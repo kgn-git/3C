@@ -1,0 +1,1 @@
+{"version":3,"file":"hook-path-guard.d.ts","sourceRoot":"","sources":["../../src/cli/hook-path-guard.ts"],"names":[],"mappings":"AAoBA,MAAM,WAAW,mBAAmB;IAClC,QAAQ,CAAC,QAAQ,EAAE,CAAC,GAAG,CAAC,CAAC;IACzB,QAAQ,CAAC,MAAM,EAAE,MAAM,CAAC;CACzB;AA2CD,wBAAsB,gBAAgB,CACpC,KAAK,EAAE,MAAM,GACZ,OAAO,CAAC,mBAAmB,CAAC,CAyC9B;AAED,wBAAsB,gBAAgB,IAAI,OAAO,CAAC,MAAM,CAAC,CAWxD"}

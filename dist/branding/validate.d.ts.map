@@ -1,0 +1,1 @@
+{"version":3,"file":"validate.d.ts","sourceRoot":"","sources":["../../src/branding/validate.ts"],"names":[],"mappings":"AAMA,MAAM,WAAW,gBAAgB;IAC/B,QAAQ,CAAC,KAAK,EAAE,OAAO,CAAC;IACxB,QAAQ,CAAC,MAAM,EAAE,SAAS,MAAM,EAAE,CAAC;CACpC;AAED,wBAAgB,iBAAiB,CAAC,IAAI,EAAE,MAAM,GAAG,gBAAgB,CAoBhE"}

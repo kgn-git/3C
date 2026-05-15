@@ -1,0 +1,1 @@
+{"version":3,"file":"glob-match.d.ts","sourceRoot":"","sources":["../../src/rules/glob-match.ts"],"names":[],"mappings":"AAMA,wBAAgB,WAAW,CAAC,IAAI,EAAE,MAAM,GAAG,MAAM,CA8BhD;AAED,wBAAgB,QAAQ,CACtB,KAAK,EAAE,aAAa,CAAC,MAAM,CAAC,EAC5B,KAAK,EAAE,aAAa,CAAC,MAAM,CAAC,GAC3B,OAAO,CAUT"}

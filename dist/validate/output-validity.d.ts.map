@@ -1,0 +1,1 @@
+{"version":3,"file":"output-validity.d.ts","sourceRoot":"","sources":["../../src/validate/output-validity.ts"],"names":[],"mappings":"AAOA,MAAM,WAAW,cAAc;IAC7B,QAAQ,CAAC,KAAK,EAAE,OAAO,CAAC;IACxB,QAAQ,CAAC,MAAM,EAAE,aAAa,CAAC,MAAM,CAAC,CAAC;CACxC;AAED,wBAAgB,cAAc,CAAC,IAAI,EAAE,MAAM,GAAG,cAAc,CAsB3D"}

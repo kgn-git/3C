@@ -1,0 +1,49 @@
+{
+  "name": "@kgn-git/3c",
+  "version": "1.0.0",
+  "description": "Claude Code Coach (3C) — governance and standardisation framework for AI coding assistants",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "bin": {
+    "3c": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "templates",
+    ".claude-plugin",
+    "framework.json",
+    "branding.json.template"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kgn-git/praise.git"
+  },
+  "homepage": "https://github.com/kgn-git/praise#readme",
+  "bugs": {
+    "url": "https://github.com/kgn-git/praise/issues"
+  },
+  "keywords": [
+    "claude-code",
+    "ai-governance",
+    "iso-42001",
+    "eu-ai-act",
+    "agent-skills",
+    "claude-md"
+  ],
+  "dependencies": {
+    "@inquirer/prompts": "^8.4.2",
+    "diff": "^9.0.0",
+    "js-yaml": "^4.1.1"
+  }
+}

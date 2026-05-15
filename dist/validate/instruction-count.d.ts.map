@@ -1,0 +1,1 @@
+{"version":3,"file":"instruction-count.d.ts","sourceRoot":"","sources":["../../src/validate/instruction-count.ts"],"names":[],"mappings":"AAWA,MAAM,MAAM,SAAS,GAAG,IAAI,GAAG,MAAM,GAAG,UAAU,CAAC;AAEnD,MAAM,WAAW,sBAAsB;IACrC,QAAQ,CAAC,KAAK,EAAE,MAAM,CAAC;IACvB,QAAQ,CAAC,SAAS,EAAE,SAAS,CAAC;CAC/B;AAED,wBAAgB,iBAAiB,CAAC,IAAI,EAAE,MAAM,GAAG,sBAAsB,CAItE"}

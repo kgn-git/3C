@@ -1,0 +1,1 @@
+{"version":3,"file":"substitute.js","sourceRoot":"","sources":["../../src/branding/substitute.ts"],"names":[],"mappings":"AAEA,8EAA8E;AAC9E,MAAM,aAAa,GACjB,yIAAyI,CAAC;AAE5I,MAAM,UAAU,UAAU,CAAC,KAAa,EAAE,KAAoB;IAC5D,OAAO,KAAK,CAAC,OAAO,CAAC,aAAa,EAAE,CAAC,CAAC,EAAE,GAAwB,EAAE,EAAE,CAAC,KAAK,CAAC,GAAG,CAAC,CAAC,CAAC;AACnF,CAAC"}

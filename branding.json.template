@@ -1,0 +1,7 @@
+{
+  "_comment": "Optional per-deployment override. Empty/absent fields fall back to FRAMEWORK_*. Copy this file to branding.json at your deployment root and fill in the fields you want to customise.",
+  "BRAND_NAME": "",
+  "BRAND_SLUG": "",
+  "BRAND_LONG": "",
+  "BRAND_VERSION": ""
+}
