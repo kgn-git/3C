@@ -33,7 +33,9 @@ export async function scaffoldTest(opts) {
         warnings.push("pytest import line uses basename only; for nested paths like pkg/util.py, " +
             "manually adjust the import to: from pkg.util import ...");
     }
-    const content = renderScaffold(opts.framework, opts.sourcePath, symbols);
+    const content = opts.mode === "integration"
+        ? renderIntegration(opts.framework, opts.sourcePath, opts.extraSources ?? [])
+        : renderScaffold(opts.framework, opts.sourcePath, symbols);
     const suggestedTargetPath = suggestTargetPath(opts.framework, opts.sourcePath);
     return { ok: true, content, suggestedTargetPath, warnings };
 }
@@ -66,8 +68,135 @@ function renderScaffold(framework, sourcePath, symbols) {
         case "vitest":
             return renderVitest(sourcePath, symbols);
         case "pytest":
-            return renderPytest(sourcePath, symbols); // implemented in Task 5
+            return renderPytest(sourcePath, symbols);
+        case "mocha":
+            return renderMocha(sourcePath, symbols);
+        case "playwright":
+            return renderPlaywright(sourcePath, symbols);
+        case "junit":
+            return renderJUnit(sourcePath, symbols);
     }
+}
+function renderMocha(sourcePath, symbols) {
+    const importPath = "./" + basename(sourcePath, extname(sourcePath));
+    const names = symbols.length > 0 ? `{ ${symbols.join(", ")} }` : "{ /* exports */ }";
+    const blocks = (symbols.length > 0 ? symbols : ["placeholder"])
+        .map((n) => [
+        `  describe("${n}", function () {`,
+        `    it("does the expected thing", function () {`,
+        `      // TODO: arrange + act + assert`,
+        `      assert.ok(${n});`,
+        `    });`,
+        `  });`,
+    ].join("\n"))
+        .join("\n\n");
+    return [
+        'const assert = require("node:assert");',
+        `const ${names} = require("${importPath}");`,
+        "",
+        `describe("${basename(sourcePath)}", function () {`,
+        blocks,
+        `});`,
+        "",
+    ].join("\n");
+}
+function renderPlaywright(sourcePath, symbols) {
+    const importPath = "./" + basename(sourcePath, extname(sourcePath));
+    const names = symbols.length > 0 ? symbols.join(", ") : "/* exports */";
+    const blocks = (symbols.length > 0 ? symbols : ["placeholder"])
+        .map((n) => [
+        `test("${n}", async ({ page }) => {`,
+        `  // TODO: drive the page, then assert`,
+        `  expect(${n}).toBeDefined();`,
+        `});`,
+    ].join("\n"))
+        .join("\n\n");
+    return [
+        'import { test, expect } from "@playwright/test";',
+        `import { ${names} } from "${importPath}";`,
+        "",
+        blocks,
+        "",
+    ].join("\n");
+}
+function renderJUnit(sourcePath, symbols) {
+    const className = basename(sourcePath, extname(sourcePath));
+    const methods = (symbols.length > 0 ? symbols : ["placeholder"])
+        .map((n) => [
+        `    @Test`,
+        `    void ${n}DoesTheExpectedThing() {`,
+        `        // TODO: arrange + act + assert`,
+        `        assertNotNull(new ${className}());`,
+        `    }`,
+    ].join("\n"))
+        .join("\n\n");
+    return [
+        "import org.junit.jupiter.api.Test;",
+        "import static org.junit.jupiter.api.Assertions.*;",
+        "",
+        `class ${className}Test {`,
+        methods,
+        `}`,
+        "",
+    ].join("\n");
+}
+// #78 AC6: integration scaffold — multiple subjects + a test-double seam.
+function renderIntegration(framework, sourcePath, extraSources) {
+    const all = [sourcePath, ...extraSources];
+    const subjects = all.map((s) => basename(s, extname(s)));
+    if (framework === "pytest") {
+        return [
+            "# Integration test — exercises multiple modules together.",
+            ...all.map((s) => `# subject: ${s.replaceAll("\\", "/")}`),
+            "",
+            "def test_integration_placeholder():",
+            "    # TODO: wire real collaborators; replace fakes with team test doubles",
+            "    fake_dependency = None  # test double / stub / fixture",
+            "    assert fake_dependency is None",
+            "",
+        ].join("\n");
+    }
+    if (framework === "junit") {
+        return [
+            "import org.junit.jupiter.api.Test;",
+            "import static org.junit.jupiter.api.Assertions.*;",
+            "",
+            `// Integration test across: ${subjects.join(", ")}`,
+            "class IntegrationTest {",
+            "    @Test",
+            "    void modulesInteractCorrectly() {",
+            "        // TODO: real collaborators; replace stub with a team test double",
+            "        Object stub = null; // test double / mock / fixture",
+            "        assertNull(stub);",
+            "    }",
+            "}",
+            "",
+        ].join("\n");
+    }
+    const isPlaywright = framework === "playwright";
+    const header = isPlaywright
+        ? 'import { test, expect } from "@playwright/test";'
+        : framework === "vitest"
+            ? 'import { describe, it, expect } from "vitest";'
+            : framework === "jest" || framework === "mocha"
+                ? 'const assert = require("node:assert");'
+                : "";
+    const imports = all
+        .map((s) => `// integration subject: ${s.replaceAll("\\", "/")} → ./${basename(s, extname(s))}`)
+        .join("\n");
+    return [
+        header,
+        imports,
+        "",
+        `describe("integration: ${subjects.join(" + ")}", () => {`,
+        `  it("modules interact correctly", ${isPlaywright ? "async ({ page }) " : "()"}=> {`,
+        "    // TODO: wire real collaborators across the modules above.",
+        "    const testDouble = undefined; // replace with a team mock / stub / fixture",
+        "    expect(testDouble).toBeUndefined();",
+        "  });",
+        "});",
+        "",
+    ].join("\n");
 }
 function renderVitest(sourcePath, symbols) {
     const importPath = "./" + basename(sourcePath, extname(sourcePath));

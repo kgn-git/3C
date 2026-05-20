@@ -1,8 +1,9 @@
 #!/usr/bin/env node
-import { createHash } from "node:crypto";
-import { readFile, readdir } from "node:fs/promises";
+import { createHash, randomUUID } from "node:crypto";
+import { spawn } from "node:child_process";
+import { readFile, readdir, writeFile, mkdir } from "node:fs/promises";
 import { dirname, join, resolve, sep } from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { loadBrand, loadFramework, resolveBrand } from "./branding/load.js";
 import { resolveBrandSlugSync } from "./branding/runtime.js";
 import { substitute } from "./branding/substitute.js";
@@ -10,11 +11,32 @@ import { renderTemplate } from "./generator/template.js";
 import { writeOutput } from "./generator/output.js";
 import { confirm } from "@inquirer/prompts";
 import { userInfo } from "node:os";
-import { recordBypass } from "./hooks/bypass.js";
+import { recordBypass, consumeBypassToken } from "./hooks/bypass.js";
 import { checkAndConfirmHooksConfig } from "./hooks/diff-confirm.js";
 import { installHook } from "./hooks/install.js";
 import { runHookOrchestrator } from "./hooks/orchestrator.js";
+import { loadTelemetryConfig } from "./telemetry/config.js";
+import { parseWindow } from "./telemetry/window.js";
+import { readEventsInWindow } from "./telemetry/read.js";
+import { dashboardMetrics } from "./dashboard/metrics.js";
+import { renderDashboardHtml } from "./dashboard/render.js";
+import { runCoverageGate } from "./coverage/index.js";
+import { runSecurityGate } from "./security/index.js";
+import { addSuppression } from "./security/suppress.js";
+import { loadDynamicContext } from "./context/loader.js";
 import { createIssue } from "./skills/create-issue.js";
+import { runBugReport } from "./skills/bug/index.js";
+import { runDrift } from "./skills/drift/index.js";
+import { runArchBoundary } from "./skills/arch-boundary/index.js";
+import { addException } from "./skills/arch-boundary/exceptions.js";
+import { runStandardsHistory, runStandardsAsOf, } from "./skills/standards-history/index.js";
+import { runDeploy } from "./skills/deploy/index.js";
+import { scaffoldDeployment } from "./skills/deploy-init/index.js";
+import { upgradeDeployment } from "./skills/deploy-init/upgrade.js";
+import { resolveRationale } from "./skills/rationale/resolve.js";
+import { formatRationale } from "./skills/rationale/format.js";
+import { runOnboard } from "./skills/onboard/index.js";
+import { runOnboardGuide } from "./skills/onboard-guide/index.js";
 import { createPr } from "./skills/implement/create-pr.js";
 import { fetchIssue } from "./skills/implement/fetch-issue.js";
 import { formatBranchName } from "./skills/implement/branch-name.js";
@@ -48,6 +70,16 @@ Commands:
                       --replace          Overwrite if file exists
                       --merge            Backup-and-overwrite (writes .pre-\${BRAND_SLUG}.bak)
                       --no-companion     Skip CLAUDE.local.md.example + .gitignore update
+                      --brand=<name>     Scaffold a white-label deployment (branding.json,
+                                         praise.config.json, .claude-plugin/plugin.json,
+                                         .claude-plugin/marketplace.json) instead of CLAUDE.md.
+                      --brand-slug=<s>   Override the derived slug (kebab-case).
+                      --fork             Use marketplace strict:true (local fork copy).
+
+  upgrade --upstream-ref=<ref> --framework-version=<x.y.z>
+                    Re-point an existing brand deployment to a new upstream
+                    framework release. Preserves BRAND_* config; refuses
+                    unsigned upstream refs.
 
   rules apply       Resolve .claude/rules/*.md against workspace files,
                     validate, and inject the matching rules into CLAUDE.md.
@@ -122,6 +154,37 @@ Commands:
                     to stdout (exit 0). Used by /\${BRAND_SLUG}:review
                     for AC7 credential redaction.
 
+  drift analyze [--format json|html|console] [--incremental]
+                    Audit tracked files against the checkable standards,
+                    grouped by rule + directory, with delta vs the last run.
+
+  arch-check check [--files a,b]   Block cross-boundary import violations
+                    per .\${BRAND_SLUG}/architecture.yaml (monorepo-aware).
+  arch-check except "<from>-><to>" --reason="..." --expires=<date>
+                    Record a time-boxed boundary exception (expiry mandatory).
+
+  standards history [--rule <id>]   Timeline of standards/rules changes
+                    (author, date, message, PR link) from git history.
+  standards as-of <date>            Reconstruct the effective standards
+                    as they were on a given date (read-only).
+
+  deploy --env <name> [--yes]       Run team-defined pre-flight checks,
+                    deploy (production needs --yes), post-deploy health
+                    check, and automatic rollback on health failure.
+
+  explain <rule-id>                 Show the recorded rationale for a
+                    standard rule (origin, reasoning, examples, incident
+                    and research references).
+
+  onboard [--user <n>] [--level <l>] [--advance|--ask "<q>"|--starter]
+                    Guided onboarding: roadmap + per-developer progress
+                    (pause/resume), local answers, starter-task suggestion.
+
+  onboard-guide --role <frontend|backend|devops> [--user <n>]
+                [--advance|--ask "<q>"]
+                    Role-tailored interactive onboarding over the onboard
+                    skill: module status, pause/resume, local-first completion.
+
   --version         Show version
   --help            Show this help
 
@@ -132,7 +195,18 @@ function parseInitArgs(rest) {
     let atRoot = false;
     let onExisting = "abort";
     let companion = true;
+    let brand;
+    let brandSlug;
+    let fork = false;
     for (const arg of rest) {
+        if (arg.startsWith("--brand=")) {
+            brand = arg.slice("--brand=".length);
+            continue;
+        }
+        if (arg.startsWith("--brand-slug=")) {
+            brandSlug = arg.slice("--brand-slug=".length);
+            continue;
+        }
         switch (arg) {
             case "--yes":
             case "-y":
@@ -150,12 +224,15 @@ function parseInitArgs(rest) {
             case "--no-companion":
                 companion = false;
                 break;
+            case "--fork":
+                fork = true;
+                break;
             default:
                 console.error(`Unknown option: ${arg}`);
                 process.exit(1);
         }
     }
-    return { yes, atRoot, onExisting, companion };
+    return { yes, atRoot, onExisting, companion, brand, brandSlug, fork };
 }
 async function loadFragments(dir) {
     const map = new Map();
@@ -174,6 +251,28 @@ function sha256(input) {
     return "sha256:" + createHash("sha256").update(input).digest("hex");
 }
 async function initCommand(args) {
+    if (args.brand !== undefined) {
+        const framework = await loadFramework(PACKAGE_ROOT);
+        return runDeployInit({
+            brandName: args.brand,
+            brandSlug: args.brandSlug,
+            fork: args.fork,
+            cwd: process.cwd(),
+            frameworkRoot: PACKAGE_ROOT,
+            frameworkSlug: framework.FRAMEWORK_SLUG,
+            frameworkVersion: framework.FRAMEWORK_VERSION,
+            upstreamRef: `v${framework.FRAMEWORK_VERSION}`,
+            upstreamSource: { type: "github", repo: "kgn-git/3C" },
+            installUuid: randomUUID(),
+            runGit: defaultGitRunner,
+            writeFile: async (p, c) => {
+                await mkdir(dirname(p), { recursive: true });
+                await writeFile(p, c, "utf8");
+            },
+            log: console.log.bind(console),
+            err: console.error.bind(console),
+        });
+    }
     const framework = await loadFramework(PACKAGE_ROOT);
     const brandConfig = await loadBrand(process.cwd());
     const brand = resolveBrand(framework, brandConfig);
@@ -254,6 +353,58 @@ async function initCommand(args) {
     console.log("  3. Commit and open a PR");
     return 0;
 }
+export async function runDeployInit(args) {
+    const result = await scaffoldDeployment({
+        brandName: args.brandName,
+        brandSlug: args.brandSlug,
+        cwd: args.cwd,
+        frameworkRoot: args.frameworkRoot,
+        frameworkSlug: args.frameworkSlug,
+        frameworkVersion: args.frameworkVersion,
+        upstreamRef: args.upstreamRef,
+        upstreamSource: args.upstreamSource,
+        installUuid: args.installUuid,
+        strict: args.fork,
+        orgMetadata: args.orgMetadata,
+        runGit: args.runGit,
+        writeFile: args.writeFile,
+    });
+    if (!result.ok) {
+        for (const e of result.errors)
+            args.err(`✗ ${e}`);
+        return 1;
+    }
+    for (const p of result.written)
+        args.log(`✓ ${p}`);
+    return 0;
+}
+export async function runDeployUpgrade(args) {
+    const result = await upgradeDeployment({
+        newUpstreamRef: args.newUpstreamRef,
+        newFrameworkVersion: args.newFrameworkVersion,
+        cwd: args.cwd,
+        frameworkRoot: args.frameworkRoot,
+        runGit: args.runGit,
+        readFile: args.readFile,
+        writeFile: args.writeFile,
+    });
+    if (!result.ok) {
+        for (const e of result.errors)
+            args.err(`✗ ${e}`);
+        return 1;
+    }
+    for (const p of result.written)
+        args.log(`✓ ${p}`);
+    return 0;
+}
+const defaultGitRunner = (gitArgs, opts) => new Promise((resolve) => {
+    const child = spawn("git", [...gitArgs], { cwd: opts.cwd });
+    let stdout = "";
+    let stderr = "";
+    child.stdout.on("data", (d) => (stdout += String(d)));
+    child.stderr.on("data", (d) => (stderr += String(d)));
+    child.on("close", (code) => resolve({ code: code ?? 1, stdout, stderr }));
+});
 async function rulesApplyCommand() {
     const framework = await loadFramework(PACKAGE_ROOT);
     const brandConfig = await loadBrand(process.cwd());
@@ -509,27 +660,47 @@ async function testCommand(argv) {
         return result.framework === "unknown" ? 1 : 0;
     }
     if (sub === "scaffold") {
+        const FRAMEWORKS = [
+            "jest",
+            "vitest",
+            "pytest",
+            "mocha",
+            "playwright",
+            "junit",
+        ];
         let framework;
         let sourcePath;
+        let mode = "unit";
+        const extraSources = [];
         for (const arg of rest) {
             if (arg.startsWith("--framework=")) {
                 const v = arg.slice("--framework=".length);
-                if (v === "jest" || v === "vitest" || v === "pytest")
+                if (FRAMEWORKS.includes(v))
                     framework = v;
             }
-            else if (sourcePath === undefined && !arg.startsWith("--")) {
-                sourcePath = arg;
+            else if (arg.startsWith("--type=")) {
+                const v = arg.slice("--type=".length);
+                if (v === "integration" || v === "unit")
+                    mode = v;
+            }
+            else if (!arg.startsWith("--")) {
+                if (sourcePath === undefined)
+                    sourcePath = arg;
+                else
+                    extraSources.push(arg);
             }
         }
         if (framework === undefined || sourcePath === undefined) {
             const slug = resolveBrandSlugSync();
-            console.error(`Usage: ${slug} test scaffold <source-path> --framework={jest|vitest|pytest}`);
+            console.error(`Usage: ${slug} test scaffold <source-path> [extra-sources...] --framework={${FRAMEWORKS.join("|")}} [--type=integration]`);
             return 1;
         }
         const result = await scaffoldTest({
             framework,
             sourcePath,
             workspaceDir: process.cwd(),
+            mode,
+            extraSources,
         });
         if (!result.ok) {
             console.error(`✗ ${result.error}`);
@@ -595,7 +766,40 @@ async function createIssueCommand(rest) {
         console.error(`✗ IssuePayload must be a JSON object with at least \"title\" and \"body\" string fields`);
         return 1;
     }
-    const result = await createIssue(payload, { force });
+    // #70: route through the bundled MCP PM server when a non-GitHub tool is
+    // configured (or --tool=); otherwise the unchanged gh path (AC7).
+    let toolFlag;
+    for (const a of rest) {
+        if (a.startsWith("--tool="))
+            toolFlag = a.slice("--tool=".length);
+    }
+    const { resolvePmSelection } = await import("./mcp/pm/select.js");
+    const sel = await resolvePmSelection(process.cwd(), toolFlag);
+    let pmRouter;
+    if (sel) {
+        const { pmCreateIssue } = await import("./mcp/pm/registry.js");
+        const { defaultResolver } = await import("./hooks/credentials.js");
+        const http = async (req) => {
+            const resp = await fetch(req.url, {
+                method: req.method,
+                headers: req.headers,
+                ...(req.body !== undefined ? { body: req.body } : {}),
+            });
+            return { status: resp.status, body: await resp.text() };
+        };
+        pmRouter = async (p) => pmCreateIssue(p, {
+            tool: sel.tool,
+            http,
+            resolver: defaultResolver,
+            baseUrl: sel.baseUrl,
+            project: sel.project,
+            tokenRef: sel.tokenRef,
+        });
+    }
+    const result = await createIssue(payload, {
+        force,
+        ...(pmRouter ? { pmRouter } : {}),
+    });
     // Always relay warnings to stderr.
     for (const w of result.warnings) {
         const where = w.line !== undefined ? `line ${w.line}: ` : "";
@@ -764,7 +968,406 @@ async function bypassCommand(rest) {
     console.log(`✓ Bypass recorded — next git commit will skip the hook chain. Reason: "${reason}"\n  ${result.path}`);
     return 0;
 }
-async function main(argv) {
+// #180 VP-03-F08-ext: personal, local, read-only insights. No network,
+// no backend, no team/comparison data — own workstation telemetry only.
+export async function dashboardCommand(argv, env = { cwd: process.cwd() }) {
+    let since;
+    for (let i = 0; i < argv.length; i++) {
+        const a = argv[i];
+        if (a === "--since")
+            since = argv[i + 1];
+        else if (a?.startsWith("--since="))
+            since = a.slice("--since=".length);
+    }
+    const cfg = await loadTelemetryConfig(env.cwd);
+    if (!cfg.enabled) {
+        console.log("Nothing to show — telemetry is disabled.");
+        return 0;
+    }
+    const win = parseWindow(since, cfg.retentionDays);
+    const records = await readEventsInWindow(env.cwd, win.days, env.now ?? new Date());
+    if (records.length === 0) {
+        console.log(`Nothing to show — no telemetry in the ${win.label}.`);
+        return 0;
+    }
+    const html = renderDashboardHtml(dashboardMetrics(records), win.label);
+    const out = join(env.cwd, `.${resolveBrandSlugSync()}`, "dashboard.html");
+    await mkdir(dirname(out), { recursive: true });
+    await writeFile(out, html, "utf8");
+    console.log(`Wrote ${out}`);
+    if (env.open)
+        await env.open(out);
+    return 0;
+}
+// #17 VP-03-F03: pre-PR coverage gate. Exit 2 when blocked, 0 otherwise.
+export async function coverageGateCommand(_argv, env = { cwd: process.cwd() }) {
+    const log = env.log ?? ((m) => console.log(m));
+    const r = await runCoverageGate(env.cwd, env.runner ? { runner: env.runner } : {});
+    if (r.blocked) {
+        log(r.message);
+        return 2;
+    }
+    log(`Coverage gate passed (${r.coveragePct}% changed-line coverage).`);
+    return 0;
+}
+// #18 VP-03-F04: pre-commit security scan gate + recorded suppressions.
+export async function securityCommand(argv, env = { cwd: process.cwd() }) {
+    const log = env.log ?? ((m) => console.log(m));
+    const sub = argv[0];
+    if (sub === "scan") {
+        const r = await runSecurityGate(env.cwd, {
+            ...(env.scanner ? { scanner: env.scanner } : {}),
+            ...(env.runner ? { runner: env.runner } : {}),
+        });
+        log(r.message);
+        return r.blocked ? 2 : 0;
+    }
+    if (sub === "suppress") {
+        const id = argv[1];
+        let reason;
+        for (const a of argv.slice(2)) {
+            if (a.startsWith("--reason="))
+                reason = a.slice("--reason=".length);
+        }
+        if (!id || !reason) {
+            log('Usage: security suppress <id> --reason="<why>"');
+            return 1;
+        }
+        await addSuppression(env.cwd, id, reason);
+        log(`Suppressed ${id} — recorded: ${reason}`);
+        return 0;
+    }
+    log("Usage: security <scan|suppress>");
+    return 1;
+}
+// #11 VP-01-F06: inspect the dynamically-loaded context for a file.
+export async function debugCommand(argv, env = { cwd: process.cwd() }) {
+    const log = env.log ?? ((m) => console.log(m));
+    if (argv[0] !== "context") {
+        log("Usage: debug context [file]");
+        return 1;
+    }
+    const file = argv[1] ?? env.cwd;
+    const c = await loadDynamicContext(env.cwd, file);
+    log(`Active rules (${c.rules.length}):`);
+    for (const r of c.rules)
+        log(`  - ${r.filename}`);
+    log(`Instruction count: ${c.instructionCount} / 150`);
+    log(`Remaining budget: ${c.remainingBudget}`);
+    if (c.debugLog.length > 0) {
+        log("Budget drops:");
+        for (const d of c.debugLog)
+            log(`  ${d}`);
+    }
+    return 0;
+}
+function bugFlag(argv, name) {
+    const i = argv.indexOf(name);
+    return i >= 0 ? argv[i + 1] : undefined;
+}
+// #14 VP-02-F07: structured bug report filed via the create-issue path.
+export async function bugCommand(argv, env = { cwd: process.cwd() }) {
+    const log = env.log ?? ((m) => console.log(m));
+    const attachments = [];
+    for (let i = 0; i < argv.length; i++) {
+        if (argv[i] === "--attach" && argv[i + 1])
+            attachments.push(argv[i + 1]);
+    }
+    const input = {
+        summary: bugFlag(argv, "--summary"),
+        reproSteps: bugFlag(argv, "--repro"),
+        expected: bugFlag(argv, "--expected"),
+        actual: bugFlag(argv, "--actual"),
+        environment: bugFlag(argv, "--env"),
+        severity: bugFlag(argv, "--severity"),
+        suspectedRootCause: bugFlag(argv, "--root-cause"),
+        attachments,
+    };
+    const r = await runBugReport(input, env.cwd, env.spawn ? { spawn: env.spawn } : {});
+    if (!r.filed) {
+        if (r.missing)
+            log(`Missing required: ${r.missing.join(", ")}`);
+        else
+            log(`Bug report not filed${r.warnings?.length ? " (preflight warnings)" : ""}.`);
+        return 1;
+    }
+    log(`Filed: ${r.ref?.url ?? "(ok)"}`);
+    return 0;
+}
+// #10 VP-01-F05: on-demand standards drift audit (reportorial, not a gate).
+export async function driftCommand(argv, env = { cwd: process.cwd() }) {
+    const log = env.log ?? ((m) => console.log(m));
+    if (argv[0] !== "analyze") {
+        log("Usage: drift analyze [--format json|html|console] [--incremental]");
+        return 1;
+    }
+    const fi = argv.indexOf("--format");
+    const fmt = fi >= 0 ? argv[fi + 1] : undefined;
+    const format = fmt === "json" || fmt === "html" ? fmt : "console";
+    const incremental = argv.includes("--incremental");
+    try {
+        const r = await runDrift(env.cwd, { format, incremental });
+        log(r.formatted);
+        if (r.delta.hasPrevious) {
+            const moved = Object.entries(r.delta.byRule).filter(([, n]) => n !== 0);
+            if (moved.length > 0) {
+                log("Delta vs previous run:");
+                for (const [rule, n] of moved) {
+                    log(`  ${rule}: ${n > 0 ? "+" : ""}${n}`);
+                }
+            }
+        }
+        return 0;
+    }
+    catch (e) {
+        // NFR-USE-03: explain + remediation; reportorial command never half-reports.
+        log(`drift analyze failed: ${e.message}`);
+        return 1;
+    }
+}
+function flagValue(argv, name) {
+    for (const a of argv) {
+        if (a.startsWith(`${name}=`))
+            return a.slice(name.length + 1);
+    }
+    const i = argv.indexOf(name);
+    return i >= 0 ? argv[i + 1] : undefined;
+}
+// #19 VP-03-F05: architecture boundary gate (mirrors `security scan`).
+export async function archCommand(argv, env = { cwd: process.cwd() }) {
+    const log = env.log ?? ((m) => console.log(m));
+    const sub = argv[0];
+    if (sub === "check") {
+        const filesArg = flagValue(argv, "--files");
+        const changedFiles = filesArg
+            ? filesArg.split(",").filter((f) => f !== "")
+            : undefined;
+        const bypassToken = await consumeBypassToken(env.cwd);
+        const r = await runArchBoundary(env.cwd, {
+            ...(changedFiles ? { changedFiles } : {}),
+            bypassToken,
+        });
+        if (r.message !== "")
+            log(r.message);
+        return r.blocked ? 2 : 0;
+    }
+    if (sub === "except") {
+        const key = argv[1];
+        const reason = flagValue(argv, "--reason");
+        const expires = flagValue(argv, "--expires");
+        if (!key || !reason || !expires) {
+            log('Usage: arch-check except "<from>-><to>" --reason="<why>" --expires=<date>');
+            return 1;
+        }
+        try {
+            await addException(env.cwd, key, reason, expires);
+            log(`Exception recorded for ${key} — expires ${expires}`);
+            return 0;
+        }
+        catch (e) {
+            log(`Could not record exception: ${e.message}`);
+            return 1;
+        }
+    }
+    log("Usage: arch-check <check|except>");
+    return 1;
+}
+// #21 VP-01-F09: git-native standards version history (read-only).
+export async function standardsCommand(argv, env = { cwd: process.cwd() }) {
+    const log = env.log ?? ((m) => console.log(m));
+    const sub = argv[0];
+    if (sub === "history") {
+        const ruleIdx = argv.indexOf("--rule");
+        const rule = ruleIdx >= 0 ? argv[ruleIdx + 1] : undefined;
+        const r = await runStandardsHistory(env.cwd, rule ? { rule } : {});
+        if (!r.ok) {
+            log(r.error);
+            return 1;
+        }
+        if (r.entries.length === 0) {
+            log("No standards changes recorded.");
+            return 0;
+        }
+        for (const e of r.entries) {
+            const subject = e.message.split("\n")[0] ?? "";
+            const pr = e.pr ? ` [PR ${e.pr}]` : "";
+            log(`${e.commit.slice(0, 9)} ${e.date} ${e.author} — ${subject}${pr}`);
+        }
+        return 0;
+    }
+    if (sub === "as-of") {
+        const date = argv[1];
+        if (!date) {
+            log("Usage: standards as-of <date>");
+            return 1;
+        }
+        const r = await runStandardsAsOf(env.cwd, date);
+        if (!r.ok) {
+            log(r.error);
+            return 1;
+        }
+        log(`Effective standards as of ${date} (commit ${r.commit.slice(0, 9)}):`);
+        for (const m of r.manifest)
+            log(`  ${m.path}`);
+        return 0;
+    }
+    log("Usage: standards <history [--rule <id>]|as-of <date>>");
+    return 1;
+}
+// #12 VP-02-F05: deployment orchestrator skill — runs the safety-gate
+// sequence and shells out to the team's deploy/rollback/health commands.
+export async function deployCommand(argv, env = { cwd: process.cwd() }) {
+    const log = env.log ?? ((m) => console.log(m));
+    const ei = argv.indexOf("--env");
+    const envName = ei >= 0 ? (argv[ei + 1] ?? "") : "";
+    const confirmed = argv.includes("--yes") || argv.includes("-y");
+    if (envName === "") {
+        log("Usage: deploy --env <name> [--yes]");
+        return 1;
+    }
+    const defaultRunner = async (command) => {
+        const { exec } = await import("node:child_process");
+        const { promisify } = await import("node:util");
+        try {
+            await promisify(exec)(command, { cwd: env.cwd });
+            return { exitCode: 0 };
+        }
+        catch (e) {
+            return { exitCode: e.code ?? 1 };
+        }
+    };
+    const defaultGit = async (args) => {
+        const { execFile } = await import("node:child_process");
+        const { promisify } = await import("node:util");
+        try {
+            const { stdout } = await promisify(execFile)("git", [...args], {
+                cwd: env.cwd,
+            });
+            return stdout;
+        }
+        catch {
+            return "";
+        }
+    };
+    const r = await runDeploy(env.cwd, {
+        envName,
+        confirmed,
+        runner: env.runner ?? defaultRunner,
+        gitRunner: env.gitRunner ?? defaultGit,
+    });
+    log(r.message);
+    if (r.deployed)
+        return 0;
+    return 1;
+}
+// #24 VP-06-F03: surface the co-versioned rationale for a standard rule.
+export async function explainCommand(argv, env = { cwd: process.cwd() }) {
+    const log = env.log ?? ((m) => console.log(m));
+    const ruleId = argv[0];
+    if (!ruleId) {
+        log("Usage: explain <rule-id>");
+        return 1;
+    }
+    const r = await resolveRationale(env.cwd, ruleId);
+    if (!r.found) {
+        log(`No rationale recorded for "${ruleId}". Known rule ids: ${r.knownRuleIds.join(", ") || "(none)"}`);
+        return 1;
+    }
+    log(formatRationale(r.ruleId, r.rationale));
+    return 0;
+}
+// #15 VP-02-F09: guided onboarding skill (primitive; #22 layers over it).
+export async function onboardCommand(argv, env = { cwd: process.cwd() }) {
+    const log = env.log ?? ((m) => console.log(m));
+    const user = flagValue(argv, "--user") ?? userInfo().username;
+    const level = flagValue(argv, "--level");
+    const ask = flagValue(argv, "--ask");
+    const action = ask
+        ? "ask"
+        : argv.includes("--advance")
+            ? "advance"
+            : argv.includes("--starter")
+                ? "starter"
+                : undefined;
+    const realSpawn = async (cmd, a) => {
+        const { execFile } = await import("node:child_process");
+        const { promisify } = await import("node:util");
+        try {
+            const { stdout, stderr } = await promisify(execFile)(cmd, [...a], {
+                cwd: env.cwd,
+            });
+            return { exitCode: 0, stdout, stderr };
+        }
+        catch (e) {
+            const x = e;
+            return {
+                exitCode: x.code ?? 1,
+                stdout: x.stdout ?? "",
+                stderr: x.stderr ?? "",
+            };
+        }
+    };
+    const r = await runOnboard(env.cwd, {
+        user,
+        ...(level ? { level } : {}),
+        ...(action ? { action } : {}),
+        ...(ask ? { query: ask } : {}),
+        ...(action === "starter" ? { spawn: realSpawn } : {}),
+    });
+    log(`Onboarding — ${user}`);
+    for (const m of r.roadmap) {
+        const mark = r.progress.completed.includes(m.id)
+            ? "[x]"
+            : r.progress.current === m.id
+                ? "[>]"
+                : "[ ]";
+        log(`  ${mark} ${m.id} — ${m.title}`);
+    }
+    if (r.progress.current)
+        log(`Current: ${r.progress.current}`);
+    else
+        log("All modules complete.");
+    if (r.answer)
+        log(`\n${r.answer}`);
+    if (r.starter)
+        log(`\nStarter task: #${r.starter.number} — ${r.starter.title}`);
+    return 0;
+}
+// #22 VP-06-F01: role-tailored interactive onboarding guide (layers over #15).
+export async function onboardGuideCommand(argv, env = { cwd: process.cwd() }) {
+    const log = env.log ?? ((m) => console.log(m));
+    const user = flagValue(argv, "--user") ?? userInfo().username;
+    const role = flagValue(argv, "--role") ?? "generic";
+    const ask = flagValue(argv, "--ask");
+    const action = ask
+        ? "ask"
+        : argv.includes("--advance")
+            ? "advance"
+            : undefined;
+    const r = await runOnboardGuide(env.cwd, {
+        user,
+        role,
+        ...(action ? { action } : {}),
+        ...(ask ? { query: ask } : {}),
+    });
+    log(`Onboarding guide — ${user} (${role})`);
+    for (const m of r.roadmap) {
+        const mark = r.status.completed.includes(m.id)
+            ? "[x]"
+            : r.status.inProgress === m.id
+                ? "[>]"
+                : "[ ]";
+        log(`  ${mark} ${m.id} — ${m.title}`);
+    }
+    if (r.completedAll)
+        log("Onboarding complete — completion recorded locally.");
+    else if (r.status.inProgress)
+        log(`Current: ${r.status.inProgress}`);
+    if (r.answer)
+        log(`\n${r.answer}`);
+    return 0;
+}
+export async function main(argv) {
     const command = argv[0];
     if (command === "--version" || command === "-v") {
         console.log(VERSION);
@@ -773,6 +1376,38 @@ async function main(argv) {
     if (command === "init") {
         const args = parseInitArgs(argv.slice(1));
         return initCommand(args);
+    }
+    if (command === "upgrade") {
+        const rest = argv.slice(1);
+        let newRef;
+        let newVersion;
+        for (const arg of rest) {
+            if (arg.startsWith("--upstream-ref=")) {
+                newRef = arg.slice("--upstream-ref=".length);
+            }
+            else if (arg.startsWith("--framework-version=")) {
+                newVersion = arg.slice("--framework-version=".length);
+            }
+            else {
+                console.error(`Unknown option: ${arg}`);
+                return 1;
+            }
+        }
+        if (!newRef || !newVersion) {
+            console.error("upgrade requires --upstream-ref=<ref> and --framework-version=<x.y.z>");
+            return 1;
+        }
+        return runDeployUpgrade({
+            newUpstreamRef: newRef,
+            newFrameworkVersion: newVersion,
+            cwd: process.cwd(),
+            frameworkRoot: PACKAGE_ROOT,
+            runGit: defaultGitRunner,
+            readFile: async (p) => readFile(p, "utf8"),
+            writeFile: async (p, c) => writeFile(p, c, "utf8"),
+            log: console.log.bind(console),
+            err: console.error.bind(console),
+        });
     }
     if (command === "rules" && argv[1] === "apply") {
         return rulesApplyCommand();
@@ -813,6 +1448,54 @@ async function main(argv) {
     if (command === "implement") {
         return implementCommand(argv.slice(1));
     }
+    if (command === "coverage-gate") {
+        return coverageGateCommand(argv.slice(1), { cwd: process.cwd() });
+    }
+    if (command === "security") {
+        return securityCommand(argv.slice(1), { cwd: process.cwd() });
+    }
+    if (command === "debug") {
+        return debugCommand(argv.slice(1), { cwd: process.cwd() });
+    }
+    if (command === "bug") {
+        return bugCommand(argv.slice(1), { cwd: process.cwd() });
+    }
+    if (command === "drift") {
+        return driftCommand(argv.slice(1), { cwd: process.cwd() });
+    }
+    if (command === "arch-check") {
+        return archCommand(argv.slice(1), { cwd: process.cwd() });
+    }
+    if (command === "standards") {
+        return standardsCommand(argv.slice(1), { cwd: process.cwd() });
+    }
+    if (command === "deploy") {
+        return deployCommand(argv.slice(1), { cwd: process.cwd() });
+    }
+    if (command === "explain") {
+        return explainCommand(argv.slice(1), { cwd: process.cwd() });
+    }
+    if (command === "onboard") {
+        return onboardCommand(argv.slice(1), { cwd: process.cwd() });
+    }
+    if (command === "onboard-guide") {
+        return onboardGuideCommand(argv.slice(1), { cwd: process.cwd() });
+    }
+    if (command === "dashboard") {
+        const realOpen = async (p) => {
+            if (process.env.CI || process.env.VITEST || !process.stdout.isTTY)
+                return;
+            const { spawn } = await import("node:child_process");
+            const plat = process.platform;
+            const cmd = plat === "win32" ? "cmd" : plat === "darwin" ? "open" : "xdg-open";
+            const args = plat === "win32" ? ["/c", "start", "", p] : [p];
+            spawn(cmd, args, { stdio: "ignore", detached: true }).unref();
+        };
+        return dashboardCommand(argv.slice(1), {
+            cwd: process.cwd(),
+            open: realOpen,
+        });
+    }
     const framework = await loadFramework(PACKAGE_ROOT);
     const brandConfig = await loadBrand(process.cwd());
     const brand = resolveBrand(framework, brandConfig);
@@ -824,6 +1507,12 @@ async function main(argv) {
     console.log(substitute(HELP_TEMPLATE, brand));
     return 1;
 }
-const exitCode = await main(process.argv.slice(2));
-process.exit(exitCode);
+// Run only when executed directly (e.g. the `3c` bin / `node dist/cli.js`),
+// not when imported (tests import `main`/`dashboardCommand`).
+const invokedPath = process.argv[1];
+if (invokedPath !== undefined &&
+    import.meta.url === pathToFileURL(invokedPath).href) {
+    const exitCode = await main(process.argv.slice(2));
+    process.exit(exitCode);
+}
 //# sourceMappingURL=cli.js.map

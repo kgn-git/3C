@@ -2,12 +2,12 @@
 
 > Public release repo. Source of truth: [`kgn-git/praise`](https://github.com/kgn-git/praise).
 
-This repo contains only the runtime-installable surface of 3C v1.0.0: built `dist/`, deployable `templates/`, the Claude Code plugin manifest, `framework.json`, and the deployment branding template.
+This repo contains only the runtime-installable surface of 3C v1.5.0: built `dist/`, deployable `templates/`, the Claude Code plugin manifest, `framework.json`, and the deployment branding template.
 
 ## Install
 
 ```bash
-npm install git+https://github.com/kgn-git/3C#v1.0.0
+npm install git+https://github.com/kgn-git/3C#v1.5.0
 ```
 
 Then in your project root:

@@ -1,0 +1,1 @@
+{"version":3,"file":"sanitise.js","sourceRoot":"","sources":["../../src/telemetry/sanitise.ts"],"names":[],"mappings":"AAAA,iEAAiE;AACjE,8EAA8E;AAC9E,MAAM,UAAU,WAAW,CAAC,QAAgB;IAC1C,OAAO,OAAO,QAAQ,KAAK,QAAQ,IAAI,QAAQ,CAAC,IAAI,EAAE,KAAK,EAAE;QAC3D,CAAC,CAAC,QAAQ,CAAC,IAAI,EAAE;QACjB,CAAC,CAAC,SAAS,CAAC;AAChB,CAAC"}

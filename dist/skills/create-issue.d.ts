@@ -19,9 +19,17 @@ export type SpawnFn = (executable: string, args: ReadonlyArray<string>) => Promi
     readonly stdout: string;
     readonly stderr: string;
 }>;
+export type PmRouter = (payload: IssuePayload) => Promise<{
+    readonly ok: true;
+    readonly ref: IssueRef;
+} | {
+    readonly ok: false;
+    readonly error: string;
+}>;
 export interface CreateIssueOptions {
     readonly force?: boolean;
     readonly spawn?: SpawnFn;
+    readonly pmRouter?: PmRouter;
 }
 export type CreateIssueResult = {
     readonly ok: true;

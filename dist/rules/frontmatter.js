@@ -12,7 +12,9 @@
 const FENCE = "---";
 const INTEGER = /^-?\d+$/;
 export function parseFrontmatter(source) {
-    const lines = source.split("\n");
+    // Split on LF or CRLF — rule files authored on Windows arrive CRLF and the
+    // frontmatter fence must still match (`---\r` !== `---`).
+    const lines = source.split(/\r?\n/);
     if (lines[0] !== FENCE) {
         return {
             ok: true,

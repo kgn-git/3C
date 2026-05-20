@@ -3,6 +3,8 @@ export interface ScaffoldOptions {
     readonly framework: Exclude<Framework, "unknown">;
     readonly sourcePath: string;
     readonly workspaceDir: string;
+    readonly mode?: "unit" | "integration";
+    readonly extraSources?: ReadonlyArray<string>;
 }
 export interface ScaffoldSuccess {
     readonly ok: true;

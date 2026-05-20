@@ -47,6 +47,14 @@ export async function createIssue(payload, options = {}) {
     if (hasBlockingWarning && !options.force) {
         return { ok: false, warnings };
     }
+    // #70: route through the bundled MCP PM server when configured; the
+    // preflight above already ran, so UX/guarantees are identical to gh.
+    if (options.pmRouter) {
+        const routed = await options.pmRouter(payload);
+        return routed.ok
+            ? { ok: true, ref: routed.ref, warnings }
+            : { ok: false, warnings, error: routed.error };
+    }
     const args = ["issue", "create", "--title", payload.title, "--body", payload.body];
     for (const label of payload.labels ?? []) {
         args.push("--label", label);

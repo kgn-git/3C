@@ -11,10 +11,14 @@ import { loadHooksConfig } from "./config.js";
 import { resolveCredentials } from "./credentials.js";
 import { checkAndConfirmHooksConfig } from "./diff-confirm.js";
 import { readHookEventFromStdin } from "./event.js";
-import { appendHookEvent } from "./event-log.js";
 import { buildIsolatedCommand } from "./network-isolate.js";
+import { loadTelemetryConfig } from "../telemetry/config.js";
+import { writeTelemetryEvent } from "../telemetry/writer.js";
+import { safeSummary } from "../telemetry/sanitise.js";
+import { deriveFailureCategory } from "../telemetry/failure-category.js";
+import { anonymiseId } from "../telemetry/anonymise.js";
+import { postEditValidate } from "../validate/post-edit/index.js";
 const COMMIT_PATTERN = /^\s*git\s+commit\b/;
-const INPUT_SUMMARY_MAX = 120;
 export async function runHookOrchestrator(opts) {
     const spawn = opts.spawn ?? defaultSpawn;
     const slug = resolveBrandSlugSync();
@@ -25,6 +29,20 @@ export async function runHookOrchestrator(opts) {
         return { exitCode: 0 };
     }
     const event = eventResult.event;
+    // 1a. #16 VP-03-F02: PostToolUse edit validation — advisory only,
+    //     self-contained, never blocks (AC4); separate from the commit chain.
+    if (opts.event === "PostToolUse" &&
+        /^(Edit|Write|MultiEdit)$/.test(event.tool_name)) {
+        try {
+            const r = await postEditValidate(event, opts.workspaceDir);
+            if (r.message !== "")
+                opts.stderr.write(r.message);
+        }
+        catch {
+            /* AC4: advisory must never block the agent */
+        }
+        return { exitCode: 0 };
+    }
     // 2. AC11: fast-path for non-commit invocations.
     if (!isCommitEvent(event)) {
         return { exitCode: 0 };
@@ -73,10 +91,14 @@ export async function runHookOrchestrator(opts) {
     if (matching.length === 0) {
         return { exitCode: 0 };
     }
-    // 7. Run hooks in parallel.
-    const inputSummary = buildInputSummary(event);
+    // 7. Run hooks in parallel. Telemetry config + anonymised actor token
+    //    resolved once (AC5/AC7); raw identity is never written.
+    const tcfg = await loadTelemetryConfig(opts.workspaceDir);
+    const actorToken = tcfg.anonymise
+        ? anonymiseId(opts.user, opts.workspaceDir)
+        : null;
     const triggerEvent = opts.event;
-    const runs = await Promise.all(matching.map((hook) => runOne(hook, event, inputSummary, triggerEvent, opts, spawn)));
+    const runs = await Promise.all(matching.map((hook) => runOne(hook, event, triggerEvent, opts, spawn, tcfg, actorToken)));
     // 8. Aggregate.
     let blocked = false;
     for (const r of runs) {
@@ -95,35 +117,32 @@ function isCommitEvent(event) {
         return false;
     return COMMIT_PATTERN.test(cmd);
 }
-function buildInputSummary(event) {
-    const cmd = typeof event.tool_input.command === "string"
-        ? event.tool_input.command
-        : "";
-    const summary = `${event.tool_name}: ${cmd}`;
-    if (summary.length <= INPUT_SUMMARY_MAX)
-        return summary;
-    return summary.slice(0, INPUT_SUMMARY_MAX - 3) + "...";
-}
-async function runOne(hook, _event, inputSummary, triggerEvent, opts, spawn) {
+async function runOne(hook, event, triggerEvent, opts, spawn, tcfg, actorToken) {
     const slug = resolveBrandSlugSync();
     const startedAt = new Date().toISOString();
+    // AC6: summary is the sanitised tool name only — never tool_input/command.
+    const summary = safeSummary(event.tool_name);
     let exitCode = 0;
     let stderrText = "";
     let durationMs = 0;
+    let spawnError = false;
+    const emit = (code, durMs, failure) => writeTelemetryEvent(opts.workspaceDir, {
+        schema_version: 1,
+        hook_id: hook.id,
+        trigger_event: triggerEvent,
+        summary,
+        exit_code: code,
+        failure_category: failure,
+        duration_ms: durMs,
+        network_used: hook.network,
+        self_correction_count: 0,
+        actor_token: actorToken,
+        timestamp: startedAt,
+    }, tcfg);
     const resolved = await resolveCredentials(hook.command);
     if (!resolved.ok) {
         const msg = `${slug} hook "${hook.id}": missing credential(s) ${resolved.missing.join(", ")} — skipping (configure via OS keychain or env)\n`;
-        await appendHookEvent(opts.workspaceDir, {
-            schema_version: 1,
-            hook_id: hook.id,
-            trigger_event: triggerEvent,
-            input_summary: inputSummary,
-            exit_code: -1,
-            duration_ms: 0,
-            network_used: hook.network,
-            self_correction_count: 0,
-            timestamp: startedAt,
-        });
+        await emit(-1, 0, deriveFailureCategory({ exitCode: -1, timedOut: false, configError: true, spawnError: false }));
         return { blocked: hook.blocking, warning: msg };
     }
     const isolated = buildIsolatedCommand({
@@ -151,21 +170,12 @@ async function runOne(hook, _event, inputSummary, triggerEvent, opts, spawn) {
     catch (err) {
         stderrText = err.message;
         exitCode = 1;
+        spawnError = true;
     }
     finally {
         clearTimeout(timer);
     }
-    await appendHookEvent(opts.workspaceDir, {
-        schema_version: 1,
-        hook_id: hook.id,
-        trigger_event: triggerEvent,
-        input_summary: inputSummary,
-        exit_code: exitCode,
-        duration_ms: durationMs,
-        network_used: hook.network,
-        self_correction_count: 0,
-        timestamp: startedAt,
-    });
+    await emit(exitCode, durationMs, deriveFailureCategory({ exitCode, timedOut, configError: false, spawnError }));
     if (timedOut) {
         // AC6 default: fail-open with warning per NFR-REL-01.
         warning += `${slug} hook "${hook.id}": timed out after ${hook.timeout}ms — fail-open (commit allowed)\n`;
