@@ -41,35 +41,37 @@ export async function installHook(workspaceDir) {
     }
     const hooks = (settings.hooks ??= {});
     const preToolUse = (hooks.PreToolUse ??= []);
-    // Find any existing matcher entry whose hook list contains our command.
-    let alreadyPresent = false;
-    for (const entry of preToolUse) {
-        if (entry.matcher === "Bash") {
-            const has = entry.hooks?.some((h) => h.type === "command" && h.command === hookCommand);
-            if (has) {
-                alreadyPresent = true;
-                break;
-            }
-            // Bash matcher exists but our command isn't in it — append it.
-            entry.hooks ??= [];
-            entry.hooks.push({
-                type: "command",
-                command: hookCommand,
-                timeout: HOOK_TIMEOUT_MS,
+    // #242: the copy path registers BOTH PreToolUse hooks — the Bash pre-commit
+    // orchestrator AND the Read|Edit|Write subagent path-guard. The path-guard
+    // previously shipped only via the plugin manifest (`${CLAUDE_PLUGIN_ROOT}`);
+    // with the plugin/colon distribution path retired (#247) this is its sole
+    // registration. Both commands resolve via the brand slug on PATH — there is
+    // no `${CLAUDE_PLUGIN_ROOT}` dependency on the copy path.
+    const pathGuardCommand = `${slug} hook path-guard`;
+    // Ensure a PreToolUse (matcher -> command) entry exists, preserving any
+    // unrelated entries. Returns true iff it added the command (was not present).
+    const ensure = (matcher, command) => {
+        const entry = preToolUse.find((e) => e.matcher === matcher);
+        if (!entry) {
+            preToolUse.push({
+                matcher,
+                hooks: [{ type: "command", command, timeout: HOOK_TIMEOUT_MS }],
             });
-            alreadyPresent = false;
-            break;
+            return true;
         }
-    }
-    if (!alreadyPresent && !preToolUse.some((e) => e.matcher === "Bash")) {
-        preToolUse.push({
-            matcher: "Bash",
-            hooks: [
-                { type: "command", command: hookCommand, timeout: HOOK_TIMEOUT_MS },
-            ],
-        });
-    }
-    if (alreadyPresent && existed) {
+        entry.hooks ??= [];
+        if (entry.hooks.some((h) => h.type === "command" && h.command === command)) {
+            return false;
+        }
+        entry.hooks.push({ type: "command", command, timeout: HOOK_TIMEOUT_MS });
+        return true;
+    };
+    // Order matters: register the Bash orchestrator first so it stays PreToolUse[0].
+    const added = [
+        ensure("Bash", hookCommand),
+        ensure("Read|Edit|Write", pathGuardCommand),
+    ].some(Boolean);
+    if (!added && existed) {
         return { ok: true, action: "already-installed", path: settingsPath };
     }
     await writeFile(settingsPath, JSON.stringify(settings, null, 2) + "\n", "utf8");

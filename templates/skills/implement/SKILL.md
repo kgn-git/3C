@@ -1,5 +1,5 @@
 ---
-name: implement
+name: ${BRAND_SLUG}-implement
 description: Standardised feature-implementation workflow — fetch issue, plan, branch, TDD-loop, review, PR. Asks for confirmation before each external-state-changing step (branch create, PR open). Never auto-merges, never force-pushes, never bypasses hooks.
 version: 1.0.0
 compatibility: [claude-code]
@@ -7,9 +7,9 @@ allowed-tools: [Bash, Read, Write]
 disable-model-invocation: true
 ---
 
-# /${BRAND_SLUG}:implement — Standardised feature implementation for ${BRAND_NAME}
+# /${BRAND_SLUG}-implement — Standardised feature implementation for ${BRAND_NAME}
 
-When the user invokes `/${BRAND_SLUG}:implement <issue-id>`, follow this exact workflow. The skill is **explicit-invocation only** (`disable-model-invocation: true`); never auto-run.
+When the user invokes `/${BRAND_SLUG}-implement <issue-id>`, follow this exact workflow. The skill is **explicit-invocation only** (`disable-model-invocation: true`); never auto-run.
 
 ## Mandatory destructive-operation interlock (AC9)
 
@@ -113,7 +113,7 @@ If the rules suggest the workspace lacks security or pattern coverage, you MAY s
 
 For each target file in your plan:
 
-a. Generate the test scaffold via the `/${BRAND_SLUG}:test` sub-skill. Run:
+a. Generate the test scaffold via the `/${BRAND_SLUG}-test` sub-skill. Run:
 
 ```bash
 ${FRAMEWORK_SLUG} test scaffold <source-path> --framework=<framework>
@@ -152,15 +152,15 @@ If you find yourself about to call Write on a source file before you've called `
 
 ## 6. Review pre-PR (AC6)
 
-Verify the `/${BRAND_SLUG}:review` sub-skill (Sprint-4 sibling #8) is installed in the workspace:
+Verify the `/${BRAND_SLUG}-review` sub-skill (Sprint-4 sibling #8) is installed in the workspace:
 
 ```bash
-ls .claude/skills/review/SKILL.md
+ls .claude/skills/${BRAND_SLUG}-review/SKILL.md
 ```
 
-If that fails, STOP and surface: "`/${BRAND_SLUG}:review` is not installed. Run `${FRAMEWORK_SLUG} skills install` to install the bundled skills, then re-run `/${BRAND_SLUG}:implement`."
+If that fails, STOP and surface: "`/${BRAND_SLUG}-review` is not installed. Run `${FRAMEWORK_SLUG} skills install` to install the bundled skills, then re-run `/${BRAND_SLUG}-implement`."
 
-Otherwise invoke `/${BRAND_SLUG}:review` as a skill — Claude Code's auto-discovery picks it up. The skill emits structured findings.
+Otherwise invoke `/${BRAND_SLUG}-review` as a skill — Claude Code's auto-discovery picks it up. The skill emits structured findings.
 
 Inspect the findings. If ANY finding has severity `critical` or `major`, STOP. Surface the findings to the user — including their exact count per severity. They must either:
 
@@ -171,7 +171,7 @@ If only `minor` / `suggestion` findings exist, proceed without requiring the ove
 
 ## 7. Open the PR (AC7)
 
-Prepare the PR title (use the issue title or a refined version). Prepare the PR body using the bundled template (`.claude/skills/implement/pr-template.md`):
+Prepare the PR title (use the issue title or a refined version). Prepare the PR body using the bundled template (`.claude/skills/${BRAND_SLUG}-implement/pr-template.md`):
 
 - Fill in the **Summary** section with 1-3 bullets
 - Fill in the **Test plan** section with the verifications a reviewer should run
@@ -198,10 +198,10 @@ Use `"draft":true` if and only if the user explicitly overrode review findings i
 
 On success, surface the PR URL to the user.
 
-## What this skill does NOT do (deferred to L2)
+## What this skill does NOT do
 
-- Issue-status transitions beyond `Closes #N` → L3 [#36](https://github.com/kgn-git/praise/issues/36) (Process Adherence Monitor) or L2 [#70](https://github.com/kgn-git/praise/issues/70) (multi-PM adapter).
-- TDD enforcement via pre-commit hook → L2 [#16](https://github.com/kgn-git/praise/issues/16) / [#17](https://github.com/kgn-git/praise/issues/17). The L1 SKILL.md prose discipline above is the only enforcement.
-- Auto-merge / merge-on-CI-green → L2/L3.
-- MCP-bridged PM tools (Jira, Linear, GitLab) → [#70](https://github.com/kgn-git/praise/issues/70) — the `fetchIssue` / `createPr` signatures are the swap-points.
-- Cross-skill TS imports → [#51](https://github.com/kgn-git/praise/issues/51) (Subagents Primitive). At L1 skills compose via Bash invocation of the runtime CLI.
+- Issue-status transitions beyond `Closes #N` — out of scope. PM-tool adapters ship at L2 via [#70](https://github.com/kgn-git/praise/issues/70) but don't add status-transition logic to this skill; the L3 [#36](https://github.com/kgn-git/praise/issues/36) Process Adherence Monitor is the right home for status-transition observability.
+- TDD enforcement via pre-commit hook — now ships at L2 ([#16](https://github.com/kgn-git/praise/issues/16) Post-Edit Validation, [#17](https://github.com/kgn-git/praise/issues/17) Test Coverage Gate). The SKILL.md prose discipline above remains this skill's L1-level reminder; the gates are what enforce it.
+- Auto-merge / merge-on-CI-green — horizon, not on the active backlog.
+- MCP-bridged PM tools (Jira, Linear, GitLab) now ship since [#70](https://github.com/kgn-git/praise/issues/70). The `fetchIssue` / `createPr` signatures remain the swap-point seams; behaviour is unchanged on the `gh` path.
+- Cross-skill TypeScript imports — out of scope; at L1 skills compose via Bash invocation of the runtime CLI. The Subagents Primitive ([#51](https://github.com/kgn-git/praise/issues/51)) ships as a separate composition primitive for parallel context-isolated work, not as a back-door for skill-to-skill imports.

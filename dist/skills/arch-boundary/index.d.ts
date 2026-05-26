@@ -7,6 +7,7 @@ export interface RunArchOpts {
 export interface RunArchResult {
     readonly blocked: boolean;
     readonly message: string;
+    readonly notConfigured?: boolean;
 }
 export declare function runArchBoundary(ws: string, opts: RunArchOpts): Promise<RunArchResult>;
 //# sourceMappingURL=index.d.ts.map

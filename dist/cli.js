@@ -29,6 +29,7 @@ import { runBugReport } from "./skills/bug/index.js";
 import { runDrift } from "./skills/drift/index.js";
 import { runArchBoundary } from "./skills/arch-boundary/index.js";
 import { addException } from "./skills/arch-boundary/exceptions.js";
+import { writeStarterArchConfig } from "./skills/arch-boundary/scaffold.js";
 import { runStandardsHistory, runStandardsAsOf, } from "./skills/standards-history/index.js";
 import { runDeploy } from "./skills/deploy/index.js";
 import { scaffoldDeployment } from "./skills/deploy-init/index.js";
@@ -41,7 +42,11 @@ import { createPr } from "./skills/implement/create-pr.js";
 import { fetchIssue } from "./skills/implement/fetch-issue.js";
 import { formatBranchName } from "./skills/implement/branch-name.js";
 import { installSkills } from "./skills/install.js";
+import { listInstalledAgents, listInstalledSkills } from "./skills/listing.js";
+import { runDoctor } from "./skills/doctor.js";
 import { installAgents } from "./agents/install.js";
+import { promptForNamespace, writeBrandingJson } from "./branding/rebrand.js";
+import { createInterface } from "node:readline/promises";
 import { hookPathGuardCli } from "./cli/hook-path-guard.js";
 import { detectFramework } from "./skills/test/detect-framework.js";
 import { scaffoldTest } from "./skills/test/scaffold.js";
@@ -116,6 +121,14 @@ Commands:
                     into ./.claude/agents/. Honours \${BRAND_*} substitution.
                     Two agents at L1: code-reviewer, test-author.
 
+  skills list       List installed skills (user-invoked slash commands).
+  agents list       List installed agents (dispatched workers, NOT slash
+                    commands). See docs/skills-vs-agents.md.
+
+  doctor            Read-only install & wiring diagnostic: brand slug, install
+                    mode, token residue, hyphen-namespace coherence, both hooks,
+                    CLAUDE.md budget, inert boundary gate. Exit 1 if blocking.
+
   test detect-framework [<workspace>]
                     Print detected framework (jest|vitest|pytest|unknown)
                     as JSON. Exit 0 on known, 1 on unknown.
@@ -160,6 +173,8 @@ Commands:
 
   arch-check check [--files a,b]   Block cross-boundary import violations
                     per .\${BRAND_SLUG}/architecture.yaml (monorepo-aware).
+  arch-check init   Scaffold a starter .\${BRAND_SLUG}/architecture.yaml
+                    (inert until you define layers/deny).
   arch-check except "<from>-><to>" --reason="..." --expires=<date>
                     Record a time-boxed boundary exception (expiry mandatory).
 
@@ -274,6 +289,29 @@ async function initCommand(args) {
         });
     }
     const framework = await loadFramework(PACKAGE_ROOT);
+    // #240: when interactive and not branded via --brand, offer to set the
+    // slash-command namespace (the hyphen brand prefix). Writes branding.json so
+    // later `skills install` / `agents install` prefix every command and agent
+    // (e.g. /acme-review). TTY-guarded so non-interactive runs never block.
+    if (!args.yes && process.stdin.isTTY) {
+        const existing = (await loadBrand(process.cwd())).BRAND_SLUG?.trim();
+        if (!existing) {
+            const rl = createInterface({ input: process.stdin, output: process.stdout });
+            try {
+                const res = await promptForNamespace(framework.FRAMEWORK_SLUG, (q) => rl.question(q));
+                if (res.ok && res.slug !== framework.FRAMEWORK_SLUG) {
+                    const p = await writeBrandingJson(process.cwd(), res.slug);
+                    console.log(`✓ namespace set to /${res.slug}-* (${p})`);
+                }
+                else if (!res.ok) {
+                    console.warn(`⚠ keeping default namespace; invalid slug: ${res.errors.join("; ")}`);
+                }
+            }
+            finally {
+                rl.close();
+            }
+        }
+    }
     const brandConfig = await loadBrand(process.cwd());
     const brand = resolveBrand(framework, brandConfig);
     console.log(`${brand.BRAND_NAME} init — generating CLAUDE.md (framework ${brand.FRAMEWORK_NAME} v${brand.FRAMEWORK_VERSION})`);
@@ -351,6 +389,8 @@ async function initCommand(args) {
     console.log("  1. Review the generated file with your team");
     console.log("  2. Add a CODEOWNERS entry: /.claude/  @your-steward");
     console.log("  3. Commit and open a PR");
+    console.log(`\nSkills and agents install under the /${brand.BRAND_SLUG}- namespace (e.g. /${brand.BRAND_SLUG}-review).`);
+    console.log(`Re-run \`${brand.FRAMEWORK_SLUG} init\` and answer the namespace prompt, or set BRAND_SLUG in branding.json, to change it.`);
     return 0;
 }
 export async function runDeployInit(args) {
@@ -649,6 +689,48 @@ async function agentsInstallCommand(rest) {
         console.log("No agents bundled in this build.");
     }
     return 0;
+}
+// #241: read-only discoverability. Skills are user-invoked slash commands;
+// agents are dispatched workers (Task tool / auto-selection), never slash-run.
+async function skillsListCommand() {
+    const skills = await listInstalledSkills(process.cwd());
+    if (skills.length === 0) {
+        console.log("No skills installed. Run `skills install` first.");
+        return 0;
+    }
+    console.log("Installed skills — user-invoked slash commands:");
+    for (const s of skills) {
+        const mode = s.modelInvocable ? "auto+manual" : "manual-only";
+        console.log(`  /${s.name}  [${mode}]  — ${s.description}`);
+    }
+    return 0;
+}
+async function agentsListCommand() {
+    const agents = await listInstalledAgents(process.cwd());
+    if (agents.length === 0) {
+        console.log("No agents installed. Run `agents install` first.");
+        return 0;
+    }
+    console.log("Installed agents — dispatched by skills/Claude via the Task tool (NOT slash commands):");
+    for (const a of agents) {
+        console.log(`  ${a.name}  [${a.model}; tools: ${a.tools.join(", ")}]  — ${a.description}`);
+    }
+    return 0;
+}
+// #239: read-only install & wiring diagnostic. Exit 1 on a blocking issue.
+async function doctorCommand() {
+    const report = await runDoctor({
+        workspaceDir: process.cwd(),
+        packageRoot: PACKAGE_ROOT,
+    });
+    for (const f of report.findings) {
+        const icon = f.level === "ok" ? "✓" : f.level === "warn" ? "⚠" : "✗";
+        console.log(`${icon} [${f.check}] ${f.message}`);
+    }
+    console.log(report.ok
+        ? "\n✓ doctor: no blocking issues."
+        : "\n✗ doctor: blocking issue(s) found — see ✗ above.");
+    return report.ok ? 0 : 1;
 }
 async function testCommand(argv) {
     const sub = argv[0];
@@ -1147,9 +1229,23 @@ export async function archCommand(argv, env = { cwd: process.cwd() }) {
             ...(changedFiles ? { changedFiles } : {}),
             bypassToken,
         });
+        if (r.notConfigured) {
+            const slug = resolveBrandSlugSync();
+            log(`architecture boundary gate not configured — no .${slug}/architecture.yaml. ` +
+                `Run \`${slug} arch-check init\` to scaffold a starter (advisory; not blocking).`);
+            return 0;
+        }
         if (r.message !== "")
             log(r.message);
         return r.blocked ? 2 : 0;
+    }
+    if (sub === "init") {
+        const slug = resolveBrandSlugSync();
+        const r = await writeStarterArchConfig(env.cwd, slug);
+        log(r.created
+            ? `Scaffolded ${r.path} — an inert starter; define layers/deny to activate the gate.`
+            : `${r.path} already exists — left unchanged.`);
+        return 0;
     }
     if (sub === "except") {
         const key = argv[1];
@@ -1169,7 +1265,7 @@ export async function archCommand(argv, env = { cwd: process.cwd() }) {
             return 1;
         }
     }
-    log("Usage: arch-check <check|except>");
+    log("Usage: arch-check <check|except|init>");
     return 1;
 }
 // #21 VP-01-F09: git-native standards version history (read-only).
@@ -1430,8 +1526,17 @@ export async function main(argv) {
     if (command === "skills" && argv[1] === "install") {
         return skillsInstallCommand(argv.slice(2));
     }
+    if (command === "skills" && argv[1] === "list") {
+        return skillsListCommand();
+    }
     if (command === "agents" && argv[1] === "install") {
         return agentsInstallCommand(argv.slice(2));
+    }
+    if (command === "agents" && argv[1] === "list") {
+        return agentsListCommand();
+    }
+    if (command === "doctor") {
+        return doctorCommand();
     }
     if (command === "hook" && argv[1] === "path-guard") {
         return hookPathGuardCli();

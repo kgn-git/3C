@@ -1,5 +1,5 @@
 ---
-name: review
+name: ${BRAND_SLUG}-review
 description: Apply a team-specific static review checklist to the current branch's diff against main. Read-only, local-only — produces structured findings with file/line, severity, and suggested-fix text. Never modifies files; never sends data externally.
 version: 1.0.0
 compatibility: [claude-code]
@@ -7,13 +7,13 @@ allowed-tools: [Bash, Read]
 disable-model-invocation: false
 ---
 
-# /${BRAND_SLUG}:review — Pre-PR review against ${BRAND_NAME} standards
+# /${BRAND_SLUG}-review — Pre-PR review against ${BRAND_NAME} standards
 
 When the user asks for a code review (or invokes this skill directly), follow this exact workflow. This skill is **read-only**: it MUST NOT modify any file, MUST NOT invoke `gh pr comment` / `gh api` / `git push` / any network primitive, and MUST NOT echo real-looking credentials.
 
 ## 1. Resolve the diff
 
-The user invokes this skill as `/${BRAND_SLUG}:review [--base=<ref>]`. Parse `--base` from the invocation arguments if present; otherwise default to `main` (3-dot, branch-relative).
+The user invokes this skill as `/${BRAND_SLUG}-review [--base=<ref>]`. Parse `--base` from the invocation arguments if present; otherwise default to `main` (3-dot, branch-relative).
 
 Run:
 
@@ -37,7 +37,7 @@ If a file was deleted, you have only the pre-image — limit findings to facts v
 
 ## 3. Load the team's checklist + rules
 
-- Use the **Read tool** to load `.claude/skills/review/checklist.md` now. (It is NOT pre-loaded into context — you must Read it at runtime.)
+- Use the **Read tool** to load `.claude/skills/${BRAND_SLUG}-review/checklist.md` now. (It is NOT pre-loaded into context — you must Read it at runtime.)
 - Rules from `.claude/rules/**/*.md` were auto-loaded into your session context by `${FRAMEWORK_SLUG} rules apply`. You do NOT need to re-load them — consult them from memory.
 - If the team has installed the OWASP pack (`.claude/rules/security/owasp-top-10/*.md`) or pattern packs (`.claude/rules/patterns/<name>/*.md`), they are part of your context. Cite the source rule file path when a finding maps to one (AC8).
 
@@ -108,13 +108,13 @@ User input flows directly into the SQL string; an attacker can break out of the 
 
 The review ends with the rendered Markdown. The skill does NOT modify any file, post any comment, push any commit, or call any network endpoint. If the user wants the review on their PR, they will paste it themselves.
 
-## What this skill does NOT do (deferred to L2)
+## What this skill does NOT do
 
-- `--fix` auto-apply of suggestions → spawned VP-02-F03-ext (L2 P2).
-- `--post` to GitHub/GitLab as PR comments → [#70 multi-PM L2 P2](https://github.com/kgn-git/praise/issues/70).
-- `--ignore <finding-id>` persistent suppression → spawned VP-02-F03-ext (L2 P2).
-- Performance / N+1 / runtime analysis in the default checklist → [#18 Security Scan Gate L2 P1](https://github.com/kgn-git/praise/issues/18).
-- Drift / trend analysis across reviews → [#10 Standards Drift Detector L2 P2](https://github.com/kgn-git/praise/issues/10).
+- `--fix` auto-apply of suggestions — not currently in scope; this skill emits findings, the developer applies fixes.
+- `--post` to GitHub / GitLab as PR comments — not currently in scope. (Multi-PM MCP — [#70](https://github.com/kgn-git/praise/issues/70) — shipped at L2 for issue creation, not for review-comment posting; the seam would be a separate ext-ticket if/when needed.)
+- `--ignore <finding-id>` persistent suppression — not currently in scope; bypass per-invocation if you need to ship past a finding.
+- Performance / N+1 / runtime analysis in the default checklist — not currently in scope. The L2 Security Scan Gate ([#18](https://github.com/kgn-git/praise/issues/18)) ships SAST + dependency-vulnerability scanning, but performance / N+1 analysis remains outside this skill's and that gate's scope.
+- Drift / trend analysis across reviews — now ships separately as the Standards Drift Detector (`/${BRAND_SLUG}-drift`, [#10](https://github.com/kgn-git/praise/issues/10)) at L2.
 
 ## Subagent dispatch (since #51)
 
@@ -124,4 +124,4 @@ When this skill dispatches the `${BRAND_SLUG}-code-reviewer` subagent for a long
 ~/.claude/projects/<project>/<sessionId>/subagents/agent-<id>.jsonl
 ```
 
-This file is plain append-only JSONL at L1 — the schema is forward-compatible with the L3 HMAC chain + escrow signing (VP-05-F01) without breaking re-emit. The agent itself runs read-only (`tools: [Read, Grep, Glob]`) and cannot reach the network. The PreToolUse path-guard (`src/cli/hook-path-guard.ts`, registered via `.claude-plugin/plugin.json`) blocks any attempt to read `.env*`, `~/.ssh/`, or `~/.aws/`.
+This file is plain append-only JSONL. The agent itself runs read-only (`tools: [Read, Grep, Glob]`) and cannot reach the network. The PreToolUse path-guard (`src/cli/hook-path-guard.ts`, registered via `.claude-plugin/plugin.json`) blocks any attempt to read `.env*`, `~/.ssh/`, or `~/.aws/`.

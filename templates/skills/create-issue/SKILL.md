@@ -1,5 +1,5 @@
 ---
-name: create-issue
+name: ${BRAND_SLUG}-create-issue
 description: Create structured GitHub issues with team-template population. User-only skill; not auto-invoked by the model.
 version: 1.0.0
 compatibility: [claude-code]
@@ -7,13 +7,13 @@ allowed-tools: [Bash]
 disable-model-invocation: true
 ---
 
-# /${BRAND_SLUG}:create-issue
+# /${BRAND_SLUG}-create-issue
 
 Guide the user through creating a well-structured GitHub issue. **This skill does not auto-attach code, environment, or system state. Issue content is exactly what you provide.**
 
 ## Workflow
 
-When the user invokes `/${BRAND_SLUG}:create-issue [<short summary>] [--template=<bug|feature|chore>]`, follow this flow:
+When the user invokes `/${BRAND_SLUG}-create-issue [<short summary>] [--template=<bug|feature|chore>]`, follow this flow:
 
 ### 1. Pick or confirm the template
 
@@ -24,7 +24,7 @@ If `--template=` is in the args, use that. Otherwise, ask:
 > - `feature` — new capability with user story + AC
 > - `chore` — refactor, dependency bump, docs
 
-Read the template body from `.claude/skills/create-issue/templates/<template>.md`.
+Read the template body from `.claude/skills/${BRAND_SLUG}-create-issue/templates/<template>.md`.
 
 ### 2. Prompt the user for the structured fields the template requires
 
@@ -97,8 +97,8 @@ On success, tell the user the URL and number. On failure, surface the error (esp
 - It does **not** auto-include `git diff`, terminal history, or running-process information.
 - It does **not** transmit anything to GitHub except the title, body, labels, assignees, and repo the user explicitly provided.
 
-## Out of scope at L1
+## What this skill does not do (continued)
 
-- Jira Cloud, Linear, GitLab Issues — those PM-tools land in L2 alongside the bundled MCP server.
-- OAuth flows for non-`gh` tools.
-- Auto-redaction sanitiser pipeline (`--scrub-secrets`) — L2.
+- Jira Cloud, Linear, and GitLab Issues route through the bundled MCP server since [#70 VP-02-F01-ext](https://github.com/kgn-git/praise/issues/70) (Multi-PM MCP adapter, L2-ext). When `${FRAMEWORK_SLUG}` is configured with one of those PM tools, `/${BRAND_SLUG}-create-issue` routes there; otherwise it falls through to `gh`. Tokens via the OS keychain only (NFR-SEC-06) — never cached, never returned in tool output.
+- OAuth flows for non-`gh` tools — not in scope for this skill; the MCP server handles credential resolution via the keychain pattern instead.
+- Auto-redaction sanitiser pipeline (`--scrub-secrets`) — not currently in scope and not on the active backlog. If you need pre-create redaction, run secret-scanning over your draft text before invoking the skill.

@@ -46,7 +46,7 @@
 
   .page {
     width: 210mm;
-    height: 297mm;
+    min-height: 297mm;
     padding: 14mm 14mm;
     page-break-after: always;
     display: flex;
@@ -54,6 +54,11 @@
     position: relative;
     overflow: hidden;
   }
+  /* #231 fix: prevent flex-shrink trap. Only .diagram-wrap is allowed to
+     shrink; print pages at 297mm via @page + page-break-after. */
+  .page > * { flex-shrink: 0; }
+  .diagram-wrap { flex-shrink: 1; }
+
   .page.cover, .page.closing { padding: 18mm 16mm; }
   .page:last-child { page-break-after: auto; }
 
@@ -185,7 +190,8 @@
     padding: 2mm 0;
     min-height: 130mm;
   }
-  .diagram-wrap svg {
+  .diagram-wrap svg,
+  .diagram-wrap img.diagram-svg {
     max-width: 100%;
     max-height: 150mm;
     height: auto;
@@ -193,12 +199,14 @@
   }
 
   /* Tall sequence/flow diagrams (E) get extra vertical room */
-  .diagram-wrap.tall svg {
+  .diagram-wrap.tall svg,
+  .diagram-wrap.tall img.diagram-svg {
     max-height: 165mm;
   }
 
   /* Extra-large: diagram B is a 14-state vertical state machine — needs the most room */
-  .diagram-wrap.xl svg {
+  .diagram-wrap.xl svg,
+  .diagram-wrap.xl img.diagram-svg {
     max-height: 195mm;
   }
 
@@ -352,7 +360,7 @@
   </div>
 
   <div class="cover-meta">
-    <div class="cover-tag">kgn-git/3C &middot; v1.0 &middot; 2026&#8209;05&#8209;15</div>
+    <div class="cover-tag">kgn-git/3C &middot; v1.0 &middot; 2026&#8209;05&#8209;15 &middot; <a href="./3C-SDLC-Infographic.pdf" style="color: var(--indigo-600); text-decoration: none; font-weight: 600;">↓ Download PDF</a></div>
     <div class="cover-brand"><strong>3C</strong><br>Claude Code Coach</div>
   </div>
 </section>

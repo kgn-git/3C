@@ -1,5 +1,5 @@
 ---
-name: test
+name: ${BRAND_SLUG}-test
 description: Generate unit or integration tests following team conventions for Jest, Vitest, pytest, Mocha, Playwright, or JUnit 5. Detects framework from package configuration, reads conventions from .claude/rules/, writes tests respecting team patterns. Never overwrites existing tests; first write per session requires user confirmation.
 version: 1.0.0
 compatibility: [claude-code]
@@ -7,7 +7,7 @@ allowed-tools: [Bash, Read, Write]
 disable-model-invocation: false
 ---
 
-# /${BRAND_SLUG}:test — Generate unit tests for ${BRAND_NAME}
+# /${BRAND_SLUG}-test — Generate unit tests for ${BRAND_NAME}
 
 When the user asks for unit tests for a source file, follow this exact workflow:
 
@@ -83,7 +83,7 @@ The runtime helper refuses to write content containing real-looking credentials.
 
 ## What this skill does NOT do
 
-- It does NOT enforce coverage thresholds. That's [#17 VP-03-F03](https://github.com/kgn-git/praise/issues/17), L2.
-- It does NOT generate integration tests. That's spawned as VP-02-F04-ext.
-- It does NOT support Mocha, Playwright, or JUnit. Those are also VP-02-F04-ext.
+- It does NOT enforce coverage thresholds — that ships as the Test Coverage Gate ([#17 VP-03-F03](https://github.com/kgn-git/praise/issues/17)) at L2 (v1.5.0), as a separate hook entry. This skill stays narrow: it writes tests, the gate enforces coverage.
 - It does NOT execute the tests after writing. Run them yourself with the team's standard command.
+
+(Integration-test scaffolding and Mocha / Playwright / JUnit support, which were L1-deferred, now ship since [#78 VP-02-F04-ext](https://github.com/kgn-git/praise/issues/78). Use `/${BRAND_SLUG}-test --integration` for the integration-mode scaffold; the framework detector recognises all six runners.)

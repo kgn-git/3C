@@ -1,5 +1,5 @@
 ---
-name: onboard
+name: ${BRAND_SLUG}-onboard
 description: Guided codebase onboarding for new team members. Presents an architecture/key-files/workflows roadmap, tracks per-developer progress with pause/resume, answers from local standards and docs, and recommends a level-appropriate starter task. All state is local to the workstation.
 version: 1.0.0
 compatibility: [claude-code]
@@ -7,7 +7,7 @@ allowed-tools: [Bash, Read]
 disable-model-invocation: false
 ---
 
-# /${BRAND_SLUG}:onboard — guided onboarding for ${BRAND_NAME}
+# /${BRAND_SLUG}-onboard — guided onboarding for ${BRAND_NAME}
 
 When a new team member asks to be onboarded, drive the `onboard` CLI:
 

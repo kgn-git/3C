@@ -32,7 +32,7 @@ async function stagedSourceFiles(ws) {
 export async function runArchBoundary(ws, opts) {
     const cfg = await loadArchConfig(ws);
     if (!cfg)
-        return { blocked: false, message: "" };
+        return { blocked: false, message: "", notConfigured: true };
     const now = opts.now ?? new Date();
     const files = opts.changedFiles ?? (await stagedSourceFiles(ws));
     const exceptions = await loadExceptions(ws);

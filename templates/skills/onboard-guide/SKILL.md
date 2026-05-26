@@ -1,5 +1,5 @@
 ---
-name: onboard-guide
+name: ${BRAND_SLUG}-onboard-guide
 description: Role-tailored interactive onboarding guide. Layers over the onboard skill with frontend/backend/devops roadmaps, module-based progress (completed/in-progress/upcoming), pause/resume across days, answers from team standards and rationale, and a local-first completion record for a mentor. No new-hire activity ever leaves the workstation.
 version: 1.0.0
 compatibility: [claude-code]
@@ -7,9 +7,9 @@ allowed-tools: [Bash, Read]
 disable-model-invocation: false
 ---
 
-# /${BRAND_SLUG}:onboard-guide — role-tailored onboarding for ${BRAND_NAME}
+# /${BRAND_SLUG}-onboard-guide — role-tailored onboarding for ${BRAND_NAME}
 
-The guided-UX layer over `/${BRAND_SLUG}:onboard`. Drive the `onboard-guide`
+The guided-UX layer over `/${BRAND_SLUG}-onboard`. Drive the `onboard-guide`
 CLI:
 
 ## 1. Pick a role and show the tailored roadmap
