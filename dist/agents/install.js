@@ -20,7 +20,11 @@ export async function installAgents(opts) {
     const installed = [];
     const skipped = [];
     for (const file of files) {
-        const destPath = join(targetDir, file);
+        // #258: install under a brand-slug-prefixed filename (e.g. 3c-architect.md),
+        // matching the skill dir-prefix convention (#240). Dispatch keys on the
+        // `name:` frontmatter, not the filename, so this is on-disk consistency only.
+        const destName = `${opts.brand.BRAND_SLUG}-${file}`;
+        const destPath = join(targetDir, destName);
         const exists = await fileExists(destPath);
         if (exists && opts.onExisting === "abort") {
             return {
@@ -29,12 +33,12 @@ export async function installAgents(opts) {
             };
         }
         if (exists && opts.onExisting === "replace") {
-            skipped.push(file);
+            skipped.push(destName);
         }
         const sourceContent = await readFile(join(opts.sourceDir, file), "utf-8");
         const substituted = substitute(sourceContent, opts.brand);
         await writeFile(destPath, substituted, "utf-8");
-        installed.push(file);
+        installed.push(destName);
     }
     return { ok: true, installed, skipped };
 }

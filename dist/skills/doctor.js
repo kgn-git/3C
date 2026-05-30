@@ -121,6 +121,31 @@ export async function runDoctor(opts) {
             add("ok", "arch-gate", "architecture boundary gate is configured.");
         }
     }
+    // Crew presence + agent naming (#260).
+    const EXPECTED_ROLES = [
+        "architect", "code-reviewer", "security-reviewer", "test-author",
+        "product-owner", "ux-expert", "qa-reviewer",
+    ];
+    if (agentFiles.length > 0) {
+        const names = agentFiles.map((f) => f.split(/[\\/]/).pop() ?? "");
+        const missing = EXPECTED_ROLES.filter((r) => !names.includes(`${slug}-${r}.md`));
+        const staleBare = EXPECTED_ROLES.filter((r) => names.includes(`${r}.md`));
+        if (missing.length === 0) {
+            add("ok", "crew", `all ${EXPECTED_ROLES.length} specialist agents present and ${slug}-prefixed.`);
+        }
+        else {
+            add("warn", "crew", `${EXPECTED_ROLES.length - missing.length}/${EXPECTED_ROLES.length} specialist agents present; missing: ${missing.join(", ")}.`);
+        }
+        if (staleBare.length > 0) {
+            add("warn", "crew", `stale bare-name agent file(s) (pre-rename): ${staleBare.map((r) => `${r}.md`).join(", ")} — remove them; use ${slug}-<role>.md.`);
+        }
+    }
+    // Orchestrator skills (#260) — report when present.
+    for (const orch of ["review-board", "project-manager"]) {
+        if (await pathExists(join(workspaceDir, ".claude", "skills", `${slug}-${orch}`, "SKILL.md"))) {
+            add("ok", "orchestrators", `${slug}-${orch} orchestrator skill present.`);
+        }
+    }
     return { findings, ok: findings.every((f) => f.level !== "fail") };
 }
 //# sourceMappingURL=doctor.js.map

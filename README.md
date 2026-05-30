@@ -2,14 +2,14 @@
 
 > Public release repo. Source of truth: [`kgn-git/praise`](https://github.com/kgn-git/praise).
 
-This repo contains only the runtime-installable surface of 3C v1.5.0: built `dist/`, deployable `templates/`, `framework.json`, and the deployment branding template.
+This repo contains only the runtime-installable surface of 3C v1.6.0: built `dist/`, deployable `templates/`, `framework.json`, and the deployment branding template.
 
 3C installs by **copying** skills, agents, rules, and hooks into your project's `.claude/` (the copy path), so your team owns and evolves them in git. Commands are namespaced with a **hyphen prefix** — `/3c-<skill>` by default, or `/<brand>-<skill>` if you set a custom namespace at `3c init`. (There is no plugin/colon install.)
 
 ## Install
 
 ```bash
-npm install git+https://github.com/kgn-git/3C#v1.5.0
+npm install git+https://github.com/kgn-git/3C#v1.6.0
 ```
 
 Then in your project root:

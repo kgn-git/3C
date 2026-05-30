@@ -30,6 +30,8 @@ import { runDrift } from "./skills/drift/index.js";
 import { runArchBoundary } from "./skills/arch-boundary/index.js";
 import { addException } from "./skills/arch-boundary/exceptions.js";
 import { writeStarterArchConfig } from "./skills/arch-boundary/scaffold.js";
+import { reconcileFromJson } from "./orchestration/reconcile.js";
+import { loadGraph, resolveOrder, addEdge, serialize } from "./orchestration/deps.js";
 import { runStandardsHistory, runStandardsAsOf, } from "./skills/standards-history/index.js";
 import { runDeploy } from "./skills/deploy/index.js";
 import { scaffoldDeployment } from "./skills/deploy-init/index.js";
@@ -731,6 +733,85 @@ async function doctorCommand() {
         ? "\n✓ doctor: no blocking issues."
         : "\n✗ doctor: blocking issue(s) found — see ✗ above.");
     return report.ok ? 0 : 1;
+}
+// #256: reconcile multi-agent review findings into one board report. Reads a
+// `{ agent: Finding[] }` JSON from stdin or --file; used by /3c-review-board.
+async function reconcileCommand(argv) {
+    const file = flagValue(argv, "--file");
+    let json;
+    if (file) {
+        json = await readFile(file, "utf8");
+    }
+    else {
+        const chunks = [];
+        for await (const chunk of process.stdin)
+            chunks.push(chunk);
+        json = Buffer.concat(chunks).toString("utf-8");
+    }
+    try {
+        process.stdout.write(reconcileFromJson(json));
+    }
+    catch (e) {
+        console.error(`reconcile: invalid findings JSON: ${e.message}`);
+        return 1;
+    }
+    return 0;
+}
+// #262: cross-project dependency ledger ops for /3c-programme-manager.
+async function depsCommand(argv) {
+    const ws = process.cwd();
+    const sub = argv[0];
+    const graph = await loadGraph(ws);
+    if (sub === "order") {
+        const t = flagValue(argv, "--target");
+        const target = t ? t.split(",").filter(Boolean) : undefined;
+        const r = resolveOrder(graph, target);
+        if (!r.ok) {
+            console.error(`✗ dependency cycle: ${r.cycle.join(" -> ")}`);
+            return 1;
+        }
+        const hasDeps = new Set(graph.edges.map((e) => e.from));
+        const readyNow = r.order.filter((id) => !hasDeps.has(id));
+        console.log(r.order.length ? r.order.join("\n") : "(no projects found)");
+        if (readyNow.length)
+            console.log(`\nready now: ${readyNow.join(", ")}`);
+        return 0;
+    }
+    if (sub === "validate") {
+        const r = resolveOrder(graph);
+        if (!r.ok) {
+            console.error(`✗ dependency cycle: ${r.cycle.join(" -> ")}`);
+            return 1;
+        }
+        console.log(`✓ ${graph.projects.length} project(s), ${graph.edges.length} edge(s); no cycles.`);
+        return 0;
+    }
+    if (sub === "add") {
+        const from = flagValue(argv, "--from");
+        const to = flagValue(argv, "--to");
+        const reason = flagValue(argv, "--reason");
+        const source = flagValue(argv, "--source");
+        if (!from || !to) {
+            console.error("Usage: deps add --from=<id> --to=<id> [--reason=...] [--source=...]");
+            return 1;
+        }
+        const r = addEdge(graph, {
+            from,
+            to,
+            ...(reason ? { reason } : {}),
+            ...(source ? { source } : {}),
+        });
+        if (!r.ok) {
+            console.error(`✗ ${r.error}`);
+            return 1;
+        }
+        await mkdir(join(ws, ".3c"), { recursive: true });
+        await writeFile(join(ws, ".3c", "dependencies.yaml"), serialize(r.graph), "utf8");
+        console.log(`✓ recorded ${from} -> ${to} in .3c/dependencies.yaml`);
+        return 0;
+    }
+    console.log("Usage: deps <order [--target=<id,...>] | validate | add --from --to [--reason --source]>");
+    return 1;
 }
 async function testCommand(argv) {
     const sub = argv[0];
@@ -1567,6 +1648,12 @@ export async function main(argv) {
     }
     if (command === "drift") {
         return driftCommand(argv.slice(1), { cwd: process.cwd() });
+    }
+    if (command === "reconcile") {
+        return reconcileCommand(argv.slice(1));
+    }
+    if (command === "deps") {
+        return depsCommand(argv.slice(1));
     }
     if (command === "arch-check") {
         return archCommand(argv.slice(1), { cwd: process.cwd() });
