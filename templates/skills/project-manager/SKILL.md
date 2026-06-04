@@ -29,7 +29,10 @@ Do not duplicate its logic; follow it.
 
 ### 3. Cross-check (auto)
 Run the `${BRAND_SLUG}-review-board` procedure on the resulting diff: dispatch the specialist agents in
-parallel and reconcile via `${FRAMEWORK_SLUG} reconcile` into one verdict.
+parallel and reconcile via `${FRAMEWORK_SLUG} reconcile` into one verdict. **If `${FRAMEWORK_SLUG} reconcile`
+fails with `Unknown command` or a non-zero exit, STOP** — the installed CLI predates the reconciler. Do not
+improvise a verdict; tell the user to upgrade/reinstall the CLI
+(`npm install -g git+https://github.com/kgn-git/3C#v<latest>`, then `${FRAMEWORK_SLUG} doctor`).
 
 ### 4. Reconcile + decide (auto)
 - `clean` / `advisory` → proceed to ship.
@@ -42,6 +45,11 @@ parallel and reconcile via `${FRAMEWORK_SLUG} reconcile` into one verdict.
   hard-to-reverse steps.
 - **Never** auto-merge, **never** force-push, **never** bypass hooks (`--no-verify`) or the pre-commit gate.
 - Write a handover-style summary (what changed, the board verdict, any needs-human items, follow-ups).
+
+### 6. Retrospective (optional)
+After shipping, **optionally** capture a retrospective: `/${BRAND_SLUG}-retrospective <scope>`. This is a
+suggestion only — it is **not** a gate, has no pass condition, and never blocks the pipeline. Skip it freely;
+the single-issue flow is complete at stage 5 whether or not a retro is run.
 
 ## Guardrails
 

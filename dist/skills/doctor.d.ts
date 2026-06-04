@@ -11,5 +11,7 @@ export interface DoctorReport {
 export declare function runDoctor(opts: {
     workspaceDir: string;
     packageRoot: string;
+    /** Commands the running CLI supports; defaults to this binary's CLI_COMMANDS (#278). */
+    supportedCommands?: ReadonlySet<string>;
 }): Promise<DoctorReport>;
 //# sourceMappingURL=doctor.d.ts.map

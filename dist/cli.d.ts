@@ -4,6 +4,7 @@ import type { Scanner } from "./security/findings.js";
 import type { GitRunner as DeployInitGitRunner } from "./skills/deploy-init/verify-commit.js";
 import type { CmdRunner, GitRunner as DeployGitRunner } from "./skills/deploy/preflight.js";
 import type { SpawnFn } from "./skills/create-issue.js";
+export declare const HELP_TEMPLATE: string;
 export interface DeployInitArgs {
     readonly brandName: string;
     readonly brandSlug: string | undefined;
@@ -106,5 +107,6 @@ export interface OnboardGuideEnv {
     readonly log?: (msg: string) => void;
 }
 export declare function onboardGuideCommand(argv: readonly string[], env?: OnboardGuideEnv): Promise<number>;
+export declare function setupCommand(argv: readonly string[]): Promise<number>;
 export declare function main(argv: readonly string[]): Promise<number>;
 //# sourceMappingURL=cli.d.ts.map

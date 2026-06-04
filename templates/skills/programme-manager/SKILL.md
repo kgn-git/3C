@@ -44,7 +44,9 @@ For each project **in dependency order** (`${FRAMEWORK_SLUG} deps order --target
 3. If a project's pipeline ends with a blocking verdict, **stop before its dependents** and surface it — never
    deliver a dependent on top of a broken dependency.
 
-Finish with an aggregated programme handover across the delivered projects.
+Finish with an aggregated programme handover across the delivered projects. After that, **optionally** capture
+a retrospective for the programme: `/${BRAND_SLUG}-retrospective <milestone-or-ids>`. The retro is a suggestion
+only — never a gate, and it never blocks delivery; skip it freely.
 
 ## Maintaining the ledger
 

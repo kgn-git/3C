@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { createHash, randomUUID } from "node:crypto";
 import { spawn } from "node:child_process";
-import { readFile, readdir, writeFile, mkdir } from "node:fs/promises";
+import { readFile, readdir, writeFile, mkdir, stat } from "node:fs/promises";
 import { dirname, join, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { loadBrand, loadFramework, resolveBrand } from "./branding/load.js";
@@ -44,6 +44,7 @@ import { createPr } from "./skills/implement/create-pr.js";
 import { fetchIssue } from "./skills/implement/fetch-issue.js";
 import { formatBranchName } from "./skills/implement/branch-name.js";
 import { installSkills } from "./skills/install.js";
+import { runSetup } from "./cli/setup.js";
 import { listInstalledAgents, listInstalledSkills } from "./skills/listing.js";
 import { runDoctor } from "./skills/doctor.js";
 import { installAgents } from "./agents/install.js";
@@ -64,13 +65,19 @@ import { scanSecretsCli } from "./cli/scan-secrets.js";
 import { runWizard } from "./wizard/runner.js";
 import { VERSION } from "./index.js";
 const PACKAGE_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const HELP_TEMPLATE = `
+export const HELP_TEMPLATE = `
 \${BRAND_NAME} — \${BRAND_LONG}
 
 Usage:
   \${FRAMEWORK_SLUG} <command> [options]
 
 Commands:
+  setup [--yes] [--replace]
+                    One-shot install: CLAUDE.md + rules (owasp-top-10) + hook
+                    + skills + agents + inert arch-check, then a doctor verify.
+                    A thin sequencer over the individual commands below; re-runs
+                    are idempotent. \`--yes\` is non-interactive. (Alias: \`init --all\`.)
+
   init [options]    Initialize CLAUDE.md for this project
                       --yes              Use defaults; no prompts
                       --at-root          Write to ./CLAUDE.md (default is ./.claude/CLAUDE.md)
@@ -179,6 +186,13 @@ Commands:
                     (inert until you define layers/deny).
   arch-check except "<from>-><to>" --reason="..." --expires=<date>
                     Record a time-boxed boundary exception (expiry mandatory).
+
+  reconcile [--file <path>]         Internal — invoked by the
+                    /\${BRAND_SLUG}-review-board skill. Reads multi-agent review
+                    findings JSON from stdin (or --file) and emits the
+                    deterministic de-duped, ranked board verdict.
+  deps order [--file <path>]        Internal — dependency-ordered issue
+                    sequence, used by /\${BRAND_SLUG}-programme-manager.
 
   standards history [--rule <id>]   Timeline of standards/rules changes
                     (author, date, message, PR link) from git history.
@@ -1544,11 +1558,89 @@ export async function onboardGuideCommand(argv, env = { cwd: process.cwd() }) {
         log(`\n${r.answer}`);
     return 0;
 }
+// #280 — one-shot installer. A thin sequencer over the existing command wrappers
+// (no new provisioning logic); each underlying command stays independently runnable.
+async function setupFileExists(p) {
+    try {
+        await stat(p);
+        return true;
+    }
+    catch {
+        return false;
+    }
+}
+async function setupDirHasMd(dir) {
+    try {
+        return (await readdir(dir)).some((e) => e.endsWith(".md"));
+    }
+    catch {
+        return false;
+    }
+}
+export async function setupCommand(argv) {
+    const yes = argv.includes("--yes") || argv.includes("-y");
+    const replaceArgs = argv.includes("--replace") ? ["--replace"] : [];
+    const cwd = process.cwd();
+    const log = console.log.bind(console);
+    const steps = [
+        {
+            name: "CLAUDE.md (init)",
+            run: async () => {
+                // Idempotent: init aborts on an existing CLAUDE.md, so skip-with-notice.
+                if ((await setupFileExists(join(cwd, "CLAUDE.md"))) ||
+                    (await setupFileExists(join(cwd, ".claude", "CLAUDE.md")))) {
+                    log("↪ CLAUDE.md already present — skipping init.");
+                    return 0;
+                }
+                return initCommand(parseInitArgs(yes ? ["--yes"] : []));
+            },
+        },
+        {
+            name: "rules (security/owasp-top-10)",
+            run: async () => {
+                const installed = await rulesInstallCommand(["security/owasp-top-10"]);
+                if (installed !== 0)
+                    return installed;
+                return rulesApplyCommand();
+            },
+        },
+        { name: "hook", run: () => hookInstallCommand() },
+        { name: "skills", run: () => skillsInstallCommand(replaceArgs) },
+        {
+            name: "agents",
+            run: async () => {
+                // installAgents aborts-with-error on existing files (unlike skills,
+                // which skip), so pre-check for idempotent re-runs.
+                if (replaceArgs.length === 0 &&
+                    (await setupDirHasMd(join(cwd, ".claude", "agents")))) {
+                    log("↪ agents already installed — skipping (use --replace to overwrite).");
+                    return 0;
+                }
+                return agentsInstallCommand(replaceArgs);
+            },
+        },
+        { name: "arch-check (inert gate)", run: () => archCommand(["init"], { cwd }) },
+        {
+            // Final verify. Advisory — its findings are printed, but a non-blocking
+            // doctor result never fails the provisioning.
+            name: "doctor (verify)",
+            run: async () => {
+                await doctorCommand();
+                return 0;
+            },
+        },
+    ];
+    const outcome = await runSetup(steps, log);
+    return outcome.failedAt ? 1 : 0;
+}
 export async function main(argv) {
     const command = argv[0];
     if (command === "--version" || command === "-v") {
         console.log(VERSION);
         return 0;
+    }
+    if (command === "setup" || (command === "init" && argv.includes("--all"))) {
+        return setupCommand(argv.slice(1));
     }
     if (command === "init") {
         const args = parseInitArgs(argv.slice(1));

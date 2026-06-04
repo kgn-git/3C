@@ -9,6 +9,7 @@ import { loadFramework, loadBrand, resolveBrand } from "../branding/load.js";
 import { scanSecrets } from "../validate/secrets.js";
 import { countInstructions } from "../validate/instruction-count.js";
 import { loadArchConfig } from "./arch-boundary/config.js";
+import { CLI_COMMANDS, checkCliSkillCompat } from "./cli-compat.js";
 async function pathExists(p) {
     try {
         await stat(p);
@@ -55,6 +56,18 @@ export async function runDoctor(opts) {
     const agentFiles = await walkFiles(join(workspaceDir, ".claude", "agents"));
     const files = [...(await walkFiles(skillsDir)), ...agentFiles];
     const contents = await Promise.all(files.map(async (f) => [f, await readFile(f, "utf8")]));
+    // Skill↔CLI version-compat (#278): installed skills that invoke a command the running
+    // CLI lacks mean the binary on PATH is older than the installed skills.
+    const supported = opts.supportedCommands ?? CLI_COMMANDS;
+    const skillTexts = contents.map(([f, t]) => ({ name: f.split(/[\\/]/).pop() ?? f, text: t }));
+    const incompat = checkCliSkillCompat(skillTexts, slug, supported);
+    if (incompat.length) {
+        const cmds = [...new Set(incompat.map((i) => i.command))].join(", ");
+        add("fail", "cli-compat", `installed skills invoke CLI command(s) [${cmds}] your \`${slug}\` binary doesn't provide — the CLI on PATH is older than the installed skills. Upgrade/reinstall: npm install -g git+https://github.com/kgn-git/3C#v<latest> (and check \`Get-Command ${slug}\` / \`which ${slug}\` for a stale shadowing copy).`);
+    }
+    else {
+        add("ok", "cli-compat", "installed skills only invoke commands the running CLI supports.");
+    }
     // Unsubstituted brand/framework tokens (AC3).
     const TOKEN_RE = /\$\{(BRAND|FRAMEWORK)_[A-Z_]+\}/;
     const residue = contents.filter(([, t]) => TOKEN_RE.test(t)).map(([f]) => f);
@@ -145,6 +158,10 @@ export async function runDoctor(opts) {
         if (await pathExists(join(workspaceDir, ".claude", "skills", `${slug}-${orch}`, "SKILL.md"))) {
             add("ok", "orchestrators", `${slug}-${orch} orchestrator skill present.`);
         }
+    }
+    // Optional retrospective skill (#13).
+    if (await pathExists(join(workspaceDir, ".claude", "skills", `${slug}-retrospective`, "SKILL.md"))) {
+        add("ok", "retrospective", `${slug}-retrospective skill present (optional post-ship retro).`);
     }
     return { findings, ok: findings.every((f) => f.level !== "fail") };
 }
