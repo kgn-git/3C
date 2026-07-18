@@ -20,6 +20,8 @@ import { parseWindow } from "./telemetry/window.js";
 import { readEventsInWindow } from "./telemetry/read.js";
 import { dashboardMetrics } from "./dashboard/metrics.js";
 import { renderDashboardHtml } from "./dashboard/render.js";
+import { readHandovers } from "./dashboard/handover.js";
+import { deliveryMetrics } from "./dashboard/delivery.js";
 import { runCoverageGate } from "./coverage/index.js";
 import { runSecurityGate } from "./security/index.js";
 import { addSuppression } from "./security/suppress.js";
@@ -30,6 +32,7 @@ import { runDrift } from "./skills/drift/index.js";
 import { runArchBoundary } from "./skills/arch-boundary/index.js";
 import { addException } from "./skills/arch-boundary/exceptions.js";
 import { writeStarterArchConfig } from "./skills/arch-boundary/scaffold.js";
+import { runArchDiscover } from "./skills/arch-boundary/discover.js";
 import { reconcileFromJson } from "./orchestration/reconcile.js";
 import { loadGraph, resolveOrder, addEdge, serialize } from "./orchestration/deps.js";
 import { runStandardsHistory, runStandardsAsOf, } from "./skills/standards-history/index.js";
@@ -184,6 +187,9 @@ Commands:
                     per .\${BRAND_SLUG}/architecture.yaml (monorepo-aware).
   arch-check init   Scaffold a starter .\${BRAND_SLUG}/architecture.yaml
                     (inert until you define layers/deny).
+  arch-check discover   Draft .\${BRAND_SLUG}/architecture.yaml from the
+                    repository's actual import graph (proposal-only when an
+                    active config exists).
   arch-check except "<from>-><to>" --reason="..." --expires=<date>
                     Record a time-boxed boundary exception (expiry mandatory).
 
@@ -1146,7 +1152,10 @@ async function bypassCommand(rest) {
     return 0;
 }
 // #180 VP-03-F08-ext: personal, local, read-only insights. No network,
-// no backend, no team/comparison data — own workstation telemetry only.
+// no backend, no comparison data — own workstation artefacts only.
+// #301: the headline is the issue-centric delivery view read from
+// docs/Handover-*.md frontmatter; telemetry gates render below it. The
+// --since window applies to telemetry only — the delivery view is all-time.
 export async function dashboardCommand(argv, env = { cwd: process.cwd() }) {
     let since;
     for (let i = 0; i < argv.length; i++) {
@@ -1156,18 +1165,25 @@ export async function dashboardCommand(argv, env = { cwd: process.cwd() }) {
         else if (a?.startsWith("--since="))
             since = a.slice("--since=".length);
     }
+    const scan = await readHandovers(env.docsDir ?? join(env.cwd, "docs"));
+    // Legacy-only docs are the expected pre-#301 state, not delivery data;
+    // malformed frontmatter must surface as a warning, so it does render.
+    const delivery = scan.records.length > 0 || scan.malformed > 0 ? deliveryMetrics(scan) : null;
     const cfg = await loadTelemetryConfig(env.cwd);
-    if (!cfg.enabled) {
-        console.log("Nothing to show — telemetry is disabled.");
-        return 0;
-    }
     const win = parseWindow(since, cfg.retentionDays);
-    const records = await readEventsInWindow(env.cwd, win.days, env.now ?? new Date());
-    if (records.length === 0) {
-        console.log(`Nothing to show — no telemetry in the ${win.label}.`);
+    let gates = null;
+    if (cfg.enabled) {
+        const records = await readEventsInWindow(env.cwd, win.days, env.now ?? new Date());
+        if (records.length > 0)
+            gates = dashboardMetrics(records);
+    }
+    if (delivery === null && gates === null) {
+        console.log(cfg.enabled
+            ? `Nothing to show — no telemetry in the ${win.label} and no handover delivery data.`
+            : "Nothing to show — telemetry is disabled and there is no handover delivery data.");
         return 0;
     }
-    const html = renderDashboardHtml(dashboardMetrics(records), win.label);
+    const html = renderDashboardHtml(delivery, gates, win.label);
     const out = join(env.cwd, `.${resolveBrandSlugSync()}`, "dashboard.html");
     await mkdir(dirname(out), { recursive: true });
     await writeFile(out, html, "utf8");
@@ -1327,12 +1343,31 @@ export async function archCommand(argv, env = { cwd: process.cwd() }) {
         if (r.notConfigured) {
             const slug = resolveBrandSlugSync();
             log(`architecture boundary gate not configured — no .${slug}/architecture.yaml. ` +
-                `Run \`${slug} arch-check init\` to scaffold a starter (advisory; not blocking).`);
+                `Run \`${slug} arch-check init\` to scaffold a starter, or ` +
+                `\`${slug} arch-check discover\` to draft one from the import graph ` +
+                `(advisory; not blocking).`);
             return 0;
         }
         if (r.message !== "")
             log(r.message);
         return r.blocked ? 2 : 0;
+    }
+    if (sub === "discover") {
+        const slug = resolveBrandSlugSync();
+        try {
+            const r = await runArchDiscover(env.cwd);
+            log(r.proposed
+                ? `Active architecture.yaml left untouched — proposal drafted at ${r.path}. ` +
+                    `Review it, then replace the active config if you adopt it.`
+                : `Drafted ${r.path} from the import graph (${r.tiers} tier(s)). ` +
+                    `Review and rename the tiers, then run \`${slug} arch-check check\`.`);
+            return 0;
+        }
+        catch (e) {
+            // NFR-USE-03: explain + remediation; discovery never half-writes.
+            log(`arch-check discover failed: ${e.message}`);
+            return 1;
+        }
     }
     if (sub === "init") {
         const slug = resolveBrandSlugSync();
@@ -1360,7 +1395,7 @@ export async function archCommand(argv, env = { cwd: process.cwd() }) {
             return 1;
         }
     }
-    log("Usage: arch-check <check|except|init>");
+    log("Usage: arch-check <check|except|init|discover>");
     return 1;
 }
 // #21 VP-01-F09: git-native standards version history (read-only).
@@ -1596,11 +1631,15 @@ export async function setupCommand(argv) {
             },
         },
         {
-            name: "rules (security/owasp-top-10)",
+            name: "rules (security/owasp-top-10 + security/cwe-top-25-2025)",
             run: async () => {
-                const installed = await rulesInstallCommand(["security/owasp-top-10"]);
-                if (installed !== 0)
-                    return installed;
+                // #294: both packs — the crew's security-reviewer references both
+                // paths, so the baseline must exist on a default install.
+                for (const pack of ["security/owasp-top-10", "security/cwe-top-25-2025"]) {
+                    const installed = await rulesInstallCommand([pack]);
+                    if (installed !== 0)
+                        return installed;
+                }
                 return rulesApplyCommand();
             },
         },

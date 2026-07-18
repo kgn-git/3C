@@ -62,7 +62,9 @@ export async function createIssue(payload, options = {}) {
     for (const assignee of payload.assignees ?? []) {
         args.push("--assignee", assignee);
     }
-    if (payload.repo !== undefined) {
+    // The skill's stdin contract allows `"repo": null` for "current repo",
+    // so a null can arrive at runtime despite the optional-string type.
+    if (payload.repo != null) {
         args.push("--repo", payload.repo);
     }
     const spawn = options.spawn ?? defaultSpawn;

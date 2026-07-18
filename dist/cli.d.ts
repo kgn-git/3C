@@ -44,6 +44,8 @@ export interface DashboardEnv {
     readonly cwd: string;
     readonly now?: Date;
     readonly open?: (path: string) => Promise<void>;
+    /** Handover artefact directory; defaults to `<cwd>/docs` (the convention). */
+    readonly docsDir?: string;
 }
 export declare function dashboardCommand(argv: readonly string[], env?: DashboardEnv): Promise<number>;
 export interface CoverageGateEnv {

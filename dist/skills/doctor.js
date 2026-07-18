@@ -128,7 +128,7 @@ export async function runDoctor(opts) {
     if (agentFiles.some((f) => f.endsWith("architect.md"))) {
         const cfg = await loadArchConfig(workspaceDir);
         if (!cfg) {
-            add("warn", "arch-gate", `architect agent installed but the boundary gate has no active architecture.yaml — it is inert. Run \`${slug} arch-check init\` and define layers/deny.`);
+            add("warn", "arch-gate", `architect agent installed but the boundary gate has no active architecture.yaml — it is inert. Run \`${slug} arch-check init\` and define layers/deny, or \`${slug} arch-check discover\` to draft them from the import graph.`);
         }
         else {
             add("ok", "arch-gate", "architecture boundary gate is configured.");

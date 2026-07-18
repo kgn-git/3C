@@ -60,7 +60,7 @@ echo '<assembled-json>' | ${FRAMEWORK_SLUG} reconcile
 **If `${FRAMEWORK_SLUG} reconcile` fails with `Unknown command` or a non-zero exit, STOP.** Your installed
 `${FRAMEWORK_SLUG}` CLI predates the reconciler — the binary on PATH is older than these skills. Do **not**
 hand-write or improvise a verdict and present it as the deterministic board result. Tell the user to upgrade
-the CLI and re-run: `npm install -g git+https://github.com/kgn-git/3C#v<latest>`, then verify with
+the CLI from your framework's distribution and re-run, then verify with
 `${FRAMEWORK_SLUG} doctor` (check for a stale shadowing copy via `Get-Command ${FRAMEWORK_SLUG}` / `which ${FRAMEWORK_SLUG}`).
 
 ## 5. Emit the board report

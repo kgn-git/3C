@@ -198,6 +198,20 @@ Use `"draft":true` if and only if the user explicitly overrode review findings i
 
 On success, surface the PR URL to the user.
 
+## 8. Handover artefact (after the PR merges)
+
+If you write a handover document for this delivery (`docs/Handover-<N>.md`), it MUST open with a
+`3c-handover/1` YAML frontmatter block computed at ship time: `issue` (or `issues: [..]`), `title`,
+`pr`, `merge_sha`, `branch`, `started` (first branch commit, ISO-8601 UTC), `merged`,
+`verdict: { level, blocking, warnings, suggestions, fixed_in_branch }` (when a review board ran),
+`tests_total`, `loc: { added, removed, files }` from the merge diff, and `follow_ups` (issue numbers
+filed during the delivery). The `${BRAND_SLUG} dashboard` delivery view reads exactly this block and
+performs no git or network calls — omitted fields render as blanks. The frontmatter carries
+delivery metadata only — it MUST NOT embed credentials, tokens, or any secret material (handovers
+are committed files; same discipline as the scan-secrets pass on plan and PR text). The narrative
+below the frontmatter stays human-first. The full block shape is specified in the
+`/${BRAND_SLUG}-project-manager` skill's ship stage; keep the two in sync.
+
 ## What this skill does NOT do
 
 - Issue-status transitions beyond `Closes #N` — out of scope. PM-tool adapters ship at L2 via [#70](https://github.com/kgn-git/praise/issues/70) but don't add status-transition logic to this skill; the L3 [#36](https://github.com/kgn-git/praise/issues/36) Process Adherence Monitor is the right home for status-transition observability.
