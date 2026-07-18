@@ -2,6 +2,7 @@
 import { createHash, randomUUID } from "node:crypto";
 import { spawn } from "node:child_process";
 import { readFile, readdir, writeFile, mkdir, stat } from "node:fs/promises";
+import { realpathSync } from "node:fs";
 import { dirname, join, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { loadBrand, loadFramework, resolveBrand } from "./branding/load.js";
@@ -1830,11 +1831,33 @@ export async function main(argv) {
     console.log(substitute(HELP_TEMPLATE, brand));
     return 1;
 }
+/**
+ * True when this module is the process entry point rather than an import.
+ *
+ * npm installs the `3c` bin as a symlink (`node_modules/.bin/3c` ->
+ * `../@kgn-git/3c/dist/cli.js`). Node reports the SYMLINK path in
+ * `process.argv[1]` while `import.meta.url` resolves to the real file, so
+ * comparing the two directly is always false under a normal install and
+ * `main()` never runs — every command exited 0 in silence on Linux and macOS.
+ * Windows was unaffected because npm writes .cmd/.ps1 shims that pass the real
+ * path. Resolving argv[1] through realpath makes both invocation styles match.
+ */
+export function isDirectInvocation(moduleUrl, invokedPath) {
+    if (invokedPath === undefined)
+        return false;
+    let resolved = invokedPath;
+    try {
+        resolved = realpathSync(invokedPath);
+    }
+    catch {
+        // argv[1] may not exist on disk (odd loaders, virtual entry points); fall
+        // back to the raw path rather than throwing during startup.
+    }
+    return moduleUrl === pathToFileURL(resolved).href;
+}
 // Run only when executed directly (e.g. the `3c` bin / `node dist/cli.js`),
 // not when imported (tests import `main`/`dashboardCommand`).
-const invokedPath = process.argv[1];
-if (invokedPath !== undefined &&
-    import.meta.url === pathToFileURL(invokedPath).href) {
+if (isDirectInvocation(import.meta.url, process.argv[1])) {
     const exitCode = await main(process.argv.slice(2));
     process.exit(exitCode);
 }

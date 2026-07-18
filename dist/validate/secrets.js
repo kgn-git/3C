@@ -1,8 +1,16 @@
 // Regex-based secret-leakage scan per AC10 of issue #1.
 // Pragmatic L1 scope: AWS access keys, GitHub PATs (classic + fine-grained),
 // JWT tokens, RFC1918 private IPs, public IPs, internal hostnames.
-const RFC1918_PATTERN = /\b(?:10(?:\.\d{1,3}){3}|192\.168(?:\.\d{1,3}){2}|172\.(?:1[6-9]|2\d|3[01])(?:\.\d{1,3}){2})\b/g;
-const ANY_IP_PATTERN = /\b(?:\d{1,3}\.){3}\d{1,3}\b/g;
+// An IP-shaped run that is immediately followed by `-<alphanumeric>` is part of
+// a longer hyphenated identifier — a version string, not an address. Four-segment
+// Linux kernel releases (`6.6.114.1-microsoft-standard-WSL2`) are IP-shaped, which
+// made `3c bug` flag its own captured environment as a leaked public IP and refuse
+// to file on every Linux host. Scoped deliberately to the hyphen-suffix case: a
+// genuine address followed by ordinary prose ("8.8.8.8 - resolver") still matches.
+const VERSION_SUFFIX = /(?!-[A-Za-z0-9])/.source;
+const RFC1918_PATTERN = new RegExp(/\b(?:10(?:\.\d{1,3}){3}|192\.168(?:\.\d{1,3}){2}|172\.(?:1[6-9]|2\d|3[01])(?:\.\d{1,3}){2})\b/
+    .source + VERSION_SUFFIX, "g");
+const ANY_IP_PATTERN = new RegExp(/\b(?:\d{1,3}\.){3}\d{1,3}\b/.source + VERSION_SUFFIX, "g");
 const DETECTORS = [
     { type: "aws-access-key", pattern: /\bAKIA[0-9A-Z]{16}\b/g },
     { type: "github-pat", pattern: /\bghp_[A-Za-z0-9]{36}\b/g },

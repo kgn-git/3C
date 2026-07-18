@@ -1,6 +1,6 @@
 {
   "name": "@kgn-git/3c",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "Claude Code Coach (3C) — governance and standardisation framework for AI coding assistants",
   "type": "module",
   "main": "./dist/index.js",

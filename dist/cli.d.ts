@@ -111,4 +111,16 @@ export interface OnboardGuideEnv {
 export declare function onboardGuideCommand(argv: readonly string[], env?: OnboardGuideEnv): Promise<number>;
 export declare function setupCommand(argv: readonly string[]): Promise<number>;
 export declare function main(argv: readonly string[]): Promise<number>;
+/**
+ * True when this module is the process entry point rather than an import.
+ *
+ * npm installs the `3c` bin as a symlink (`node_modules/.bin/3c` ->
+ * `../@kgn-git/3c/dist/cli.js`). Node reports the SYMLINK path in
+ * `process.argv[1]` while `import.meta.url` resolves to the real file, so
+ * comparing the two directly is always false under a normal install and
+ * `main()` never runs — every command exited 0 in silence on Linux and macOS.
+ * Windows was unaffected because npm writes .cmd/.ps1 shims that pass the real
+ * path. Resolving argv[1] through realpath makes both invocation styles match.
+ */
+export declare function isDirectInvocation(moduleUrl: string, invokedPath: string | undefined): boolean;
 //# sourceMappingURL=cli.d.ts.map
