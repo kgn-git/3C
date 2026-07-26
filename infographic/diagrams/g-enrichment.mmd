@@ -1,0 +1,22 @@
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#EEF2FF','primaryTextColor':'#1E1B4B','primaryBorderColor':'#4F46E5','lineColor':'#6366F1','fontFamily':'Inter, sans-serif','fontSize':'16px'}}}%%
+sequenceDiagram
+    autonumber
+    participant Maya as Maya
+    participant Arch as architect (subagent)
+    participant Exp as /3c-explain (skill)
+    participant Issue as GitHub Issue
+
+    Maya->>Arch: dispatch with issue context
+    Note over Arch: reads CLAUDE.md + .claude/rules/
+    Arch-->>Maya: affected components / approach<br/>risks / open questions<br/>complexity / testing strategy
+
+    Note over Maya: reads carefully<br/>spots a pattern<br/>that doesn't fit
+    Maya->>Exp: /3c-explain layered-mvc.rationale
+    Exp-->>Maya: Why / Do / Docs (from rationale.yaml)
+
+    Maya->>Arch: re-dispatch with the rationale<br/>"reconsider — our boundary lives elsewhere"
+    Note over Arch: revises analysis<br/>(architect re-writes,<br/>NOT Maya)
+    Arch-->>Maya: revised approach + revised testing strategy
+
+    Maya->>Issue: architect appends the analysis<br/>(via /3c-implement later)
+    Note over Issue: enriched, ready for code

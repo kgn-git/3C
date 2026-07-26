@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 520" role="img">
+  <title>What L2 actually ships — the 3C automation substrate</title>
+  <desc>L2 adds 21 features layered on L1. Standards layer: drift detector, dynamic context loader, version history, CWE Top 25, microservices and modular-monolith patterns. Quality layer: post-edit validation, coverage gate, security scan gate, architecture boundary enforcer, hook telemetry. Workflow layer: deployment, bug-report, onboarding skills, multi-PM MCP, init --brand white-label, extended test frameworks. DX layer: interactive onboarding guide, coaching mode, rationale database, architect + security-reviewer subagents, personal local insights dashboard. Everything still under .claude/ and removable by one git revert.</desc>
+  <style>text{font-family:Inter,system-ui,sans-serif}.t{fill:#0F172A}.d{fill:#334155}.m{fill:#64748B}.s{font-family:Inter,Georgia,serif;fill:#0F172A}.l1{fill:#64748B}</style>
+  <rect width="760" height="520" rx="18" fill="#F8FAFC"/>
+
+  <text x="380" y="40" text-anchor="middle" class="s" font-size="20">What L2 adds to L1</text>
+  <rect x="330" y="50" width="100" height="3" rx="1.5" fill="#4F46E5"/>
+  <text x="380" y="74" text-anchor="middle" class="m" font-size="12">21 features layered on the L1 substrate · same .claude/ tree · still one git revert away</text>
+
+  <rect x="34" y="86" width="340" height="180" rx="14" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="54" y="112" class="s" font-size="15">Standards — five additions</text>
+  <text x="54" y="134" class="d" font-size="11.5">Standards Drift Detector — /3c-drift</text>
+  <text x="54" y="154" class="d" font-size="11.5">Dynamic Context Loader — under 150 instructions</text>
+  <text x="54" y="174" class="d" font-size="11.5">Standards Version History — /3c-standards history</text>
+  <text x="54" y="194" class="d" font-size="11.5">CWE Top 25 (alongside OWASP Top 10)</text>
+  <text x="54" y="214" class="d" font-size="11.5">microservices · modular-monolith patterns</text>
+  <text x="54" y="240" class="m" font-size="10.5">src/skills/drift · src/skills/standards-history · src/context</text>
+
+  <rect x="386" y="86" width="340" height="180" rx="14" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="406" y="112" class="s" font-size="15">Quality — five new gates</text>
+  <text x="406" y="134" class="d" font-size="11.5">Post-Edit Validation — &lt;300ms PostToolUse</text>
+  <text x="406" y="154" class="d" font-size="11.5">Test Coverage Gate — per test type</text>
+  <text x="406" y="174" class="d" font-size="11.5">Security Scan Gate — SAST + dependency vulns</text>
+  <text x="406" y="194" class="d" font-size="11.5">Architecture Boundary Enforcer</text>
+  <text x="406" y="214" class="d" font-size="11.5">Hook Telemetry — local JSONL, no egress</text>
+  <text x="406" y="240" class="m" font-size="10.5">src/coverage · src/security · src/validate · src/telemetry</text>
+
+  <rect x="34" y="280" width="340" height="180" rx="14" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="54" y="306" class="s" font-size="15">Workflow — six additions</text>
+  <text x="54" y="328" class="d" font-size="11.5">/3c-deploy — pre-flight + auto-rollback</text>
+  <text x="54" y="348" class="d" font-size="11.5">/3c-bug — environment auto-capture</text>
+  <text x="54" y="368" class="d" font-size="11.5">/3c-onboard — guided codebase orientation</text>
+  <text x="54" y="388" class="d" font-size="11.5">multi-PM MCP — Jira · Linear · GitLab · GitHub</text>
+  <text x="54" y="408" class="d" font-size="11.5">init --brand — white-label scaffolder, zero-fork</text>
+  <text x="54" y="428" class="d" font-size="11.5">Mocha · Playwright · JUnit · integration mode</text>
+  <text x="54" y="450" class="m" font-size="10.5">src/skills/{deploy,bug,onboard,test} · src/mcp · src/skills/deploy-init</text>
+
+  <rect x="386" y="280" width="340" height="180" rx="14" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="406" y="306" class="s" font-size="15">DX &amp; observability — five additions</text>
+  <text x="406" y="328" class="d" font-size="11.5">Interactive Onboarding Guide — role-tailored</text>
+  <text x="406" y="348" class="d" font-size="11.5">Coaching Mode — hooks explain why, not just no</text>
+  <text x="406" y="368" class="d" font-size="11.5">Standards Rationale DB — /3c-explain &lt;rule-id&gt;</text>
+  <text x="406" y="388" class="d" font-size="11.5">architect + security-reviewer subagents</text>
+  <text x="406" y="408" class="d" font-size="11.5">Personal Local Insights Dashboard — local-only</text>
+  <text x="406" y="428" class="d" font-size="11.5">grew into a 7-agent review crew — all under the 150-instr. budget</text>
+  <text x="406" y="450" class="m" font-size="10.5">src/skills/onboard-guide · src/skills/rationale · src/dashboard</text>
+
+  <text x="380" y="488" text-anchor="middle" class="m" font-size="11">v1.5.0 · 1256 tests green · build / vitest / lint:brand / cs02 all clean</text>
+  <text x="380" y="508" text-anchor="middle" class="l1" font-size="10.5">layered on L1's 9 features — same standards / workflow / quality / DX shape, more capability per commit</text>
+</svg>

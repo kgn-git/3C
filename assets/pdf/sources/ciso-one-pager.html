@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>3C — Claude Code Coach — Security One-Pager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Mulish:wght@400;600;700&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#f3ecda;--ink:#33291c;--honey:#d99528;--honey-dk:#b6781c;--sand:#e8c987;--sage:#5e7d5b;--muted:#8a7550;--card:#fbf6e9;--line:#e3d4b3}
+  @page{size:A4;margin:0}*{box-sizing:border-box}
+  html,body{margin:0;padding:0;font-family:'Mulish',system-ui,sans-serif;color:var(--ink);background:#fff;-webkit-font-smoothing:antialiased}
+  .page{width:210mm;height:297mm;padding:14mm 15mm;display:flex;flex-direction:column;background:var(--paper);background-image:radial-gradient(#e7d9ba .6px,transparent .6px);background-size:7px 7px}
+  header{border-bottom:2px solid var(--honey);padding-bottom:5mm;margin-bottom:6mm}
+  .eyebrow{font-family:'Space Mono',monospace;font-size:9pt;letter-spacing:.16em;text-transform:uppercase;color:var(--honey-dk);font-weight:600}
+  h1{font-family:'Newsreader',Georgia,serif;font-size:23pt;line-height:1.12;font-weight:600;letter-spacing:-.01em;margin:3mm 0 2mm;color:var(--ink)}
+  h1 span{color:var(--honey-dk)}
+  .sub{font-size:11pt;color:#5a4f3d}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:6mm;flex:1}
+  section{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--honey);border-radius:3mm;padding:5mm 6mm}
+  section.warn{border-left-color:var(--sage)}
+  h2{font-family:'Newsreader',serif;font-size:13pt;font-weight:600;margin:0 0 3mm;color:var(--ink)}
+  h2 .tag{font-family:'Space Mono',monospace;font-size:8pt;color:var(--muted);font-weight:400}
+  p,li{font-size:9.5pt;line-height:1.5;color:#5a4f3d;margin:0 0 2.5mm}
+  ul{margin:0;padding-left:4.5mm}strong{color:var(--ink)}
+  code{font-family:'Space Mono',monospace;font-size:8.5pt;color:var(--honey-dk)}
+  footer{margin-top:6mm;padding-top:4mm;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:8pt;color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <div class="eyebrow">3C · Claude Code Coach · Security One-Pager</div>
+    <h1>Where your code goes: <span>nowhere it didn't already.</span></h1>
+    <div class="sub">The under-claiming summary — what L1 produces, and what your org always owns.</div>
+  </header>
+  <div class="grid">
+    <section>
+      <h2>Data flow <span class="tag">// trust boundary</span></h2>
+      <p>The developer workstation is the trust boundary. 3C adds no path off the workstation for source code, prompt content, or credentials, under any maturity level.</p>
+      <p>At L2+, the only thing 3C optionally emits is anonymised metadata — counts, pass/fail, durations — to a self-hostable backend. It does not change how your AI assistant already operates with its own model provider; that remains governed by your existing agreement with that vendor.</p>
+    </section>
+    <section>
+      <h2>Security posture <span class="tag">// by design</span></h2>
+      <ul>
+        <li><strong>OWASP-aligned generation</strong> — security rule sets aligned to the OWASP Top 10 applied at the point of generation (VP-01-F04), before review.</li>
+        <li><strong>Secret-scanning</strong> — every file-writing skill scans for secrets before the write lands.</li>
+        <li><strong>Local storage</strong> — config + event state on the workstation (SQLite + JSONL); no code or prompt content off-box.</li>
+        <li><strong>Offline resilient</strong> — the workflow never blocks on a backend; no always-on egress.</li>
+      </ul>
+    </section>
+    <section class="warn">
+      <h2>What 3C does NOT do <span class="tag">// honest</span></h2>
+      <p>3C is a developer-productivity and standards-alignment framework, <strong>not a compliance product</strong>. It does <strong>not</strong> certify any standard or produce a regulatory evidence pack — that is a separate, future business case.</p>
+      <p>3C is not a SAST replacement: it shifts secure-coding defaults left (OWASP Top 10 at the point of generation), it does not absolve your existing security review, scanning, and reviewer training.</p>
+    </section>
+    <section>
+      <h2>Evaluate it as OSS <span class="tag">// not a vendor</span></h2>
+      <ul>
+        <li><strong>Licence:</strong> MIT — read it in the repo <code>LICENSE</code>.</li>
+        <li><strong>SBOM:</strong> <code>npm sbom --sbom-format cyclonedx</code> after install captures 3C + transitive deps; git-installed, so recorded with <code>git+https</code> provenance.</li>
+        <li><strong>Source of truth:</strong> every claim is verifiable in <code>kgn-git/praise</code> — the full requirements baseline is maintained there.</li>
+      </ul>
+    </section>
+  </div>
+  <footer>
+    <span>https://kgn-git.github.io/3C/</span>
+    <span>https://github.com/kgn-git/praise · MIT · v1.0.0</span>
+  </footer>
+</main>
+</body>
+</html>

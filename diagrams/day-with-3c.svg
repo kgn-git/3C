@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 470" role="img">
+  <title>What actually changes in your day — quietly, in the background</title>
+  <desc>Four beats: you ask AI for a change; it already knows your conventions; the pre-commit hook gently flags anything off; you decide — nothing is forced.</desc>
+  <style>text{font-family:Inter,system-ui,sans-serif}.s{font-family:Inter,Georgia,serif;fill:#0F172A}.t{fill:#0F172A}.m{fill:#64748B}</style>
+  <text x="380" y="58" text-anchor="middle" class="s" font-size="30" font-weight="600">What actually changes in your day</text>
+  <text x="380" y="90" text-anchor="middle" class="m" font-size="18">quietly, in the background</text>
+
+  <line x1="100" y1="235" x2="660" y2="235" stroke="#E2E8F0" stroke-width="3" stroke-dasharray="2 12"/>
+
+  <g>
+    <circle cx="100" cy="235" r="20" fill="#EEF2FF" stroke="#4F46E5" stroke-width="3"/>
+    <text x="100" y="290" text-anchor="middle" class="t" font-size="20" font-weight="700">You ask AI</text>
+    <text x="100" y="316" text-anchor="middle" class="m" font-size="15">for a change</text>
+  </g>
+  <g>
+    <circle cx="287" cy="235" r="20" fill="#EEF2FF" stroke="#4F46E5" stroke-width="3"/>
+    <text x="287" y="290" text-anchor="middle" class="t" font-size="20" font-weight="700">It already knows</text>
+    <text x="287" y="316" text-anchor="middle" class="m" font-size="15">your conventions</text>
+  </g>
+  <g>
+    <circle cx="473" cy="235" r="20" fill="#EEF2FF" stroke="#4F46E5" stroke-width="3"/>
+    <text x="473" y="290" text-anchor="middle" class="t" font-size="20" font-weight="700">Hook gently flags</text>
+    <text x="473" y="316" text-anchor="middle" class="m" font-size="15">anything off</text>
+  </g>
+  <g>
+    <circle cx="660" cy="235" r="20" fill="#4F46E5"/>
+    <text x="660" y="290" text-anchor="middle" class="t" font-size="20" font-weight="700">You decide</text>
+    <text x="660" y="316" text-anchor="middle" class="m" font-size="15">nothing forced</text>
+  </g>
+
+  <text x="380" y="420" text-anchor="middle" class="m" font-size="16">The hook flags what doesn't match the team's conventions — the author decides.</text>
+</svg>

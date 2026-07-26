@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>3C — Claude Code Coach — Eng-Leader One-Pager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Mulish:wght@400;600;700&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#f3ecda;--ink:#33291c;--honey:#d99528;--honey-dk:#b6781c;--sand:#e8c987;--sage:#5e7d5b;--muted:#8a7550;--card:#fbf6e9;--line:#e3d4b3}
+  @page{size:A4;margin:0}*{box-sizing:border-box}
+  html,body{margin:0;padding:0;font-family:'Mulish',system-ui,sans-serif;color:var(--ink);background:#fff;-webkit-font-smoothing:antialiased}
+  .page{width:210mm;height:297mm;padding:14mm 15mm;display:flex;flex-direction:column;background:var(--paper);background-image:radial-gradient(#e7d9ba .6px,transparent .6px);background-size:7px 7px}
+  header{border-bottom:2px solid var(--honey);padding-bottom:5mm;margin-bottom:6mm}
+  .eyebrow{font-family:'Space Mono',monospace;font-size:9pt;letter-spacing:.16em;text-transform:uppercase;color:var(--honey-dk);font-weight:600}
+  h1{font-family:'Newsreader',Georgia,serif;font-size:24pt;line-height:1.12;font-weight:600;letter-spacing:-.01em;margin:3mm 0 2mm;color:var(--ink)}
+  h1 span{color:var(--honey-dk)}
+  .sub{font-size:11pt;color:#5a4f3d}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:6mm;flex:1}
+  section{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--honey);border-radius:3mm;padding:5mm 6mm}
+  section.buys{border-left-color:var(--sage)}
+  h2{font-family:'Newsreader',serif;font-size:13pt;font-weight:600;margin:0 0 3mm;color:var(--ink)}
+  h2 .tag{font-family:'Space Mono',monospace;font-size:8pt;color:var(--muted);font-weight:400}
+  p,li{font-size:9.5pt;line-height:1.5;color:#5a4f3d;margin:0 0 2.5mm}
+  ul{margin:0;padding-left:4.5mm}strong{color:var(--ink)}
+  code{font-family:'Space Mono',monospace;font-size:8.5pt;color:var(--honey-dk)}
+  footer{margin-top:6mm;padding-top:4mm;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:8pt;color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <div class="eyebrow">3C · Claude Code Coach · Eng-Leader One-Pager</div>
+    <h1>Your team's AI, <span>finding the same page.</span></h1>
+    <div class="sub">Open, local-first, audit-ready — the one-page case for a calm rollout.</div>
+  </header>
+  <div class="grid">
+    <section>
+      <h2>The moment this is for <span class="tag">// why now</span></h2>
+      <p>AI assistants made individual developers much faster without making teams more coherent. Each session is <strong>locally optimal</strong> — passing local tests, matching the file it can see — but the aggregate drifts: divergent conventions, drifting architecture, no evidence trail.</p>
+      <p>There is also gentle pressure to be able to <em>show your work</em> — which changes were AI-assisted, against which conventions, reviewed by whom. Teams that adopted AI with no alignment have no substrate to produce that from.</p>
+    </section>
+    <section>
+      <h2>A path, walked at your pace <span class="tag">// L1 → L4</span></h2>
+      <p>A set of places a team can choose to be — each answering a real question at a clearly-stated commitment level. Stopping anywhere is a valid decision:</p>
+      <ul>
+        <li><strong>L1 Standardise</strong> — shipped. Reversible in one PR. Eases architectural drift.</li>
+        <li><strong>L2 Automate</strong> — gates run automatically. Eases review-burden inflation.</li>
+        <li><strong>L3 Observe</strong> — evidence packs; mapped before the 2027-08 deadline.</li>
+        <li><strong>L4 Optimise</strong> — complexity-adapted governance. A horizon, not a date.</li>
+      </ul>
+    </section>
+    <section>
+      <h2>What L1 asks of you <span class="tag">// honest</span></h2>
+      <ul>
+        <li><strong>Adoption:</strong> about a week from <code>npx 3c init</code>; starting point + delta measured in-week.</li>
+        <li><strong>Infrastructure:</strong> none — runs on developer workstations.</li>
+        <li><strong>Lock-in:</strong> none — Agent Skills open standard, MIT.</li>
+        <li><strong>Maintenance:</strong> a steward role ~2 hr/week per active 6–15-dev team.</li>
+      </ul>
+    </section>
+    <section class="buys">
+      <h2>What L1 gives back <span class="tag">// adoption week</span></h2>
+      <p>Visible by the end of the one-week adoption sprint, then compounding:</p>
+      <ul>
+        <li>Two engineers on one repo produce structurally consistent code without a reviewer forcing it.</li>
+        <li>Issue → implement → review → test runs the same way on every laptop; onboarding is one <code>CLAUDE.md</code>.</li>
+        <li>Lint, types, tests, secret-scan run before code review, every commit.</li>
+      </ul>
+      <p>3C produces evidence <strong>substrate</strong>, not certification: it does not issue any compliance certification or conformity statement — your org owns the risk register.</p>
+    </section>
+  </div>
+  <footer>
+    <span>https://kgn-git.github.io/3C/</span>
+    <span>https://github.com/kgn-git/praise · MIT · v1.0.0</span>
+  </footer>
+</main>
+</body>
+</html>

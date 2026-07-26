@@ -1,0 +1,31 @@
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#EEF2FF','primaryTextColor':'#1E1B4B','primaryBorderColor':'#4F46E5','lineColor':'#6366F1','fontFamily':'Inter, sans-serif','fontSize':'16px'}}}%%
+flowchart LR
+    RAW["📥 18 raw items<br/><i>backlog, customer wishlist, retro outputs</i>"]
+    TPL["📋 batch prompt template<br/><i>one shape, eighteen pass-throughs</i>"]
+    CREATE["/3c-create-issue × 18<br/><i>structured candidate issues</i>"]
+    DUP{{"near-duplicate<br/>detection"}}
+    MERGED["4 merged<br/><i>back into the count</i>"]
+    FLAG["⚠️ 2 flagged<br/>for human clarification<br/><i>(contradictory / missing context)</i>"]
+    DRIFT["/3c-drift check<br/><i>no issue references a rule<br/>that no longer exists</i>"]
+    CLEAN["✅ 12 ready<br/><i>cleaned set, internally consistent</i>"]
+
+    RAW --> TPL
+    TPL --> CREATE
+    CREATE --> DUP
+    DUP -->|"4 dupes"| MERGED
+    MERGED -.collapse.-> CREATE
+    DUP -->|"2 unclear"| FLAG
+    FLAG -.do not proceed.-> RAW
+    DUP -->|"12 distinct"| DRIFT
+    DRIFT --> CLEAN
+
+    classDef input fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:1.5px
+    classDef skill fill:#EEF2FF,stroke:#4F46E5,color:#1E1B4B,stroke-width:1.5px
+    classDef decision fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:1.5px
+    classDef warn fill:#FEE2E2,stroke:#DC2626,color:#7F1D1D,stroke-width:1.5px
+    classDef good fill:#ECFDF5,stroke:#10B981,color:#047857,stroke-width:2px
+    class RAW input
+    class TPL,CREATE,DRIFT skill
+    class DUP,MERGED decision
+    class FLAG warn
+    class CLEAN good

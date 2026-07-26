@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 210" role="img" aria-label="L3 Observe: team-observability dashboards — quality trends, velocity, ROI, process adherence and a cross-project view, fed by L2 telemetry over an optional backend.">
+  <title>L3 — Observe</title>
+  <desc>The team-observability layer. Captured telemetry becomes dashboards: quality trends, velocity and DORA metrics, ROI, process-adherence, and a cross-project view. Introduces an optional self-hostable backend. This level is about measured visibility into AI's impact — not audit or compliance evidence.</desc>
+  <style>text{font-family:Inter,system-ui,sans-serif}.t{fill:#0F172A}.m{fill:#64748B}.s{font-family:Inter,Georgia,serif;fill:#0F172A}.b{fill:#F8FAFC;stroke:#E2E8F0}</style>
+  <rect width="660" height="210" rx="18" fill="#F8FAFC"/>
+  <text x="330" y="30" text-anchor="middle" class="s" font-size="16">L3 — Observe</text>
+  <text x="330" y="48" text-anchor="middle" class="m" font-size="11">see, with data, how AI affects quality &amp; velocity</text>
+
+  <rect class="b" x="26" y="64" width="150" height="62" rx="9" stroke-width="1"/>
+  <text x="101" y="90" text-anchor="middle" class="t" font-size="11" font-weight="700">Telemetry</text>
+  <text x="101" y="108" text-anchor="middle" class="m" font-size="10">from L2 hooks</text>
+
+  <path d="M180,95 L214,95" stroke="#4F46E5" stroke-width="2.4" stroke-linecap="round" marker-end="url(#a)"/>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#4F46E5"/></marker></defs>
+
+  <g font-size="10">
+    <rect x="218" y="62" width="132" height="38" rx="7" class="b" stroke-width="1"/><text x="284" y="85" text-anchor="middle" class="t" font-weight="700">Quality trends</text>
+    <rect x="358" y="62" width="132" height="38" rx="7" class="b" stroke-width="1"/><text x="424" y="85" text-anchor="middle" class="t" font-weight="700">Velocity / DORA</text>
+    <rect x="498" y="62" width="138" height="38" rx="7" class="b" stroke-width="1"/><text x="567" y="85" text-anchor="middle" class="t" font-weight="700">ROI</text>
+    <rect x="218" y="108" width="132" height="38" rx="7" class="b" stroke-width="1"/><text x="284" y="131" text-anchor="middle" class="t" font-weight="700">Process adherence</text>
+    <rect x="358" y="108" width="278" height="38" rx="7" class="b" stroke-width="1"/><text x="497" y="131" text-anchor="middle" class="t" font-weight="700">Cross-project observability view</text>
+  </g>
+
+  <text x="330" y="174" text-anchor="middle" class="m" font-size="11">Mapped — material: an optional self-hostable backend is introduced</text>
+  <text x="330" y="192" text-anchor="middle" fill="#047857" font-size="10" font-weight="700">team-observability, not audit or compliance</text>
+</svg>

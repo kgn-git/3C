@@ -1,0 +1,28 @@
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#EEF2FF','primaryTextColor':'#1E1B4B','primaryBorderColor':'#4F46E5','lineColor':'#6366F1','fontFamily':'Inter, sans-serif','fontSize':'16px'}}}%%
+graph TD
+    PGM["/programme-manager<br/><i>cross-project coordinator</i>"]
+    PM["/project-manager<br/><i>context: CWD (platform | backoffice | scoring)</i>"]
+    EXP["Expert advisors<br/><i>product-owner · solution-architect ·<br/>security-expert · data-engineer ·<br/>tech-expert · compliance-officer · ...</i>"]
+    DEV["/developer"]
+    E2E["/e2e-writer"]
+    TST["/tester"]
+    SCL["/sprint-close"]
+    RETRO["/retrospective"]
+
+    PGM ==> PM
+    PM --> EXP
+    PM ==> DEV
+    DEV --> E2E
+    E2E --> TST
+    PM ==> SCL
+    SCL --> TST
+    SCL -.triggers.-> RETRO
+    PGM -.triggers.-> RETRO
+    RETRO -. codified rules .-> PM
+
+    classDef orch fill:#4F46E5,stroke:#312E81,color:#fff,stroke-width:2px
+    classDef skill fill:#EEF2FF,stroke:#4F46E5,color:#1E1B4B,stroke-width:1.5px
+    classDef loop fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:1.5px
+    class PGM,PM orch
+    class DEV,E2E,TST,SCL,EXP skill
+    class RETRO loop

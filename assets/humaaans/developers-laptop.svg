@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 760 760" width="760" height="760">
+  <rect width="760" height="760" rx="48" fill="#EEF2FF"/>
+  <g transform="translate(0, 0)"><g transform="translate(0, 602)"><title>Objects/Scene/Floor Wood</title>
+    <g id="Objects/Scene/Floor-Wood" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="floor" fill="#D9B98C" x="0" y="20" width="760" height="130"></rect>
+        <rect id="skirting" fill="#C49A6C" x="0" y="0" width="760" height="22"></rect>
+        <rect id="skirting-shadow" fill-opacity="0.12" fill="#000000" x="0" y="20" width="760" height="6"></rect>
+        <rect id="plank-1" fill-opacity="0.08" fill="#5A3E22" x="120" y="26" width="3" height="124"></rect>
+        <rect id="plank-2" fill-opacity="0.08" fill="#5A3E22" x="300" y="26" width="3" height="124"></rect>
+        <rect id="plank-3" fill-opacity="0.08" fill="#5A3E22" x="470" y="26" width="3" height="124"></rect>
+        <rect id="plank-4" fill-opacity="0.08" fill="#5A3E22" x="640" y="26" width="3" height="124"></rect>
+        <rect id="sheen" fill-opacity="0.10" fill="#FFFFFF" x="0" y="26" width="760" height="14"></rect>
+    </g></g>
+  <g transform="translate(56, 84) scale(0.9)"><title>Objects/Scene/Office Window</title>
+    <g id="Objects/Scene/Office-Window" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="frame" fill="#AFB9C5" x="6" y="6" width="188" height="188" rx="6"></rect>
+        <rect id="sky" fill="#C1DEE2" x="16" y="16" width="168" height="168"></rect>
+        <rect id="sky-low" fill="#D8ECEF" x="16" y="120" width="168" height="64"></rect>
+        <circle id="sun" fill="#FF9B21" cx="146" cy="56" r="20"></circle>
+        <rect id="cloud" fill="#FFFFFF" x="36" y="62" width="72" height="20" rx="10"></rect>
+        <rect id="cloud-2" fill="#FFFFFF" fill-opacity="0.8" x="58" y="40" width="48" height="14" rx="7"></rect>
+        <rect id="mullion-v" fill="#AFB9C5" x="96" y="16" width="8" height="168"></rect>
+        <rect id="mullion-h" fill="#AFB9C5" x="16" y="96" width="168" height="8"></rect>
+        <rect id="sill" fill="#C5CFD6" x="0" y="190" width="200" height="10" rx="3"></rect>
+    </g></g>
+  <g transform="translate(636, 86)"><title>Objects/Scene/Wall Clock</title>
+    <g id="Objects/Scene/Wall-Clock" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle id="ring" fill="#AFB9C5" cx="45" cy="45" r="42"></circle>
+        <circle id="ring-shadow" fill-opacity="0.12" fill="#000000" cx="45" cy="45" r="42"></circle>
+        <circle id="ring-top" fill="#C5CFD6" cx="45" cy="42" r="40"></circle>
+        <circle id="face" fill="#FFFFFF" cx="45" cy="45" r="35"></circle>
+        <rect id="tick-12" fill="#AFB9C5" x="43" y="14" width="4" height="8" rx="2"></rect>
+        <rect id="tick-6" fill="#AFB9C5" x="43" y="68" width="4" height="8" rx="2"></rect>
+        <rect id="tick-3" fill="#AFB9C5" x="68" y="43" width="8" height="4" rx="2"></rect>
+        <rect id="tick-9" fill="#AFB9C5" x="14" y="43" width="8" height="4" rx="2"></rect>
+        <rect id="minute-hand" fill="#191847" x="43" y="20" width="4" height="27" rx="2"></rect>
+        <rect id="hour-hand" fill="#FF9B21" x="45" y="43" width="22" height="4" rx="2"></rect>
+        <circle id="hub" fill="#191847" cx="45" cy="45" r="4"></circle>
+    </g></g>
+  <g transform="translate(60, 452)"><title>Objects/Scene/Plant</title>
+    <g id="Objects/Scene/Plant" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <ellipse id="leaf-far" fill="#69A1AC" cx="30" cy="100" rx="9" ry="30" transform="rotate(-44 30 100)"></ellipse>
+        <ellipse id="leaf-left" fill="#89C5CC" cx="42" cy="92" rx="12" ry="38" transform="rotate(-26 42 92)"></ellipse>
+        <ellipse id="leaf-right" fill="#89C5CC" cx="78" cy="92" rx="12" ry="38" transform="rotate(26 78 92)"></ellipse>
+        <ellipse id="leaf-center" fill="#69A1AC" cx="60" cy="72" rx="13" ry="46"></ellipse>
+        <ellipse id="leaf-vein" fill="#4F818A" cx="60" cy="74" rx="3" ry="40"></ellipse>
+        <polygon id="pot" fill="#B28B67" points="36,120 84,120 77,176 43,176"></polygon>
+        <polygon id="pot-shade" fill-opacity="0.12" fill="#000000" points="64,120 84,120 77,176 60,176"></polygon>
+        <rect id="rim" fill="#997659" x="32" y="112" width="56" height="10" rx="2"></rect>
+    </g></g></g>
+  <g transform="translate(215, 380)"><!-- Generator: Sketch 52.4 (67378) - http://www.bohemiancoding.com/sketch -->
+    <title>Bottom/Sitting/Skinny Jeans 1</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Bottom/Sitting/Skinny-Jeans-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Objects/Seat/Cube" transform="translate(10.000000, 42.000000)">
+            <g id="Seat" transform="translate(55.000000, 0.000000)">
+                <polygon id="Seat-Stuff" fill="#C5CFD6" points="27.6226415 0 104.877193 0 115 124 0 124"></polygon>
+                <polygon id="Seat-Stuff" fill-opacity="0.1" fill="#000000" points="27.6226415 0 51.3828011 0 65.6037736 124 0 124"></polygon>
+            </g>
+        </g>
+        <path d="M257.953294,20.7561262 C266.190093,15.8101469 280.009488,22.164715 280,29.2384154 C279.971611,50.4029106 260.656682,150.1511 259.648224,156.456711 C258.639766,162.762321 247.83665,164.42787 247.20755,156.477375 C246.206544,143.826795 244.3468,100.033121 246.20755,79.7626522 C246.975628,71.3954284 247.802807,63.4267637 248.617148,56.3175946 C238.481902,74.6206031 222.807229,100.825998 201.593128,134.933778 L190.076573,129.672175 C199.120166,99.8760987 206.535776,78.8408618 212.323403,66.5664641 C222.233227,45.5497154 231.525307,27.551672 235.436043,21.2120072 C241.587634,11.2397104 252.295462,14.7191925 257.953294,20.7561262 Z" id="Skin" fill="#B28B67"></path>
+        <path d="M208.819223,123.340112 L213.936922,21.8299349 C217.625361,4.27739957 248.84365,12.4235349 248.830812,21.8299349 C248.801666,43.1853748 235.973522,116.956762 235.964839,123.319261 L208.819223,123.340112 Z" id="LegLower" fill="#1F28CF" transform="translate(228.825019, 67.419630) rotate(20.000000) translate(-228.825019, -67.419630) "></path>
+        <g id="Accessories/Shoe/Flat-Sneaker" transform="translate(215.500000, 133.000000) rotate(30.000000) translate(-215.500000, -133.000000) translate(185.000000, 113.000000)" fill="#E4E4E4">
+            <path d="M2.67813181,25.4019242 C1.55937727,28.3884109 1,30.6229931 1,32.1056708 C1,33.908957 1.3004142,36.5404001 1.90124261,40 C3.99318117,40 22.7937852,40 58.3030548,40 C59.768738,35.1545073 58.9226607,32.5385816 55.7648228,32.1522232 C52.606985,31.7658647 49.9837155,31.4170139 47.8950143,31.1056708 L21.6799926,19.4188835 C21.1755635,19.1940064 20.584344,19.4206282 20.359467,19.9250573 C20.35562,19.9336867 20.3518954,19.9423702 20.3482945,19.9511052 L18.6632131,24.038695 C15.7398812,25.4026522 13.3643706,26.0846307 11.5366811,26.0846307 C10.0517269,26.0846307 8.00099246,25.4849054 5.38447792,24.2854549 L5.38448339,24.285443 C4.38038273,23.8251478 3.19325534,24.2659892 2.73296014,25.2700899 C2.71312074,25.3133681 2.69483298,25.3573409 2.67813181,25.4019242 Z" id="shoe"></path>
+        </g>
+        <g id="Accessories/Shoe/Flat-Sneaker" transform="translate(242.000000, 126.000000)" fill="#E4E4E4">
+            <path d="M2.67813181,25.4019242 C1.55937727,28.3884109 1,30.6229931 1,32.1056708 C1,33.908957 1.3004142,36.5404001 1.90124261,40 C3.99318117,40 22.7937852,40 58.3030548,40 C59.768738,35.1545073 58.9226607,32.5385816 55.7648228,32.1522232 C52.606985,31.7658647 49.9837155,31.4170139 47.8950143,31.1056708 L21.6799926,19.4188835 C21.1755635,19.1940064 20.584344,19.4206282 20.359467,19.9250573 C20.35562,19.9336867 20.3518954,19.9423702 20.3482945,19.9511052 L18.6632131,24.038695 C15.7398812,25.4026522 13.3643706,26.0846307 11.5366811,26.0846307 C10.0517269,26.0846307 8.00099246,25.4849054 5.38447792,24.2854549 L5.38448339,24.285443 C4.38038273,23.8251478 3.19325534,24.2659892 2.73296014,25.2700899 C2.71312074,25.3133681 2.69483298,25.3573409 2.67813181,25.4019242 Z" id="shoe"></path>
+        </g>
+        <path d="M282.770373,36.4330278 C282.770373,63 270.1536,124.970293 270.145616,130.820112 L243,130.840963 C246.973277,75.5454811 248.382172,47.5998928 247.226683,47.0041979 C245.49345,46.1106556 176.175838,53.9250306 155.386358,53.9250306 C125.407825,53.9250306 113.006307,35.0203971 112,-4.40536496e-13 L171.386358,-4.40536496e-13 C183.477954,1.29386693 246.548825,14.0152568 269.972097,18.3884129 C280,20.2606358 282.770373,29.1145109 282.770373,36.4330278 Z" id="Leg-and-Butt" fill="#2B44FF"></path>
+    </g></g>
+  <g transform="translate(237, 300)"><!-- Generator: Sketch 52.4 (67378) - http://www.bohemiancoding.com/sketch -->
+    <title>Body/Hoodie</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Body/Hoodie" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M190.781205,92.2114854 L222.679476,115.635084 C231.330944,117.969562 238.558965,120.874047 244.363541,124.34854 C245.734683,125.597945 247.391836,128.128197 241.70538,127.690906 C236.018925,127.253615 230.01796,127.049392 229.233339,128.988954 C228.448719,130.928516 231.889854,133.24802 230.303794,135.864997 C229.246421,137.609648 224.250967,133.234999 215.31743,122.74105 L183.729774,109.642447 L190.781205,92.2114854 Z M68.3079281,93.0198914 L89.2053198,93.1020711 C76.3021447,134.755739 69.3363474,156.856914 68.3079281,159.405597 C65.9939846,165.140133 70.8906002,173.873732 72.9845874,178.567103 C66.1645409,181.61887 66.8912241,170.316929 58.2879189,174.319492 C50.4352209,177.972846 44.4616931,184.59248 35.3890352,178.994371 C34.2736052,178.306117 33.0512757,175.714714 36.0045784,173.68967 C43.3623323,168.644547 53.9653015,159.814672 55.3979297,156.908251 C57.3515741,152.944826 61.6549068,131.648706 68.3079281,93.0198914 Z" id="Skin" fill="#8E5B3D"></path>
+        <path d="M122.731734,9.58031077 L131.216685,7.34914009 C165.5935,32.1628362 183.361709,84.0563407 224.996623,108.72736 L216.58973,121.240539 C147.889238,118.771641 125.383314,55.5469019 122.731734,9.58031077 Z" id="Coat-Back" fill="#E87613" transform="translate(173.864178, 64.294840) rotate(5.000000) translate(-173.864178, -64.294840) "></path>
+        <path d="M90,114 C124.671756,114 150.175573,114 166.511451,114 C170.007634,114 169.348845,108.951637 168.84345,106.404206 C163.010588,77.0037663 140.241304,45.3115155 140.241304,3.4607303 L118.1718,0 C99.917485,29.3584068 93.6048263,65.5045499 90,114 Z" id="Shirt" fill="#DDE3E9"></path>
+        <path d="M90.6148413,28.8579585 C87.4095228,27.9365884 84.8712423,25.7876656 83,22.4111902 C74.933557,7.85607578 77.8467271,-0.157592785 86.4671964,-2.7917309 C95.0876658,-5.42586901 102.775319,-2.04281037e-14 116.510031,-7.10542736e-15 C117.257085,-6.21724894e-15 117.941303,0.0468325343 118.562683,0.140497603 L125.471587,0.534739944 C145.293986,67.7151944 150.760885,112.536948 141.872285,135 L81.6518141,135 C78.0838152,143.319871 74.6695413,150.319871 71.4089926,156 L55,156 C53.4556832,106.067091 65.327297,63.6864104 90.6148413,28.8579585 Z" id="Coat-Front" fill="#FF9B21"></path>
+        <path d="M94.7652287,100.497634 C96.6591508,116.344024 99.7374079,127.844812 104,135 L81.6518141,135 C85.813785,125.295103 90.1849231,113.794314 94.7652283,100.497633 Z" id="Shade" fill-opacity="0.1" fill="#000000"></path>
+    </g></g>
+  <g transform="translate(297, 226)"><!-- Generator: Sketch 52.4 (67378) - http://www.bohemiancoding.com/sketch -->
+    <title>Head/Front/Afro</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Head/Front/Afro" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M61,77.7068588 C72.4289379,77.7068588 76.5854974,64.0240838 83.0786187,56.5153483 C87.7243138,51.143002 95.6530795,52.7449442 98,45.2237762 C103.901542,26.3111237 88.1061086,13 67.5,13 C46.8938914,13 33,24.6742524 30,42.2237762 C27,59.7733 40.3938914,77.7068588 61,77.7068588 Z" id="Hair-Back" fill="#191847"></path>
+        <g id="Head" transform="translate(54.000000, 31.000000)" fill="#8E5B3D">
+            <path d="M8.26227388,34.4901268 C3.65436435,29.0813759 0.535634794,22.4528771 1.05677633,15.0254539 C2.55833022,-6.37502057 32.3485306,-1.66718886 38.1433414,9.13393292 C43.9381521,19.9350547 43.249578,47.3329958 35.7603014,49.2634576 C32.7735882,50.033323 26.4110012,48.1474609 19.935372,44.244306 L24,73 L0,73 L8.26227388,34.4901268 Z"></path>
+        </g>
+        <path d="M72.379769,51.7233675 C71.5077737,51.2620302 70.5086201,51 69.4466684,51 C66.0464589,51 63.2900445,53.6862915 63.2900445,57 C63.2900445,58.3524891 63.749225,59.6004592 64.5239446,60.6039231 C63.0651901,63.0083834 62.0695832,65.5346814 61.7432388,68.1317726 C56.6870351,68.1317726 38.2335803,49 56.6167901,31 C75,13 101.566014,38.6959598 93.5831606,40.1945268 C88.9934286,41.0561261 79.7498479,45.4379083 72.3797716,51.7233656 Z" id="Hair" fill="#191847"></path>
+    </g></g>
+  <g transform="translate(0, 0)"><g transform="translate(220, 355)"><title>Objects/Scene/Work Desk</title>
+    <g id="Objects/Scene/Work-Desk" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="surface" fill="#C5CFD6" x="0" y="40" width="320" height="22" rx="4"></rect>
+        <rect id="surface-highlight" fill="#DDE3E9" x="0" y="40" width="320" height="6" rx="4"></rect>
+        <rect id="surface-shadow" fill-opacity="0.1" fill="#000000" x="0" y="56" width="320" height="6"></rect>
+        <rect id="modesty-panel" fill="#DDE3E9" x="22" y="62" width="276" height="110"></rect>
+        <rect id="panel-shadow" fill-opacity="0.06" fill="#000000" x="22" y="62" width="276" height="110"></rect>
+        <rect id="panel-accent" fill="#89C5CC" x="22" y="62" width="276" height="5"></rect>
+        <rect id="drawer" fill="#C5CFD6" x="232" y="78" width="56" height="40" rx="2"></rect>
+        <rect id="drawer-handle" fill="#89C5CC" x="244" y="95" width="32" height="6" rx="3"></rect>
+        <rect id="leg-left" fill="#AFB9C5" x="28" y="172" width="16" height="28"></rect>
+        <rect id="leg-right" fill="#AFB9C5" x="276" y="172" width="16" height="28"></rect>
+    </g></g>
+  <g transform="translate(322, 318) scale(0.9)"><title>Objects/Prop/Laptop</title>
+    <g id="Objects/Prop/Laptop" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="lid" fill="#AFB9C5" x="18" y="6" width="94" height="62" rx="4"></rect>
+        <rect id="display" fill="#89C5CC" x="24" y="12" width="82" height="50"></rect>
+        <rect id="titlebar" fill="#191847" x="24" y="12" width="82" height="10"></rect>
+        <polygon id="deck" fill="#C5CFD6" points="8,68 122,68 130,84 0,84"></polygon>
+        <rect id="base-edge" fill="#AFB9C5" x="0" y="82" width="130" height="6" rx="3"></rect>
+    </g></g></g>
+</svg>

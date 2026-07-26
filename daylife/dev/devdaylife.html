@@ -1,0 +1,1320 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Claude Code Coach — strategy, architecture, and decisions">
+      
+      
+      
+        <link rel="canonical" href="https://kgn-git.github.io/3C/daylife/dev/devdaylife.html">
+      
+      
+      
+      
+      <link rel="icon" href="../../favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
+    
+    
+      
+        <title>Prompt: "A day in the life of a developer using 3C" — infographic - 3C</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.a40c8224.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/tokens.css">
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/3c.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#prompt-a-day-in-the-life-of-a-developer-using-3c-infographic" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="3C" class="md-header__button md-logo" aria-label="3C" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            3C
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Prompt: "A day in the life of a developer using 3C" — infographic
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kgn-git/3C" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kgn-git/3C
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../why-now.html" class="md-tabs__link">
+        
+  
+    
+  
+  Why now
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../get-started.html" class="md-tabs__link">
+        
+  
+    
+  
+  Get started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../maturity-model.html" class="md-tabs__link">
+        
+  
+    
+  
+  Maturity Model
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../l1-today.html" class="md-tabs__link">
+        
+  
+    
+  
+  What L1 ships
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../l2-today.html" class="md-tabs__link">
+        
+  
+    
+  
+  What L2 ships
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../for-developers.html" class="md-tabs__link">
+        
+  
+    
+  
+  For developers
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../coaching.html" class="md-tabs__link">
+        
+  
+    
+  
+  Coaching mode
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../for-eng-leaders.html" class="md-tabs__link">
+        
+  
+    
+  
+  For engineering leaders
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../uninstall-upgrade.html" class="md-tabs__link">
+        
+  
+    
+  
+  Uninstall
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../branding.html" class="md-tabs__link">
+        
+  
+    
+  
+  Branding
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../infographic/sdlc-infographic.html" class="md-tabs__link">
+          
+  
+  Infographics
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../for-ciso.html" class="md-tabs__link">
+        
+  
+    
+  
+  Security
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="https://github.com/kgn-git/3C/discussions" class="md-tabs__link">
+        
+  
+    
+  
+  Discussions
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="3C" class="md-nav__button md-logo" aria-label="3C" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    3C
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kgn-git/3C" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kgn-git/3C
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../why-now.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Why now
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../get-started.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Get started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../maturity-model.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Maturity Model
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../l1-today.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What L1 ships
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../l2-today.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What L2 ships
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../for-developers.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    For developers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../coaching.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Coaching mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../for-eng-leaders.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    For engineering leaders
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../uninstall-upgrade.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Uninstall
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../branding.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Branding
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Infographics
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            Infographics
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infographic/sdlc-infographic.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SDLC pipeline
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infographic/devdaylife-infographic.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Day in the life — developer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../for-ciso.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Security
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/kgn-git/3C/discussions" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Discussions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="prompt-a-day-in-the-life-of-a-developer-using-3c-infographic">Prompt: "A day in the life of a developer using 3C" — infographic<a class="headerlink" href="#prompt-a-day-in-the-life-of-a-developer-using-3c-infographic" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p>Source material on disk:
+<code>site/index.html</code>, <code>site/why-now.html</code>, <code>site/maturity-model.html</code>,
+<code>site/l1-today.html</code>, <code>site/l2-today.html</code>, <code>site/for-developers.html</code>,
+<code>site/coaching.html</code>, <code>site/branding.html</code>,
+<code>site/infographic/sdlc-infographic.html</code> (the visual template),
+<code>site/infographic/diagrams/*.mmd</code> (existing mermaid sources),
+<code>site/diagrams/{day-with-3c,journey,pillars}.svg</code>.</p>
+</blockquote>
+<hr />
+<h2 id="goal">Goal<a class="headerlink" href="#goal" title="Permanent link">&para;</a></h2>
+<p>Produce a <strong>multi-page, print-ready HTML infographic</strong> titled
+<strong>"A day in the life of a developer using 3C."</strong> It tells the working
+day of one engineer (call her <em>Maya</em>) who is shipping inside a team that
+has adopted <strong>3C — Claude Code Coach</strong> at <strong>L2 (v1.5.0, May 2026)</strong>, and
+it makes the workflow legible at a glance: one phase per page, one
+diagram per phase, one key message per phase.</p>
+<p>The deliverable is a <strong>standalone <code>.html</code> file</strong> that mirrors the
+structure, design system, and print posture of
+<code>site/infographic/sdlc-infographic.html</code> — same A4 portrait pages, same
+typography, same colour tokens, same badge / title / diagram / key-
+message / footer rhythm — so the new infographic sits next to the
+existing one as a sibling deliverable, not a one-off.</p>
+<h2 id="audience">Audience<a class="headerlink" href="#audience" title="Permanent link">&para;</a></h2>
+<p>A new engineer joining a team that already runs 3C at L2. Assumes
+general familiarity with Git, sprint-based agile workflows, TDD, and
+PR review, plus everyday use of Claude Code as her AI assistant — but
+zero prior knowledge of 3C itself, its slash commands, its rule files,
+its subagents, or its gate chain.</p>
+<h2 id="hard-constraints-maya-never-edits-code-or-tests-by-hand">Hard constraints — Maya never edits code or tests by hand<a class="headerlink" href="#hard-constraints-maya-never-edits-code-or-tests-by-hand" title="Permanent link">&para;</a></h2>
+<p>This is non-negotiable, and the writer must read this section before
+starting the diagrams.</p>
+<p><strong>Maya is an instructor, not a typist.</strong> Every code change, every test
+change, every fix, every refactor in this infographic happens through
+<strong>Claude Code</strong> (her AI assistant) or through one of the <strong><code>/3c-*</code>
+slash commands</strong> — <em>never</em> by Maya opening a file in her IDE and
+editing it manually. This is true even for:</p>
+<ul>
+<li>writing the assertions in a TDD test (she prompts <code>/3c-test</code> or
+  Claude Code with the assertions she wants in natural language; the
+  skill or the assistant types them)</li>
+<li>fixing a failing test (she re-prompts Claude Code with the
+  diagnosis, or dispatches the <code>architect</code> / <code>code-reviewer</code> subagent
+  for a second opinion, and lets the assistant apply the fix)</li>
+<li>tightening an issue body that came back too vague (she iterates
+  with <code>/3c-create-issue</code> until it is right)</li>
+<li>correcting a coaching-mode rule violation (she re-prompts Claude
+  Code with the rationale she just read in the coaching segment)</li>
+</ul>
+<p>Maya <strong>does</strong> type freely in three places, and only these three:</p>
+<ol>
+<li><strong>Prompts</strong> — to Claude Code, to the slash commands, to subagents.</li>
+<li><strong>Issue / PR comments</strong> in GitHub.</li>
+<li><strong>Config-style decisions</strong> — picking the next issue, choosing a
+   branch name, approving a destructive-operation prompt with <code>y</code>,
+   running <code>/3c-bypass --reason="..."</code> for a real hot-fix.</li>
+</ol>
+<p>If a phase seems to demand hand-editing, that is a signal the phase is
+under-specified — re-prompt or re-dispatch instead. The infographic
+should reinforce this discipline visibly: in every diagram, the arrow
+that changes code is labelled with the slash command or the assistant
+that did the typing.</p>
+<h2 id="what-to-establish-on-the-cover-page">What to establish on the cover page<a class="headerlink" href="#what-to-establish-on-the-cover-page" title="Permanent link">&para;</a></h2>
+<p>Before the seven phase pages, a cover page establishes:</p>
+<ul>
+<li><strong>The premise.</strong> 3C is <em>AI engineering alignment</em>: keeping every team
+  member's AI assistant working from the same conventions, the same
+  workflow, and the same quality bar. Without it, every session is
+  locally optimal but the aggregate is <em>locally optimal, globally
+  incoherent</em> (<code>site/why-now.html</code>).</li>
+<li><strong>The three pillars</strong> — Standards (<code>CLAUDE.md</code> under a hard
+  150-instruction cognitive budget, <code>.claude/rules/</code>, the architecture
+  pattern library, the security policy templates), <strong>Workflow</strong> (the
+  slash commands), <strong>Quality</strong> (the gate chain). <code>site/diagrams/pillars.svg</code>
+  may be inlined or recreated as a small inset.</li>
+<li><strong>The L2 surface area Maya uses today</strong> — slash commands
+  <code>/3c-create-issue</code>, <code>/3c-implement</code>, <code>/3c-review</code>, <code>/3c-test</code>,
+  <code>/3c-drift</code>, <code>/3c-standards history</code>, <code>/3c-explain &lt;rule-id&gt;</code>,
+  <code>/3c-deploy</code>, <code>/3c-bug</code>, <code>/3c-onboard</code>, <code>/3c-onboard-guide</code>,
+  <code>/3c-bypass</code>; the crew orchestrators <code>/3c-review-board</code>,
+  <code>/3c-project-manager</code>, <code>/3c-programme-manager</code>; the eight review
+  agents <code>architect</code>, <code>code-reviewer</code>, <code>security-reviewer</code>,
+  <code>test-author</code>, <code>product-owner</code>, <code>ux-expert</code>, <code>qa-reviewer</code>,
+  <code>journey-architect</code>; gate
+  chain Post-Edit Validation (&lt; 300 ms) → Pre-Commit (&lt; 10 s) →
+  Coverage Gate + Security Scan Gate (&lt; 60 s) → Drift Detector
+  (on-demand).</li>
+<li><strong>Coaching mode</strong> — ON by default; teaching segment shape
+  (<code>——— 3c coaching ———</code> block) shown verbatim in a sidebar so the
+  reader recognises it later; goes terse after <code>TERSE_AFTER = 2</code>
+  sightings of the same rule by the same developer.</li>
+<li><strong>The brand caveat</strong> (one line, drawn from <code>site/branding.html</code>) —
+  if this team has run <code>npx 3c init --brand="Acme"</code> and chosen the slug
+  <code>acme</code>, the reader will see <code>/acme-review</code> in their terminal instead of
+  <code>/3c-review</code>; the slash <em>prefix</em> is brand-controlled, the upstream
+  code is not. The infographic uses the unbranded <code>/3c-*</code> names
+  throughout for clarity.</li>
+<li><strong>The honesty discipline</strong> — 3C deliberately under-claims; reversal
+  is <code>git revert</code> of one PR; no source code leaves the workstation.</li>
+</ul>
+<h2 id="page-by-page-structure">Page-by-page structure<a class="headerlink" href="#page-by-page-structure" title="Permanent link">&para;</a></h2>
+<p>The infographic is <strong>10 A4 portrait pages</strong>, in this order:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Page</th>
+<th>Diagram</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Cover</td>
+<td>inlined <code>pillars.svg</code> mini-inset</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Phase 1 — Intake → issue creation</td>
+<td><strong>mermaid flowchart</strong> — inputs to issue</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Phase 2 — Technical enrichment</td>
+<td><strong>mermaid sequenceDiagram</strong> — Maya ↔ architect ↔ /3c-explain</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Phase 3 — Batch backlog refinement</td>
+<td><strong>mermaid flowchart</strong> — funnel: 18 raw → cleaned set</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Phase 4 — Sprint assembly</td>
+<td><strong>mermaid flowchart</strong> — checklist crossings</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Phase 5 — One issue, end-to-end</td>
+<td><strong>mermaid stateDiagram-v2</strong> — the /3c-implement loop with gates</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Phase 6 — Working the rest of the sprint</td>
+<td><strong>mermaid flowchart</strong> — compounding loop, coaching going terse</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Phase 7 — Manual end-user testing</td>
+<td><strong>mermaid sequenceDiagram</strong> — Maya → /3c-test integration → /3c-deploy → /3c-bug</td>
+</tr>
+<tr>
+<td>8</td>
+<td>End-of-day reflection — Personal Local Insights Dashboard</td>
+<td>small <strong>mermaid pie or bar</strong> mock-up of dashboard sections</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Closing — common mistakes + pinnable checklist</td>
+<td>no diagram; six "mistake → correction" cards + the checklist</td>
+</tr>
+</tbody>
+</table>
+<h2 id="design-system-copy-from-sdlc-infographichtml">Design system — copy from sdlc-infographic.html<a class="headerlink" href="#design-system-copy-from-sdlc-infographichtml" title="Permanent link">&para;</a></h2>
+<p>The visual brief is <em>exactly</em> the existing infographic's stylesheet —
+do not invent a new design language. The writer should re-use:</p>
+<ul>
+<li><strong>A4 portrait pages</strong>, 210 × 297 mm, with <code>padding: 14mm 14mm</code>,
+  <code>page-break-after: always</code>; cover and closing get <code>padding: 18mm 16mm</code>.</li>
+<li><strong>Fonts</strong>: <code>Inter</code> (300/400/500/600/700/800/900) for everything,
+  <code>JetBrains Mono</code> for tags, badges, page numbers, and prompt/event
+  snippets. Both from <code>fonts.googleapis.com</code>.</li>
+<li><strong>Colour tokens</strong> — re-use the existing CSS custom properties exactly:
+  <code>--indigo-{50,100,500,600,700,900}</code>, <code>--slate-{50,100,200,500,700,900}</code>,
+  <code>--amber-{100,600}</code>, <code>--emerald-{50,500,700}</code>. Indigo for orchestration
+  and skills; amber for shared-context / rationales / coaching; emerald
+  for quality gates passing; red (<code>#FEE2E2</code> / <code>#DC2626</code> / <code>#7F1D1D</code>) for
+  failure / refusal states.</li>
+<li><strong>Per-page chrome</strong>: a <code>.page-header</code> with a left-side <code>.badge</code>
+  (mono-font, <code>01 · INTAKE</code> style) and a right-side <code>.page-num</code>
+  (<code>1 / 7</code>); an H2 <code>.diagram-title</code> (~26pt, weight 800,
+  letter-spacing <code>-0.02em</code>); a <code>.diagram-subtitle</code> (~12pt); the
+  <code>.diagram-wrap</code> (use <code>.tall</code> for sequence diagrams, <code>.xl</code> for the
+  Phase 5 state machine); a <code>.key-message</code> indigo-tinted box at the
+  bottom (<code>.key-label</code> mono uppercase + <code>.key-text</code> 13.5pt weight 500);
+  a <code>.page-footer</code> with the phase name on the left and a
+  rule / artefact reference on the right.</li>
+<li><strong>Cover page</strong>: gradient background, eyebrow, large <code>.cover-title</code>
+  (~48pt with one <code>&lt;span&gt;</code> accent), <code>.cover-sub</code>, three <code>.hl</code>
+  highlight cards in a 3-col grid, <code>.cover-meta</code> strip with version
+  and <code>3C — Claude Code Coach</code> brand block.</li>
+<li><strong>Closing page</strong>: gradient background, <code>.closing-head</code> eyebrow,
+  <code>.closing-title</code> (~40pt), <code>.closing-body</code> (~14pt), a 2-col
+  <code>.takeaway-grid</code> of six <code>.takeaway</code> cards (numbered), and a
+  <code>.closing-cta</code> strip with the GitHub source and the topic tags.</li>
+</ul>
+<p>The writer should literally open <code>site/infographic/sdlc-infographic.html</code>,
+copy its <code>&lt;style&gt;</code> block wholesale, and adapt only what the new content
+requires (e.g. adding a small "coaching segment" callout style and a
+prompt/snippet style).</p>
+<h2 id="diagram-requirements-one-per-phase">Diagram requirements — one per phase<a class="headerlink" href="#diagram-requirements-one-per-phase" title="Permanent link">&para;</a></h2>
+<p>All diagrams are <strong>mermaid sources</strong>. The writer should commit a <code>.mmd</code>
+file per diagram into <code>site/infographic/diagrams/</code> following the
+existing naming pattern (<code>f-intake.mmd</code>, <code>g-enrichment.mmd</code>,
+<code>h-batch.mmd</code>, <code>i-sprint-assembly.mmd</code>, <code>j-implement.mmd</code>,
+<code>k-sprint-throughput.mmd</code>, <code>l-uat.mmd</code>, <code>m-dashboard.mmd</code>), pre-render
+each to SVG with the same toolchain (<code>puppeteer.config.json</code> is already
+in the folder), and inline the SVGs into the HTML at the
+<code>&lt;!--SVG_F--&gt;</code> style placeholders.</p>
+<p>Every mermaid source must begin with the same <code>%%{init: ...}%%</code> theme
+block the existing five diagrams use, so the typography and palette
+match. Pick the right diagram type per phase:</p>
+<h3 id="diagram-f-phase-1-intake-issue-creation-flowchart-td">Diagram F — Phase 1 — Intake → issue creation (<code>flowchart TD</code>)<a class="headerlink" href="#diagram-f-phase-1-intake-issue-creation-flowchart-td" title="Permanent link">&para;</a></h3>
+<p>Nodes: <strong>PM Brief</strong>, <strong>Slack Thread</strong>, <strong>CSV (customer feedback)</strong> →
+<strong><code>/3c-create-issue</code> prompt</strong> → <em>iteration loop</em> → <strong>GitHub Issue</strong>
+(structured: title, user-story, scope, out-of-scope, ACs, deps, source-
+link). Label the iteration arrow <code>Maya re-prompts /3c-create-issue</code>
+explicitly. Annotate the GitHub Issue node with the 6 required fields
+as a sub-list. Footer reference: <code>L2 Multi-PM MCP adapter · GitHub
+default at L1</code>.</p>
+<h3 id="diagram-g-phase-2-technical-enrichment-sequencediagram">Diagram G — Phase 2 — Technical enrichment (<code>sequenceDiagram</code>)<a class="headerlink" href="#diagram-g-phase-2-technical-enrichment-sequencediagram" title="Permanent link">&para;</a></h3>
+<p>Actors: <strong>Maya</strong>, <strong><code>architect</code></strong> (subagent), <strong><code>/3c-explain</code></strong> (skill),
+<strong>GitHub Issue</strong>. Steps: Maya dispatches <code>architect</code> with the issue
+context; <code>architect</code> returns affected components / approach / risks /
+open questions / complexity / testing strategy; Maya reads, identifies
+one proposed pattern that doesn't fit the codebase, runs
+<code>/3c-explain &lt;rule-id&gt;</code> against a rule she's not sure about, pushes
+back to <code>architect</code> with the rationale, gets a revised analysis,
+appends it to the GitHub Issue. <strong>Critical: no node labelled "Maya
+edits the analysis"</strong> — every change to the analysis is made by
+<code>architect</code> after Maya's prompt or by <code>/3c-implement</code> later.</p>
+<h3 id="diagram-h-phase-3-batch-backlog-refinement-flowchart-lr">Diagram H — Phase 3 — Batch backlog refinement (<code>flowchart LR</code>)<a class="headerlink" href="#diagram-h-phase-3-batch-backlog-refinement-flowchart-lr" title="Permanent link">&para;</a></h3>
+<p>Funnel: <strong>18 raw items</strong> → <strong>batch prompt template</strong> →
+<strong><code>/3c-create-issue</code> ×18</strong> → near-duplicate detection (a diamond
+decision node; merged duplicates loop back into the count) →
+<strong>human-clarification flag</strong> (a small branch off for items that are
+internally contradictory or missing context — these do <em>not</em> proceed)
+→ <strong><code>/3c-drift</code></strong> check that no issue references a non-existent rule →
+<strong>cleaned set</strong> (e.g. 12 ready, 4 merged, 2 flagged for human
+clarification). The diagram makes the <em>funnel shape</em> visible: 18 in,
+12 out, with the lost mass labelled.</p>
+<h3 id="diagram-i-phase-4-sprint-assembly-flowchart-tb">Diagram I — Phase 4 — Sprint assembly (<code>flowchart TB</code>)<a class="headerlink" href="#diagram-i-phase-4-sprint-assembly-flowchart-tb" title="Permanent link">&para;</a></h3>
+<p>A <strong>5-check grid</strong> above a single output node. Top row, left to right:
+<strong>overlap scan</strong>, <strong>AC contradiction scan</strong>, <strong>missing-deps scan</strong>,
+<strong>coverage-gap scan</strong>, <strong>doc-uniformity scan</strong> — each invoked by
+<code>/3c-review</code> adapted for sprint scope, with <code>/3c-standards history</code> as
+a side-node feeding <em>all five</em>. Bottom node: <strong>Tightened sprint
+(deduplicated, internally consistent)</strong> with one issue explicitly
+<strong>punted</strong> (a side-arrow labelled <code>needs ADR-level discussion</code>).</p>
+<h3 id="diagram-j-phase-5-one-issue-end-to-end-statediagram-v2">Diagram J — Phase 5 — One issue, end-to-end (<code>stateDiagram-v2</code>)<a class="headerlink" href="#diagram-j-phase-5-one-issue-end-to-end-statediagram-v2" title="Permanent link">&para;</a></h3>
+<p>The most detailed diagram — give it the <code>.xl</code> diagram-wrap class.
+States, in order: <code>Issue selected</code> → <code>/3c-implement plan</code> →
+<code>branch created</code> → <code>/3c-test scaffolds failing tests</code> →
+<code>Claude Code implements</code> → <code>Post-Edit Validator (&lt;300ms)</code> →
+<em>loop back to Claude Code on failure</em> → <code>git stage + commit</code> →
+<code>Pre-Commit Hook (&lt;10s)</code> (lint / types / unit / secret) → <em>loop back
+on failure with coaching segment shown</em> → <code>Coverage Gate +
+Security Scan Gate (&lt;60s)</code> → <code>/3c-implement PR description</code> →
+<code>/3c-review-board</code> → <em>eight-agent panel (architect, code-reviewer,
+security-reviewer, test-author, product-owner, ux-expert,
+qa-reviewer, journey-architect)</em> → <code>reconciled verdict (blocking / advisory / clean)</code> →
+<em>Maya prompts Claude Code to apply the applicable findings</em> →
+<code>merge to main</code>. Show the verdict as <strong>advisory</strong> — Maya still
+decides. Every edge that changes code is labelled with <strong>who typed
+it</strong> (<code>Claude Code applies</code>, <code>/3c-implement applies</code>,
+<code>/3c-test scaffolds</code>) — never Maya.</p>
+<h3 id="diagram-k-phase-6-working-the-rest-of-the-sprint-flowchart-td">Diagram K — Phase 6 — Working the rest of the sprint (<code>flowchart TD</code>)<a class="headerlink" href="#diagram-k-phase-6-working-the-rest-of-the-sprint-flowchart-td" title="Permanent link">&para;</a></h3>
+<p>A <strong>compounding loop</strong>: <code>Issue 2</code> → <code>Issue 3</code> → <code>Issue 4</code>, each
+running through a compact box labelled <code>/3c-implement (full loop, see
+Diagram J)</code>. Off to the side, three loops that get tighter each
+iteration:
+- <strong>Coaching loop</strong>: verbose teaching segment on issue 2 → terse on
+  issue 4 (annotate <code>TERSE_AFTER = 2</code>).
+- <strong>Pattern-reuse loop</strong>: prompt to <code>/3c-implement</code> references the
+  merged PR (<code>"follow the shape of #1284"</code>) — no re-pasting of
+  standards into context (annotate <code>150-instruction budget held</code>).
+- <strong>Subagent loop</strong>: <code>architect</code> dispatched once for a hard design
+  call; <code>security-reviewer</code> dispatched before PR for an auth-touching
+  change.</p>
+<p>A side-branch shows the <strong>hot-fix path</strong>:
+<code>prod incident → /3c-bypass --reason="prod hotfix #INC-417" →
+JSONL event recorded → ship → follow-up issue auto-created</code>.</p>
+<p>A second side-branch shows <strong>the tricky-failure path</strong> (this is the
+one to design carefully so it stays consistent with the hard
+constraint above): <code>Pre-Commit fails on tricky test → Maya reads
+coaching rationale → Maya prompts Claude Code: "the rule is right,
+the test asserts the wrong contract, regenerate it" → Claude Code
+revises the test → gate passes</code>. <strong>No node labelled "Maya edits the
+test in IDE"</strong> — instead, the diagram makes visible that the rule's
+authority routes the fix through the assistant, not around it.</p>
+<h3 id="diagram-l-phase-7-manual-end-user-testing-sequencediagram">Diagram L — Phase 7 — Manual end-user testing (<code>sequenceDiagram</code>)<a class="headerlink" href="#diagram-l-phase-7-manual-end-user-testing-sequencediagram" title="Permanent link">&para;</a></h3>
+<p>Actors: <strong>Maya</strong>, <strong><code>/3c-test --mode=integration</code></strong>, <strong><code>/3c-deploy</code></strong>,
+<strong>Staging environment</strong>, <strong><code>/3c-bug</code></strong>, <strong>GitHub Issue</strong>. Sequence:
+Maya invokes <code>/3c-test --mode=integration</code> for a UI/integration
+change → skill scaffolds a UAT checklist + edge cases (test-author
+subagent assists) → Maya invokes <code>/3c-deploy --env=staging</code> → deploy
+runs pre-flight checks → health check passes → Maya runs the
+checklist manually in staging → finds a regression → Maya invokes
+<code>/3c-bug</code> → skill captures OS, runtime, project state, recent
+commits, scrubbed env vars → structured report appended to original
+GitHub Issue → Maya comments and reopens or marks done. Annotate the
+production-deploy arrow with <code>requires --yes</code>.</p>
+<h3 id="diagram-m-end-of-day-reflection-pie-or-flowchart">Diagram M — End-of-day reflection (<code>pie</code> or <code>flowchart</code>)<a class="headerlink" href="#diagram-m-end-of-day-reflection-pie-or-flowchart" title="Permanent link">&para;</a></h3>
+<p>A small mock-up of the <strong>Personal Local Insights Dashboard</strong> at
+<code>.3c/dashboard.html</code>. Three panels:
+- <em>Rules that fired most for me today</em> (top 5 list)
+- <em>First-try gate pass-rate</em> (one big number, e.g. "78%")
+- <em>Post-edit validation deltas trend</em> (sparkline placeholder)</p>
+<p>Annotate plainly: <strong>local-only · gitignored · never egressed at L2 ·
+your manager cannot see this</strong>.</p>
+<h2 id="phase-narratives-body-copy-under-each-diagram">Phase narratives — body copy under each diagram<a class="headerlink" href="#phase-narratives-body-copy-under-each-diagram" title="Permanent link">&para;</a></h2>
+<p>The diagram carries the structure; the <strong>body copy</strong> (placed inside
+the <code>.diagram-subtitle</code> slot and, for richer phases, an additional
+small prose block above the <code>.key-message</code>) carries Maya's voice. Each
+phase narrative should:</p>
+<ul>
+<li>Open with one sentence on <strong>what Maya is doing and why</strong>.</li>
+<li>Show <strong>one concrete artifact verbatim</strong> in a <code>.snippet</code> block:</li>
+<li>Phase 1 — the literal <code>/3c-create-issue</code> prompt she sends, then
+    the resulting issue body (truncated to ~10 lines).</li>
+<li>Phase 2 — the <code>architect</code> subagent's output snippet (3–4 bullet
+    points), then a one-line <code>/3c-explain &lt;rule-id&gt;</code> invocation and
+    its reply.</li>
+<li>Phase 3 — the batch-prompt template (5 lines) and the human-
+    clarification flag email/comment (2 lines).</li>
+<li>Phase 4 — the <code>/3c-review</code> adapted prompt and its summary of
+    findings (5 lines).</li>
+<li>
+<p>Phase 5 — the <strong>coaching teaching segment exactly as shipped</strong>:</p>
+<div class="highlight"><pre><span></span><code>——— 3c coaching ———
+• import-order
+Why:  imports should be ordered stdlib, third-party, local —
+      fewer merge conflicts in long-lived branches.
+Do:   import { readFile } from &quot;node:fs/promises&quot;;
+Docs: https://github.com/kgn-git/praise/blob/main/strategy/adr/AD-04-local-storage.md
+———————————————
+</code></pre></div>
+<p>plus a <strong>JSONL gate event</strong> verbatim (one line).
+  - Phase 6 — a <strong>terse coaching segment</strong> (bullet + <code>Why:</code> only) and
+the JSONL <strong>bypass event</strong> with the <code>reason</code> field populated.
+  - Phase 7 — a <code>/3c-bug</code> structured report header (5 lines, scrubbed).
+- Close with the three call-outs (as compact bullets, not boxes —
+  the <code>.key-message</code> box already does the visual emphasis):
+  - <em>What 3C does for you here.</em>
+  - <em>What Maya still owns here.</em> (always a thinking / judgement
+action, never a typing action)
+  - <em>What 3C deliberately does NOT do here.</em></p>
+</li>
+</ul>
+<p>Cap each phase body copy at <strong>~180 words</strong> so the page stays scannable
+and the diagram dominates.</p>
+<h2 id="closing-page-page-9-common-mistakes-checklist">Closing page (page 9) — common mistakes + checklist<a class="headerlink" href="#closing-page-page-9-common-mistakes-checklist" title="Permanent link">&para;</a></h2>
+<p>Two stacked sections inside the existing <code>.closing</code> layout:</p>
+<p><strong>Common mistakes — six cards</strong> (re-use the <code>.takeaway-grid</code> /
+<code>.takeaway</code> styles, but number them with a red <code>.takeaway-num</code> accent
+instead of indigo, and rename the class for the rendered file).
+Each card is one sentence on the mistake plus one sentence on the
+correction. Required mistakes:</p>
+<ol>
+<li>Rubber-stamping AI-generated issues; <strong>correction:</strong> read every
+   issue body before publishing — <code>/3c-create-issue</code> produces what you
+   prompt, not what you mean.</li>
+<li>Pasting the entire standards doc into prompts; <strong>correction:</strong> trust
+   the <code>.claude/rules/</code> library and the 150-instruction budget — re-
+   pasting blows the budget and degrades the model.</li>
+<li>Bypassing without a real <code>--reason</code>; <strong>correction:</strong> the JSONL event
+   is permanent and reviewable — <em>"forgot why"</em> in the reason field is
+   how teams lose trust in the bypass mechanism.</li>
+<li>Treating coaching segments as noise; <strong>correction:</strong> the second
+   sighting goes terse on its own — read it the first time and the
+   framework gets quieter on its own.</li>
+<li>Running <code>/3c-implement</code> on issues that haven't been enriched;
+   <strong>correction:</strong> enrich first (Phase 2), then implement — <code>architect</code>
+   is cheaper before code than after.</li>
+<li>Trying to edit code or tests by hand to "save time";
+   <strong>correction:</strong> the assistant types, you instruct — every hand-edit
+   is a missed opportunity for the rule library to evolve.</li>
+</ol>
+<p><strong>Pinnable checklist</strong> (single card spanning both columns, ≤ 20 lines).
+Required content, in this order:</p>
+<ul>
+<li>Slash commands by phase: <code>/3c-create-issue</code> · <code>/3c-explain</code> ·
+  <code>/3c-drift</code> · <code>/3c-review</code> · <code>/3c-standards history</code> ·
+  <code>/3c-implement</code> · <code>/3c-test [--mode=integration]</code> ·
+  <code>/3c-deploy --env=&lt;…&gt;</code> · <code>/3c-bug</code> · <code>/3c-bypass --reason="..."</code>.</li>
+<li>Subagents and when to dispatch each: <code>architect</code> (design call),
+  <code>security-reviewer</code> (auth/crypto/input-handling), <code>code-reviewer</code>
+  (pre-PR findings), <code>test-author</code> (test scaffolding inside <code>/3c-test</code>),
+  <code>product-owner</code> (scope/priority), <code>ux-expert</code> (screen-level UX),
+  <code>qa-reviewer</code> (AC traceability), <code>journey-architect</code> (journey
+  reachability) — or convene all eight at once with
+  <code>/3c-review-board</code>, which reconciles their findings into one verdict.</li>
+<li>Gate chain in firing order: Post-Edit Validation (&lt; 300 ms) →
+  Pre-Commit (&lt; 10 s) → Coverage + Security Scan (&lt; 60 s) → Drift
+  (on-demand).</li>
+<li>Bypass syntax: <code>/3c-bypass --reason="&lt;one-line&gt;"</code> — logged, never
+  silent.</li>
+<li>File paths to remember: <code>CLAUDE.md</code> (root, ≤ 150 instructions),
+  <code>.claude/rules/&lt;rule&gt;.rationale.yaml</code>, <code>.3c/coaching.yaml</code>,
+  <code>.3c/coaching/&lt;user&gt;.yaml</code>,
+  <code>.3c/events/*.jsonl</code>, <code>.3c/dashboard.html</code>.</li>
+<li>The one rule that summarises the rest: <strong>the assistant types, you
+  instruct.</strong></li>
+</ul>
+<h2 id="tone">Tone<a class="headerlink" href="#tone" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Match the 3C house voice — calm, honest, mildly understated, names
+  what it does NOT do at every step. Read <code>site/why-now.html</code> and
+  <code>site/for-developers.html</code> and lift the cadence directly.</li>
+<li>Match the existing infographic's punchy diagram titles ("Skills talk
+  to skills — on purpose."). Each of the seven phase titles should
+  read as a single, opinionated sentence with a full stop. Examples
+  the writer can refine but should not copy verbatim:</li>
+<li>Phase 1: <em>"Raw inputs in. Reviewable issue out."</em></li>
+<li>Phase 5: <em>"One issue, six gates, zero hand-edits."</em></li>
+<li>Phase 6: <em>"Compounding is the product."</em></li>
+<li>No emoji except the small lifecycle emoji already used in the
+  source <code>.mmd</code> files (🔧 🏁 📚 🔄). Do not introduce new emoji.</li>
+</ul>
+<h2 id="deliverable-file-layout">Deliverable file layout<a class="headerlink" href="#deliverable-file-layout" title="Permanent link">&para;</a></h2>
+<p>When the writer is done, the following files should exist under
+<code>marketing/infographic/</code>:</p>
+<p>The <code>.html</code> file is self-contained (fonts via Google Fonts CDN, SVGs
+inlined at the <code>&lt;!--SVG_F--&gt;</code> style placeholders, no JS required), so
+it both renders in a browser and prints cleanly to PDF via the same
+puppeteer pipeline the existing infographic uses.</p>
+<h2 id="non-goals-do-not-produce-any-of-this">Non-goals — do not produce any of this<a class="headerlink" href="#non-goals-do-not-produce-any-of-this" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Do not pitch 3C. The audience has already adopted it; no "why 3C"
+  page.</li>
+<li>Do not cover L3 (Observe) or L4 (Optimise). They are out of scope.</li>
+<li>Do not cover compliance, regulatory framing, or productivity-
+  tracking framing — those are explicitly not what 3C is.</li>
+<li>Do not invent slash commands, subagents, gates, or behaviours that
+  aren't documented in the source pages above.</li>
+<li>Do not add any diagram in which Maya types code or tests directly.
+  If a phase seems to require it, re-design the diagram to route the
+  change through Claude Code or <code>/3c-implement</code>.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/kgn-git/3C" target="_blank" rel="noopener" title="kgn-git/3C on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.tabs", "toc.integrate", "content.code.copy", "search.suggest"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.60a45f97.min.js"></script>
+      
+        <script src="../../assets/javascripts/carousel.js"></script>
+      
+    
+  </body>
+</html>

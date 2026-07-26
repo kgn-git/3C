@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 210" role="img" aria-label="L1 Standardise: shared conventions in every AI's context, plus core workflow skills and a local pre-commit gate.">
+  <title>L1 — Standardise</title>
+  <desc>Team conventions (CLAUDE.md, versioned rules, OWASP-aligned security templates) feed every AI session; the core workflow skills run a standardised lifecycle; a local pre-commit gate checks lint, types, tests and secrets before review. Reversible in one PR.</desc>
+  <style>text{font-family:Inter,system-ui,sans-serif}.t{fill:#0F172A}.m{fill:#64748B}.s{font-family:Inter,Georgia,serif;fill:#0F172A}.b{fill:#F8FAFC;stroke:#E2E8F0}</style>
+  <rect width="660" height="210" rx="18" fill="#F8FAFC"/>
+  <text x="330" y="30" text-anchor="middle" class="s" font-size="16">L1 — Standardise</text>
+  <text x="330" y="48" text-anchor="middle" class="m" font-size="11">conventions in every AI's context · reversible in one PR</text>
+
+  <rect class="b" x="24" y="66" width="150" height="92" rx="9" stroke-width="1"/>
+  <text x="99" y="86" text-anchor="middle" class="t" font-size="11" font-weight="700">Standards in context</text>
+  <text x="99" y="106" text-anchor="middle" class="m" font-size="10">CLAUDE.md</text>
+  <text x="99" y="122" text-anchor="middle" class="m" font-size="10">.claude/rules/</text>
+  <text x="99" y="138" text-anchor="middle" class="m" font-size="10">OWASP templates</text>
+
+  <path d="M178,112 L214,112" stroke="#4F46E5" stroke-width="2.4" stroke-linecap="round" marker-end="url(#a)"/>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#4F46E5"/></marker></defs>
+
+  <rect class="b" x="218" y="66" width="200" height="92" rx="9" stroke-width="1"/>
+  <text x="318" y="86" text-anchor="middle" class="t" font-size="11" font-weight="700">Core workflow skills</text>
+  <text x="318" y="106" text-anchor="middle" class="m" font-size="10">/create-issue · /implement</text>
+  <text x="318" y="122" text-anchor="middle" class="m" font-size="10">/review · /test</text>
+  <text x="318" y="138" text-anchor="middle" class="m" font-size="10">standardised lifecycle</text>
+
+  <path d="M422,112 L458,112" stroke="#4F46E5" stroke-width="2.4" stroke-linecap="round" marker-end="url(#a)"/>
+
+  <rect x="462" y="66" width="174" height="92" rx="9" fill="#F8FAFC" stroke="#047857" stroke-width="1.4"/>
+  <text x="549" y="86" text-anchor="middle" class="t" font-size="11" font-weight="700">Local pre-commit gate</text>
+  <text x="549" y="106" text-anchor="middle" class="m" font-size="10">lint · types</text>
+  <text x="549" y="122" text-anchor="middle" class="m" font-size="10">tests · secrets</text>
+  <text x="549" y="138" text-anchor="middle" fill="#047857" font-size="10" font-weight="700">before review</text>
+
+  <text x="330" y="186" text-anchor="middle" class="m" font-size="11">Shipped — the question it answers: is our team's AI converging or diverging?</text>
+</svg>

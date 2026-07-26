@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>3C — Claude Code Coach — Engineer One-Pager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Mulish:wght@400;600;700&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#f3ecda;--ink:#33291c;--honey:#d99528;--honey-dk:#b6781c;--sand:#e8c987;--sage:#5e7d5b;--muted:#8a7550;--card:#fbf6e9;--line:#e3d4b3}
+  @page{size:A4;margin:0}*{box-sizing:border-box}
+  html,body{margin:0;padding:0;font-family:'Mulish',system-ui,sans-serif;color:var(--ink);background:#fff;-webkit-font-smoothing:antialiased}
+  .page{width:210mm;height:297mm;padding:14mm 15mm;display:flex;flex-direction:column;background:var(--paper);background-image:radial-gradient(#e7d9ba .6px,transparent .6px);background-size:7px 7px}
+  header{border-bottom:2px solid var(--honey);padding-bottom:5mm;margin-bottom:6mm}
+  .eyebrow{font-family:'Space Mono',monospace;font-size:9pt;letter-spacing:.16em;text-transform:uppercase;color:var(--honey-dk);font-weight:600}
+  h1{font-family:'Newsreader',Georgia,serif;font-size:24pt;line-height:1.12;font-weight:600;letter-spacing:-.01em;margin:3mm 0 2mm;color:var(--ink)}
+  h1 span{color:var(--honey-dk)}
+  .sub{font-size:11pt;color:#5a4f3d}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:6mm;flex:1}
+  section{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--honey);border-radius:3mm;padding:5mm 6mm}
+  section.buys{border-left-color:var(--sage)}
+  h2{font-family:'Newsreader',serif;font-size:13pt;font-weight:600;margin:0 0 3mm;color:var(--ink)}
+  h2 .tag{font-family:'Space Mono',monospace;font-size:8pt;color:var(--muted);font-weight:400}
+  p,li{font-size:9.5pt;line-height:1.5;color:#5a4f3d;margin:0 0 2.5mm}
+  ul{margin:0;padding-left:4.5mm}strong{color:var(--ink)}
+  code{font-family:'Space Mono',monospace;font-size:8.5pt;color:var(--honey-dk)}
+  footer{margin-top:6mm;padding-top:4mm;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:8pt;color:var(--muted)}
+</style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <div class="eyebrow">3C · Claude Code Coach · Engineer One-Pager</div>
+    <h1>What L1 actually <span>ships today.</span></h1>
+    <div class="sub">Nine features, four workflow skills, one pre-commit hook — and a one-command exit.</div>
+  </header>
+  <div class="grid">
+    <section>
+      <h2>What you get week one <span class="tag">// 9 features</span></h2>
+      <p><strong>Standards.</strong> A <code>CLAUDE.md</code> generator inside the 150-instruction budget, a git-based rules engine with glob matching, an architecture-pattern library, and OWASP-aligned security templates.</p>
+      <p><strong>Workflow.</strong> Four Agent Skills for issue creation, implementation, review, and test generation.</p>
+      <p><strong>Quality.</strong> A pre-commit hook engine running lint, types, tests, and secret-scan.</p>
+    </section>
+    <section>
+      <h2>The 4 workflow skills <span class="tag">// /3c-*</span></h2>
+      <ul>
+        <li><code>/3c-create-issue</code> — structured GitHub issues; no auto-attached state.</li>
+        <li><code>/3c-implement</code> — fetch → plan → branch → TDD → review → PR, with a destructive-op interlock. Never auto-merges or force-pushes.</li>
+        <li><code>/3c-review</code> — read-only checklist over the branch diff; findings with file/line/severity.</li>
+        <li><code>/3c-test</code> — tests in your framework + conventions; never overwrites existing tests unprompted.</li>
+      </ul>
+    </section>
+    <section>
+      <h2>The pre-commit hook <span class="tag">// 10s budget</span></h2>
+      <p>One synchronous orchestrator runs every configured gate before a commit lands — lint, typecheck, unit tests, secret scan — inside a 10-second budget on a 500-file repo.</p>
+      <p>A failed gate blocks the commit with a remediation message. An emergency bypass exists and is audited — it's a recorded decision, not a back door.</p>
+    </section>
+    <section class="buys">
+      <h2>Leaving is one command <span class="tag">// reversible</span></h2>
+      <p><code>git revert</code> the PR that added <code>.claude/</code> (or <code>git rm -r .claude/</code>). What remains afterwards: nothing of 3C's.</p>
+      <p>No daemon, no global package, no workstation state, no backend. The <code>.claude/</code> tree is the entire footprint — plain version-controlled files you can read before you trust them.</p>
+    </section>
+  </div>
+  <footer>
+    <span>https://kgn-git.github.io/3C/</span>
+    <span>https://github.com/kgn-git/praise · MIT · v1.0.0</span>
+  </footer>
+</main>
+</body>
+</html>

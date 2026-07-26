@@ -1,0 +1,1060 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Claude Code Coach — strategy, architecture, and decisions">
+      
+      
+      
+        <link rel="canonical" href="https://kgn-git.github.io/3C/maturity-model.html">
+      
+      
+        <link rel="prev" href="get-started.html">
+      
+      
+        <link rel="next" href="l1-today.html">
+      
+      
+      <link rel="icon" href="favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
+    
+    
+      
+        <title>Maturity Model - 3C</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.a40c8224.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/tokens.css">
+    
+      <link rel="stylesheet" href="assets/stylesheets/3c.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#3c-the-maturity-model-as-a-portfolio-plan" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="3C" class="md-header__button md-logo" aria-label="3C" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            3C
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Maturity Model
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kgn-git/3C" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kgn-git/3C
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="why-now.html" class="md-tabs__link">
+        
+  
+    
+  
+  Why now
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="get-started.html" class="md-tabs__link">
+        
+  
+    
+  
+  Get started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="maturity-model.html" class="md-tabs__link">
+        
+  
+    
+  
+  Maturity Model
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="l1-today.html" class="md-tabs__link">
+        
+  
+    
+  
+  What L1 ships
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="l2-today.html" class="md-tabs__link">
+        
+  
+    
+  
+  What L2 ships
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="for-developers.html" class="md-tabs__link">
+        
+  
+    
+  
+  For developers
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="coaching.html" class="md-tabs__link">
+        
+  
+    
+  
+  Coaching mode
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="for-eng-leaders.html" class="md-tabs__link">
+        
+  
+    
+  
+  For engineering leaders
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="uninstall-upgrade.html" class="md-tabs__link">
+        
+  
+    
+  
+  Uninstall
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="branding.html" class="md-tabs__link">
+        
+  
+    
+  
+  Branding
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="infographic/sdlc-infographic.html" class="md-tabs__link">
+          
+  
+  Infographics
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="for-ciso.html" class="md-tabs__link">
+        
+  
+    
+  
+  Security
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="https://github.com/kgn-git/3C/discussions" class="md-tabs__link">
+        
+  
+    
+  
+  Discussions
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="3C" class="md-nav__button md-logo" aria-label="3C" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    3C
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kgn-git/3C" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kgn-git/3C
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="why-now.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Why now
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="get-started.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Get started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Maturity Model
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="maturity-model.html" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Maturity Model
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#locate-your-team" class="md-nav__link">
+    <span class="md-ellipsis">
+      Locate your team
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-four-levels" class="md-nav__link">
+    <span class="md-ellipsis">
+      The four levels
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="The four levels">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#l1-standardise" class="md-nav__link">
+    <span class="md-ellipsis">
+      L1 — Standardise
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#l2-automate" class="md-nav__link">
+    <span class="md-ellipsis">
+      L2 — Automate
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#l3-observe" class="md-nav__link">
+    <span class="md-ellipsis">
+      L3 — Observe
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#l4-optimise" class="md-nav__link">
+    <span class="md-ellipsis">
+      L4 — Optimise
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="l1-today.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What L1 ships
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="l2-today.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What L2 ships
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="for-developers.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    For developers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="coaching.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Coaching mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="for-eng-leaders.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    For engineering leaders
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="uninstall-upgrade.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Uninstall
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="branding.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Branding
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Infographics
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            Infographics
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="infographic/sdlc-infographic.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SDLC pipeline
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="infographic/devdaylife-infographic.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Day in the life — developer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="for-ciso.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Security
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/kgn-git/3C/discussions" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Discussions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="3c-the-maturity-model-as-a-portfolio-plan">3C — the maturity model as a portfolio plan<a class="headerlink" href="#3c-the-maturity-model-as-a-portfolio-plan" title="Permanent link">&para;</a></h1>
+<p>L1 → L4 isn't a checklist to complete. It's a set of places a team can choose to be, each answering a real question and each carrying its own, clearly-stated level of commitment. Adopt only the level whose risk you actually need to retire — and stay there as long as it serves you. Most teams find L1 is plenty for a long time.</p>
+<h2 id="locate-your-team">Locate your team<a class="headerlink" href="#locate-your-team" title="Permanent link">&para;</a></h2>
+<p>Three yes/no questions. No JavaScript — expand the answer that matches.</p>
+<details class="question">
+<summary>1. Do two engineers using AI on the same repo produce structurally consistent code without a reviewer forcing it?</summary>
+<p><strong>No → you are at L0.</strong> What you need next: <strong>L1 (Standardise)</strong> — shared conventions in every AI's context. Start at <a href="l1-today.html">what L1 ships today</a>.</p>
+<p><strong>Yes → you are at least L1.</strong> Continue to question 2.</p>
+</details>
+<details class="question">
+<summary>2. Are your quality gates (lint, types, tests, secrets) run automatically before code review, every time?</summary>
+<p><strong>No → you are at L1.</strong> What you need next: <strong>L2 (Automate)</strong> — the gates stop being aspirational.</p>
+<p><strong>Yes → you are at least L2.</strong> Continue to question 3.</p>
+</details>
+<details class="question">
+<summary>3. Can you show, with data, how AI is affecting your team's quality and velocity — and where the ROI is?</summary>
+<p><strong>No → you are at L2.</strong> What you need next: <strong>L3 (Observe)</strong> — telemetry becomes dashboards: quality trends, velocity, process adherence, ROI.</p>
+<p><strong>Yes → you are at L3+.</strong> L3 (Observe) and L4 (Optimise) are on the <strong>roadmap</strong> — under active study, not yet available. What they aim at: dashboards and ROI attribution (L3), then governance that adapts to change complexity (L4).</p>
+</details>
+<h2 id="the-four-levels">The four levels<a class="headerlink" href="#the-four-levels" title="Permanent link">&para;</a></h2>
+<figure class="fg-figure">
+<img src="assets/diagrams/journey.svg" alt="The L1 to L4 journey; you are at L1, and every stop is a fine place to stay">
+<figcaption>You can stop at any level. Stopping is not "incomplete adoption" — it's a decision.</figcaption>
+</figure>
+
+<h3 id="l1-standardise">L1 — Standardise<a class="headerlink" href="#l1-standardise" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p><strong>Shipped — May 2026</strong></p>
+</blockquote>
+<ul>
+<li><strong>The question it answers:</strong> <em>Is our team's AI converging or diverging?</em></li>
+<li><strong>Business risk addressed:</strong> architectural drift — every AI session locally optimal, globally incoherent.</li>
+<li><strong>Commitment level:</strong> <em>Reversible — one PR to remove.</em></li>
+<li><strong>Calendar anchor:</strong> internal — adopt in one week (a focused adoption sprint), on your team's own calendar.</li>
+</ul>
+<p><img alt="L1 Standardise: shared conventions (CLAUDE.md, rules, OWASP templates) feed the core workflow skills and a local pre-commit gate" src="assets/diagrams/maturity-l1.svg" /></p>
+<h3 id="l2-automate">L2 — Automate<a class="headerlink" href="#l2-automate" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p><strong>Shipped</strong></p>
+</blockquote>
+<ul>
+<li><strong>The question it answers:</strong> <em>Is our quality bar automatic or aspirational?</em></li>
+<li><strong>Business risk addressed:</strong> review-burden inflation — humans hand-checking what a gate should catch.</li>
+<li><strong>Commitment level:</strong> <em>Rebuildable — telemetry can be disabled.</em></li>
+<li><strong>Calendar anchor:</strong> internal — paced to your team's quality-debt curve. A focused half-week adoption sprint from install to measurable deltas.</li>
+</ul>
+<p>L2 adds 21 features layered on top of L1's 9: extended rule families (CWE Top 25, microservices, modular-monolith), automated quality gates (Post-Edit Validation, Coverage Gate, Security Scan Gate, Architecture Boundary Enforcer, Hook Telemetry), workflow expansions (Deployment Skill, Bug Report, Onboarding, Multi-PM MCP, <code>init --brand</code> white-label scaffolder, extended test frameworks), and DX additions (Interactive Onboarding Guide, Coaching Mode, Standards Rationale Database, extended starter subagents <code>architect</code> + <code>security-reviewer</code>, Personal Local Insights Dashboard). The L2 surface then grew a <strong>multi-agent crew</strong> — eight specialist review agents (<code>architect</code>, <code>code-reviewer</code>, <code>security-reviewer</code>, <code>test-author</code>, <code>product-owner</code>, <code>ux-expert</code>, <code>qa-reviewer</code>, <code>journey-architect</code>) coordinated by three orchestrator skills (<code>/3c-review-board</code> for a reconciled multi-lens verdict, <code>/3c-project-manager</code> for the per-issue delivery pipeline, <code>/3c-programme-manager</code> for dependency-ordered delivery across a workspace's projects). It automates the review-and-delivery <em>process</em> a senior engineer runs by hand, and its per-change verdicts are the raw material the L3 layer rolls up. The full inventory and adoption path: <a href="l2-today.html">what L2 ships today</a>.</p>
+<p><img alt="L2 Automate: post-edit, coverage and security-scan gates run before review every time; hook telemetry captured; coaching mode for juniors" src="assets/diagrams/maturity-l2.svg" /></p>
+<h3 id="l3-observe">L3 — Observe<a class="headerlink" href="#l3-observe" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p><strong>Roadmap — not yet available.</strong> Under active study; the specification is being refined from adopter feedback. No release date.</p>
+</blockquote>
+<ul>
+<li><strong>The question it aims to answer:</strong> <em>Can we see, with data, how AI is affecting our quality, velocity, and ROI?</em></li>
+<li><strong>Business risk it targets:</strong> decision-blindness — scaling AI-assisted change with no measured view of its quality and velocity impact.</li>
+<li><strong>Direction:</strong> telemetry captured at L2 becomes team-observability dashboards — quality trends, velocity/DORA, ROI, process adherence, a cross-project view.</li>
+<li><strong>Want to shape it?</strong> L3 is where adopter input matters most — <a href="https://github.com/kgn-git/3C/discussions">tell us what you'd need to see</a>.</li>
+</ul>
+<p><img alt="L3 Observe: telemetry becomes team-observability dashboards — quality trends, velocity/DORA, ROI, process adherence, cross-project view" src="assets/diagrams/maturity-l3.svg" /></p>
+<h3 id="l4-optimise">L4 — Optimise<a class="headerlink" href="#l4-optimise" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p><strong>Roadmap — not yet available.</strong> The furthest-out level; under study, its shape will be refined from adopter feedback as L3 lands. No release date.</p>
+</blockquote>
+<ul>
+<li><strong>The question it aims to answer:</strong> <em>Is our governance adapting to our complexity?</em></li>
+<li><strong>Business risk it targets:</strong> governance ossification — one-size rules taxing simple changes, under-guarding complex ones.</li>
+<li><strong>Direction:</strong> a closed loop where telemetry feeds retrospectives that evolve standards, with complexity-adapted governance and policy-as-code.</li>
+<li><strong>Want to shape it?</strong> <a href="https://github.com/kgn-git/3C/discussions">Start a discussion</a> — the earlier the input, the more it counts.</li>
+</ul>
+<p><img alt="L4 Optimise: a closed loop where telemetry feeds retrospectives that evolve standards, with complexity-adapted governance and policy-as-code" src="assets/diagrams/maturity-l4.svg" /></p>
+<div class="admonition note learning">
+<p class="admonition-title">What we're learning</p>
+<p>Teams tell us the hardest part is deciding <em>not</em> to climb a level they don't need yet. If you're weighing that, we're happy to think it through with you: <a href="https://github.com/kgn-git/3C/discussions">start a discussion</a>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/kgn-git/3C" target="_blank" rel="noopener" title="kgn-git/3C on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.tabs", "toc.integrate", "content.code.copy", "search.suggest"], "search": "assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.60a45f97.min.js"></script>
+      
+        <script src="assets/javascripts/carousel.js"></script>
+      
+    
+  </body>
+</html>

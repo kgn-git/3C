@@ -1,0 +1,41 @@
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#EEF2FF','primaryTextColor':'#1E1B4B','primaryBorderColor':'#4F46E5','lineColor':'#6366F1','fontFamily':'Inter, sans-serif','fontSize':'16px'}}}%%
+flowchart TB
+    REVIEW["/3c-review<br/><i>adapted for sprint scope</i>"]
+    HISTORY["/3c-standards history<br/><i>which rules existed when?</i>"]
+
+    OVERLAP["1. Overlap scan<br/><i>two issues touching the same file</i>"]
+    AC_CONTRA["2. AC contradiction scan<br/><i>issue A's AC2 vs B's AC1</i>"]
+    DEPS["3. Missing-deps scan<br/><i>issue C needs D, but D isn't in scope</i>"]
+    COVERAGE["4. Coverage-gap scan<br/><i>module changed, tests not updated</i>"]
+    DOCS["5. Doc-uniformity scan<br/><i>same shape across all 12 issue bodies</i>"]
+
+    PUNT["⚠️ 1 issue punted<br/><i>needs ADR-level discussion</i>"]
+    TIGHT["✅ Tightened sprint<br/><i>deduplicated, internally consistent</i>"]
+
+    REVIEW --> OVERLAP
+    REVIEW --> AC_CONTRA
+    REVIEW --> DEPS
+    REVIEW --> COVERAGE
+    REVIEW --> DOCS
+
+    HISTORY -.feeds.-> OVERLAP
+    HISTORY -.feeds.-> AC_CONTRA
+    HISTORY -.feeds.-> DEPS
+    HISTORY -.feeds.-> COVERAGE
+    HISTORY -.feeds.-> DOCS
+
+    OVERLAP --> TIGHT
+    AC_CONTRA --> TIGHT
+    DEPS --> TIGHT
+    COVERAGE --> TIGHT
+    DOCS --> PUNT
+    DOCS --> TIGHT
+
+    classDef skill fill:#EEF2FF,stroke:#4F46E5,color:#1E1B4B,stroke-width:1.5px
+    classDef check fill:#fff,stroke:#0F172A,color:#0F172A,stroke-width:1.5px
+    classDef warn fill:#FEE2E2,stroke:#DC2626,color:#7F1D1D,stroke-width:1.5px
+    classDef good fill:#ECFDF5,stroke:#10B981,color:#047857,stroke-width:2px
+    class REVIEW,HISTORY skill
+    class OVERLAP,AC_CONTRA,DEPS,COVERAGE,DOCS check
+    class PUNT warn
+    class TIGHT good

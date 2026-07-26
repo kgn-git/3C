@@ -1,0 +1,26 @@
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#ECFDF5','primaryTextColor':'#064E3B','primaryBorderColor':'#10B981','lineColor':'#059669','fontFamily':'Inter, sans-serif','fontSize':'16px'}}}%%
+flowchart LR
+  subgraph IMPL["🔧 During implementation"]
+    direction LR
+    G0["<b>Gate 0</b><br/>Unit tests<br/><i>npm test</i>"]
+    BUILD["<b>Build</b><br/><i>npm run build</i>"]
+    LINT["<b>Lint</b><br/><i>npm run lint</i>"]
+    MIG["<b>Migration</b><br/><i>db:migrate</i>"]
+    G1["<b>Gate 1</b><br/>Headless E2E<br/><i>AC-scoped</i>"]
+  end
+  subgraph CLOSE["🏁 Sprint close"]
+    G2["<b>Gate 2</b><br/>Headed E2E<br/><i>full journey</i>"]
+  end
+
+  G0 --> BUILD --> LINT --> MIG --> G1 --> G2
+  G2 -->|fail| FU["Follow-up issue<br/><small>retro-follow-up</small>"]
+  G2 -->|pass| CLOSED["✓ Close issue"]
+
+  classDef gate fill:#ECFDF5,stroke:#10B981,color:#064E3B,stroke-width:1.5px
+  classDef closegate fill:#D1FAE5,stroke:#059669,color:#064E3B,stroke-width:2px
+  classDef closed fill:#10B981,stroke:#047857,color:#fff,stroke-width:2px
+  classDef fail fill:#FEE2E2,stroke:#DC2626,color:#7F1D1D,stroke-width:1.5px
+  class G0,BUILD,LINT,MIG,G1 gate
+  class G2 closegate
+  class CLOSED closed
+  class FU fail

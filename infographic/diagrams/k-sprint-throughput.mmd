@@ -1,0 +1,59 @@
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#EEF2FF','primaryTextColor':'#1E1B4B','primaryBorderColor':'#4F46E5','lineColor':'#6366F1','fontFamily':'Inter, sans-serif','fontSize':'16px'}}}%%
+flowchart TD
+    I1["Issue #1284 ✅<br/><i>shipped via /3c-implement</i>"]
+    I2["Issue #1285<br/>/3c-implement loop<br/><i>(see Diagram J)</i>"]
+    I3["Issue #1286<br/>/3c-implement loop"]
+    I4["Issue #1287<br/>/3c-implement loop"]
+
+    COACH_V["📚 verbose coaching<br/>seg full Why / Do / Docs"]
+    COACH_T["✂️ terse coaching<br/>bullet + Why only<br/><i>TERSE_AFTER = 2</i>"]
+
+    REUSE["pattern-reuse loop<br/>prompt: 'follow the shape of #1284'<br/><i>no re-paste of standards</i>"]
+    BUDGET["✅ 150-instruction budget held"]
+
+    ARCH["architect dispatched once<br/><i>(hard design call on #1286)</i>"]
+    SEC["security-reviewer dispatched<br/><i>(auth-touching #1287)</i>"]
+
+    HOTFIX["🚨 prod incident<br/>/3c-bypass --reason='prod hotfix INC-417'"]
+    JSONL["JSONL bypass event recorded<br/>{...,'bypassed':true,'reason':'prod hotfix INC-417'}"]
+    FU["✏️ follow-up issue auto-created"]
+
+    TRICKY["pre-commit fails on tricky test"]
+    TR_READ["Maya reads coaching rationale"]
+    TR_PROMPT["Maya prompts Claude Code:<br/>'rule is right, test asserts wrong<br/>contract, regenerate it'"]
+    TR_PASS["✅ Claude Code revises test<br/>gate passes"]
+
+    I1 --> I2
+    I2 --> I3
+    I3 --> I4
+
+    I2 -.coach.-> COACH_V
+    I4 -.coach.-> COACH_T
+
+    I2 -.reuse.-> REUSE
+    REUSE --> BUDGET
+
+    I3 -.dispatch.-> ARCH
+    I4 -.dispatch.-> SEC
+
+    I3 --> HOTFIX
+    HOTFIX --> JSONL
+    JSONL --> FU
+
+    I3 --> TRICKY
+    TRICKY --> TR_READ
+    TR_READ --> TR_PROMPT
+    TR_PROMPT --> TR_PASS
+
+    classDef issue fill:#EEF2FF,stroke:#4F46E5,color:#1E1B4B,stroke-width:1.5px
+    classDef coachv fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:1.5px
+    classDef coacht fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:1.5px,stroke-dasharray:3 3
+    classDef ok fill:#ECFDF5,stroke:#10B981,color:#047857,stroke-width:1.5px
+    classDef warn fill:#FEE2E2,stroke:#DC2626,color:#7F1D1D,stroke-width:1.5px
+    class I1,I2,I3,I4 issue
+    class COACH_V coachv
+    class COACH_T coacht
+    class REUSE,ARCH,SEC issue
+    class BUDGET,TR_PASS ok
+    class HOTFIX,TRICKY warn
+    class JSONL,FU,TR_READ,TR_PROMPT issue

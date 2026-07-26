@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 460" role="img" font-family="'Inter','Segoe UI',system-ui,sans-serif">
+<title>3C governs across your AI coding stack</title>
+<desc>Four stacked layers. Top: the developer's IDE. Below it: the AI assistant (Copilot, Cursor, Claude Code, or Cline). Below that: the 3C governance layer — the band this product owns. Foundation: team conventions, quality gates, and the audit substrate. 3C does not replace the assistant; it governs across whichever assistants the team uses.</desc>
+<rect x="0" y="0" width="720" height="460" fill="#F8FAFC"/>
+<rect x="120" y="30" width="480" height="70" rx="10" fill="#64748B"/>
+<text x="360" y="70" text-anchor="middle" fill="#FFFFFF" font-size="20" font-weight="600">Developer's IDE</text>
+<path d="M360 100 L360 120" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+<rect x="80" y="120" width="560" height="80" rx="10" fill="#334155"/>
+<text x="360" y="150" text-anchor="middle" fill="#FFFFFF" font-size="18" font-weight="600">AI coding assistant</text>
+<text x="360" y="178" text-anchor="middle" fill="#E2E8F0" font-size="14">Copilot · Cursor · Claude Code · Cline</text>
+<path d="M360 200 L360 220" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+<rect x="40" y="220" width="640" height="90" rx="10" fill="#4F46E5"/>
+<text x="360" y="252" text-anchor="middle" fill="#FFFFFF" font-size="20" font-weight="700">3C governance layer</text>
+<text x="360" y="282" text-anchor="middle" fill="#E0E7FF" font-size="14">conventions in context · workflow skills · pre-commit gates</text>
+<path d="M360 310 L360 330" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+<rect x="40" y="330" width="640" height="90" rx="10" fill="#10B981"/>
+<text x="360" y="362" text-anchor="middle" fill="#FFFFFF" font-size="18" font-weight="600">Team conventions · quality gates · audit substrate</text>
+<text x="360" y="390" text-anchor="middle" fill="#ECFDF5" font-size="13">version-controlled, local-first, reversible</text>
+<defs>
+<marker id="a" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#334155"/></marker>
+</defs>
+</svg>

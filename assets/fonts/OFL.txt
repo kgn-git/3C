@@ -1,0 +1,19 @@
+Bundled here as self-hosted woff2 files so the site builds and renders with
+no external CDN dependency. All are licensed under the SIL Open Font License
+1.1 (https://scripts.sil.org/OFL). Each file is a Google Fonts `latin` subset.
+
+Deck identity (#236 — current):
+- inter.woff2          — Inter, variable weight axis (display + body)
+- jetbrainsmono.woff2  — JetBrains Mono, variable weight axis (code / tags)
+
+Field-guide identity (pre-#236 — retained for history):
+- mulish.woff2     — Mulish, weight axis 200..1000
+- newsreader.woff2 — Newsreader, weight axis 200..800
+- spacemono.woff2  — Space Mono, weight 400
+
+Sources:
+- https://fonts.google.com/specimen/Inter
+- https://fonts.google.com/specimen/JetBrains+Mono
+- https://fonts.google.com/specimen/Newsreader
+- https://fonts.google.com/specimen/Mulish
+- https://fonts.google.com/specimen/Space+Mono

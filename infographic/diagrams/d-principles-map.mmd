@@ -1,0 +1,36 @@
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#FEF3C7','primaryTextColor':'#78350F','primaryBorderColor':'#D97706','lineColor':'#92400E','fontFamily':'Inter, sans-serif','fontSize':'15px'}}}%%
+flowchart TB
+  subgraph SC["📚 _shared-context/"]
+    direction LR
+    PR["<b>process-rules.md</b><br/>TDD · branch · sizing · SD-007"]
+    CS["<b>code-standards.md</b><br/>SOLID · file limits"]
+    SB["<b>security-baseline.md</b><br/>secrets · RLS · OWASP"]
+    PAT["<b>patterns.md</b><br/>12 canonical patterns"]
+    QG["<b>quality-gates.md</b><br/>Gate 0 / 1 / 2"]
+  end
+
+  subgraph PH["🔄 Lifecycle phases"]
+    direction LR
+    PLAN["Plan &<br/>Enrich"]
+    DESIGN["Design"]
+    IMPL["Implement"]
+    REV["Review"]
+    CLOSE["Close &<br/>Retro"]
+  end
+
+  PR --> PLAN
+  PR --> IMPL
+  PR --> CLOSE
+  CS --> DESIGN
+  CS --> IMPL
+  SB --> DESIGN
+  SB --> IMPL
+  SB --> REV
+  PAT --> IMPL
+  QG --> IMPL
+  QG --> CLOSE
+
+  classDef ctx fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:1.5px
+  classDef phase fill:#EEF2FF,stroke:#4F46E5,color:#1E1B4B,stroke-width:1.5px
+  class PR,CS,SB,PAT,QG ctx
+  class PLAN,DESIGN,IMPL,REV,CLOSE phase

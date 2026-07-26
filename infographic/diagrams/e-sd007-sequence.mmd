@@ -1,0 +1,28 @@
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#EEF2FF','primaryTextColor':'#1E1B4B','primaryBorderColor':'#4F46E5','lineColor':'#6366F1','actorBkg':'#4F46E5','actorTextColor':'#fff','actorLineColor':'#312E81','fontFamily':'Inter, sans-serif','fontSize':'15px'}}}%%
+sequenceDiagram
+  autonumber
+  participant U as User
+  participant PGM as /programme-manager
+  participant PM as /project-manager
+  participant DEV as /developer
+  participant GH as GitHub
+
+  U->>PGM: implement issue #N
+  PGM->>GH: list prior sprint PRs
+  alt any prior PR still open
+    PGM-->>U: ❌ REFUSE · SD-007
+  else all prior merged
+    PGM->>GH: check cross-repo DEP-NNN
+    alt upstream not merged
+      PGM-->>U: ❌ REFUSE · cross-repo
+    else cleared
+      PGM->>PM: dispatch (SD-007 preamble)
+      PM->>DEV: invoke /developer for #N
+      DEV->>GH: re-verify (belt & braces)
+      alt gate now trips
+        DEV-->>PM: 🛑 HARD BLOCK
+      else cleared
+        DEV->>DEV: TDD → gates → review → handover → PR
+      end
+    end
+  end

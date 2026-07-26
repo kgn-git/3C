@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 480" role="img">
+  <title>The L2 feedback loop — hooks, telemetry, coaching, drift</title>
+  <desc>L2's automation loop: Claude Code edits a file, Post-Edit Validation fires immediately (under 300ms); the developer stages and commits, the Pre-Commit hook chain runs (lint, types, unit tests, secret scan); pre-PR, the Coverage Gate and Security Scan Gate run. Every gate writes a JSONL event regardless of pass, fail, or bypass. The Hook Telemetry events feed the Personal Local Insights Dashboard. When a gate fails and coaching mode is on, the failure message includes the rule's rationale from the Standards Rationale Database. Separately, the Standards Drift Detector runs on demand and audits the codebase against the current rules. Every loop arrow is a real code path that ships in v1.5.</desc>
+  <style>text{font-family:Inter,system-ui,sans-serif}.t{fill:#0F172A}.d{fill:#334155}.m{fill:#64748B}.s{font-family:Inter,Georgia,serif;fill:#0F172A}.acc{fill:#4F46E5}</style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#64748B"/>
+    </marker>
+    <marker id="arrow-acc" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#4F46E5"/>
+    </marker>
+  </defs>
+  <rect width="760" height="480" rx="18" fill="#F8FAFC"/>
+
+  <text x="380" y="40" text-anchor="middle" class="s" font-size="20">The L2 feedback loop</text>
+  <rect x="330" y="50" width="100" height="3" rx="1.5" fill="#4F46E5"/>
+  <text x="380" y="74" text-anchor="middle" class="m" font-size="12">every arrow is a code path that ships in v1.5 · none is aspirational</text>
+
+  <rect x="40" y="100" width="180" height="64" rx="12" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="130" y="125" text-anchor="middle" class="s" font-size="13">Claude Code edits a file</text>
+  <text x="130" y="146" text-anchor="middle" class="m" font-size="10.5">PreToolUse + PostToolUse boundary</text>
+
+  <path d="M220 132 L300 132" stroke="#64748B" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <rect x="300" y="100" width="200" height="64" rx="12" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="400" y="125" text-anchor="middle" class="s" font-size="13">Post-Edit Validation</text>
+  <text x="400" y="146" text-anchor="middle" class="m" font-size="10.5">&lt;300ms · imports · naming · arch</text>
+
+  <path d="M500 132 L580 132" stroke="#64748B" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <rect x="580" y="100" width="140" height="64" rx="12" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="650" y="125" text-anchor="middle" class="s" font-size="13">stage + commit</text>
+  <text x="650" y="146" text-anchor="middle" class="m" font-size="10.5">developer's keystroke</text>
+
+  <path d="M650 164 L650 200" stroke="#64748B" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <rect x="490" y="200" width="230" height="64" rx="12" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="605" y="225" text-anchor="middle" class="s" font-size="13">Pre-Commit hook chain</text>
+  <text x="605" y="246" text-anchor="middle" class="m" font-size="10.5">lint · types · unit · secret scan · &lt;10s</text>
+
+  <path d="M490 232 L380 232" stroke="#64748B" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <rect x="180" y="200" width="200" height="64" rx="12" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="280" y="225" text-anchor="middle" class="s" font-size="13">pre-PR gates</text>
+  <text x="280" y="246" text-anchor="middle" class="m" font-size="10.5">coverage gate · security scan gate</text>
+
+  <path d="M180 232 L100 232 L100 280" stroke="#64748B" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <rect x="34" y="280" width="240" height="76" rx="12" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="154" y="305" text-anchor="middle" class="s" font-size="13">Hook Telemetry</text>
+  <text x="154" y="326" text-anchor="middle" class="m" font-size="10.5">.${BRAND_SLUG}/events/*.jsonl</text>
+  <text x="154" y="344" text-anchor="middle" class="m" font-size="10.5">append-only · local-only · no egress</text>
+
+  <path d="M274 318 L340 318" stroke="#4F46E5" stroke-width="2" fill="none" marker-end="url(#arrow-acc)"/>
+
+  <rect x="340" y="280" width="240" height="76" rx="12" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="460" y="305" text-anchor="middle" class="s" font-size="13">Personal Local Insights Dashboard</text>
+  <text x="460" y="326" text-anchor="middle" class="m" font-size="10.5">.${BRAND_SLUG}/dashboard.html</text>
+  <text x="460" y="344" text-anchor="middle" class="m" font-size="10.5">your data, never your team's view</text>
+
+  <path d="M280 264 L280 280" stroke="#64748B" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <rect x="600" y="280" width="120" height="76" rx="12" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="660" y="305" text-anchor="middle" class="s" font-size="13">/3c-drift</text>
+  <text x="660" y="326" text-anchor="middle" class="m" font-size="10.5">on-demand audit</text>
+  <text x="660" y="344" text-anchor="middle" class="m" font-size="10.5">trend over time</text>
+
+  <path d="M460 356 L460 384" stroke="#4F46E5" stroke-width="2" fill="none" marker-end="url(#arrow-acc)"/>
+
+  <rect x="200" y="384" width="520" height="64" rx="12" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="460" y="409" text-anchor="middle" class="s" font-size="13">Coaching Mode + Standards Rationale Database</text>
+  <text x="460" y="430" text-anchor="middle" class="m" font-size="10.5">on gate failure: rule rationale + example + ADR / incident link · /3c-explain &lt;rule-id&gt;</text>
+
+  <path d="M200 416 L100 416 L100 356" stroke="#64748B" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+</svg>

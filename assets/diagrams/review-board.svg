@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 600" role="img">
+  <title>The review board — the 3C multi-agent crew</title>
+  <desc>/3c-review-board convenes seven read-only specialist agents on a change — architect, code-reviewer, security-reviewer, test-author, product-owner, ux-expert, qa-reviewer — then 3c reconcile deterministically de-duplicates findings the agents agree on, flags severity disagreements for a human, and ranks the rest into one verdict: blocking, advisory, or clean. The verdict is advisory: a human decides, and every git action is checkpointed. The orchestrator is a skill in the main thread; agents are dispatched one level deep with no nesting; everything is local-first.</desc>
+  <style>text{font-family:Inter,system-ui,sans-serif}.t{fill:#0F172A}.d{fill:#334155}.m{fill:#64748B}.s{font-family:Inter,Georgia,serif;fill:#0F172A}.l1{fill:#64748B}</style>
+  <defs>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="4.5" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 Z" fill="#94A3B8"/>
+    </marker>
+  </defs>
+  <rect width="760" height="600" rx="18" fill="#F8FAFC"/>
+
+  <text x="380" y="40" text-anchor="middle" class="s" font-size="20">The review board</text>
+  <rect x="330" y="50" width="100" height="3" rx="1.5" fill="#4F46E5"/>
+  <text x="380" y="74" text-anchor="middle" class="m" font-size="12">/3c-review-board convenes the panel, then reconciles one verdict</text>
+
+  <!-- input -->
+  <rect x="300" y="86" width="160" height="30" rx="15" fill="#FFFFFF" stroke="#C7D2FE"/>
+  <text x="380" y="106" text-anchor="middle" class="d" font-size="12">the change · branch diff</text>
+  <line x1="380" y1="116" x2="380" y2="128" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <!-- seven specialists -->
+  <rect x="80" y="132" width="600" height="216" rx="14" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="100" y="158" class="s" font-size="15">Seven specialist agents — read-only critics</text>
+  <text x="100" y="182" class="d" font-size="11.5">architect — boundary direction, coupling, ADR adherence</text>
+  <text x="100" y="206" class="d" font-size="11.5">code-reviewer — correctness, readability, team conventions</text>
+  <text x="100" y="230" class="d" font-size="11.5">security-reviewer — OWASP / CWE lenses, secrets, trust boundaries</text>
+  <text x="100" y="254" class="d" font-size="11.5">test-author — coverage + conventions  (the one writer — writes tests)</text>
+  <text x="100" y="278" class="d" font-size="11.5">product-owner — scope, priority, maturity-level fit</text>
+  <text x="100" y="302" class="d" font-size="11.5">ux-expert — user-journey &amp; interaction review</text>
+  <text x="100" y="326" class="d" font-size="11.5">qa-reviewer — acceptance-criteria traceability, edge cases</text>
+  <line x1="380" y1="350" x2="380" y2="372" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <!-- deterministic reconciliation (the highlighted core) -->
+  <rect x="220" y="376" width="320" height="60" rx="14" fill="#FFFFFF" stroke="#4F46E5" stroke-width="1.5"/>
+  <text x="380" y="400" text-anchor="middle" class="t" font-size="14" font-weight="600">3c reconcile — deterministic</text>
+  <text x="380" y="420" text-anchor="middle" class="m" font-size="10.5">de-dupe agreement · flag severity splits for a human · rank</text>
+  <line x1="380" y1="436" x2="380" y2="458" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <!-- verdict -->
+  <rect x="250" y="462" width="260" height="58" rx="14" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="380" y="486" text-anchor="middle" class="s" font-size="14">one verdict</text>
+  <text x="380" y="507" text-anchor="middle" class="d" font-size="12.5">blocking · advisory · clean</text>
+
+  <!-- honest limits -->
+  <text x="380" y="548" text-anchor="middle" class="m" font-size="11">advisory — a human decides · every git action checkpointed · local-first</text>
+  <text x="380" y="568" text-anchor="middle" class="l1" font-size="10.5">orchestrator skill in the main thread · agents dispatched one level deep · no nesting</text>
+</svg>

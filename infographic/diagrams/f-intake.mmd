@@ -1,0 +1,31 @@
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#EEF2FF','primaryTextColor':'#1E1B4B','primaryBorderColor':'#4F46E5','lineColor':'#6366F1','fontFamily':'Inter, sans-serif','fontSize':'16px'}}}%%
+flowchart TD
+    PM["📋 PM Brief<br/><i>one paragraph, two acceptance bullets</i>"]
+    SLACK["💬 Slack Thread<br/><i>screenshots, half-decided</i>"]
+    CSV["📊 CSV<br/><i>customer feedback rows</i>"]
+
+    PROMPT["/3c-create-issue prompt<br/><i>Maya describes intent in natural language</i>"]
+    DRAFT{{"draft issue"}}
+    REVIEW{"Maya reads<br/>the draft"}
+    LOOP["Maya re-prompts /3c-create-issue<br/><i>(scope too wide / AC vague / source link missing)</i>"]
+
+    ISSUE["📝 GitHub Issue<br/>━━━━━━━━━━━━━━<br/>1. title<br/>2. user-story<br/>3. scope<br/>4. out-of-scope<br/>5. acceptance criteria<br/>6. deps + source-link"]
+
+    PM --> PROMPT
+    SLACK --> PROMPT
+    CSV --> PROMPT
+    PROMPT --> DRAFT
+    DRAFT --> REVIEW
+    REVIEW -->|"needs tightening"| LOOP
+    LOOP --> PROMPT
+    REVIEW -->|"clear + actionable"| ISSUE
+
+    classDef input fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:1.5px
+    classDef skill fill:#EEF2FF,stroke:#4F46E5,color:#1E1B4B,stroke-width:1.5px
+    classDef artifact fill:#fff,stroke:#0F172A,color:#0F172A,stroke-width:2px
+    classDef loop fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:1.5px,stroke-dasharray:5 3
+    class PM,SLACK,CSV input
+    class PROMPT skill
+    class DRAFT,REVIEW skill
+    class LOOP loop
+    class ISSUE artifact

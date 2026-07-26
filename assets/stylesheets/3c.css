@@ -1,0 +1,130 @@
+/* 3C deck design system (#236 — rebrand from the #127/#138 warm field-guide).
+   Layered over MkDocs Material; the deck palette tokens come from tokens.css,
+   loaded first via mkdocs.yml `extra_css`. The custom-home `fg-` classes are
+   retained (some deep pages use `.fg-figure`) but recoloured to the deck
+   palette. Self-hosted variable woff2 — no CDN dependency. */
+
+@font-face{font-family:"Inter";src:url("../fonts/inter.woff2") format("woff2");font-weight:300 900;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url("../fonts/jetbrainsmono.woff2") format("woff2");font-weight:400 700;font-display:swap}
+
+:root{
+  /* deck aliases for the retained .fg-* rules (mirror tokens.css) */
+  --fg-paper:#FFFFFF; --fg-ink:#0F172A; --fg-honey:#4F46E5;
+  --fg-honey-dk:#4338CA; --fg-sand:#C7D2FE; --fg-sage:#047857;
+  --fg-muted:#64748B; --fg-card:#F8FAFC; --fg-line:#E2E8F0;
+  --md-primary-fg-color:#4338CA; --md-accent-fg-color:#4F46E5;
+  --md-text-font:"Inter"; --md-code-font:"JetBrains Mono";
+}
+
+/* Deep Material pages: cool re-skin, calm reading column */
+.md-grid{max-width:62rem}
+body,.md-typeset{font-family:"Inter",system-ui,sans-serif;color:var(--slate-700)}
+.md-typeset h1,.md-typeset h2,.md-typeset h3{
+  font-family:"Inter",system-ui,sans-serif;font-weight:800;
+  letter-spacing:-.02em;color:var(--slate-900)}
+.md-typeset h1{font-weight:800;font-size:2.1rem;line-height:1.18}
+.md-main{background:#ffffff}
+.md-sidebar .md-nav{font-size:.72rem}
+.md-nav__link--active{color:var(--md-primary-fg-color)!important;font-weight:700}
+.md-typeset code{background:var(--slate-100);color:var(--indigo-700)}
+.md-typeset a{color:var(--indigo-700)}
+.md-header{background:linear-gradient(180deg,#1e1b4b,#0f172a)}
+.md-typeset table:not([class]){border:1px solid var(--slate-200)}
+.md-typeset table:not([class]) th{background:var(--slate-50);color:var(--slate-900)}
+
+/* "What we're learning" admonition (class .learning) — emerald accent */
+.md-typeset .admonition.learning,.md-typeset details.learning{
+  border-color:var(--emerald-500);background:var(--emerald-50)}
+.md-typeset .learning>.admonition-title,.md-typeset .learning>summary{
+  background:rgba(16,185,129,.12);color:var(--emerald-700)}
+.md-typeset .learning>.admonition-title::before,
+.md-typeset .learning>summary::before{
+  background-color:var(--emerald-500);
+  -webkit-mask-image:var(--md-admonition-icon--note);mask-image:var(--md-admonition-icon--note)}
+
+/* ---- Custom home (sidebars removed via `hide:` front matter) ---- */
+.md-content:has(.fg-wrap){max-width:none}
+.fg-wrap{max-width:64rem;margin:0 auto;padding:0 1.2rem}
+.fg-wrap .md-typeset h1:first-child{display:none}
+/* #136: full-bleed band — escapes the centred content column. */
+.fg-hero{background:var(--slate-50);
+  background-image:radial-gradient(#E0E7FF .8px,transparent .8px);
+  background-size:7px 7px;border:0;border-radius:0;
+  width:100vw;margin-left:calc(50% - 50vw);
+  padding:clamp(2.2rem,5vw,3.6rem) 1.2rem;margin-bottom:2rem}
+.fg-hero-inner{max-width:80rem;margin:0 auto}
+.fg-kicker{font:600 .72rem/1 "JetBrains Mono",monospace;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--indigo-600);margin:0 0 .9rem}
+.fg-display{font:800 2.7rem/1.12 "Inter",system-ui,sans-serif;
+  letter-spacing:-.02em;color:var(--slate-900);margin:0 0 .8rem;max-width:18ch}
+.fg-lede{font:400 1.15rem/1.65 "Inter",system-ui,sans-serif;color:var(--slate-700);max-width:46ch;margin:0 0 1.5rem}
+.fg-cta{display:inline-block;background:var(--fg-honey);color:#fff!important;
+  font:700 .98rem "Inter",system-ui,sans-serif;padding:.8rem 1.4rem;border-radius:14px;
+  box-shadow:0 3px 0 var(--fg-honey-dk);text-decoration:none}
+.fg-cta.ghost{background:transparent;color:var(--slate-700)!important;
+  border:1.5px solid var(--slate-200);box-shadow:none;margin-left:.6rem}
+.fg-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin:1.4rem 0}
+.fg-card{background:var(--fg-card);border:1px solid var(--fg-line);
+  border-radius:16px;padding:1.6rem 1.7rem;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+.fg-card h3{font:700 1.25rem "Inter",system-ui,sans-serif;margin:.2rem 0 .5rem;color:var(--slate-900)}
+.fg-card p{font:400 .98rem/1.6 "Inter",system-ui,sans-serif;color:var(--slate-700);margin:0 0 .8rem}
+.fg-card a{color:var(--fg-honey-dk);font-weight:700;text-decoration:none}
+.fg-figure{background:var(--fg-card);border:1px solid var(--fg-line);
+  border-radius:16px;padding:1.6rem;margin:1.6rem 0;text-align:center}
+.fg-figure img{width:100%;max-width:46rem;height:auto}
+.fg-figure figcaption{font:400 .9rem "Inter",system-ui,sans-serif;color:var(--fg-muted);margin-top:.7rem}
+.fg-section-title{font:800 1.7rem "Inter",system-ui,sans-serif;color:var(--slate-900);
+  margin:2.4rem 0 .3rem;text-align:center;letter-spacing:-.02em}
+@media (max-width:55rem){.fg-grid{grid-template-columns:1fr}
+  .fg-display{font-size:2rem}}
+
+/* ---- #130/#136 hero carousel (progressive enhancement) ---- */
+/* #136 golden ratio: text:carousel = 1:1.618 (38.2% / 61.8%), carousel-
+   dominant for SVG legibility. <55rem stacks (source order = text then
+   carousel). Columns vertically centred (shared optical axis). */
+@media (min-width:55rem){
+  .fg-hero-inner{display:grid;grid-template-columns:0.382fr 0.618fr;
+    gap:2.5rem;align-items:center}
+  .fg-hero-text{min-width:0}
+}
+.fg-carousel{margin-top:1.2rem}
+@media (min-width:55rem){.fg-carousel{margin-top:0}}
+/* No-JS / pre-init fallback: slides stack, all visible, dots hidden. */
+.fg-carousel .fg-slide{margin:0 0 1.1rem}
+.fg-carousel-dots{display:none}
+/* JS-enhanced slider mode */
+.fg-carousel--ready{overflow:hidden;border-radius:16px;border:1px solid var(--fg-line);background:var(--fg-card)}
+.fg-carousel--ready .fg-carousel-track{display:flex;transition:transform .4s ease}
+.fg-carousel--ready .fg-slide{flex:0 0 100%;margin:0}
+.fg-carousel--ready .fg-figure{margin:0;border:0;background:transparent;padding:1.4rem}
+/* #136: fixed golden-rectangle slide frame — every slide the same height
+   (no per-slide jump / dead space); SVG scales up → legible text. */
+.fg-carousel--ready .fg-slide img{aspect-ratio:1.618 / 1;width:100%;
+  max-width:100%;max-height:100%;height:auto;object-fit:contain}
+.fg-carousel--ready .fg-figure figcaption{min-height:4.5rem;
+  display:flex;align-items:center;justify-content:center;text-align:center}
+.fg-carousel--ready .fg-carousel-track:focus-visible{outline:2px solid var(--fg-honey);outline-offset:-2px}
+.fg-carousel--ready .fg-carousel-dots{display:flex;gap:.5rem;justify-content:center;padding:0 0 1rem}
+.fg-dot{width:.6rem;height:.6rem;padding:0;border-radius:50%;border:1px solid var(--fg-line);
+  background:var(--fg-sand);cursor:pointer}
+.fg-dot.is-active{background:var(--fg-honey);border-color:var(--fg-honey-dk)}
+
+/* #144 E4 (root-cause fix): Material sets `.md-typeset figure{width:fit-
+   content;margin:1em auto}` which shrink-wraps & centres every figure — a
+   `max-width` tweak is inert against `width:fit-content`. Scoped under
+   .md-typeset to out-specify Material (0,0,2,0 > 0,0,1,1); width:100% +
+   margin reset makes the marked figures span the <article>. Base
+   .fg-figure (every other figure) is untouched. */
+.md-typeset .fg-figure--wide{width:100%;max-width:none;
+  margin-left:0;margin-right:0}
+.md-typeset .fg-figure--wide img{width:100%;max-width:none}
+
+/* The four purpose-built per-level maturity diagrams (uniform 660×210
+   viewBox) render full-width of the content column so the in-diagram text
+   is legible. Scope by filename (specificity 0,0,2,1 out-ranks Material's
+   .md-typeset img — no !important); every other image is untouched. */
+.md-typeset img[src$="maturity-l1.svg"],
+.md-typeset img[src$="maturity-l2.svg"],
+.md-typeset img[src$="maturity-l3.svg"],
+.md-typeset img[src$="maturity-l4.svg"]{width:100%;max-width:100%;
+  height:auto;display:block;margin-inline:auto}

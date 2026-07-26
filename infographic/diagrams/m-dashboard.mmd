@@ -1,0 +1,28 @@
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#EEF2FF','primaryTextColor':'#1E1B4B','primaryBorderColor':'#4F46E5','lineColor':'#6366F1','fontFamily':'Inter, sans-serif','fontSize':'16px'}}}%%
+flowchart LR
+    SOURCE["📁 .3c/events/*.jsonl<br/><i>local-only · gitignored</i>"]
+
+    DASH["📊 .3c/dashboard.html<br/><i>opens in your browser</i>"]
+
+    P1["Panel 1 — Rules fired today<br/>1. import-order × 7<br/>2. naming-fetch-prefix × 3<br/>3. arch-boundary × 2<br/>4. secret-scan × 1<br/>5. coverage-threshold × 1"]
+
+    P2["Panel 2 — First-try pass rate<br/><b style='font-size:24px'>78%</b><br/><i>11 of 14 PRs passed on first attempt</i>"]
+
+    P3["Panel 3 — Post-edit deltas<br/>▁▂▃▅▆▇█ ↘ ▅▃▂▁<br/><i>trend down across the sprint</i>"]
+
+    PRIVACY["🔒 local-only · gitignored<br/>never egressed at L2<br/>your manager cannot see this"]
+
+    SOURCE --> DASH
+    DASH --> P1
+    DASH --> P2
+    DASH --> P3
+    DASH --> PRIVACY
+
+    classDef source fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:1.5px
+    classDef panel fill:#EEF2FF,stroke:#4F46E5,color:#1E1B4B,stroke-width:1.5px
+    classDef host fill:#fff,stroke:#0F172A,color:#0F172A,stroke-width:2px
+    classDef privacy fill:#ECFDF5,stroke:#10B981,color:#047857,stroke-width:2px
+    class SOURCE source
+    class DASH host
+    class P1,P2,P3 panel
+    class PRIVACY privacy

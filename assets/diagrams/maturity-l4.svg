@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 210" role="img" aria-label="L4 Optimise: a closed feedback loop where telemetry feeds retrospectives that evolve standards, with complexity-adapted governance and policy-as-code.">
+  <title>L4 — Optimise</title>
+  <desc>The governance feedback loop closes: observability telemetry feeds retrospectives, which propose and deploy standards changes with impact analysis. Governance intensity adapts to change complexity, and policies become version-controlled, testable code — a productivity horizon, not a date.</desc>
+  <style>text{font-family:Inter,system-ui,sans-serif}.t{fill:#0F172A}.m{fill:#64748B}.s{font-family:Inter,Georgia,serif;fill:#0F172A}.b{fill:#F8FAFC;stroke:#E2E8F0}</style>
+  <rect width="660" height="210" rx="18" fill="#F8FAFC"/>
+  <text x="330" y="30" text-anchor="middle" class="s" font-size="16">L4 — Optimise</text>
+  <text x="330" y="48" text-anchor="middle" class="m" font-size="11">is our governance adapting to our complexity?</text>
+
+  <g font-size="10">
+    <rect x="40" y="70" width="150" height="56" rx="9" class="b" stroke-width="1"/><text x="115" y="93" text-anchor="middle" class="t" font-size="11" font-weight="700">Observability</text><text x="115" y="111" text-anchor="middle" class="m">measured outcomes</text>
+    <rect x="255" y="70" width="150" height="56" rx="9" class="b" stroke-width="1"/><text x="330" y="93" text-anchor="middle" class="t" font-size="11" font-weight="700">Retrospective</text><text x="330" y="111" text-anchor="middle" class="m">what to change &amp; why</text>
+    <rect x="470" y="70" width="150" height="56" rx="9" class="b" stroke-width="1"/><text x="545" y="93" text-anchor="middle" class="t" font-size="11" font-weight="700">Standards evolution</text><text x="545" y="111" text-anchor="middle" class="m">impact-analysed</text>
+  </g>
+  <path d="M190,98 L251,98" stroke="#4F46E5" stroke-width="2.4" stroke-linecap="round" marker-end="url(#a)"/>
+  <path d="M405,98 L466,98" stroke="#4F46E5" stroke-width="2.4" stroke-linecap="round" marker-end="url(#a)"/>
+  <path d="M545,126 C545,166 115,166 115,128" fill="none" stroke="#4F46E5" stroke-width="2.2" stroke-dasharray="0.5 7" stroke-linecap="round" marker-end="url(#a)"/>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#4F46E5"/></marker></defs>
+
+  <rect x="200" y="150" width="260" height="34" rx="8" fill="#F8FAFC" stroke="#047857" stroke-width="1.4"/>
+  <text x="330" y="172" text-anchor="middle" fill="#047857" font-size="10" font-weight="700">complexity-adapted governance · policy-as-code</text>
+
+  <text x="330" y="200" text-anchor="middle" class="m" font-size="10">Horizon — strategic; a direction, not a dated commitment</text>
+</svg>

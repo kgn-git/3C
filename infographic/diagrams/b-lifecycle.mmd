@@ -1,0 +1,18 @@
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#EEF2FF','primaryTextColor':'#1E1B4B','primaryBorderColor':'#4F46E5','lineColor':'#6366F1','fontFamily':'Inter, sans-serif','fontSize':'22px'}}}%%
+stateDiagram-v2
+  direction TB
+  [*] --> Backlog
+  Backlog --> Planning: /project-manager plan
+  Planning --> ExpertReview: triage + scope gate
+  ExpertReview --> Enriched: synthesize assessments
+  Enriched --> ReadyForDev: self-critique
+  ReadyForDev --> RedCommit: /developer • SI-001
+  RedCommit --> GreenCommit: implement to pass
+  GreenCommit --> LocalGates: build / lint / Gate 0 / 1
+  LocalGates --> CodeReview: SA-001
+  CodeReview --> Handover: SI-002 / SD-001
+  Handover --> PrMerged: PR merged
+  PrMerged --> SprintClose: Gate 2 headed
+  SprintClose --> Retrospective
+  Retrospective --> Backlog: codified rules → future sprints
+  Retrospective --> [*]

@@ -1,0 +1,36 @@
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#EEF2FF','primaryTextColor':'#1E1B4B','primaryBorderColor':'#4F46E5','lineColor':'#6366F1','fontFamily':'Inter, sans-serif','fontSize':'16px'}}}%%
+stateDiagram-v2
+    direction TB
+    [*] --> IssueSelected
+    IssueSelected --> ImplementPlan: Maya invokes /3c-implement
+    ImplementPlan --> BranchCreated: /3c-implement creates branch
+    BranchCreated --> TestScaffold: /3c-test scaffolds failing tests
+    TestScaffold --> ClaudeImpl: Claude Code implements
+
+    ClaudeImpl --> PostEdit
+
+    state PostEdit <<choice>>
+    PostEdit --> ClaudeImpl: fail — Claude Code revises
+    PostEdit --> StageCommit: pass under 300ms
+
+    StageCommit --> PreCommit: Maya runs git commit
+    state PreCommit <<choice>>
+    PreCommit --> ClaudeImpl: fail — coaching shows rationale\nClaude Code regenerates
+    PreCommit --> GateChain: pass under 10s
+
+    GateChain --> SecurityReviewer: optional dispatch\nfor auth-touching change
+    SecurityReviewer --> PRDescription: findings applied by Claude Code
+    GateChain --> PRDescription: pass under 60s
+
+    PRDescription --> CodeReviewer: code-reviewer subagent runs
+    CodeReviewer --> ApplyFindings: Maya prompts which findings to apply
+    ApplyFindings --> Merge: Claude Code applies them
+    Merge --> [*]: merge to main
+
+    note right of ClaudeImpl
+        every code-changing
+        transition labelled
+        with who typed it —
+        Claude Code, /3c-implement,
+        /3c-test. Never Maya.
+    end note

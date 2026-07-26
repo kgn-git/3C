@@ -1,0 +1,4 @@
+{
+  "args": ["--no-sandbox", "--disable-setuid-sandbox"],
+  "executablePath": "C:\\Users\\kghoo\\AppData\\Local\\ms-playwright\\chromium-1208\\chrome-win64\\chrome.exe"
+}

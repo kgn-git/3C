@@ -1,0 +1,171 @@
+<!DOCTYPE html><html lang="en" class="no-js"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>3C — Claude Code Coach</title><meta name="description" content="3C — Claude Code Coach: your team's AI, on the same page."><style>:root{--indigo-50: #EEF2FF;--indigo-100: #E0E7FF;--indigo-500: #6366F1;--indigo-600: #4F46E5;--indigo-700: #4338CA;--indigo-900: #312E81;--slate-900: #0F172A;--slate-700: #334155;--slate-500: #64748B;--slate-200: #E2E8F0;--slate-100: #F1F5F9;--slate-50: #F8FAFC;--amber-100: #FEF3C7;--amber-600: #D97706;--emerald-50: #ECFDF5;--emerald-500: #10B981;--emerald-700: #047857;--red-bg: #FEE2E2;--red-fg: #DC2626;--red-dk: #7F1D1D;--c-bg: #FFFFFF;--c-surface: var(--slate-50);--c-border: var(--slate-200);--c-ink: var(--slate-900);--c-body: var(--slate-700);--c-muted: var(--slate-500);--c-accent: var(--indigo-600);--c-accent-dk: var(--indigo-700);--c-accent-soft: var(--indigo-50);--font-display: "Inter", "Segoe UI", system-ui, sans-serif;--font-body: "Inter", "Segoe UI", system-ui, sans-serif;--font-mono: "JetBrains Mono", ui-monospace, monospace}@font-face{font-family:Inter;src:url(fonts/inter.woff2) format("woff2");font-weight:300 900;font-display:swap}@font-face{font-family:JetBrains Mono;src:url(fonts/jetbrainsmono.woff2) format("woff2");font-weight:400 700;font-display:swap}*,:before,:after{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }*,:before,:after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}:before,:after{--tw-content: ""}html,:host{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:JetBrains Mono,ui-monospace,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}ol,ul,menu{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}button,[role=button]{cursor:pointer}:disabled{cursor:default}img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.visible{visibility:visible}.m-0{margin:0}.my-phi2{margin-top:1.618rem;margin-bottom:1.618rem}.mb-2{margin-bottom:.5rem}.mb-phi1{margin-bottom:1rem}.mb-phi2{margin-bottom:1.618rem}.mt-4{margin-top:1rem}.mt-phi3{margin-top:2.618rem}.flex{display:flex}.grid{display:grid}.min-h-\[100svh\]{min-height:100svh}.w-full{width:100%}.max-w-\[52ch\]{max-width:52ch}.max-w-golden{max-width:73.75rem}.flex-1{flex:1 1 0%}.transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.list-none{list-style-type:none}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-end{justify-content:flex-end}.gap-4,.gap-phi1{gap:1rem}.gap-phi2{gap:1.618rem}.gap-x-6{-moz-column-gap:1.5rem;column-gap:1.5rem}.gap-x-phi2{-moz-column-gap:1.618rem;column-gap:1.618rem}.gap-y-1{row-gap:.25rem}.gap-y-2{row-gap:.5rem}.overflow-x-auto{overflow-x:auto}.rounded-xl{border-radius:.75rem}.border-b{border-bottom-width:1px}.border-fg-line{--tw-border-opacity: 1;border-color:rgb(226 232 240 / var(--tw-border-opacity, 1))}.bg-fg-ink{--tw-bg-opacity: 1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-fg-ink\/95{background-color:#0f172af2}.p-0{padding:0}.p-phi2{padding:1.618rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-phi3{padding-top:2.618rem;padding-bottom:2.618rem}.pb-phi2{padding-bottom:1.618rem}.text-center{text-align:center}.font-body,.font-display{font-family:Inter,Segoe UI,system-ui,sans-serif}.font-mono{font-family:JetBrains Mono,ui-monospace,monospace}.text-body-large{font-size:1.125rem;line-height:1.75rem;letter-spacing:.03125rem;font-weight:400}.text-body-medium{font-size:.875rem;line-height:1.25rem;letter-spacing:.015625rem;font-weight:400}.text-body-small{font-size:.75rem;line-height:1rem;letter-spacing:.025rem;font-weight:400}.text-display-medium{font-size:2.8125rem;line-height:3.25rem;font-weight:400}.text-headline-medium{font-size:1.75rem;line-height:2.25rem;font-weight:400}.text-label-large{font-size:.875rem;line-height:1.25rem;letter-spacing:.00625rem;font-weight:500}.text-title-large{font-size:1.375rem;line-height:1.75rem;font-weight:400}.font-bold{font-weight:700}.font-semibold{font-weight:600}.text-fg-body{--tw-text-opacity: 1;color:rgb(51 65 85 / var(--tw-text-opacity, 1))}.text-fg-honey-dk{--tw-text-opacity: 1;color:rgb(67 56 202 / var(--tw-text-opacity, 1))}.text-fg-ink{--tw-text-opacity: 1;color:rgb(15 23 42 / var(--tw-text-opacity, 1))}.text-fg-muted{--tw-text-opacity: 1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-fg-paper{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-fg-sand{--tw-text-opacity: 1;color:rgb(199 210 254 / var(--tw-text-opacity, 1))}.no-underline{text-decoration-line:none}.backdrop-blur{--tw-backdrop-blur: blur(8px);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}:root{--phi: 1.618}html{background:#fff;color:#0f172a;font-family:Inter,Segoe UI,system-ui,sans-serif}#wave-bg{position:fixed;inset:0;z-index:-1;pointer-events:none}.fg-container{width:100%;max-width:73.75rem;margin-inline:auto;padding-inline:clamp(1.25rem,5vw,4.236rem)}.fg-cta{display:inline-block;background:#4f46e5;color:#fff;font-weight:700;padding:.8rem 1.4rem;border-radius:14px;box-shadow:0 3px #4338ca;text-decoration:none}.fg-carousel{border:1px solid #E2E8F0;border-radius:18px;background:#f8fafc;overflow:hidden}.fg-carousel-track{display:flex;transition:transform .4s ease}.fg-slide{flex:0 0 100%;margin:0;padding:1.4rem;text-align:center}.fg-slide img{width:100%;max-width:100%;height:auto;max-height:min(28rem,44svh);-o-object-fit:contain;object-fit:contain}.fg-slide figcaption{font-size:.875rem;line-height:1.25rem;color:#64748b;margin-top:.7rem;min-height:3.5rem}.no-js .fg-carousel-track{display:block}.no-js .fg-slide{margin-bottom:1rem}.fg-carousel-dots{display:flex;gap:.5rem;justify-content:center;padding:0 0 1rem}.no-js .fg-carousel-dots{display:none}.fg-dot{width:.6rem;height:.6rem;padding:0;border-radius:50%;border:1px solid #E2E8F0;background:#c7d2fe;cursor:pointer}.fg-dot[aria-selected=true]{background:#4f46e5;border-color:#4338ca}.fg-badge{display:inline-block;font-family:JetBrains Mono,ui-monospace,monospace;font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--c-accent);background:var(--c-accent-soft);padding:.35rem .75rem;border-radius:999px}.fg-callout{background:var(--c-surface);border:1px solid var(--c-border);border-left:3px solid var(--c-accent);border-radius:0 14px 14px 0;padding:1.3rem 1.5rem}.fg-deck-card{background:var(--c-bg);border:1px solid var(--c-border);border-radius:16px;padding:1.618rem;box-shadow:0 1px 2px #0f172a0a}.hover\:text-white:hover{--tw-text-opacity: 1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}@media (min-width: 768px){.md\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.md\:grid-cols-\[0\.382fr_0\.618fr\]{grid-template-columns:.382fr .618fr}}
+</style></head> <body class="font-body text-fg-ink"> <div id="wave-bg" aria-hidden="true"></div> <main> <div class="flex min-h-[100svh] flex-col"> <header class="border-b border-fg-line bg-fg-ink/95 text-fg-paper backdrop-blur"> <nav class="fg-container flex flex-wrap items-center gap-x-phi2 gap-y-2 py-4" aria-label="Primary"> <a href="." class="font-display text-title-large font-semibold text-fg-paper no-underline">3C</a> <ul class="m-0 flex flex-1 list-none flex-wrap items-center justify-end gap-x-6 gap-y-1 p-0"> <li> <a href="why-now.html" class="text-label-large text-fg-sand no-underline hover:text-white"> Why now </a> </li><li> <a href="maturity-model.html" class="text-label-large text-fg-sand no-underline hover:text-white"> Maturity Model </a> </li><li> <a href="l1-today.html" class="text-label-large text-fg-sand no-underline hover:text-white"> For engineers </a> </li><li> <a href="for-eng-leaders.html" class="text-label-large text-fg-sand no-underline hover:text-white"> For engineering leaders </a> </li><li> <a href="for-ciso.html" class="text-label-large text-fg-sand no-underline hover:text-white"> For CISOs </a> </li><li> <a href="https://github.com/kgn-git/3C/discussions" class="text-label-large text-fg-sand no-underline hover:text-white"> Discussions </a> </li> </ul> </nav> </header> <section class="fg-container flex flex-1 items-center py-phi3"> <div class="grid w-full items-center gap-phi2 md:grid-cols-[0.382fr_0.618fr]"> <div> <p class="m-0 mb-phi2"> <span class="fg-badge">3C · Claude Code Coach · a field guide</span> </p> <h1 class="m-0 mb-phi1 font-display text-display-medium font-semibold text-fg-ink">
+Coding sessions under your control.
+</h1> <p class="m-0 mb-phi1 font-display text-title-large text-fg-body">
+Your team's AI, finding the same page — together.
+</p> <p class="m-0 mb-phi2 max-w-[52ch] font-body text-body-large text-fg-body">
+A crew of specialist agents reviews every change against your
+              team's standards — architecture, code, security, tests, product,
+              UX, QA — and hands you one verdict. The assistant types; you
+              decide. Local-first, and one <code class="font-mono">git revert</code> takes it all back out.
+</p> <p class="m-0 flex flex-wrap items-center gap-phi1"> <a class="fg-cta" href="l2-today.html">See the crew →</a> <a class="font-bold text-fg-honey-dk no-underline" href="l1-today.html">Try L1 in an afternoon</a> </p> </div> <div class="fg-carousel" data-fg-carousel aria-roledescription="carousel" aria-label="3C at a glance"> <div class="fg-carousel-track"> <figure class="fg-slide"> <img src="diagrams/review-board.svg" alt="The review board: eight specialist agents reconcile one verdict on every change"> <figcaption>A crew of specialist agents reviews every change and reconciles <strong>one verdict</strong> — blocking, advisory, or clean. The reconciliation is tested code; the verdict is advisory — you decide. <a class="text-fg-honey-dk font-bold no-underline" href="l2-today.html">Meet the crew →</a></figcaption> </figure><figure class="fg-slide"> <img src="diagrams/journey.svg" alt="The L1 to L4 journey; you are at L1, and every stop is a fine place to stay"> <figcaption>L1 is where most teams start — and many run it as-is for a long time. L2, L3, L4 are there when, and if, you need them. <a class="text-fg-honey-dk font-bold no-underline" href="maturity-model.html">The full picture →</a></figcaption> </figure><figure class="fg-slide"> <img src="diagrams/pillars.svg" alt="Standards, Workflow, Quality — three layers resting on your repo"> <figcaption>Three layers — Standards, Workflow, Quality — each chosen because it makes a daily difference, not to fill a checklist.</figcaption> </figure> </div> <div class="fg-carousel-dots" role="tablist" aria-label="Choose slide"></div> </div> </div> </section> </div> <div class="fg-container max-w-golden"> <pre class="overflow-x-auto rounded-xl bg-fg-ink p-phi2 font-mono text-body-medium text-fg-paper"><code>npm install git+https://github.com/kgn-git/3C#v1.7.3
+npx 3c setup</code></pre> <p class="mt-4 font-body text-body-medium text-fg-body">
+A few commands scaffold <code class="font-mono">.claude/</code> into
+          your repo — standards, the workflow skills, the review crew, and the
+          quality gates that every team member's AI assistant works from.
+          Nothing leaves your machine; one <code class="font-mono">git revert</code> takes it all back out.
+</p> <h2 class="mt-phi3 text-center font-display text-headline-medium font-semibold text-fg-ink">
+Come in the way that fits you
+</h2> <div class="my-phi2 grid gap-4 md:grid-cols-2"> <div class="fg-deck-card"> <h3 class="m-0 mb-2 font-display text-title-large font-semibold">
+I'm an engineer
+</h3> <p class="m-0 mb-phi1 text-body-medium text-fg-body">
+See what L1 actually ships today — the nine features, the four
+              workflow skills, the pre-commit hook, and the one-command
+              rollback. No commitment to read it.
+</p> <p class="m-0"> <a class="font-bold text-fg-honey-dk no-underline" href="l1-today.html">Open the engineer page →</a> </p> </div> <div class="fg-deck-card"> <h3 class="m-0 mb-2 font-display text-title-large font-semibold">
+I'm an engineering leader
+</h3> <p class="m-0 mb-phi1 text-body-medium text-fg-body">
+What L1 costs, what it buys, how succession works, and where it
+              deliberately stops. The page you can forward without
+              over-claiming.
+</p> <p class="m-0"> <a class="font-bold text-fg-honey-dk no-underline" href="for-eng-leaders.html">Open the leader page →</a> </p> </div> </div> <h2 class="mt-phi3 text-center font-display text-headline-medium font-semibold text-fg-ink">
+Print-ready infographics
+</h2> <p class="mb-phi2 text-center font-body text-body-medium text-fg-body">
+The same governed workflow as A4 portrait deliverables — browseable
+          online, downloadable as PDF.
+</p> <div class="my-phi2 grid gap-4 md:grid-cols-2"> <div class="fg-deck-card"> <h3 class="m-0 mb-2 font-display text-title-large font-semibold">
+How a skills library ships software
+</h3> <p class="m-0 mb-phi1 text-body-medium text-fg-body">
+Five diagrams of the governed workflow — orchestration, lifecycle,
+              quality gates, principles map, and the SD-007 prior-issue merge
+              gate sequence. The architecture in one read.
+</p> <p class="m-0"> <a class="font-bold text-fg-honey-dk no-underline" href="infographic/sdlc-infographic.html">Browse online →</a>
+&nbsp;·&nbsp;
+<a class="font-bold text-fg-honey-dk no-underline" href="infographic/3C-SDLC-Infographic.pdf">Download PDF ↓</a> </p> </div> <div class="fg-deck-card"> <h3 class="m-0 mb-2 font-display text-title-large font-semibold">
+A day in the life of a developer using 3C
+</h3> <p class="m-0 mb-phi1 text-body-medium text-fg-body">
+Ten pages following one engineer (Maya) through her L2 day — the
+              slash commands she runs, the gates she passes, the rules that
+              coach her, and the things she never types by hand.
+</p> <p class="m-0"> <a class="font-bold text-fg-honey-dk no-underline" href="infographic/devdaylife-infographic.html">Browse online →</a>
+&nbsp;·&nbsp;
+<a class="font-bold text-fg-honey-dk no-underline" href="infographic/3C-Devdaylife-Infographic.pdf">Download PDF ↓</a> </p> </div> </div> <div class="fg-callout"> <p class="m-0 text-body-medium text-fg-body"> <strong class="text-fg-ink">What we're learning.</strong> Teams
+            tell us the pre-commit hook is the moment it clicks — but your
+            context might differ. If something here doesn't match what you
+            see, we'd genuinely like to know: <a class="font-bold text-fg-honey-dk" href="https://github.com/kgn-git/3C/discussions">start a discussion</a>.
+</p> </div> <hr class="my-phi2 border-fg-line"> <p class="pb-phi2 font-body text-body-small text-fg-muted">
+Source of truth: <a class="text-fg-honey-dk" href="https://github.com/kgn-git/praise">kgn-git/praise</a> — the development repository. Public distribution: <a class="text-fg-honey-dk" href="https://github.com/kgn-git/3C">kgn-git/3C</a>. 3C — Claude Code Coach — is open and MIT-licensed; there's no pricing, no
+          sign-up, and no code leaving your machine to make it work.
+</p> </div> </main> <script>/* 3C hero carousel (#138, ported from the #130/#136 vanilla carousel).
+ * Plain JS — raw-inlined into index.html (no bundled asset, no CDN).
+ * Progressive enhancement: no-JS = stacked visible figures (.no-js).
+ * WCAG 2.2: auto-advance 5000ms; pause on hover/focus; permanent stop on
+ * first manual interaction; no auto-advance under prefers-reduced-motion;
+ * ArrowLeft/ArrowRight; pointer swipe; dot tablist with aria-selected. */
+(function () {
+  "use strict";
+  document.documentElement.classList.remove("no-js");
+
+  function setup(el) {
+    if (el.dataset.fgReady === "1") return;
+    el.dataset.fgReady = "1";
+
+    var track = el.querySelector(".fg-carousel-track");
+    var slides = Array.prototype.slice.call(el.querySelectorAll(".fg-slide"));
+    var dotsWrap = el.querySelector(".fg-carousel-dots");
+    if (!track || slides.length < 2 || !dotsWrap) return;
+
+    var reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    var index = 0;
+    var stopped = false;
+    var timer = null;
+
+    slides.forEach(function (s, i) {
+      s.setAttribute("aria-roledescription", "slide");
+      s.setAttribute("aria-label", i + 1 + " of " + slides.length);
+      var d = document.createElement("button");
+      d.type = "button";
+      d.className = "fg-dot";
+      d.setAttribute("role", "tab");
+      d.setAttribute("aria-label", "Slide " + (i + 1));
+      d.addEventListener("click", function () {
+        halt();
+        go(i);
+      });
+      dotsWrap.appendChild(d);
+    });
+    var dots = Array.prototype.slice.call(dotsWrap.children);
+
+    function render() {
+      track.style.transform = "translateX(" + -index * 100 + "%)";
+      slides.forEach(function (s, i) {
+        s.setAttribute("aria-hidden", i === index ? "false" : "true");
+      });
+      dots.forEach(function (d, i) {
+        d.setAttribute("aria-selected", i === index ? "true" : "false");
+      });
+    }
+    function go(i) {
+      index = (i + slides.length) % slides.length;
+      render();
+    }
+    function start() {
+      if (reduced || stopped || timer) return;
+      timer = window.setInterval(function () {
+        go(index + 1);
+      }, 5000);
+    }
+    function pause() {
+      if (timer) {
+        window.clearInterval(timer);
+        timer = null;
+      }
+    }
+    function halt() {
+      stopped = true;
+      pause();
+    }
+
+    el.addEventListener("mouseenter", pause);
+    el.addEventListener("mouseleave", start);
+    el.addEventListener("focusin", pause);
+    el.addEventListener("focusout", start);
+
+    track.setAttribute("tabindex", "0");
+    track.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowLeft") {
+        halt();
+        go(index - 1);
+      } else if (e.key === "ArrowRight") {
+        halt();
+        go(index + 1);
+      }
+    });
+
+    var x0 = null;
+    track.addEventListener("pointerdown", function (e) {
+      x0 = e.clientX;
+    });
+    track.addEventListener("pointerup", function (e) {
+      if (x0 === null) return;
+      var dx = e.clientX - x0;
+      x0 = null;
+      if (Math.abs(dx) < 40) return;
+      halt();
+      go(index + (dx < 0 ? 1 : -1));
+    });
+
+    render();
+    start();
+  }
+
+  function init() {
+    var nodes = document.querySelectorAll("[data-fg-carousel]");
+    Array.prototype.forEach.call(nodes, setup);
+  }
+  if (document.readyState !== "loading") init();
+  else document.addEventListener("DOMContentLoaded", init);
+})();
+</script> <script src="three.min.js"></script> <script src="vanta.dots.min.js"></script> <script src="wave-bg.js"></script> </body> </html>

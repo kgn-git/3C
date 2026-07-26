@@ -1,0 +1,1119 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Claude Code Coach — strategy, architecture, and decisions">
+      
+      
+      
+        <link rel="canonical" href="https://kgn-git.github.io/3C/for-developers.html">
+      
+      
+        <link rel="prev" href="l2-today.html">
+      
+      
+        <link rel="next" href="coaching.html">
+      
+      
+      <link rel="icon" href="favicon.ico">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
+    
+    
+      
+        <title>For developers - 3C</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.a40c8224.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/tokens.css">
+    
+      <link rel="stylesheet" href="assets/stylesheets/3c.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#3c-for-developers" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="3C" class="md-header__button md-logo" aria-label="3C" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            3C
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              For developers
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kgn-git/3C" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kgn-git/3C
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="why-now.html" class="md-tabs__link">
+        
+  
+    
+  
+  Why now
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="get-started.html" class="md-tabs__link">
+        
+  
+    
+  
+  Get started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="maturity-model.html" class="md-tabs__link">
+        
+  
+    
+  
+  Maturity Model
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="l1-today.html" class="md-tabs__link">
+        
+  
+    
+  
+  What L1 ships
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="l2-today.html" class="md-tabs__link">
+        
+  
+    
+  
+  What L2 ships
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="for-developers.html" class="md-tabs__link">
+        
+  
+    
+  
+  For developers
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="coaching.html" class="md-tabs__link">
+        
+  
+    
+  
+  Coaching mode
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="for-eng-leaders.html" class="md-tabs__link">
+        
+  
+    
+  
+  For engineering leaders
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="uninstall-upgrade.html" class="md-tabs__link">
+        
+  
+    
+  
+  Uninstall
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="branding.html" class="md-tabs__link">
+        
+  
+    
+  
+  Branding
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="infographic/sdlc-infographic.html" class="md-tabs__link">
+          
+  
+  Infographics
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="for-ciso.html" class="md-tabs__link">
+        
+  
+    
+  
+  Security
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="https://github.com/kgn-git/3C/discussions" class="md-tabs__link">
+        
+  
+    
+  
+  Discussions
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="3C" class="md-nav__button md-logo" aria-label="3C" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    3C
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kgn-git/3C" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kgn-git/3C
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="why-now.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Why now
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="get-started.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Get started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="maturity-model.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Maturity Model
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="l1-today.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What L1 ships
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="l2-today.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What L2 ships
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    For developers
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="for-developers.html" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    For developers
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-changes-on-day-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      What changes on day one
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-l2-adds-for-you-specifically" class="md-nav__link">
+    <span class="md-ellipsis">
+      What L2 adds for you specifically
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What L2 adds for you specifically">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre-commit-gates-that-catch-the-obvious-before-review" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pre-commit gates that catch the obvious before review
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coaching-mode-the-hook-tells-you-why-not-just-no" class="md-nav__link">
+    <span class="md-ellipsis">
+      Coaching mode — the hook tells you why, not just no
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#your-ai-assistant-gets-two-more-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      Your AI assistant gets two more agents
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-crew-multi-lens-review-and-orchestrated-delivery-on-demand" class="md-nav__link">
+    <span class="md-ellipsis">
+      The crew — multi-lens review and orchestrated delivery, on demand
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross-platform-workflow-skills" class="md-nav__link">
+    <span class="md-ellipsis">
+      Cross-platform workflow skills
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#your-own-local-insights-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      Your own local insights dashboard
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-l2-does-not-change-for-you" class="md-nav__link">
+    <span class="md-ellipsis">
+      What L2 does NOT change for you
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-adopt-l2-if-youre-already-at-l1" class="md-nav__link">
+    <span class="md-ellipsis">
+      How to adopt L2 if you're already at L1
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      See also
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="coaching.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Coaching mode
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="for-eng-leaders.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    For engineering leaders
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="uninstall-upgrade.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Uninstall
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="branding.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Branding
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Infographics
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            Infographics
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="infographic/sdlc-infographic.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SDLC pipeline
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="infographic/devdaylife-infographic.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Day in the life — developer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="for-ciso.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Security
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/kgn-git/3C/discussions" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Discussions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="3c-for-developers">3C — for developers<a class="headerlink" href="#3c-for-developers" title="Permanent link">&para;</a></h1>
+<p>This page is for the IC sitting in front of Claude Code today. Not your manager, not your CISO — you, the person who will actually use this thing every commit.</p>
+<p>We'll be honest about what changes for you and what doesn't. 3C is built on the principle that the worst thing a governance framework can do is slow you down. So everything below is designed around two questions: <em>what new thing do I have to think about?</em> and <em>what gets faster?</em></p>
+<h2 id="what-changes-on-day-one">What changes on day one<a class="headerlink" href="#what-changes-on-day-one" title="Permanent link">&para;</a></h2>
+<p>After <code>npx 3c init</code>, <code>npx 3c skills install</code>, and <code>npx 3c hook install</code> (run <code>npx 3c doctor</code> to confirm they landed), three things are different in your daily flow:</p>
+<ol>
+<li><strong>Your AI assistant has read the team's conventions.</strong> <code>npx 3c init</code> writes a <code>CLAUDE.md</code> into the repo root with your team's standards distilled into a single file under 150 instructions. The AI will spontaneously follow them. You will stop reviewing PRs where the AI used a pattern your team retired six months ago.</li>
+<li><strong>A pre-commit hook runs before every commit.</strong> <code>npx 3c hook install</code> registers it: lint, types, unit tests, secret scan — under a 10-second budget on a typical repo. Catches the obvious before your reviewer has to.</li>
+<li><strong>Four slash commands appear in Claude Code.</strong> <code>npx 3c skills install</code> copies them in: <code>/3c-create-issue</code>, <code>/3c-implement</code>, <code>/3c-review</code>, <code>/3c-test</code>. Each runs the standardised version of those workflows for your team. You can ignore them — the L1 standards still apply through <code>CLAUDE.md</code> — but they're the fastest path through the same lifecycle that everyone on your team is now running.</li>
+</ol>
+<p>That's L1. It's enough for a long time.</p>
+<h2 id="what-l2-adds-for-you-specifically">What L2 adds for you specifically<a class="headerlink" href="#what-l2-adds-for-you-specifically" title="Permanent link">&para;</a></h2>
+<p>L2 — v1.5, shipped May 2026 — is where 3C starts paying you back for the conventions L1 captured. Five things start mattering for the IC:</p>
+<h3 id="pre-commit-gates-that-catch-the-obvious-before-review">Pre-commit gates that catch the obvious before review<a class="headerlink" href="#pre-commit-gates-that-catch-the-obvious-before-review" title="Permanent link">&para;</a></h3>
+<p>Beyond L1's lint / types / unit-tests / secret-scan baseline, L2 adds three more gates that fire automatically before code review:</p>
+<ul>
+<li><strong>Post-Edit Validation</strong> runs the moment Claude Code finishes an edit — checks imports, naming, and architectural-direction rules against the change. Catches "the AI imported from <code>internal/</code>" or "the AI named it <code>getUser</code> when our convention is <code>fetchUser</code>" in <code>&lt;300ms</code>, before you've even staged the file.</li>
+<li><strong>Coverage Gate</strong> refuses to PR a change that drops coverage below the team threshold. Tunable per test type (unit / integration / contract). Off by default; turn it on when the team's actually ready for it.</li>
+<li><strong>Security Scan Gate</strong> runs SAST + dependency-vulnerability scan per commit. Refuses on critical findings; warns on lower severities. You get the warning in the same buffer as the test failures — no separate dashboard to check.</li>
+</ul>
+<p>All gates write a JSONL event regardless of pass / fail / bypass, so the picture stays complete even when you <code>/3c-bypass --reason="hotfix"</code> to ship a critical change.</p>
+<h3 id="coaching-mode-the-hook-tells-you-why-not-just-no">Coaching mode — the hook tells you <em>why</em>, not just <em>no</em><a class="headerlink" href="#coaching-mode-the-hook-tells-you-why-not-just-no" title="Permanent link">&para;</a></h3>
+<p>The annoying part of pre-commit hooks is they fail you at the worst time and tell you nothing. L2 changes that.</p>
+<p>When a rule fails and <strong>coaching mode</strong> is on, the hook output includes:</p>
+<ul>
+<li>The rule's rationale (why it exists).</li>
+<li>A 5-line example of the right shape.</li>
+<li>A link to the ADR or incident that produced the rule, if one exists.</li>
+</ul>
+<p>It's the thing senior engineers do in code review, automated and immediate. Turn it off in <code>.3c/coaching.yaml</code> once the team's past needing it — the rules still enforce, you just stop seeing the explanations.</p>
+<p><strong>Activation:</strong> coaching is ON by default — you don't need to do anything to enable it. To disable for the whole repo, write <code>enabled: false</code> into <code>.3c/coaching.yaml</code>. To disable for specific users only, use <code>disabledUsers: [&lt;user&gt;]</code> in the same file.</p>
+<p>The rationale itself comes from the <strong>Standards Rationale Database</strong>: a structured "why" repository linking every rule to its origin. You can also look it up directly with <code>/3c-explain &lt;rule-id&gt;</code> when you're curious why a rule exists without waiting for it to bite you.</p>
+<p>→ <a href="coaching.html">Coaching mode in full</a> covers the rationale-authoring path, the adaptive teaching after two sightings, and what coaching deliberately does NOT do.</p>
+<h3 id="your-ai-assistant-gets-two-more-agents">Your AI assistant gets two more agents<a class="headerlink" href="#your-ai-assistant-gets-two-more-agents" title="Permanent link">&para;</a></h3>
+<p>L1 shipped <code>code-reviewer</code> and <code>test-author</code> as subagents your AI can dispatch. L2 adds two more:</p>
+<ul>
+<li><strong><code>architect</code></strong> — for "I'm about to make a design decision and want a second opinion that knows our ADRs and patterns."</li>
+<li><strong><code>security-reviewer</code></strong> — for "I'm touching auth / crypto / input-handling and want the OWASP + CWE lens applied before I PR this."</li>
+</ul>
+<p>Both are plain Markdown files under <code>.claude/agents/</code> with declared tool allowlists — you can read them, fork them, change them. No black box.</p>
+<h3 id="the-crew-multi-lens-review-and-orchestrated-delivery-on-demand">The crew — multi-lens review and orchestrated delivery, on demand<a class="headerlink" href="#the-crew-multi-lens-review-and-orchestrated-delivery-on-demand" title="Permanent link">&para;</a></h3>
+<p>Those agents started as something your AI dispatches one at a time. The L2 surface then grew the roster to <strong>eight</strong> (adding <code>product-owner</code>, <code>ux-expert</code>, <code>qa-reviewer</code>, <code>journey-architect</code>) and wired them into a <strong>crew</strong> you drive with three explicit commands — they only run when you type them:</p>
+<ul>
+<li><strong><code>/3c-review-board</code></strong> — run the whole panel over your branch before you open the PR. The eight specialists each report findings; the board <strong>reconciles</strong> them into one verdict — <em>blocking</em>, <em>advisory</em>, or <em>clean</em> — de-duplicating what they agree on and flagging where two disagree on severity for you to settle. The reconciliation is tested code (<code>3c reconcile</code>), so the same diff gives the same verdict every time — not a model mood.</li>
+<li><strong><code>/3c-project-manager</code></strong> — hand it an issue and it drives the whole pipeline: enrich → plan → test-first → review board → PR. It checkpoints before it branches or opens a PR, and it never merges, force-pushes, or bypasses a hook on your behalf. You stay in control of anything irreversible.</li>
+<li><strong><code>/3c-programme-manager</code></strong> — when your work spans several projects in one workspace (a monorepo, or sibling folders), it sequences them in dependency order with a checkpoint between each, reading the ledger at <code>.3c/dependencies.yaml</code>.</li>
+</ul>
+<p>The verdict is always advisory — you decide. Run <code>npx 3c doctor</code> if you ever wonder whether the crew installed cleanly; it checks all eight agents and three orchestrators are wired.</p>
+<h3 id="cross-platform-workflow-skills">Cross-platform workflow skills<a class="headerlink" href="#cross-platform-workflow-skills" title="Permanent link">&para;</a></h3>
+<p>If your team uses Jira Cloud, Linear, or GitLab Issues instead of GitHub: <code>/3c-create-issue</code> now routes to all four. Token via OS keychain (Keychain on macOS, Credential Manager on Windows, Secret Service on Linux). Nothing cached, nothing returned in tool output, nothing committable as a secret.</p>
+<p>If your test runner is Mocha, Playwright, or JUnit (not just Jest / Vitest / Pytest): <code>/3c-test</code> recognises and scaffolds for those too. New at L2: an integration-test mode separate from unit-test scaffolding.</p>
+<h3 id="your-own-local-insights-dashboard">Your own local insights dashboard<a class="headerlink" href="#your-own-local-insights-dashboard" title="Permanent link">&para;</a></h3>
+<p>L2 captures hook telemetry to <code>.3c/events/*.jsonl</code> — local-only, gitignored, never egressed at L2. The <strong>Personal Local Insights Dashboard</strong> renders it as a static HTML file you open in your browser:</p>
+<ul>
+<li>Which rules fire most for you (so you know what to internalise).</li>
+<li>How often your commits pass the gate on first try (so you know if coaching mode is still earning its keep).</li>
+<li>The post-edit validation deltas trend (so you can see your own AI-assisted-quality curve).</li>
+</ul>
+<p>It's the <em>developer's</em> mirror of what the L3 team-backend dashboard will roll up across the team — but at L2, the data does not leave your machine. Your manager can't see this dashboard. Only you can.</p>
+<h2 id="what-l2-does-not-change-for-you">What L2 does NOT change for you<a class="headerlink" href="#what-l2-does-not-change-for-you" title="Permanent link">&para;</a></h2>
+<p>The framework is designed to disappear when it's not needed. So:</p>
+<ul>
+<li><strong>You can still bypass.</strong> <code>/3c-bypass --reason="hotfix for prod"</code> skips the hook chain for the next commit. Logged in the JSONL events; never silently suppressed.</li>
+<li><strong>You can still edit by hand.</strong> The post-edit validator only fires when Claude Code is the editor. Editing a file directly in your IDE bypasses it — same as if the file didn't have rules. (This is intentional; 3C governs AI-assisted change, not human IDE work.)</li>
+<li><strong>Your model interactions don't change.</strong> Whether Claude Code is talking to Sonnet, Opus, or a local model — 3C sits <em>between</em> you and the editor, not between Claude Code and its provider. Your existing model-traffic agreement is undisturbed.</li>
+<li><strong>You don't have to learn a new tool.</strong> The four L1 slash commands plus the L2 additions (<code>/3c-drift</code>, <code>/3c-standards history</code>, <code>/3c-explain</code>, <code>/3c-deploy</code>, <code>/3c-bug</code>, <code>/3c-onboard</code>, <code>/3c-bypass</code>) and the crew orchestrators (<code>/3c-review-board</code>, <code>/3c-project-manager</code>, <code>/3c-programme-manager</code>) all live where every other Claude Code skill does. There's no separate CLI to keep open in another terminal.</li>
+</ul>
+<h2 id="how-to-adopt-l2-if-youre-already-at-l1">How to adopt L2 if you're already at L1<a class="headerlink" href="#how-to-adopt-l2-if-youre-already-at-l1" title="Permanent link">&para;</a></h2>
+<p>Realistically, half a day of focused work for the IC who's championing it:</p>
+<ol>
+<li><code>npm install git+https://github.com/kgn-git/3C#v1.7.3</code> — pin v1.7.</li>
+<li><code>npx 3c setup</code> — one command provisions everything (CLAUDE.md, rules, hooks, the L2 skills, the crew agents <code>product-owner</code>/<code>ux-expert</code>/<code>qa-reviewer</code>, an inert arch-check), then runs <code>3c doctor</code> to verify. Idempotent over an existing L1 tree, which it preserves; the individual <code>init</code> / <code>skills install</code> / <code>agents install</code> / <code>hook install</code> commands still run on their own if you prefer to step through.</li>
+<li><code>npx 3c doctor</code> — re-check anytime; it now also flags a stale <code>3c</code> CLI that's behind your installed skills, so a degraded crew skill tells you to upgrade instead of failing quietly.</li>
+<li>Enable one gate at a time and watch the JSONL events accumulate for a few days before turning on the next. Recommended sequence: <strong>Post-Edit Validation → Coaching Mode → Drift Detector → Coverage Gate → Security Scan Gate</strong>.</li>
+<li>Open <code>.3c/dashboard.html</code> after a week and see your own data.</li>
+<li>After shipping a piece of work, optionally capture a retrospective with <code>/3c-retrospective &lt;scope&gt;</code> — a single-project, evidence-based retro that is a suggestion, never a gate.</li>
+</ol>
+<h2 id="see-also">See also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Your team's view of L2 →</strong> <a href="for-eng-leaders.html">for engineering leaders</a></li>
+<li><strong>Your security architect's view of L2 →</strong> <a href="for-ciso.html">security &amp; code safety</a></li>
+<li><strong>The full L2 feature inventory →</strong> <a href="l2-today.html">what L2 ships today</a></li>
+<li><strong>Where this is all going →</strong> <a href="maturity-model.html">the maturity model as a portfolio plan</a></li>
+</ul>
+<div class="admonition note learning">
+<p class="admonition-title">What we're learning</p>
+<p>The patterns that work best are coaching mode + drift detector together — coaching catches the per-commit issues with rationale, drift catches the slow regressions that landed before a rule was written. If you're trying this on your own team, <a href="https://github.com/kgn-git/3C/discussions">tell us how it goes</a>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://github.com/kgn-git/3C" target="_blank" rel="noopener" title="kgn-git/3C on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8M97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.instant", "navigation.tracking", "navigation.sections", "navigation.tabs", "toc.integrate", "content.code.copy", "search.suggest"], "search": "assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.60a45f97.min.js"></script>
+      
+        <script src="assets/javascripts/carousel.js"></script>
+      
+    
+  </body>
+</html>

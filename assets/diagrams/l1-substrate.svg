@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 440" role="img">
+  <title>What L1 actually ships — the 3C templates substrate</title>
+  <desc>L1 ships four workflow skills (/3c-create-issue, /3c-implement, /3c-review, /3c-test), two starter agents (code-reviewer, test-author), rule families (clean-architecture, hexagonal, layered-mvc, owasp-top-10) plus CLAUDE.md fragments, and a pre-commit hook engine. Everything is scaffolded by npx 3c init into .claude/.</desc>
+  <style>text{font-family:Inter,system-ui,sans-serif}.t{fill:#0F172A}.d{fill:#334155}.m{fill:#64748B}.s{font-family:Inter,Georgia,serif;fill:#0F172A}</style>
+  <rect width="760" height="440" rx="18" fill="#F8FAFC"/>
+  <text x="380" y="40" text-anchor="middle" class="s" font-size="20">What L1 actually ships</text>
+  <rect x="330" y="50" width="100" height="3" rx="1.5" fill="#4F46E5"/>
+  <text x="380" y="74" text-anchor="middle" class="m" font-size="12">every item below is a real file scaffolded by npx 3c init into .claude/</text>
+
+  <rect x="34" y="86" width="340" height="150" rx="14" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="54" y="112" class="s" font-size="15">Standards — rules</text>
+  <text x="54" y="134" class="d" font-size="11.5">patterns: clean-architecture · hexagonal · layered-mvc</text>
+  <text x="54" y="154" class="d" font-size="11.5">security: owasp-top-10 (A01–A10)</text>
+  <text x="54" y="174" class="d" font-size="11.5">CLAUDE.md fragments (architecture, security, test)</text>
+  <text x="54" y="204" class="m" font-size="10.5">templates/rules/* · templates/claude-md/fragments/*</text>
+
+  <rect x="386" y="86" width="340" height="150" rx="14" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="406" y="112" class="s" font-size="15">Workflow — skills</text>
+  <text x="406" y="134" class="d" font-size="11.5">/3c-create-issue · /3c-implement</text>
+  <text x="406" y="154" class="d" font-size="11.5">/3c-review · /3c-test</text>
+  <text x="406" y="178" class="d" font-size="11.5">the same lifecycle on every laptop</text>
+  <text x="406" y="204" class="m" font-size="10.5">templates/skills/{create-issue,implement,review,test}</text>
+
+  <rect x="34" y="250" width="340" height="150" rx="14" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="54" y="276" class="s" font-size="15">Starter agents</text>
+  <text x="54" y="298" class="d" font-size="11.5">code-reviewer — review subagent</text>
+  <text x="54" y="318" class="d" font-size="11.5">test-author — test-generation subagent</text>
+  <text x="54" y="342" class="d" font-size="11.5">yours to extend, not a black box</text>
+  <text x="54" y="368" class="m" font-size="10.5">templates/agents/{code-reviewer,test-author}.md</text>
+
+  <rect x="386" y="250" width="340" height="150" rx="14" fill="#EEF2FF" stroke="#C7D2FE"/>
+  <text x="406" y="276" class="s" font-size="15">Quality — pre-commit hook engine</text>
+  <text x="406" y="298" class="d" font-size="11.5">lint · types · unit tests · secret scan</text>
+  <text x="406" y="318" class="d" font-size="11.5">flags before review — you decide, nothing forced</text>
+  <text x="406" y="342" class="d" font-size="11.5">code, not a template (AD-03)</text>
+  <text x="406" y="368" class="m" font-size="10.5">hook engine — runs under a 10s budget</text>
+
+  <text x="380" y="426" text-anchor="middle" class="m" font-size="11">one git revert removes all of it · L1 is reversible</text>
+</svg>

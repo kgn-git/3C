@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>A day in the life of a developer using 3C — 10-page Infographic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --indigo-50: #EEF2FF;
+    --indigo-100: #E0E7FF;
+    --indigo-500: #6366F1;
+    --indigo-600: #4F46E5;
+    --indigo-700: #4338CA;
+    --indigo-900: #312E81;
+    --slate-900: #0F172A;
+    --slate-700: #334155;
+    --slate-500: #64748B;
+    --slate-200: #E2E8F0;
+    --slate-100: #F1F5F9;
+    --slate-50: #F8FAFC;
+    --amber-100: #FEF3C7;
+    --amber-600: #D97706;
+    --emerald-50: #ECFDF5;
+    --emerald-500: #10B981;
+    --emerald-700: #047857;
+    --red-50: #FEE2E2;
+    --red-600: #DC2626;
+    --red-900: #7F1D1D;
+  }
+
+  * { box-sizing: border-box; }
+
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    color: var(--slate-900);
+    background: #fff;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "ss01", "cv01", "cv02";
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 14mm 14mm;
+    page-break-after: always;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  /* #231 fix: prevent flex-shrink trap that compresses snippet/prose blocks.
+     Only .diagram-wrap is allowed to shrink; everything else keeps natural
+     height. Print preview still pages at 297mm via @page + page-break-after. */
+  .page > * { flex-shrink: 0; }
+  .diagram-wrap { flex-shrink: 1; }
+
+  .page.cover, .page.closing { padding: 18mm 16mm; }
+  .page:last-child { page-break-after: auto; }
+
+  /* Cover page */
+  .cover {
+    background:
+      radial-gradient(circle at 85% 15%, rgba(99,102,241,0.20), transparent 55%),
+      radial-gradient(circle at 10% 90%, rgba(16,185,129,0.14), transparent 50%),
+      linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+    justify-content: space-between;
+  }
+  .cover-eyebrow {
+    font-size: 11pt;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--indigo-600);
+  }
+  .cover-title {
+    font-size: 48pt;
+    line-height: 1.02;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--slate-900);
+    margin: 12mm 0 8mm 0;
+    max-width: 170mm;
+  }
+  .cover-title span { color: var(--indigo-600); }
+  .cover-sub {
+    font-size: 17pt;
+    line-height: 1.35;
+    font-weight: 400;
+    color: var(--slate-700);
+    max-width: 160mm;
+  }
+  .cover-meta {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-top: 14mm;
+    border-top: 1.5px solid var(--slate-200);
+  }
+  .cover-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5pt;
+    color: var(--slate-500);
+    letter-spacing: 0.04em;
+  }
+  .cover-brand {
+    text-align: right;
+    font-size: 10pt;
+    color: var(--slate-500);
+  }
+  .cover-brand strong { color: var(--slate-900); font-weight: 700; }
+
+  .cover-highlights {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6mm;
+    margin-top: 16mm;
+  }
+  .hl {
+    padding: 5mm;
+    border-radius: 3mm;
+    background: #fff;
+    border: 1.5px solid var(--slate-200);
+    box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+  }
+  .hl-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11pt;
+    color: var(--indigo-600);
+    font-weight: 600;
+    margin-bottom: 2mm;
+  }
+  .hl-text {
+    font-size: 10.5pt;
+    line-height: 1.4;
+    color: var(--slate-700);
+  }
+
+  /* Diagram pages */
+  .diagram-page { background: #fff; }
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6mm;
+  }
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10pt;
+    letter-spacing: 0.08em;
+    color: var(--indigo-600);
+    font-weight: 600;
+    padding: 2mm 4mm;
+    background: var(--indigo-50);
+    border-radius: 20mm;
+  }
+  .page-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9pt;
+    color: var(--slate-500);
+    letter-spacing: 0.1em;
+  }
+
+  .diagram-title {
+    font-size: 26pt;
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--slate-900);
+    margin: 0 0 3mm 0;
+  }
+  .diagram-subtitle {
+    font-size: 12pt;
+    line-height: 1.4;
+    color: var(--slate-700);
+    font-weight: 400;
+    margin: 0 0 4mm 0;
+    max-width: 180mm;
+  }
+
+  .diagram-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2mm 0;
+    min-height: 130mm;
+  }
+  .diagram-wrap svg,
+  .diagram-wrap img.diagram-svg {
+    max-width: 100%;
+    max-height: 150mm;
+    height: auto;
+    width: auto;
+  }
+
+  /* Tall sequence/flow diagrams get extra vertical room */
+  .diagram-wrap.tall svg,
+  .diagram-wrap.tall img.diagram-svg {
+    max-height: 165mm;
+  }
+
+  /* Extra-large: Diagram J (Phase 5 stateDiagram) gets the most room */
+  .diagram-wrap.xl svg,
+  .diagram-wrap.xl img.diagram-svg {
+    max-height: 195mm;
+  }
+
+  .key-message {
+    margin-top: 4mm;
+    padding: 5mm 6mm 5mm 7mm;
+    border-left: 4px solid var(--indigo-600);
+    background: var(--indigo-50);
+    border-radius: 0 3mm 3mm 0;
+  }
+  .key-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9pt;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--indigo-700);
+    text-transform: uppercase;
+    margin-bottom: 2.5mm;
+  }
+  .key-text {
+    font-size: 13.5pt;
+    line-height: 1.45;
+    color: var(--slate-900);
+    font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+
+  .page-footer {
+    margin-top: 5mm;
+    padding-top: 3mm;
+    border-top: 1px solid var(--slate-200);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8pt;
+    color: var(--slate-500);
+    letter-spacing: 0.04em;
+  }
+
+  /* Closing page */
+  .closing {
+    background:
+      radial-gradient(circle at 15% 20%, rgba(99,102,241,0.18), transparent 55%),
+      radial-gradient(circle at 90% 85%, rgba(16,185,129,0.12), transparent 55%),
+      linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+    justify-content: space-between;
+  }
+  .closing-head {
+    font-size: 12pt;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--indigo-600);
+  }
+  .closing-title {
+    font-size: 40pt;
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--slate-900);
+    margin: 10mm 0 6mm 0;
+    max-width: 170mm;
+  }
+  .closing-body {
+    font-size: 14pt;
+    line-height: 1.5;
+    color: var(--slate-700);
+    max-width: 170mm;
+  }
+  .closing-body p { margin: 0 0 4mm 0; }
+
+  .takeaway-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4mm;
+    margin-top: 10mm;
+  }
+  .takeaway {
+    padding: 5mm 6mm;
+    background: #fff;
+    border: 1.5px solid var(--slate-200);
+    border-radius: 3mm;
+  }
+  .takeaway-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9pt;
+    color: var(--indigo-600);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5mm;
+  }
+  /* Red variant for mistake cards on the closing page (#225 AC5) */
+  .takeaway-num.mistake { color: var(--red-600); }
+  .takeaway.mistake { border-color: var(--red-50); }
+  .takeaway-text {
+    font-size: 11pt;
+    line-height: 1.4;
+    color: var(--slate-900);
+    font-weight: 500;
+  }
+  .takeaway-text strong { color: var(--slate-900); font-weight: 700; }
+
+  /* Checklist card spanning both columns on closing page (#225 AC3) */
+  .checklist {
+    grid-column: 1 / span 2;
+    padding: 6mm 7mm;
+    background: var(--slate-50);
+    border: 1.5px solid var(--slate-200);
+    border-radius: 3mm;
+    font-size: 10.5pt;
+    line-height: 1.55;
+    color: var(--slate-700);
+  }
+  .checklist strong { color: var(--slate-900); }
+  .checklist code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5pt;
+    background: #fff;
+    border: 1px solid var(--slate-200);
+    border-radius: 1.5mm;
+    padding: 0.5mm 1mm;
+  }
+
+  .closing-cta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 14mm;
+    padding-top: 8mm;
+    border-top: 1.5px solid var(--slate-200);
+  }
+  .cta-main {
+    font-size: 14pt;
+    font-weight: 700;
+    color: var(--slate-900);
+    line-height: 1.3;
+  }
+  .cta-sub {
+    font-size: 10.5pt;
+    color: var(--slate-500);
+    margin-top: 2mm;
+  }
+  .cta-tags {
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9pt;
+    color: var(--indigo-600);
+    letter-spacing: 0.04em;
+    line-height: 1.7;
+  }
+
+  /* #231: verbatim code/event snippet — shows full content, never clipped */
+  .snippet {
+    margin: 3mm 0;
+    padding: 3mm 4mm;
+    background: var(--slate-50);
+    border-left: 3px solid var(--slate-500);
+    border-radius: 0 2mm 2mm 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9pt;
+    line-height: 1.5;
+    color: var(--slate-900);
+    white-space: pre-wrap;
+    overflow: visible;
+    overflow-x: auto;
+    flex-shrink: 0;
+    height: auto;
+    max-height: none;
+  }
+
+  /* New: coaching segment callout — used in cover page sidebar (#216 AC5) */
+  .coaching-callout {
+    margin: 4mm 0;
+    padding: 4mm 5mm;
+    background: var(--amber-100);
+    border-left: 4px solid var(--amber-600);
+    border-radius: 0 2mm 2mm 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9pt;
+    line-height: 1.55;
+    color: var(--slate-900);
+    white-space: pre-wrap;
+  }
+  .coaching-callout-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 9pt;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--amber-600);
+    margin-bottom: 2mm;
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE 0 — COVER (sub-issue #216) -->
+<section class="page cover">
+  <div>
+    <div class="cover-eyebrow">3C &middot; AI engineering alignment</div>
+    <h1 class="cover-title">A day in the life of<br>a developer using <span>3C</span>.</h1>
+    <p class="cover-sub">One engineer's working day inside a team that has adopted <strong>3C &mdash; Claude Code Coach</strong> at <strong>L2 (v1.5.0)</strong>. The slash commands she runs, the gates she passes, the rules that coach her, and the things she never types by hand.</p>
+
+    <div class="cover-highlights">
+      <div class="hl">
+        <div class="hl-num">Standards</div>
+        <div class="hl-text"><code>CLAUDE.md</code> under a 150-instruction cognitive budget, <code>.claude/rules/</code>, the architecture pattern library, the security policy templates &mdash; the shared spine every AI session reads from.</div>
+      </div>
+      <div class="hl">
+        <div class="hl-num">Workflow</div>
+        <div class="hl-text">The <code>/3c-*</code> slash commands &mdash; <code>create-issue</code>, <code>implement</code>, <code>review</code>, <code>test</code>, <code>drift</code>, <code>explain</code>, <code>deploy</code>, <code>bug</code>, <code>onboard</code>, <code>bypass</code>. The same lifecycle on every laptop.</div>
+      </div>
+      <div class="hl">
+        <div class="hl-num">Quality</div>
+        <div class="hl-text">Post-Edit Validation (&lt;300ms) &rarr; Pre-Commit Hook (&lt;10s) &rarr; Coverage Gate + Security Scan Gate (&lt;60s) &rarr; Drift Detector on demand. Every gate fired, every event logged.</div>
+      </div>
+    </div>
+
+    <p class="cover-sub" style="font-size: 11pt; margin-top: 6mm; line-height: 1.5;"><strong>Specialists on call:</strong> the AI dispatches <code>code-reviewer</code>, <code>test-author</code>, <code>architect</code>, and <code>security-reviewer</code> when one perspective isn't enough. <strong>Coaching mode:</strong> gate failures explain <em>why</em>, not just <em>no</em> &mdash; rationale, example, ADR link &mdash; and go terse after two sightings of the same rule. <strong>Honesty discipline:</strong> one <code>git revert</code> removes 3C entirely; no source code leaves the workstation; the framework under-claims by design.</p>
+
+    <div class="coaching-callout">
+      <span class="coaching-callout-label">Coaching segment &mdash; what Maya sees when a rule fails</span>
+——— 3c coaching ———
+• import-order
+  Why: imports should be ordered stdlib, third-party, local —
+        fewer merge conflicts in long-lived branches.
+  Do:  import { readFile } from "node:fs/promises";
+  Docs: github.com/kgn-git/praise/blob/main/strategy/adr/AD-04-local-storage.md
+———————————————
+    </div>
+
+    <p class="cover-sub" style="font-size: 11pt; margin-top: 6mm;"><strong>One brand note:</strong> if Maya's team ran <code>npx 3c init --brand="Acme Standards"</code>, she invokes <code>/acme-standards:review</code> instead of <code>/3c-review</code>. This infographic uses the unbranded <code>/3c-*</code> names throughout for clarity. The upstream code is unchanged; only the slash namespace is brand-local.</p>
+  </div>
+
+  <div class="cover-meta">
+    <div class="cover-tag">kgn-git/3C &middot; v1.5.0 &middot; 2026&#8209;05&#8209;20 &middot; <a href="./3C-Devdaylife-Infographic.pdf" style="color: var(--indigo-600); text-decoration: none; font-weight: 600;">↓ Download PDF</a></div>
+    <div class="cover-brand"><strong>3C</strong><br>Claude Code Coach</div>
+  </div>
+</section>
+
+<!-- PAGE 1 — PHASE 1 INTAKE (sub-issue #217; body added via #231) -->
+<section class="page diagram-page">
+  <div class="page-header">
+    <div class="badge">01 &middot; INTAKE</div>
+    <div class="page-num">1 / 7</div>
+  </div>
+  <h2 class="diagram-title">Raw inputs in. Reviewable issue out.</h2>
+  <p class="diagram-subtitle">Maya's morning starts with a PM brief, a Slack thread, and a CSV of customer feedback. She invokes <code>/3c-create-issue</code>, iterates on the draft, and ends with one GitHub issue carrying six required fields. The assistant types the issue body; Maya picks intent and judges fit.</p>
+
+  <div class="diagram-wrap">
+    <img src="diagrams/f-intake.svg" alt="Phase 1 intake: PM brief, Slack thread, and CSV feed /3c-create-issue, which iterates with Maya's re-prompts until the resulting GitHub issue has the six required fields" class="diagram-svg">
+  </div>
+
+  <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">The exact prompt Maya sends, and the resulting issue body she reviews:</p>
+  <div class="snippet">/3c-create-issue --repo=acme/web
+
+We want logged-in users to see their last 5 orders on the
+account home. PM brief attached (link).
+Source: customer feedback CSV row 247, Slack #cx-feedback 2026-05-19.
+Out of scope: changing order-detail page.</div>
+
+  <div class="snippet">Title: account home: surface last 5 orders
+User story: As a logged-in user, I want my last 5 orders…
+Scope: account-home page, /api/orders pagination
+Out of scope: order-detail page, reordering, returns
+AC1: orders panel shows 5 most-recent orders, descending by date
+AC2: empty state when user has zero orders
+AC3: link to full order history (existing route)
+Deps: none new. Source: <a>Slack #cx-feedback…</a></div>
+
+  <p style="font-size: 10pt; line-height: 1.55; color: var(--slate-700); margin: 3mm 0 0 0;">
+    <strong>What 3C does for you here:</strong> turns three loose inputs into one structured artefact in under a minute. <strong>What Maya still owns:</strong> reading the draft and judging "is this what I meant?" — the only typing she does is the next prompt. <strong>What 3C does NOT do:</strong> read source files, scrape Slack, or transmit anything to GitHub except the title / body / labels / repo Maya explicitly provided.
+  </p>
+
+  <div class="key-message">
+    <div class="key-label">Key takeaway</div>
+    <div class="key-text">The skill produces what you prompt, not what you mean. Iterating the prompt is the work; reading the draft is the gate.</div>
+  </div>
+
+  <div class="page-footer">
+    <div>Phase 1 &middot; Intake</div>
+    <div>L2 Multi-PM MCP adapter &middot; GitHub default at L1</div>
+  </div>
+</section>
+
+<!-- PAGE 2 — PHASE 2 ENRICHMENT (sub-issue #218) -->
+<section class="page diagram-page">
+  <div class="page-header">
+    <div class="badge">02 &middot; ENRICH</div>
+    <div class="page-num">2 / 7</div>
+  </div>
+  <h2 class="diagram-title">Dispatch a specialist before code.</h2>
+  <p class="diagram-subtitle">The issue is structured, not yet technical. Maya dispatches the <code>architect</code> subagent for an approach analysis, looks up the rationale for a pattern she's unsure about with <code>/3c-explain</code>, and re-prompts the architect with the rationale until the analysis fits.</p>
+
+  <div class="diagram-wrap tall">
+    <img src="diagrams/g-enrichment.svg" alt="Phase 2 enrichment: Maya dispatches architect subagent, reviews its output, runs /3c-explain for an unclear rule, re-dispatches with rationale; architect revises and appends to issue" class="diagram-svg">
+  </div>
+
+  <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">What the architect returns (first pass), and Maya's <code>/3c-explain</code> lookup:</p>
+  <div class="snippet">Affected: src/account/home/, src/api/orders/list.ts
+Approach: paginate via existing /api/orders?limit=5&amp;sort=-date
+Risks: stale-cache on order-creation (TTL 5 min on this route)
+Open questions: empty state copy? confirm with PM
+Complexity: S (≤ 1 day)
+Testing: unit on pagination + integration on empty state</div>
+
+  <div class="snippet">/3c-explain layered-mvc.api-vs-page-boundary
+
+Why: API routes own data shape; page components consume + render.
+     A page importing another page's data layer is a boundary violation.
+Do:  fetch in the page route handler, hand props to component
+Docs: github.com/kgn-git/praise/blob/main/strategy/adr/AD-04-local-storage.md</div>
+
+  <p style="font-size: 10pt; line-height: 1.55; color: var(--slate-700); margin: 3mm 0 0 0;">
+    <strong>What 3C does for you:</strong> dispatches a specialist that reads your standards before answering. <strong>What Maya still owns:</strong> noticing the analysis doesn't fit, and choosing to re-dispatch — the architect re-writes; Maya doesn't. <strong>What 3C does NOT do:</strong> design the solution unilaterally; the architect proposes, you accept or push back.
+  </p>
+
+  <div class="key-message">
+    <div class="key-label">Key takeaway</div>
+    <div class="key-text">The architect is cheaper before code than after. One re-dispatch with a rationale beats fifty minutes of refactoring.</div>
+  </div>
+
+  <div class="page-footer">
+    <div>Phase 2 &middot; Enrichment</div>
+    <div>L2 architect + security-reviewer subagents (VP-02-F11b)</div>
+  </div>
+</section>
+
+<!-- PAGE 3 — PHASE 3 BATCH (sub-issue #219) -->
+<section class="page diagram-page">
+  <div class="page-header">
+    <div class="badge">03 &middot; BATCH</div>
+    <div class="page-num">3 / 7</div>
+  </div>
+  <h2 class="diagram-title">Eighteen rows in. Twelve issues out.</h2>
+  <p class="diagram-subtitle">After lunch, Maya processes the backlog dump. A batch prompt template runs <code>/3c-create-issue</code> against each row; duplicates collapse, two items kick back for human clarification, and <code>/3c-drift</code> catches any reference to a rule that has since been retired.</p>
+
+  <div class="diagram-wrap">
+    <img src="diagrams/h-batch.svg" alt="Phase 3 batch funnel: 18 raw items into /3c-create-issue ×18, near-duplicate detection merges 4, 2 flagged for human clarification, /3c-drift check, 12 cleaned set out" class="diagram-svg">
+  </div>
+
+  <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">The batch template Maya wraps each row in, and the clarification comment she sends back to the PM for one of the rejected items:</p>
+  <div class="snippet">/3c-create-issue --batch --repo=acme/web
+
+For each row in customer-feedback.csv:
+  - title from "summary" column
+  - user-story from "asker_voice" column
+  - source-link from row URL
+  - mark as "needs human clarification" if "type" column is empty</div>
+
+  <div class="snippet">Hi Sam — row 12 of cx-feedback says "shipping flow broken on
+mobile" but no device / steps / expected behaviour. Two issues
+about shipping in the same week, possibly the same bug. Could
+you (or a customer) attach a screen recording and confirm?
+— Maya (via /3c-bug template)</div>
+
+  <p style="font-size: 10pt; line-height: 1.55; color: var(--slate-700); margin: 3mm 0 0 0;">
+    <strong>What 3C does for you:</strong> consistent shape across eighteen issues + dedup + drift check, in one pass. <strong>What Maya still owns:</strong> reading the two flagged items and deciding "ask the human" vs "drop it". <strong>What 3C does NOT do:</strong> invent acceptance criteria for unclear rows; the human-clarification branch is the framework saying "I cannot make this concrete; you decide."
+  </p>
+
+  <div class="key-message">
+    <div class="key-label">Key takeaway</div>
+    <div class="key-text">The funnel shape is the point: 18 in, 12 out, 4 merged, 2 deferred. The framework loses items on purpose, not by accident.</div>
+  </div>
+
+  <div class="page-footer">
+    <div>Phase 3 &middot; Batch refinement</div>
+    <div>L2 Standards Drift Detector (#10)</div>
+  </div>
+</section>
+
+<!-- PAGE 4 — PHASE 4 SPRINT ASSEMBLY (sub-issue #220) -->
+<section class="page diagram-page">
+  <div class="page-header">
+    <div class="badge">04 &middot; ASSEMBLE</div>
+    <div class="page-num">4 / 7</div>
+  </div>
+  <h2 class="diagram-title">Five scans, one tightened sprint.</h2>
+  <p class="diagram-subtitle">With 12 clean issues in hand, Maya runs <code>/3c-review</code> over the sprint as a whole — five checks that catch the inconsistencies a single-issue review misses. <code>/3c-standards history</code> feeds every check so the assertions match the rules that existed on the relevant date.</p>
+
+  <div class="diagram-wrap">
+    <img src="diagrams/i-sprint-assembly.svg" alt="Phase 4 sprint assembly: /3c-review runs 5 scans (overlap, AC contradiction, missing deps, coverage gap, doc uniformity), fed by /3c-standards history; tightened sprint with one issue punted to ADR" class="diagram-svg">
+  </div>
+
+  <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">The <code>/3c-review</code> invocation adapted for sprint scope, and the resulting summary of findings:</p>
+  <div class="snippet">/3c-review --scope=sprint --issues=#1284..#1295
+
+For the 12 issues in the candidate sprint:
+  1. flag overlapping files across issues
+  2. flag contradictory ACs across issues
+  3. flag deps that aren't in scope
+  4. flag modules changed without test issues
+  5. flag issue-body shape uniformity</div>
+
+  <div class="snippet">Findings:
+- #1287 + #1291 both touch src/account/home/. Merge order matters.
+- #1289 AC2 contradicts #1284 AC3 on empty-state. Decide.
+- #1292 depends on a util that #1295 will refactor. Sequence.
+- #1290 changes /api/orders/ but no test-issue. PUNT to needs-ADR.
+- 11/12 issue bodies match shape. #1293 missing out-of-scope.</div>
+
+  <p style="font-size: 10pt; line-height: 1.55; color: var(--slate-700); margin: 3mm 0 0 0;">
+    <strong>What 3C does for you:</strong> five inconsistency checks across the whole sprint, dated against the rules that actually applied. <strong>What Maya still owns:</strong> choosing whether to merge, sequence, or punt each finding — the skill flags, she decides. <strong>What 3C does NOT do:</strong> reject the sprint; one issue gets punted for ADR-level discussion, the rest proceed.
+  </p>
+
+  <div class="key-message">
+    <div class="key-label">Key takeaway</div>
+    <div class="key-text">Catching a contradiction now costs five minutes. Catching it in PR review costs two days of rework.</div>
+  </div>
+
+  <div class="page-footer">
+    <div>Phase 4 &middot; Sprint assembly</div>
+    <div>L2 Standards Version History (#21) &middot; Drift (#10)</div>
+  </div>
+</section>
+
+<!-- PAGE 5 — PHASE 5 IMPLEMENT (sub-issue #221) -->
+<section class="page diagram-page">
+  <div class="page-header">
+    <div class="badge">05 &middot; IMPLEMENT</div>
+    <div class="page-num">5 / 7</div>
+  </div>
+  <h2 class="diagram-title">One issue, six gates, zero hand-edits.</h2>
+  <p class="diagram-subtitle">Maya picks issue #1284 and runs <code>/3c-implement</code>. From branch creation through merge, every keystroke that changes code, tests, or the PR description is typed by Claude Code or by a <code>/3c-*</code> skill. Maya prompts, judges, and approves.</p>
+
+  <div class="diagram-wrap xl">
+    <img src="diagrams/j-implement.svg" alt="Phase 5 implement loop: state machine from issue selection through /3c-implement, branch, /3c-test scaffold, Claude Code implements, Post-Edit Validator, Pre-Commit, Coverage + Security Scan Gate, optional security-reviewer, code-reviewer findings, merge" class="diagram-svg">
+  </div>
+
+  <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">The coaching segment Maya sees when the Pre-Commit hook flags her import order, and the JSONL event the hook telemetry records:</p>
+  <div class="snippet">——— 3c coaching ———
+• import-order
+  Why: imports should be ordered stdlib, third-party, local —
+        fewer merge conflicts in long-lived branches.
+  Do:  import { readFile } from "node:fs/promises";
+  Docs: github.com/kgn-git/praise/blob/main/strategy/adr/AD-04-local-storage.md
+———————————————</div>
+
+  <div class="snippet">{"ts":"2026-05-20T14:32:11Z","gate":"pre-commit","rule":"import-order","outcome":"fail","duration_ms":487,"file":"src/account/home/orders-panel.tsx","user":"maya","session":"j-1284-2"}</div>
+
+  <p style="font-size: 10pt; line-height: 1.55; color: var(--slate-700); margin: 3mm 0 0 0;">
+    <strong>What 3C does for you:</strong> six gates fire automatically; failures explain why; every event is recorded. <strong>What Maya still owns:</strong> reading the coaching segment, deciding "rule is right, regenerate" vs "rule is wrong, push to standards-history". <strong>What 3C does NOT do:</strong> fix the code for her unbidden — every revision happens because Maya re-prompted Claude Code with the diagnosis.
+  </p>
+
+  <div class="key-message">
+    <div class="key-label">Key takeaway</div>
+    <div class="key-text">The gate chain is mechanical. The instruction is human. The keystroke is always the assistant's.</div>
+  </div>
+
+  <div class="page-footer">
+    <div>Phase 5 &middot; Implementation loop</div>
+    <div>L2 Post-Edit (#16) &middot; Coverage (#17) &middot; Security Scan (#18) &middot; Coaching (#23)</div>
+  </div>
+</section>
+
+<!-- PAGE 6 — PHASE 6 COMPOUNDING (sub-issue #222) -->
+<section class="page diagram-page">
+  <div class="page-header">
+    <div class="badge">06 &middot; COMPOUND</div>
+    <div class="page-num">6 / 7</div>
+  </div>
+  <h2 class="diagram-title">Compounding is the product.</h2>
+  <p class="diagram-subtitle">After issue #1284 ships, Maya runs issues #1285, #1286, #1287 through the same loop. Coaching goes terse on rules she has seen twice. New prompts reference shipped PRs as patterns, holding the 150-instruction budget. The hot-fix path and the tricky-failure path both route through the assistant — never around it.</p>
+
+  <div class="diagram-wrap">
+    <img src="diagrams/k-sprint-throughput.svg" alt="Phase 6 compounding: issues 2-4 through /3c-implement, three side-loops (verbose→terse coaching, pattern-reuse, subagent dispatch), plus hot-fix branch (/3c-bypass + JSONL event) and tricky-failure branch (Maya re-prompts; Claude Code revises)" class="diagram-svg">
+  </div>
+
+  <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">The terse coaching segment Maya sees on a third sighting of <code>import-order</code>, and the JSONL bypass event when she ships a hot-fix:</p>
+  <div class="snippet">——— 3c coaching ———
+• import-order
+  Why: imports should be ordered stdlib, third-party, local.
+———————————————</div>
+
+  <div class="snippet">{"ts":"2026-05-20T16:14:02Z","gate":"pre-commit","outcome":"bypass","reason":"prod hotfix #INC-417 — null-deref on /api/orders, fix in 3 lines","user":"maya","session":"hotfix-INC-417"}</div>
+
+  <p style="font-size: 10pt; line-height: 1.55; color: var(--slate-700); margin: 3mm 0 0 0;">
+    <strong>What 3C does for you:</strong> coaching gets quieter, prompts get shorter, gates fire the same. Velocity compounds because the team's standards are doing the standardising, not the developers. <strong>What Maya still owns:</strong> the decision to bypass, the rationale she writes, the follow-up issue she files after shipping. <strong>What 3C does NOT do:</strong> erase the bypass — every event is permanent and reviewable.
+  </p>
+
+  <div class="key-message">
+    <div class="key-label">Key takeaway</div>
+    <div class="key-text">The framework gets out of your way as you internalise it. The first sighting is mentorship; the third is just a bullet.</div>
+  </div>
+
+  <div class="page-footer">
+    <div>Phase 6 &middot; Compounding</div>
+    <div>L2 Hook Telemetry (#20) &middot; Coaching (#23)</div>
+  </div>
+</section>
+
+<!-- PAGE 7 — PHASE 7 UAT (sub-issue #223) -->
+<section class="page diagram-page">
+  <div class="page-header">
+    <div class="badge">07 &middot; UAT</div>
+    <div class="page-num">7 / 7</div>
+  </div>
+  <h2 class="diagram-title">Walk the path. File the gap.</h2>
+  <p class="diagram-subtitle">For #1287 (a UI change), Maya scaffolds an integration checklist via <code>/3c-test --mode=integration</code>, deploys to staging through <code>/3c-deploy --env=staging</code>, walks the checklist by hand, and uses <code>/3c-bug</code> to file the one regression she found — appended directly to the original issue with full environment capture.</p>
+
+  <div class="diagram-wrap tall">
+    <img src="diagrams/l-uat.svg" alt="Phase 7 UAT sequence: Maya invokes /3c-test --mode=integration, /3c-deploy --env=staging, walks UAT checklist manually, /3c-bug captures environment, structured report appended to issue" class="diagram-svg">
+  </div>
+
+  <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">The header of the <code>/3c-bug</code> report appended to issue #1287 (env values scrubbed):</p>
+  <div class="snippet">Bug report — #1287 follow-up
+OS: macOS 14.5 (Darwin 23.5.0)
+Runtime: Node 20.12.2, npm 10.5.0
+Project state: branch=feat/issue-1287..., commit=a8c4f2e
+Recent commits: 4 in last 24h
+Env (scrubbed): NODE_ENV=staging, FEATURE_FLAGS=[**SCRUBBED**]
+Repro: navigate /account, log out, log in as user with 0 orders
+Expected: empty-state copy. Actual: orders panel renders [object Object].</div>
+
+  <p style="font-size: 10pt; line-height: 1.55; color: var(--slate-700); margin: 3mm 0 0 0;">
+    <strong>What 3C does for you:</strong> the integration checklist is generated, the environment is captured, the bug report is structured — no "works on my machine" archaeology. <strong>What Maya still owns:</strong> walking the checklist with human eyes; only humans notice that empty-state looks broken. <strong>What 3C does NOT do:</strong> deploy to production for her — production deploys require <code>--yes</code> on the deploy command.
+  </p>
+
+  <div class="key-message">
+    <div class="key-label">Key takeaway</div>
+    <div class="key-text">Manual UAT is the test the assistant cannot run. The framework's job is to capture what she found, structured.</div>
+  </div>
+
+  <div class="page-footer">
+    <div>Phase 7 &middot; Manual UAT</div>
+    <div>L2 Deployment Skill (#12) &middot; Bug Report (#14)</div>
+  </div>
+</section>
+
+<!-- PAGE 8 — END-OF-DAY REFLECTION (sub-issue #224) -->
+<section class="page diagram-page">
+  <div class="page-header">
+    <div class="badge">END-OF-DAY</div>
+    <div class="page-num">&nbsp;</div>
+  </div>
+  <h2 class="diagram-title">Your data. Your machine. Your reflection.</h2>
+  <p class="diagram-subtitle">Maya opens <code>.3c/dashboard.html</code> in her browser. Three panels: which rules fired most today, what proportion of her commits passed the gate on first try, and the trend of post-edit findings across the sprint. <strong>Local-only. Gitignored. Never egressed at L2. Her manager cannot see this.</strong></p>
+
+  <div class="diagram-wrap">
+    <img src="diagrams/m-dashboard.svg" alt="End-of-day dashboard mockup: .3c/events/*.jsonl feeds .3c/dashboard.html with three panels (rules fired today, first-try pass rate, post-edit deltas trend); local-only, gitignored, never egressed at L2" class="diagram-svg">
+  </div>
+
+  <p style="font-size: 10pt; line-height: 1.55; color: var(--slate-700); margin: 3mm 0 0 0;">
+    <strong>What 3C does for you:</strong> rolls up the day's local JSONL events into three signals you can act on tomorrow. <strong>What Maya still owns:</strong> what to do about a 78% pass rate — push it higher with practice, or write a new rationale so coaching helps her? <strong>What 3C does NOT do at L2:</strong> share this with anyone. Not the team. Not the manager. The L3 team-observability dashboard is a different surface, opt-in per team, on a self-hostable backend — not a stealth pipe from this view.
+  </p>
+
+  <div class="key-message">
+    <div class="key-label">Key takeaway</div>
+    <div class="key-text">A dashboard your manager cannot see is the only honest version of personal observability.</div>
+  </div>
+
+  <div class="page-footer">
+    <div>End-of-day &middot; Personal Local Insights</div>
+    <div>L2 Personal Dashboard (#180) &middot; local-only NFR-PRIV-01</div>
+  </div>
+</section>
+
+<!-- PAGE 9 — CLOSING (sub-issue #225) -->
+<section class="page closing">
+  <div>
+    <div class="closing-head">Common mistakes &middot; pinnable checklist</div>
+    <h2 class="closing-title">The assistant types.<br>You instruct.</h2>
+    <div class="closing-body">
+      <p>Six wrong turns most teams make in their first week with 3C, and the one rule that summarises the rest. Print this page, pin it next to your laptop &mdash; the framework gets quieter as the team internalises it.</p>
+    </div>
+
+    <div class="takeaway-grid">
+      <div class="takeaway mistake">
+        <div class="takeaway-num mistake">01 &middot; Rubber-stamping AI issues</div>
+        <div class="takeaway-text"><code>/3c-create-issue</code> produces what you prompt, not what you mean. <strong>Read every issue body before publishing.</strong></div>
+      </div>
+      <div class="takeaway mistake">
+        <div class="takeaway-num mistake">02 &middot; Pasting the standards doc</div>
+        <div class="takeaway-text"><strong>Trust <code>.claude/rules/</code> and the 150-instruction budget.</strong> Re-pasting blows the budget and degrades the model.</div>
+      </div>
+      <div class="takeaway mistake">
+        <div class="takeaway-num mistake">03 &middot; Bypass without a real reason</div>
+        <div class="takeaway-text">The JSONL event is permanent and reviewable. <strong>"forgot why"</strong> in the reason field is how teams lose trust in the bypass mechanism.</div>
+      </div>
+      <div class="takeaway mistake">
+        <div class="takeaway-num mistake">04 &middot; Treating coaching as noise</div>
+        <div class="takeaway-text">The second sighting goes terse on its own. <strong>Read it the first time</strong> and the framework gets quieter on its own.</div>
+      </div>
+      <div class="takeaway mistake">
+        <div class="takeaway-num mistake">05 &middot; Implement on un-enriched issues</div>
+        <div class="takeaway-text"><strong>Enrich first (Phase 2), then implement.</strong> <code>architect</code> is cheaper before code than after.</div>
+      </div>
+      <div class="takeaway mistake">
+        <div class="takeaway-num mistake">06 &middot; Hand-editing to "save time"</div>
+        <div class="takeaway-text"><strong>The assistant types, you instruct.</strong> Every hand-edit is a missed opportunity for the rule library to evolve.</div>
+      </div>
+
+      <div class="checklist">
+        <strong>Pinnable checklist</strong> &middot; pin next to your laptop<br><br>
+        <strong>Slash commands by phase:</strong> <code>/3c-create-issue</code> &middot; <code>/3c-explain</code> &middot; <code>/3c-drift</code> &middot; <code>/3c-review</code> &middot; <code>/3c-standards history</code> &middot; <code>/3c-implement</code> &middot; <code>/3c-test [--mode=integration]</code> &middot; <code>/3c-deploy --env=&lt;…&gt;</code> &middot; <code>/3c-bug</code> &middot; <code>/3c-bypass --reason="..."</code><br><br>
+        <strong>Subagents &mdash; when to dispatch:</strong> <code>architect</code> for design calls &middot; <code>security-reviewer</code> for auth/crypto/input-handling &middot; <code>code-reviewer</code> pre-PR &middot; <code>test-author</code> for scaffolding inside <code>/3c-test</code><br><br>
+        <strong>Gate chain (firing order):</strong> Post-Edit Validation (&lt;300ms) &rarr; Pre-Commit (&lt;10s) &rarr; Coverage + Security Scan (&lt;60s) &rarr; Drift on demand<br><br>
+        <strong>Bypass syntax:</strong> <code>/3c-bypass --reason="&lt;one-line&gt;"</code> &mdash; logged, never silent<br><br>
+        <strong>File paths to remember:</strong> <code>CLAUDE.md</code> (root, &le;150 instructions) &middot; <code>.claude/rules/&lt;rule&gt;.rationale.yaml</code> &middot; <code>.3c/coaching.yaml</code> &middot; <code>.3c/coaching/&lt;user&gt;.yaml</code> &middot; <code>.3c/events/*.jsonl</code> &middot; <code>.3c/dashboard.html</code><br><br>
+        <strong>The one rule that summarises the rest: the assistant types, you instruct.</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="closing-cta">
+    <div>
+      <div class="cta-main">3C &mdash; Claude Code Coach</div>
+      <div class="cta-sub">Open source &middot; MIT licensed &middot; built in public</div>
+    </div>
+    <div class="cta-tags">
+      github.com/kgn-git/3C<br>
+      github.com/kgn-git/praise<br>
+      #ai-coding &middot; #governance
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

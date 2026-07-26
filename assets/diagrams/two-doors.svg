@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 220" role="img" aria-label="Come in the way that fits you: an engineer door and a team-lead door.">
+  <style>text{font-family:Inter,system-ui,sans-serif}.t{fill:#0F172A}.s{font-family:Inter,Georgia,serif;fill:#0F172A}</style>
+  <rect width="460" height="220" rx="18" fill="#F8FAFC"/>
+  <text x="230" y="34" text-anchor="middle" class="s" font-size="16">Come in the way that fits you</text>
+  <g>
+    <rect x="70" y="56" width="140" height="132" rx="16" fill="#F8FAFC" stroke="#E2E8F0"/>
+    <circle cx="140" cy="100" r="16" fill="none" stroke="#4F46E5" stroke-width="2.4"/>
+    <path d="M118,140 a22,22 0 0,1 44,0" fill="none" stroke="#4F46E5" stroke-width="2.4"/>
+    <text x="140" y="174" text-anchor="middle" class="t" font-size="13" font-weight="700">I'm an engineer</text>
+  </g>
+  <g>
+    <rect x="250" y="56" width="140" height="132" rx="16" fill="#F8FAFC" stroke="#E2E8F0"/>
+    <rect x="298" y="88" width="44" height="30" rx="4" fill="none" stroke="#4F46E5" stroke-width="2.4"/>
+    <path d="M300,134 h40 M308,150 h24" stroke="#4F46E5" stroke-width="2.4" stroke-linecap="round"/>
+    <text x="320" y="174" text-anchor="middle" class="t" font-size="13" font-weight="700">I lead a team</text>
+  </g>
+</svg>

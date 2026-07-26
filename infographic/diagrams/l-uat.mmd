@@ -1,0 +1,29 @@
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#EEF2FF','primaryTextColor':'#1E1B4B','primaryBorderColor':'#4F46E5','lineColor':'#6366F1','fontFamily':'Inter, sans-serif','fontSize':'16px'}}}%%
+sequenceDiagram
+    autonumber
+    participant Maya as Maya
+    participant Test as /3c-test --mode=integration
+    participant Deploy as /3c-deploy
+    participant Stage as Staging env
+    participant Bug as /3c-bug
+    participant Issue as GitHub Issue
+
+    Maya->>Test: invoke for UI/integration change
+    Note over Test: test-author subagent assists
+    Test-->>Maya: UAT checklist + edge cases scaffolded
+
+    Maya->>Deploy: --env=staging
+    Note over Deploy: pre-flight checks run
+    Deploy->>Stage: deploy succeeds
+    Stage-->>Deploy: health check passes
+    Deploy-->>Maya: ready for UAT
+
+    Note over Maya: walks the checklist<br/>manually in staging
+    Maya->>Maya: finds a regression in empty-state
+
+    Maya->>Bug: invoke /3c-bug
+    Note over Bug: captures OS / runtime /<br/>project state / recent commits /<br/>scrubbed env vars
+    Bug-->>Issue: structured report appended
+    Maya->>Issue: re-opens and comments
+
+    Note over Deploy: production deploys<br/>require --yes

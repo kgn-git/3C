@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 760 760" width="760" height="760">
+  <rect width="760" height="760" rx="48" fill="#ECFEFF"/>
+  <g transform="translate(0, 0)">
+    <g transform="translate(0, 0)"><g transform="translate(0, 602)"><title>Objects/Scene/Floor Wood</title>
+    <g id="Objects/Scene/Floor-Wood" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="floor" fill="#D9B98C" x="0" y="20" width="760" height="130"></rect>
+        <rect id="skirting" fill="#C49A6C" x="0" y="0" width="760" height="22"></rect>
+        <rect id="skirting-shadow" fill-opacity="0.12" fill="#000000" x="0" y="20" width="760" height="6"></rect>
+        <rect id="plank-1" fill-opacity="0.08" fill="#5A3E22" x="120" y="26" width="3" height="124"></rect>
+        <rect id="plank-2" fill-opacity="0.08" fill="#5A3E22" x="300" y="26" width="3" height="124"></rect>
+        <rect id="plank-3" fill-opacity="0.08" fill="#5A3E22" x="470" y="26" width="3" height="124"></rect>
+        <rect id="plank-4" fill-opacity="0.08" fill="#5A3E22" x="640" y="26" width="3" height="124"></rect>
+        <rect id="sheen" fill-opacity="0.10" fill="#FFFFFF" x="0" y="26" width="760" height="14"></rect>
+    </g></g>
+  <g transform="translate(36, 362)"><title>Objects/Scene/Server Rack</title>
+    <g id="Objects/Scene/Server-Rack" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="cabinet" fill="#191847" x="6" y="6" width="128" height="228" rx="6"></rect>
+        <rect id="cabinet-edge" fill-opacity="0.18" fill="#FFFFFF" x="6" y="6" width="7" height="228" rx="6"></rect>
+        <rect id="cabinet-side" fill-opacity="0.18" fill="#000000" x="124" y="6" width="10" height="228" rx="6"></rect>
+        <g id="u1">
+            <rect fill="#C5CFD6" x="16" y="18" width="108" height="34" rx="2"></rect>
+            <rect fill="#FF9B21" x="22" y="30" width="7" height="7" rx="1"></rect>
+            <rect fill="#89C5CC" x="33" y="30" width="7" height="7" rx="1"></rect>
+            <rect fill-opacity="0.1" fill="#000000" x="60" y="28" width="54" height="12" rx="2"></rect>
+        </g>
+        <g id="u2">
+            <rect fill="#C5CFD6" x="16" y="58" width="108" height="34" rx="2"></rect>
+            <rect fill="#89C5CC" x="22" y="70" width="7" height="7" rx="1"></rect>
+            <rect fill="#89C5CC" x="33" y="70" width="7" height="7" rx="1"></rect>
+            <rect fill-opacity="0.1" fill="#000000" x="60" y="68" width="54" height="12" rx="2"></rect>
+        </g>
+        <g id="u3">
+            <rect fill="#C5CFD6" x="16" y="98" width="108" height="34" rx="2"></rect>
+            <rect fill="#FF9B21" x="22" y="110" width="7" height="7" rx="1"></rect>
+            <rect fill="#89C5CC" x="33" y="110" width="7" height="7" rx="1"></rect>
+            <rect fill-opacity="0.1" fill="#000000" x="60" y="108" width="54" height="12" rx="2"></rect>
+        </g>
+        <g id="u4">
+            <rect fill="#C5CFD6" x="16" y="138" width="108" height="34" rx="2"></rect>
+            <rect fill="#89C5CC" x="22" y="150" width="7" height="7" rx="1"></rect>
+            <rect fill="#FF9B21" x="33" y="150" width="7" height="7" rx="1"></rect>
+            <rect fill-opacity="0.1" fill="#000000" x="60" y="148" width="54" height="12" rx="2"></rect>
+        </g>
+        <g id="u5">
+            <rect fill="#C5CFD6" x="16" y="178" width="108" height="34" rx="2"></rect>
+            <rect fill="#89C5CC" x="22" y="190" width="7" height="7" rx="1"></rect>
+            <rect fill="#89C5CC" x="33" y="190" width="7" height="7" rx="1"></rect>
+            <rect fill-opacity="0.1" fill="#000000" x="60" y="188" width="54" height="12" rx="2"></rect>
+        </g>
+    </g></g>
+  <g transform="translate(600, 362)"><title>Objects/Scene/Server Rack</title>
+    <g id="Objects/Scene/Server-Rack" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="cabinet" fill="#191847" x="6" y="6" width="128" height="228" rx="6"></rect>
+        <rect id="cabinet-edge" fill-opacity="0.18" fill="#FFFFFF" x="6" y="6" width="7" height="228" rx="6"></rect>
+        <rect id="cabinet-side" fill-opacity="0.18" fill="#000000" x="124" y="6" width="10" height="228" rx="6"></rect>
+        <g id="u1">
+            <rect fill="#C5CFD6" x="16" y="18" width="108" height="34" rx="2"></rect>
+            <rect fill="#FF9B21" x="22" y="30" width="7" height="7" rx="1"></rect>
+            <rect fill="#89C5CC" x="33" y="30" width="7" height="7" rx="1"></rect>
+            <rect fill-opacity="0.1" fill="#000000" x="60" y="28" width="54" height="12" rx="2"></rect>
+        </g>
+        <g id="u2">
+            <rect fill="#C5CFD6" x="16" y="58" width="108" height="34" rx="2"></rect>
+            <rect fill="#89C5CC" x="22" y="70" width="7" height="7" rx="1"></rect>
+            <rect fill="#89C5CC" x="33" y="70" width="7" height="7" rx="1"></rect>
+            <rect fill-opacity="0.1" fill="#000000" x="60" y="68" width="54" height="12" rx="2"></rect>
+        </g>
+        <g id="u3">
+            <rect fill="#C5CFD6" x="16" y="98" width="108" height="34" rx="2"></rect>
+            <rect fill="#FF9B21" x="22" y="110" width="7" height="7" rx="1"></rect>
+            <rect fill="#89C5CC" x="33" y="110" width="7" height="7" rx="1"></rect>
+            <rect fill-opacity="0.1" fill="#000000" x="60" y="108" width="54" height="12" rx="2"></rect>
+        </g>
+        <g id="u4">
+            <rect fill="#C5CFD6" x="16" y="138" width="108" height="34" rx="2"></rect>
+            <rect fill="#89C5CC" x="22" y="150" width="7" height="7" rx="1"></rect>
+            <rect fill="#FF9B21" x="33" y="150" width="7" height="7" rx="1"></rect>
+            <rect fill-opacity="0.1" fill="#000000" x="60" y="148" width="54" height="12" rx="2"></rect>
+        </g>
+        <g id="u5">
+            <rect fill="#C5CFD6" x="16" y="178" width="108" height="34" rx="2"></rect>
+            <rect fill="#89C5CC" x="22" y="190" width="7" height="7" rx="1"></rect>
+            <rect fill="#89C5CC" x="33" y="190" width="7" height="7" rx="1"></rect>
+            <rect fill-opacity="0.1" fill="#000000" x="60" y="188" width="54" height="12" rx="2"></rect>
+        </g>
+    </g></g>
+  <g transform="translate(250, 70) scale(0.8)"><title>Objects/Scene/App Window</title>
+    <g id="Objects/Scene/App-Window" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="shadow" fill-opacity="0.08" fill="#000000" x="16" y="18" width="176" height="124" rx="10"></rect>
+        <rect id="card" fill="#FFFFFF" x="8" y="8" width="176" height="124" rx="10"></rect>
+        <rect id="titlebar" fill="#DDE3E9" x="8" y="8" width="176" height="26" rx="10"></rect>
+        <rect id="titlebar-flat" fill="#DDE3E9" x="8" y="22" width="176" height="12"></rect>
+        <circle id="dot-1" fill="#FF9B21" cx="24" cy="21" r="4"></circle>
+        <circle id="dot-2" fill="#89C5CC" cx="40" cy="21" r="4"></circle>
+        <circle id="dot-3" fill="#191847" cx="56" cy="21" r="4"></circle>
+        <rect id="line-1" fill="#C5CFD6" x="24" y="50" width="130" height="8" rx="4"></rect>
+        <rect id="line-2" fill="#C5CFD6" x="24" y="70" width="96" height="8" rx="4"></rect>
+        <rect id="line-3" fill="#C5CFD6" x="24" y="90" width="112" height="8" rx="4"></rect>
+        <rect id="button" fill="#89C5CC" x="24" y="108" width="60" height="16" rx="4"></rect>
+    </g></g>
+  <g transform="translate(300, 468)"><title>Objects/Scene/Database</title>
+    <g id="Objects/Scene/Database" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <ellipse id="base" fill="#4F818A" cx="55" cy="120" rx="40" ry="14"></ellipse>
+        <rect id="body" fill="#69A1AC" x="15" y="30" width="80" height="90"></rect>
+        <rect id="accent" fill="#FF9B21" x="15" y="48" width="80" height="4"></rect>
+        <rect id="seam-1" fill-opacity="0.12" fill="#000000" x="15" y="66" width="80" height="3"></rect>
+        <rect id="seam-2" fill-opacity="0.12" fill="#000000" x="15" y="94" width="80" height="3"></rect>
+        <ellipse id="top" fill="#89C5CC" cx="55" cy="30" rx="40" ry="14"></ellipse>
+        <ellipse id="top-inner" fill-opacity="0.15" fill="#FFFFFF" cx="55" cy="28" rx="26" ry="8"></ellipse>
+    </g></g></g>
+  </g>
+  <g transform="translate(760, 0) scale(-1, 1)">
+    <g transform="translate(215, 360)"><!-- Generator: Sketch 52.4 (67378) - http://www.bohemiancoding.com/sketch -->
+    <title>Bottom/Standing/Skinny Jeans</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Bottom/Standing/Skinny-Jeans" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <polygon id="Leg" fill="#191847" points="128 9.9475983e-14 164.254962 127.226909 190.706957 221 210 221 181.890974 9.9475983e-14"></polygon>
+        <path d="M118.304342,0 C117.465768,65.5742244 114.606247,101.340188 113.725779,107.297892 C112.845311,113.255595 99.5321718,151.156298 73.7863613,221 L93.7726468,221 C126.549033,153.996902 144.845651,116.096199 148.662499,107.297892 C152.479348,98.4995844 164.258515,62.7336205 182,0 L118.304342,0 Z" id="Leg" fill="#2F3676"></path>
+        <g id="Accessories/Shoe/Flat-Pointy" transform="translate(72.000000, 199.000000)" fill="#191847">
+            <path d="M0,40 L1,19 L22,19 C31.9576033,26 44.9576033,31.6666667 61,36 L61,40 L23,40 L10,38 L10,40 L0,40 Z" id="Shoe"></path>
+        </g>
+        <g id="Accessories/Shoe/Flat-Pointy" transform="translate(188.000000, 199.000000)" fill="#191847">
+            <path d="M0,40 L1,19 L22,19 C31.9576033,26 44.9576033,31.6666667 61,36 L61,40 L23,40 L10,38 L10,40 L0,40 Z" id="Shoe"></path>
+        </g>
+    </g></g>
+    <g transform="translate(237, 263)"><!-- Generator: Sketch 52.4 (67378) - http://www.bohemiancoding.com/sketch -->
+    <title>Body/Pointing Forward</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Body/Pointing-Forward" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M158.638039,42.7002327 L193.347821,23.6898218 C199.119845,16.8355222 204.806897,11.5121983 210.408976,7.71984988 C212.120791,7.00519513 215.114322,6.57263502 212.314801,11.541507 C209.515281,16.510379 206.794075,21.8627914 208.22032,23.3935933 C209.646565,24.9243953 213.203036,22.7859324 214.904525,25.3293729 C216.038851,27.0249998 209.962902,29.703613 196.676679,33.3652124 L171.455792,56.4576422 L158.638039,42.7002327 Z M213,58.7398397 L228.246523,50.3642065 C230.385826,42.2239107 232.943102,38.1282526 235.918351,38.0772323 C238.203961,37.0137608 234.223587,47.2997848 238.556381,46.4077826 C242.889175,45.5157805 253.464286,37.6506887 255.286431,39.2475996 C257.982176,41.6101262 255.578484,48.864452 252.746364,52.4730906 C247.453134,59.2176317 243.070569,61.5240612 232.238377,64.5443446 C226.574749,66.1235046 220.451364,69.288795 213.868224,74.0402157 L213,58.7398397 Z" id="Skin" fill="#997659"></path>
+        <path d="M142.857986,34.7503025 C154.885997,36.5253162 171.300289,36.5253162 190.103565,28.3861499 L194.443447,44.4123074 C180.805809,54.2415559 162.712714,61.226516 148.287694,58.5246963 C136.919984,56.3955135 133.271725,41.6595451 142.857986,34.7503025 Z" id="Sleeve" fill="#2026A2" transform="translate(165.898282, 43.748060) rotate(-9.000000) translate(-165.898282, -43.748060) "></path>
+        <path d="M158.104267,62.7612342 C171.011057,65.9801048 192.654946,62.184167 223.035933,51.3734208 C230.571674,66.9635189 234.055257,78.0780631 233.486685,84.7170535 C207.424274,98.3310492 185.086537,104.400834 166.683227,104.801533 C167.268059,115.72137 165.938918,126.111847 161.473933,135.605966 C152.29468,155.124265 98.5450578,137.048144 80.4727876,140.605966 C69.1554006,103.85132 91.0379108,88.9143806 91.0555178,65.3966157 C91.0747993,39.6421572 111.75441,-1.42108547e-13 114.797001,-1.42108547e-13 L142.54375,1.15166749e-13 C144.0747,19.6690193 151.7804,41.3459827 158.104267,62.7612342 Z" id="Clothes" fill="#1F28CF"></path>
+    </g></g>
+    <g transform="translate(250, 360)"><title>Objects/Prop/Clipboard</title>
+    <g id="Objects/Prop/Clipboard" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="board" fill="#B28B67" x="6" y="12" width="72" height="96" rx="4"></rect>
+        <rect id="paper" fill="#FFFFFF" x="14" y="20" width="56" height="80"></rect>
+        <rect id="line-1" fill="#DDE3E9" x="22" y="34" width="40" height="5" rx="2"></rect>
+        <rect id="line-2" fill="#DDE3E9" x="22" y="50" width="40" height="5" rx="2"></rect>
+        <rect id="line-3" fill="#DDE3E9" x="22" y="66" width="40" height="5" rx="2"></rect>
+        <rect id="line-4" fill="#DDE3E9" x="22" y="82" width="28" height="5" rx="2"></rect>
+        <rect id="clip" fill="#AFB9C5" x="32" y="6" width="20" height="16" rx="3"></rect>
+    </g></g>
+    <g transform="translate(297, 189)"><!-- Generator: Sketch 52.4 (67378) - http://www.bohemiancoding.com/sketch -->
+    <title>Head/Front/Turban 1</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M59.5761618,12.9456954 C59.3658913,11.6405875 59.7821901,11.0000348 54.5346912,7.32322248 C49.2871923,3.64641021 40.8148726,-0.690083867 32.2816409,1.19718054 C21.2074934,3.64641021 16.8090436,10.95123 12.5386337,14.5025253 C8.68897397,17.7040264 4.82639368,18.0773849 2.53730321,22.0499243 C0.248212735,26.0224636 -0.969669172,37.4512721 1.02080294,41.9950076 C3.76655586,48.2628548 9.18121558,49.9508389 13.133879,51.7566178 C19.9127597,54.8535575 29.4945554,51.5827766 29.7266676,51.0409656 C31.5221564,46.8498232 41.186894,35.0268608 47,30.0596268 C51.2746625,26.4069756 60.5630562,19.0711556 59.5761618,12.9456954 Z" id="path-1"></path>
+    </defs>
+    <g id="Head/Front/Turban-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Head" transform="translate(54.000000, 31.000000)" fill="#D89B6C">
+            <path d="M8.26227388,34.4901268 C3.65436435,29.0813759 0.535634794,22.4528771 1.05677633,15.0254539 C2.55833022,-6.37502057 32.3485306,-1.66718886 38.1433414,9.13393292 C43.9381521,19.9350547 43.249578,47.3329958 35.7603014,49.2634576 C32.7735882,50.033323 26.4110012,48.1474609 19.935372,44.244306 L24,73 L0,73 L8.26227388,34.4901268 Z"></path>
+        </g>
+        <g id="Turban" transform="translate(31.000000, 23.000000)">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <use fill="#5C63AB" xlink:href="#path-1"></use>
+            <path d="M12.4570236,12 C14.25711,23.3796891 18.9826226,33.7873661 26.6335616,43.223031 C17.7122912,36.3009755 11.8344374,26.6221332 9,14.1865041 L12.4570236,12 Z M7.99840897,16.3421428 C10.9512397,28.5681061 18.6184367,40.1207252 31,51 C16.673342,42.3522376 7.67334197,31.1925804 4,17.5210284 L7.99840897,16.3421428 Z" id="SHade" fill-opacity="0.2" fill="#000000" mask="url(#mask-2)"></path>
+        </g>
+    </g></g>
+    <g transform="translate(237, 263)"><path d="M110,16 C122,30 138,30 150,16 L150,42 L108,42 Z" fill="#1F28CF"></path></g>
+  </g>
+  <g transform="translate(0, 0)">
+    <g transform="translate(0, 0)"><g transform="translate(60, 560)"><title>Objects/Scene/Plant</title>
+    <g id="Objects/Scene/Plant" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <ellipse id="leaf-far" fill="#69A1AC" cx="30" cy="100" rx="9" ry="30" transform="rotate(-44 30 100)"></ellipse>
+        <ellipse id="leaf-left" fill="#89C5CC" cx="42" cy="92" rx="12" ry="38" transform="rotate(-26 42 92)"></ellipse>
+        <ellipse id="leaf-right" fill="#89C5CC" cx="78" cy="92" rx="12" ry="38" transform="rotate(26 78 92)"></ellipse>
+        <ellipse id="leaf-center" fill="#69A1AC" cx="60" cy="72" rx="13" ry="46"></ellipse>
+        <ellipse id="leaf-vein" fill="#4F818A" cx="60" cy="74" rx="3" ry="40"></ellipse>
+        <polygon id="pot" fill="#B28B67" points="36,120 84,120 77,176 43,176"></polygon>
+        <polygon id="pot-shade" fill-opacity="0.12" fill="#000000" points="64,120 84,120 77,176 60,176"></polygon>
+        <rect id="rim" fill="#997659" x="32" y="112" width="56" height="10" rx="2"></rect>
+    </g></g></g>
+  </g>
+</svg>

@@ -1,0 +1,61 @@
+/* 3C canonical design tokens — the "deck" identity (issue #236).
+   SINGLE SOURCE OF TRUTH for the cool indigo/slate palette + type roles,
+   lifted verbatim from docs/infographic/sdlc-infographic.html :root.
+
+   Consumed by all public-site render pipelines:
+   - MkDocs deep pages — loaded via mkdocs.yml `extra_css` BEFORE 3c.css.
+   - Astro home — synced to landing/public/tokens.css by landing/scripts/
+     sync-bg.mjs and linked from index.astro; the Tailwind config mirrors
+     these exact hexes (drift is caught by tests/docs/site-rebrand.test.ts).
+   - Infographics (docs/infographic/*.html) — inline these same values; kept
+     in sync here.
+
+   Authoring-time only — fonts are self-hosted woff2, no runtime CDN. */
+
+:root {
+  /* indigo — orchestration / skills / primary accent */
+  --indigo-50: #EEF2FF;
+  --indigo-100: #E0E7FF;
+  --indigo-500: #6366F1;
+  --indigo-600: #4F46E5;
+  --indigo-700: #4338CA;
+  --indigo-900: #312E81;
+
+  /* slate — neutrals (ink → paper) */
+  --slate-900: #0F172A;
+  --slate-700: #334155;
+  --slate-500: #64748B;
+  --slate-200: #E2E8F0;
+  --slate-100: #F1F5F9;
+  --slate-50: #F8FAFC;
+
+  /* amber — shared-context / rationales / coaching */
+  --amber-100: #FEF3C7;
+  --amber-600: #D97706;
+
+  /* emerald — quality gates passing */
+  --emerald-50: #ECFDF5;
+  --emerald-500: #10B981;
+  --emerald-700: #047857;
+
+  /* red — failure / refusal states */
+  --red-bg: #FEE2E2;
+  --red-fg: #DC2626;
+  --red-dk: #7F1D1D;
+
+  /* semantic aliases — what the pages actually reference */
+  --c-bg: #FFFFFF;
+  --c-surface: var(--slate-50);
+  --c-border: var(--slate-200);
+  --c-ink: var(--slate-900);
+  --c-body: var(--slate-700);
+  --c-muted: var(--slate-500);
+  --c-accent: var(--indigo-600);
+  --c-accent-dk: var(--indigo-700);
+  --c-accent-soft: var(--indigo-50);
+
+  /* type roles */
+  --font-display: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
