@@ -8,7 +8,7 @@ export interface SelfCritiqueCheck {
     readonly hasMarker: boolean;
     readonly reason: string;
 }
-/** The 6 review agents that emit a fenced JSON findings array (in-JSON marker). */
+/** The 7 review agents that emit a fenced JSON findings array (in-JSON marker). */
 export declare const REVIEW_AGENTS: ReadonlyArray<string>;
 /** Explicitly exempt skills/agents (AC5) — interactive or reference, not emission gates. */
 export declare const EXEMPT_NAMES: ReadonlyArray<string>;

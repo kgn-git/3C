@@ -20,9 +20,13 @@ It composes the existing atomic skills and the specialist agents — it does **n
 ## Stages
 
 ### 1. Plan + scope (auto)
-Fetch the issue and its acceptance criteria. Dispatch the `${BRAND_SLUG}-product-owner` subagent for a
-scope / AC pre-check on the issue. Present a short plan (AC → tasks). If the product-owner flags the issue
-itself as out-of-scope or unclear, stop and surface it — do not implement against an unclear spec.
+Fetch the issue and its acceptance criteria. Dispatch two subagents in parallel for the pre-check:
+the `${BRAND_SLUG}-product-owner` subagent for a scope / AC pre-check, and the
+`${BRAND_SLUG}-journey-architect` subagent for a **reachability** pre-check — whether the change keeps
+every customer-facing capability reachable and recoverable, judged from the issue/AC before any code.
+Present a short plan (AC → tasks). If the product-owner flags the issue itself as out-of-scope or
+unclear — or the journey-architect flags a `blocking` reachability gap — stop and surface it; do not
+implement against an unclear or unreachable spec.
 
 ### 2. Implement — TDD (auto)
 Run the `/${BRAND_SLUG}-implement` workflow as the implementation stage (RED → GREEN, per its own rules).

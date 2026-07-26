@@ -10,10 +10,11 @@
 // `3c-onboard-guide` (reference material). No frontmatter boolean — the gate is body prose + a real
 // in-context pass, not a rubber stamp a dispatcher cannot distinguish from a real pass (AC4).
 import { contentLines, exceedsSizeCap } from "./_markdown.js";
-/** The 6 review agents that emit a fenced JSON findings array (in-JSON marker). */
+/** The 7 review agents that emit a fenced JSON findings array (in-JSON marker). */
 export const REVIEW_AGENTS = [
     "3c-architect",
     "3c-code-reviewer",
+    "3c-journey-architect",
     "3c-product-owner",
     "3c-qa-reviewer",
     "3c-security-reviewer",

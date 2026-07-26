@@ -137,7 +137,7 @@ export async function runDoctor(opts) {
     // Crew presence + agent naming (#260).
     const EXPECTED_ROLES = [
         "architect", "code-reviewer", "security-reviewer", "test-author",
-        "product-owner", "ux-expert", "qa-reviewer",
+        "product-owner", "ux-expert", "qa-reviewer", "journey-architect",
     ];
     if (agentFiles.length > 0) {
         const names = agentFiles.map((f) => f.split(/[\\/]/).pop() ?? "");
