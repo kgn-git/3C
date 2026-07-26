@@ -439,7 +439,7 @@
   Why: imports should be ordered stdlib, third-party, local —
         fewer merge conflicts in long-lived branches.
   Do:  import { readFile } from "node:fs/promises";
-  Docs: github.com/kgn-git/praise/blob/main/strategy/adr/AD-04-local-storage.md
+  Docs: kgn-git.github.io/3C/
 ———————————————
     </div>
 
@@ -523,7 +523,7 @@ Testing: unit on pagination + integration on empty state</div>
 Why: API routes own data shape; page components consume + render.
      A page importing another page's data layer is a boundary violation.
 Do:  fetch in the page route handler, hand props to component
-Docs: github.com/kgn-git/praise/blob/main/strategy/adr/AD-04-local-storage.md</div>
+Docs: kgn-git.github.io/3C/</div>
 
   <p style="font-size: 10pt; line-height: 1.55; color: var(--slate-700); margin: 3mm 0 0 0;">
     <strong>What 3C does for you:</strong> dispatches a specialist that reads your standards before answering. <strong>What Maya still owns:</strong> noticing the analysis doesn't fit, and choosing to re-dispatch — the architect re-writes; Maya doesn't. <strong>What 3C does NOT do:</strong> design the solution unilaterally; the architect proposes, you accept or push back.
@@ -647,7 +647,7 @@ For the 12 issues in the candidate sprint:
   Why: imports should be ordered stdlib, third-party, local —
         fewer merge conflicts in long-lived branches.
   Do:  import { readFile } from "node:fs/promises";
-  Docs: github.com/kgn-git/praise/blob/main/strategy/adr/AD-04-local-storage.md
+  Docs: kgn-git.github.io/3C/
 ———————————————</div>
 
   <div class="snippet">{"ts":"2026-05-20T14:32:11Z","gate":"pre-commit","rule":"import-order","outcome":"fail","duration_ms":487,"file":"src/account/home/orders-panel.tsx","user":"maya","session":"j-1284-2"}</div>
@@ -823,7 +823,6 @@ Expected: empty-state copy. Actual: orders panel renders [object Object].</div>
     </div>
     <div class="cta-tags">
       github.com/kgn-git/3C<br>
-      github.com/kgn-git/praise<br>
       #ai-coding &middot; #governance
     </div>
   </div>

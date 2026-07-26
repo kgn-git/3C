@@ -949,7 +949,7 @@
 <h2 id="the-two-tier-identity-model">The two-tier identity model<a class="headerlink" href="#the-two-tier-identity-model" title="Permanent link">&para;</a></h2>
 <p>3C adopts a <strong>two-tier brand identity</strong> (the architecture decision is <strong>AD-16</strong> in <code>strategy/adr/</code>). One tier is immutable upstream; the other is per-deployment.</p>
 <ul>
-<li><strong><code>${FRAMEWORK_*}</code></strong> — the upstream framework identity. Set in <code>framework.json</code> at the source repo. Immutable for adopters: <code>FRAMEWORK_NAME</code> = <code>3C</code>, <code>FRAMEWORK_SLUG</code> = <code>3c</code>, <code>FRAMEWORK_LONG</code> = <code>Claude Code Coach</code>, <code>FRAMEWORK_VERSION</code> = <code>1.7.3</code>. These govern marketing, ADRs, the canonical <a href="https://github.com/kgn-git/praise"><code>kgn-git/praise</code></a> repo, and the upstream community.</li>
+<li><strong><code>${FRAMEWORK_*}</code></strong> — the upstream framework identity. Set in <code>framework.json</code> at the source repo. Immutable for adopters: <code>FRAMEWORK_NAME</code> = <code>3C</code>, <code>FRAMEWORK_SLUG</code> = <code>3c</code>, <code>FRAMEWORK_LONG</code> = <code>Claude Code Coach</code>, <code>FRAMEWORK_VERSION</code> = <code>1.7.3</code>. These govern marketing, ADRs, the canonical <a href="https://github.com/kgn-git/3C"><code>kgn-git/3C</code></a> repo, and the upstream community.</li>
 <li><strong><code>${BRAND_*}</code></strong> — your team's per-deployment identity. Chosen at <code>init</code> time and persisted in your project's <code>branding.json</code>. Governs the slash-command prefix on the skills and agents copied into your repo, the OS-keychain prefix, the <code>.&lt;slug&gt;/</code> runtime paths, and the contents of internal docs the framework generates into your project.</li>
 </ul>
 <p>When you do nothing, <code>${BRAND_*}</code> falls through to <code>${FRAMEWORK_*}</code> — the framework runs unbranded as <code>3c</code>. When you set a brand, only the per-deployment tier changes; the upstream tier stays.</p>
@@ -1068,13 +1068,13 @@ npx<span class="w"> </span>3c<span class="w"> </span>doctor
 <ul>
 <li><strong>MIT license</strong> — <code>3C</code> is MIT-licensed; your deployment inherits MIT. Fork rights are explicit; no per-deployment EULA.</li>
 <li><strong>Upstream provenance</strong> — every deployment's <code>praise.config.json</code> records <code>UPSTREAM_REF</code> (the git tag you pinned, e.g. <code>v1.5.0</code>) and <code>INSTALL_UUID</code>. The <code>3c verify-commit</code> command runs against the upstream tag during init — refuses to scaffold from an unsigned upstream (supply-chain provenance, not an audit chain).</li>
-<li><strong>The canonical source repo</strong> — <a href="https://github.com/kgn-git/praise"><code>kgn-git/praise</code></a>. PRs / issues / discussions live upstream; your deployment's <code>branding.json</code> is your own, but bug reports and feature requests funnel back to one place.</li>
+<li><strong>The canonical source repo</strong> — <a href="https://github.com/kgn-git/3C"><code>kgn-git/3C</code></a>. PRs / issues / discussions live upstream; your deployment's <code>branding.json</code> is your own, but bug reports and feature requests funnel back to one place.</li>
 <li><strong>The <code>3c</code> npm bin name</strong> — <code>npx 3c</code> always invokes the upstream CLI; your <code>3c</code> namespaces the artefacts the CLI produces, not the CLI itself.</li>
 </ul>
 <h2 id="what-custom-branding-does-not-enable">What custom branding does NOT enable<a class="headerlink" href="#what-custom-branding-does-not-enable" title="Permanent link">&para;</a></h2>
 <p>The same honesty discipline as the rest of this site:</p>
 <ul>
-<li><strong>No compliance attribution.</strong> The two-tier model exists for white-label <em>adoption</em>, not for compliance signaling. Regulatory framing (ISO 42001 / EU AI Act / AIMS) was extracted from the L1–L4 model per epic <a href="https://github.com/kgn-git/praise/issues/166">#166</a>; your brand does not confer compliance status from upstream. Compliance content is parked in <code>strategy/parked/compliance-business-case.md</code>.</li>
+<li><strong>No compliance attribution.</strong> The two-tier model exists for white-label <em>adoption</em>, not for compliance signaling. Regulatory framing (ISO 42001 / EU AI Act / AIMS) was extracted from the L1–L4 model per epic #166 (tracked upstream); your brand does not confer compliance status from upstream. Compliance content is parked in <code>strategy/parked/compliance-business-case.md</code>.</li>
 <li><strong>No white-label SaaS.</strong> 3C is open-source software, not a vendor product. Custom branding lets your team's tooling carry your team's name; it does not create a commercial product or a service-level agreement.</li>
 <li><strong>No upstream-attribution stripping.</strong> Even with brand set, <code>praise.config.json</code> records the upstream pin and the framework name. Your team gets to brand the experience; the supply chain stays auditable.</li>
 </ul>
@@ -1083,8 +1083,8 @@ npx<span class="w"> </span>3c<span class="w"> </span>doctor
 <p>For most teams, brand is a one-time decision at deployment. We chose immutability over a rebrand workflow because (a) slash prefixes are referenced from every developer's local Claude Code state, and unilateral rename would break in-flight sessions; (b) the upstream <code>INSTALL_UUID</code> makes per-brand-per-install state inspectable for support cases. If your team genuinely needs a rebrand workflow, <a href="https://github.com/kgn-git/3C/discussions">start a discussion</a>.</p>
 <h2 id="cross-references">Cross-references<a class="headerlink" href="#cross-references" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>The full <code>init --brand</code> CLI spec</strong> ships in <a href="https://github.com/kgn-git/praise/issues/60">issue #60</a>; the verification-via-signed-tag path is <a href="https://github.com/kgn-git/praise/issues/60">AC5 on that issue</a>.</li>
-<li><strong>The brand-substrate code</strong> (slug validation, blocklist, <code>branding.json</code> schema) shipped in <a href="https://github.com/kgn-git/praise/issues/57">issue #57</a> — it's the shared module reused by the deployer.</li>
+<li><strong>The full <code>init --brand</code> CLI spec</strong> ships in issue #60 (tracked upstream); the verification-via-signed-tag path is AC5 on that issue.</li>
+<li><strong>The brand-substrate code</strong> (slug validation, blocklist, <code>branding.json</code> schema) shipped in issue #57 — it's the shared module reused by the deployer.</li>
 <li><strong>The architecture decision</strong> is <code>strategy/adr/AD-16-white-label-identity.md</code> in the upstream repo — the rationale for two-tier, the alternatives considered, and the future amendments.</li>
 </ul>
 <div class="admonition note learning">

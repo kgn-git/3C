@@ -919,7 +919,7 @@
 • import-order
   Why: imports should be ordered: stdlib, third-party, local — fewer merge conflicts in long-lived branches.
   Do: import { readFile } from &quot;node:fs/promises&quot;;
-  Docs: https://github.com/kgn-git/praise/blob/main/strategy/adr/AD-04-local-storage.md
+  Docs: https://kgn-git.github.io/3C/
 ———————————————
 </code></pre></div>
 <p>The bullet is the rule that triggered. <code>Why:</code> is the rationale you wrote. <code>Do:</code> is the first example from your rationale file. <code>Docs:</code> is the link to the ADR or incident that produced the rule.</p>
@@ -945,7 +945,7 @@
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;import</span><span class="nv"> </span><span class="s">{</span><span class="nv"> </span><span class="s">readFile</span><span class="nv"> </span><span class="s">}</span><span class="nv"> </span><span class="s">from</span><span class="nv"> </span><span class="s">&quot;node:fs/promises&quot;;&#39;</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;import</span><span class="nv"> </span><span class="s">axios</span><span class="nv"> </span><span class="s">from</span><span class="nv"> </span><span class="s">&quot;axios&quot;;&#39;</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;import</span><span class="nv"> </span><span class="s">{</span><span class="nv"> </span><span class="s">Widget</span><span class="nv"> </span><span class="s">}</span><span class="nv"> </span><span class="s">from</span><span class="nv"> </span><span class="s">&quot;./widget.js&quot;;&#39;</span>
-<span class="nt">docLink</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://github.com/kgn-git/praise/blob/main/strategy/adr/AD-04-local-storage.md</span>
+<span class="nt">docLink</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://kgn-git.github.io/3C/</span>
 </code></pre></div>
 <p>The rationale file lives in git next to its rule. Edits propagate live — the next coaching invocation reads the current file content, no restart needed. This is the AD-01 git-native pattern: standards and their rationales travel together.</p>
 <p>If a rule has no rationale file, coaching will still record the rule fired, but the teaching segment will read <code>(no rationale recorded yet)</code> instead of a <code>Why:</code> block. That is the gentle nudge to the team's rule-author.</p>
