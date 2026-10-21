@@ -2,6 +2,7 @@
 schema_version: 1
 description: Hexagonal — Domain code MUST NOT import from infrastructure or adapter modules.
 globs: ["**/{domain,core,model}/**/*.{ts,js,py,go,java,rb,php}"]
+load: inject
 priority: 10
 pattern: "hexagonal"
 concern: "domain-isolation"

@@ -19,6 +19,31 @@ tests (that is the `${BRAND_SLUG}-test-author`) — without modifying any code.
    implementation detail rather than behaviour), and flaky or order-dependent patterns.
 4. Emit findings (see Output).
 
+## An assertion that cannot fail is `blocking`
+
+Your first pass over any added test is: **could this assertion ever be false?** If not, it is not a
+test — it is coverage-shaped decoration, and it is worse than no test because it reads as proof.
+
+Shapes that pass the moment the symbol exists, whatever the language:
+
+```
+expect(x).toBeDefined()   expect(x).toBeTruthy()   expect(x).not.toBeNull()
+assert.ok(x)              assertNotNull(x)         assertTrue(true)
+assert x is not None      assert True              assertEquals(x, x)
+```
+
+Judge the shape, not the spelling — a nested call, extra whitespace or a different matcher is the
+same defect. Two further variants to name explicitly when you see them:
+
+- **Red for the wrong reason** — a test that dies on a missing import, a syntax error or an
+  unimported symbol. It fails, so it looks RED, but it says nothing about the code.
+- **A defect recorded as a passing test** — an assertion written to match current broken behaviour
+  pins that behaviour in place and turns green when someone fixes it.
+
+This is the check that replaces the retired scaffold generator, so it is not optional: a
+generator could pattern-match a fixed list of shapes, and you can reason about whether the
+assertion has any falsifying input at all. That is why the job moved here.
+
 ## Output — findings schema
 
 Emit your findings as a single fenced `json` block: an array of objects, one per issue you raise.
@@ -29,7 +54,8 @@ Emit your findings as a single fenced `json` block: an array of objects, one per
 ]
 ```
 
-- `severity`: `blocking` (a behaviour ships with no test), `warning` (a meaningful edge case is untested),
+- `severity`: `blocking` (a behaviour ships with no test, OR an added assertion that cannot fail),
+  `warning` (a meaningful edge case is untested),
   `suggestion` (stronger assertion). Omit `file`/`line` for whole-suite observations. Emit `[]` when coverage
   is adequate.
 

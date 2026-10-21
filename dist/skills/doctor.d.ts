@@ -13,5 +13,7 @@ export declare function runDoctor(opts: {
     packageRoot: string;
     /** Commands the running CLI supports; defaults to this binary's CLI_COMMANDS (#278). */
     supportedCommands?: ReadonlySet<string>;
+    /** Subcommand pairs this framework has retired; defaults to RETIRED_COMMANDS (#406). */
+    retiredCommands?: ReadonlySet<string>;
 }): Promise<DoctorReport>;
 //# sourceMappingURL=doctor.d.ts.map

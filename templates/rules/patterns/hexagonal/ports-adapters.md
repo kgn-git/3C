@@ -2,6 +2,7 @@
 schema_version: 1
 description: Hexagonal — Port interfaces in the domain; Adapters at the edge implement them.
 globs: ["**/*.{ts,js,py,go,java,rb,php}"]
+load: inject
 priority: 10
 pattern: "hexagonal"
 concern: "ports-adapters"

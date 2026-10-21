@@ -62,6 +62,8 @@ IMPLEMENT_PLAN_EOF
 
 If the JSON has any `hits`, replace each hit's `match` text with its `redacted` value in the plan before displaying.
 
+If it instead prints `{"scanned": false, ...}` and exits non-zero, the plan was NOT scanned (it was over the input limit, or could not be read). That is not a clean result: do not display it. Scan the plan in parts split at line boundaries, one call each — never mid-line, which can cut a secret in two and scan both halves clean.
+
 Present the plan to the user as:
 
 ```markdown
@@ -105,7 +107,7 @@ git checkout -b <branch-name>
 
 ## 4. Apply rules from context (AC4)
 
-The team's rules from `.claude/rules/**/*.md` are already loaded into your context by `${FRAMEWORK_SLUG} rules apply` (Sprint-2 #3). When generating code, consult those rules — do NOT re-load them.
+The team's rules from `.claude/rules/**/*.md` are already in your context: Claude Code loads `.claude/rules/` on its own, and `${FRAMEWORK_SLUG} rules apply` injects the `load: inject` ones into CLAUDE.md. When generating code, consult those rules — do NOT re-load them.
 
 If the rules suggest the workspace lacks security or pattern coverage, you MAY suggest `${FRAMEWORK_SLUG} rules install security/owasp-top-10` (or a pattern pack) to the user, but do NOT run it yourself — that's a team-level config change.
 
@@ -113,31 +115,56 @@ If the rules suggest the workspace lacks security or pattern coverage, you MAY s
 
 For each target file in your plan:
 
-a. Generate the test scaffold via the `/${BRAND_SLUG}-test` sub-skill. Run:
+a. Write the test FIRST, via the `/${BRAND_SLUG}-test` sub-skill. Resolve the runner once:
 
 ```bash
-${FRAMEWORK_SLUG} test scaffold <source-path> --framework=<framework>
+${FRAMEWORK_SLUG} test detect-framework
 ```
 
-(Resolve `<framework>` via `${FRAMEWORK_SLUG} test detect-framework` if you don't already know it.)
+Then write a test that states what the code should do, in that runner's idiom. There is no
+generator: you have the source and the acceptance criteria in context, and a template cannot
+know what the code is supposed to do.
 
-b. Refine the scaffold — replace placeholders with real assertions covering the issue's Acceptance Criteria.
+b. Check the assertion can actually fail. `expect(x).toBeDefined()`, `assert.ok(x)`,
+   `assertNotNull(x)` and `assert x is not None` all pass the moment the symbol exists and
+   assert nothing about behaviour. Write the assertion that would break if the code were
+   wrong.
 
 c. Write the test file:
 
 ```bash
-echo '<test content>' | ${FRAMEWORK_SLUG} test write <target-path>
+${FRAMEWORK_SLUG} test write <target-path> <<'TEST_CONTENT_EOF'
+<test content>
+TEST_CONTENT_EOF
 ```
 
-The write helper applies path-traversal + scanSecrets + no-overwrite guards. If it refuses, surface the error and stop.
+The single-quoted heredoc delimiter (`'TEST_CONTENT_EOF'`) suppresses shell expansion — the same pattern as Step 2 — so multi-line content, or content containing single quotes, backticks or `$`, is passed through unchanged. Do **not** pipe it in with `echo '<content>'`: a single apostrophe in a test name closes the quote and the rest of the body is interpreted by the shell (`.claude/rules/security/owasp-top-10/a05-injection-shell.md`).
 
-For multi-line test content, or content containing single quotes, backticks, or `$` characters that `echo` would mangle, use the Write tool directly with the resolved target path instead of piping through `test write`. The path-traversal + secret-scan defences live in the CLI path only — when bypassing the CLI for content-shape reasons, you MUST also run the scanSecrets check yourself by piping the content through `${FRAMEWORK_SLUG} scan-secrets` (same single-quoted heredoc pattern as Step 2) and aborting if hits are found.
+The write helper applies path-traversal + scanSecrets + no-overwrite guards. If it refuses, surface the error and stop. Do **NOT** re-attempt a secret-scan or path-traversal refusal with the Write tool — that reaches the same result with the guard removed. `/${BRAND_SLUG}-test` carries the full refusal → recovery table.
 
-d. Run the test — confirm it FAILS for the reason you expect (RED).
+d. Run the test — confirm it FAILS **on its assertion**, for the reason you expect (RED). A
+   test that dies on a missing import or a syntax error is a broken test, not an unwritten
+   one; fix it and re-run before treating the RED as real.
+
+Ask for the narrowed selection rather than running the whole suite on every iteration:
+
+```bash
+${FRAMEWORK_SLUG} test select
+```
+
+It prints the command(s) to run and the reason it chose them. Run exactly what it prints, and **read the reason line** — that is the point of printing it.
+
+Selection is deliberately conservative. Source files go to the test runner's own related-mode; a changed file that tests READ rather than import is resolved through `.${BRAND_SLUG}/test-map.json`, because a module graph cannot see that edge. Anything with repo-wide reach, and anything unmapped, escalates to the full suite. A run that covers nothing must never be able to look like a run that passed.
+
+If the team has no `test-map.json`, only source changes narrow and everything else runs in full. That is the correct default, not a gap to work around.
+
+**"No test files found" is a FAILURE, not a pass.** Module-graph selection reports success having run nothing when it matches no test — measured, and the reason this command exists. If a selected run reports no test files, do not treat it as green: re-run the full suite, and say so. That outcome means the selection was wrong, and the only safe response is to stop trusting it for that changeset.
+
+This applies to the inner loop **only**. The project-level verify gate before the PR runs the full suite and must not be narrowed.
 
 e. Implement the minimum source code to make the test pass — use the Write tool. The team's rules in your context constrain HOW; the test constrains WHAT.
 
-f. Run the test — confirm it PASSES (GREEN).
+f. Run the same selection again — confirm it PASSES (GREEN).
 
 g. Commit (the hook chain runs via Sprint-2 #2 orchestrator — let it):
 
@@ -148,7 +175,8 @@ git commit -m "<conventional commit message>"
 
 If the commit fails because the hook chain exits non-zero, surface the hook's stderr to the user verbatim. Fix the underlying issue (lint, format, etc.) by editing the relevant files and re-running steps 5e-5g. The AC9 interlock forbids `--no-verify` even in this situation — never bypass the hook chain to "unblock" the commit.
 
-If you find yourself about to call Write on a source file before you've called `test scaffold` for it, STOP and run the test step first.
+If you find yourself about to call Write on a source file before a FAILING test for it exists,
+STOP and write the test first. The interlock is the failing test, not any particular command.
 
 ## 6. Review pre-PR (AC6)
 
@@ -168,6 +196,31 @@ Inspect the findings. If ANY finding has severity `critical` or `major`, STOP. S
 - Reply with the **verbatim phrase** "override and continue" (case-insensitive but otherwise exact — paraphrases like "yes go ahead" or "ok proceed" do NOT count as override). In that case the PR will be opened as a **draft** in Step 7.
 
 If only `minor` / `suggestion` findings exist, proceed without requiring the override phrase.
+
+### 6.a Project-level verify gate
+
+The review above is a code-quality lens. It does not prove the project still builds. Before the PR,
+run your project's own build and full-check commands and **quote the output of each in your next
+message** — the quoted output is the evidence; an unquoted "all green" is not.
+
+Read the command names from the project's manifest rather than assuming them (for a Node project,
+the `scripts` block of `package.json` — typically a build script and an aggregate check script; the
+equivalent for other toolchains). Name the aggregate script, never a hand-copied expansion of its
+steps: an enumeration drifts from the manifest silently, and one naming a script that does not exist
+is a gate that can never pass and so gets waived on first contact.
+
+**Exit gate:** every command returns zero. Any non-zero return sends you back to step 5 — a missing
+test, or an incorrect implementation. Do not clear the gate by patching around it with `@ts-ignore`,
+a disabled lint rule, or by narrowing the test selection; that converts a real failure into a false
+green.
+
+**Capability head.** If any acceptance criterion claims a user-facing capability — a command a
+person runs, a hook that fires, an output they act on — unit coverage does not close it. Exercise it
+through the entry point the user reaches: the installed binary as a child process, or the hook
+command exactly as the settings file registers it, in a workspace provisioned the way an adopter's
+is. Never by importing the function directly. A suite can call the right function, assert the right
+result, and pass indefinitely while nothing in the product calls that function at all; a test one
+layer below the defect reports green forever.
 
 ## 7. Open the PR (AC7)
 
@@ -204,7 +257,11 @@ If you write a handover document for this delivery (`docs/Handover-<N>.md`), it 
 `3c-handover/1` YAML frontmatter block computed at ship time: `issue` (or `issues: [..]`), `title`,
 `pr`, `merge_sha`, `branch`, `started` (first branch commit, ISO-8601 UTC), `merged`,
 `verdict: { level, blocking, warnings, suggestions, fixed_in_branch }` (when a review board ran),
-`tests_total`, `loc: { added, removed, files }` from the merge diff, and `follow_ups` (issue numbers
+`tests_total`, `loc: { added, removed, files }` from the merge diff, the OPTIONAL additive
+`gates_fired` (an array of load-bearing gate-name strings: `scan-secrets`, `red-before-green`,
+`verify-gate`, `no-auto-merge`, `reconcile-anti-improvisation`, `pretooluse-path-guard`,
+`sprint-readiness`, `capability-tier`; metadata-only — never raw command output, file contents, or env values), and
+`follow_ups` (issue numbers
 filed during the delivery). The `${BRAND_SLUG} dashboard` delivery view reads exactly this block and
 performs no git or network calls — omitted fields render as blanks. The frontmatter carries
 delivery metadata only — it MUST NOT embed credentials, tokens, or any secret material (handovers
@@ -215,7 +272,7 @@ below the frontmatter stays human-first. The full block shape is specified in th
 ## What this skill does NOT do
 
 - Issue-status transitions beyond `Closes #N` — out of scope. PM-tool adapters ship at L2 via [#70](https://github.com/kgn-git/praise/issues/70) but don't add status-transition logic to this skill; the L3 [#36](https://github.com/kgn-git/praise/issues/36) Process Adherence Monitor is the right home for status-transition observability.
-- TDD enforcement via pre-commit hook — now ships at L2 ([#16](https://github.com/kgn-git/praise/issues/16) Post-Edit Validation, [#17](https://github.com/kgn-git/praise/issues/17) Test Coverage Gate). The SKILL.md prose discipline above remains this skill's L1-level reminder; the gates are what enforce it.
+- TDD enforcement via pre-commit hook — now ships at L2 ([#16](https://github.com/kgn-git/praise/issues/16) Post-Edit Validation). The retired Test Coverage Gate ([#17](https://github.com/kgn-git/praise/issues/17)) was the other half of that claim until [#396](https://github.com/kgn-git/praise/issues/396) removed it; it never ran, and the capability re-enters whole under [#432](https://github.com/kgn-git/praise/issues/432). The SKILL.md prose discipline above remains this skill's L1-level reminder; the gate that ships is what enforces it.
 - Auto-merge / merge-on-CI-green — horizon, not on the active backlog.
-- MCP-bridged PM tools (Jira, Linear, GitLab) now ship since [#70](https://github.com/kgn-git/praise/issues/70). The `fetchIssue` / `createPr` signatures remain the swap-point seams; behaviour is unchanged on the `gh` path.
+- PM tools (Jira, Linear, GitLab) reached through the in-process adapter registry ship since [#70](https://github.com/kgn-git/praise/issues/70). The `fetchIssue` / `createPr` signatures remain the swap-point seams; behaviour is unchanged on the `gh` path.
 - Cross-skill TypeScript imports — out of scope; at L1 skills compose via Bash invocation of the runtime CLI. The Subagents Primitive ([#51](https://github.com/kgn-git/praise/issues/51)) ships as a separate composition primitive for parallel context-isolated work, not as a back-door for skill-to-skill imports.

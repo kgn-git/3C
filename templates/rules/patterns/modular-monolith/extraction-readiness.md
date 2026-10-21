@@ -2,6 +2,7 @@
 schema_version: 1
 description: Modular monolith — keep modules extractable into services later.
 globs: ["**/*.{ts,js,py,go,java,rb,php}"]
+load: inject
 priority: 8
 pattern: "modular-monolith"
 concern: "extraction-readiness"

@@ -17,6 +17,7 @@ export async function discoverWorkspaceFiles(workspaceDir) {
         return {
             ok: false,
             error: `git ls-files failed in ${workspaceDir}: ${err.message}`,
+            cause: err,
         };
     }
 }

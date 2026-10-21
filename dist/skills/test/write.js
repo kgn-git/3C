@@ -27,7 +27,7 @@ export async function writeTest(opts) {
             ok: false,
             error: `refusing to write: test fixture contains a secret-shaped string. Use an obviously-fake placeholder (e.g. "PLACEHOLDER_API_KEY", "<<example-token>>") instead.`,
             secretHits: scan.hits.map((h) => ({
-                line: lineOf(opts.content, h.match),
+                line: lineOf(opts.content, h.index),
                 type: h.type,
                 redacted: h.redacted,
             })),
@@ -37,10 +37,9 @@ export async function writeTest(opts) {
     await writeFile(targetAbs, opts.content, "utf8");
     return { ok: true, written: targetAbs };
 }
-function lineOf(text, match) {
-    const idx = text.indexOf(match);
-    if (idx === -1)
-        return 1;
-    return text.slice(0, idx).split("\n").length;
+// #413: from the hit's own offset — `indexOf(match)` found the FIRST
+// occurrence, so a repeated secret reported its first line every time.
+function lineOf(text, index) {
+    return text.slice(0, index).split("\n").length;
 }
 //# sourceMappingURL=write.js.map

@@ -2,6 +2,7 @@
 schema_version: 1
 description: Software supply chain failure prevention — dependency pinning, integrity verification, and build reproducibility.
 globs: ["**/package.json", "**/package-lock.json", "**/yarn.lock", "**/pnpm-lock.yaml", "**/requirements.txt", "**/Pipfile", "**/Pipfile.lock", "**/poetry.lock", "**/go.mod", "**/go.sum", "**/Cargo.toml", "**/Cargo.lock", "**/pom.xml", "**/build.gradle", "**/Gemfile", "**/Gemfile.lock", "**/composer.json", "**/composer.lock"]
+load: disk
 priority: 10
 owasp_version: "2025"
 owasp_category: "A03:2025"

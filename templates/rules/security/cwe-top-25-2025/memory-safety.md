@@ -2,6 +2,7 @@
 schema_version: 1
 description: Memory-safety weaknesses — out-of-bounds access, use-after-free, integer overflow, NULL deref.
 globs: ["**/*.{c,cc,cpp,cxx,h,hpp,rs}"]
+load: disk
 priority: 9
 cwe_version: "4.15"
 cwe_category: "CWE-787,CWE-125,CWE-416,CWE-476,CWE-190"

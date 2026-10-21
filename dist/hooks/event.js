@@ -1,6 +1,7 @@
 // Reads and parses Claude Code's hook event payload from stdin.
 // Claude Code passes PreToolUse / PostToolUse events as a single
 // JSON object on stdin. We surface only the fields relevant to L1.
+import { MAX_HOOK_EVENT_BYTES, readStdinBounded } from "../validate/_stdin.js";
 export function parseHookEvent(json) {
     let parsed;
     try {
@@ -37,11 +38,15 @@ export function parseHookEvent(json) {
     };
     return { ok: true, event };
 }
+/**
+ * Reads the event bounded at MAX_HOOK_EVENT_BYTES (#416). Over the cap it
+ * THROWS `StdinTooLargeError` rather than returning a parse failure: the
+ * right response differs per event (deny a PreToolUse, skip an advisory
+ * PostToolUse), so the caller decides, and an unparsable payload is not
+ * allowed to stand in for an oversized one.
+ */
 export async function readHookEventFromStdin(stream) {
-    let buffer = "";
-    for await (const chunk of stream) {
-        buffer += typeof chunk === "string" ? chunk : chunk.toString("utf8");
-    }
-    return parseHookEvent(buffer);
+    const text = await readStdinBounded(stream, MAX_HOOK_EVENT_BYTES);
+    return parseHookEvent(text);
 }
 //# sourceMappingURL=event.js.map

@@ -8,9 +8,9 @@ import { join } from "node:path";
 import { resolveBrandSlugSync } from "../branding/runtime.js";
 import { consumeBypassToken } from "./bypass.js";
 import { loadHooksConfig } from "./config.js";
-import { resolveCredentials } from "./credentials.js";
 import { checkAndConfirmHooksConfig } from "./diff-confirm.js";
 import { readHookEventFromStdin } from "./event.js";
+import { hookLimitText, readErrorCode, retryRoute, StdinTooLargeError } from "../validate/_stdin.js";
 import { buildIsolatedCommand } from "./network-isolate.js";
 import { loadTelemetryConfig } from "../telemetry/config.js";
 import { writeTelemetryEvent } from "../telemetry/writer.js";
@@ -23,7 +23,27 @@ export async function runHookOrchestrator(opts) {
     const spawn = opts.spawn ?? defaultSpawn;
     const slug = resolveBrandSlugSync();
     // 1. Read event payload (must succeed; otherwise fail-open with warn).
-    const eventResult = await readHookEventFromStdin(opts.stdin);
+    let eventResult;
+    try {
+        eventResult = await readHookEventFromStdin(opts.stdin);
+    }
+    catch (err) {
+        // #416: an over-cap or unreadable event is NOT a parse failure. Allowing
+        // it would let a padded command walk past the commit gate, so a PreToolUse
+        // is denied — explicitly exit 2: Claude Code reads any other non-zero,
+        // including an escaping throw, as "proceed". The advisory PostToolUse
+        // never blocks (#16 AC4), so it only says so.
+        const cause = err instanceof StdinTooLargeError ? hookLimitText(err) : `could not read the event (${readErrorCode(err)})`;
+        if (opts.event === "PostToolUse") {
+            opts.stderr.write(`${slug} hook run: ${cause}; post-edit validation skipped for this edit\n`);
+            return { exitCode: 0 };
+        }
+        opts.stderr.write(err instanceof StdinTooLargeError
+            ? `${slug} hook run: ${cause}; denied. ` +
+                `Split the command, or write large content to a file in parts under the limit first.\n`
+            : `${slug} hook run: ${cause}; denied. ${retryRoute(slug)}\n`);
+        return { exitCode: 2 };
+    }
     if (!eventResult.ok) {
         opts.stderr.write(`${slug} hook run: could not parse Claude Code event payload (${eventResult.error}); allowing tool call to proceed\n`);
         return { exitCode: 0 };
@@ -35,8 +55,20 @@ export async function runHookOrchestrator(opts) {
         /^(Edit|Write|MultiEdit)$/.test(event.tool_name)) {
         try {
             const r = await postEditValidate(event, opts.workspaceDir);
-            if (r.message !== "")
+            if (r.message !== "") {
+                // Human-readable copy first, for `--debug` and the transcript.
                 opts.stderr.write(r.message);
+                // #384: and the same content on the channel the model actually reads.
+                // Emitted ONLY when there is something to say — a clean edit is the
+                // common case and an envelope on every one of them would inject noise
+                // into the model's context forever.
+                opts.stdout.write(JSON.stringify({
+                    hookSpecificOutput: {
+                        hookEventName: "PostToolUse",
+                        additionalContext: r.message,
+                    },
+                }));
+            }
         }
         catch {
             /* AC4: advisory must never block the agent */
@@ -139,14 +171,19 @@ async function runOne(hook, event, triggerEvent, opts, spawn, tcfg, actorToken) 
         actor_token: actorToken,
         timestamp: startedAt,
     }, tcfg);
-    const resolved = await resolveCredentials(hook.command);
-    if (!resolved.ok) {
-        const msg = `${slug} hook "${hook.id}": missing credential(s) ${resolved.missing.join(", ")} — skipping (configure via OS keychain or env)\n`;
+    // #449: credential references are retired. The hook is refused here, per
+    // hook, so a blocking hook still blocks — a config error would have
+    // bypassed the whole chain. Nothing is resolved or substituted any more.
+    if (hook.command.includes("${OS_KEYCHAIN:")) {
         await emit(-1, 0, deriveFailureCategory({ exitCode: -1, timedOut: false, configError: true, spawnError: false }));
-        return { blocked: hook.blocking, warning: msg };
+        return {
+            blocked: hook.blocking,
+            warning: `${slug} hook "${hook.id}": \${OS_KEYCHAIN:...} references in hook commands are retired — ` +
+                `remove it from .${slug}/hooks.yaml; a hook that needs a secret must read its own secret from the OS credential store\n`,
+        };
     }
     const isolated = buildIsolatedCommand({
-        command: resolved.value,
+        command: hook.command,
         network: hook.network,
     });
     let warning = isolated.platformWarning

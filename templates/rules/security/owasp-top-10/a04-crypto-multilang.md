@@ -2,6 +2,7 @@
 schema_version: 1
 description: Cryptographic failure prevention — approved algorithms, key lengths, and transport security across languages.
 globs: ["**/*.{py,ts,js,go,java,rb,php}"]
+load: disk
 priority: 10
 owasp_version: "2025"
 owasp_category: "A04:2025"

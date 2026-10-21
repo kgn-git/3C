@@ -57,11 +57,19 @@ echo '<assembled-json>' | ${FRAMEWORK_SLUG} reconcile
 
 (or write it to a temp file and pass `${FRAMEWORK_SLUG} reconcile --file <path>`).
 
-**If `${FRAMEWORK_SLUG} reconcile` fails with `Unknown command` or a non-zero exit, STOP.** Your installed
+**If `${FRAMEWORK_SLUG} reconcile` exits 1, read its stderr before deciding — it names its own refusals, and the CLI is fine in each:**
+
+- reconcile says its input `exceeds the` byte limit: the findings JSON is too large. Shorten each finding's message and suggestion (keep every finding), then re-run. Do not split the agents across calls: reconcile merges agreement across agents, so a split changes the verdict.
+- reconcile says `cannot read input`: the `--file` path or the pipe is wrong. Fix it and re-run.
+- reconcile says `invalid findings JSON`: the assembled JSON is malformed; it must be `{ "<agent>": [ <finding>, … ] }`. Fix it and re-run.
+
+**If `${FRAMEWORK_SLUG} reconcile` fails with `Unknown command`, STOP.** Your installed
 `${FRAMEWORK_SLUG}` CLI predates the reconciler — the binary on PATH is older than these skills. Do **not**
 hand-write or improvise a verdict and present it as the deterministic board result. Tell the user to upgrade
 the CLI from your framework's distribution and re-run, then verify with
 `${FRAMEWORK_SLUG} doctor` (check for a stale shadowing copy via `Get-Command ${FRAMEWORK_SLUG}` / `which ${FRAMEWORK_SLUG}`).
+
+**On any other non-zero exit, STOP** and show the user the error. Never improvise a verdict.
 
 ## 5. Emit the board report
 

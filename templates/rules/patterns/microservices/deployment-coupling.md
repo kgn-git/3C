@@ -2,6 +2,7 @@
 schema_version: 1
 description: Microservices — avoid deployment and runtime coupling between services.
 globs: ["**/{deploy,infra,k8s,helm,ci}/**/*.{yaml,yml,tf,json,ts,js}"]
+load: inject
 priority: 8
 pattern: "microservices"
 concern: "deployment-coupling"

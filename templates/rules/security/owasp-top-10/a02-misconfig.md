@@ -2,6 +2,7 @@
 schema_version: 1
 description: Security misconfiguration prevention — hardened defaults for config files, containers, and infrastructure.
 globs: ["**/*.{yaml,yml,json,toml,env,dockerfile,Dockerfile}"]
+load: disk
 priority: 10
 owasp_version: "2025"
 owasp_category: "A02:2025"

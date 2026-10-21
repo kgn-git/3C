@@ -2,6 +2,7 @@
 schema_version: 1
 description: Modular monolith — avoid shared mutable state across module boundaries.
 globs: ["**/*.{ts,js,py,go,java,rb,php}"]
+load: inject
 priority: 9
 pattern: "modular-monolith"
 concern: "shared-state"

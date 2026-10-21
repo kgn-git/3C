@@ -2,6 +2,7 @@
 schema_version: 1
 description: Cross-site request forgery — state-changing requests without anti-forgery verification.
 globs: ["**/{routes,handlers,controllers,api,middleware}/**/*.{ts,js,py,go,rb,php,java}"]
+load: disk
 priority: 8
 cwe_version: "4.15"
 cwe_category: "CWE-352"

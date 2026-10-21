@@ -2,6 +2,7 @@
 schema_version: 1
 description: Layered/MVC — Controllers stay thin; business logic lives in the service layer.
 globs: ["**/{controllers,handlers}/**/*.{ts,js,py,go,java,rb,php}"]
+load: inject
 priority: 10
 pattern: "layered-mvc"
 concern: "controller-rules"

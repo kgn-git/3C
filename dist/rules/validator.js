@@ -1,6 +1,7 @@
 // Validates a parsed RuleFile against the L1 frontmatter contract,
 // the AC7 body line cap, and the AC6 secret-pattern reject.
 import { scanSecrets } from "../validate/secrets.js";
+import { GLOB_REMEDIATION, globProblem } from "./glob-match.js";
 const BODY_LINE_CAP = 50;
 export function validateRule(rule) {
     const diagnostics = [];
@@ -68,6 +69,23 @@ export function validateRule(rule) {
             message: 'frontmatter "globs" must contain at least one pattern',
         });
     }
+    else {
+        // #464: a malformed brace would otherwise match only as literal text, so
+        // the rule would silently apply to nothing; an over-long or globstar-heavy
+        // glob could hang the match.
+        for (const g of globs) {
+            const problem = typeof g === "string" ? globProblem(g) : "is not a string";
+            if (problem !== null) {
+                diagnostics.push({
+                    path: rule.path,
+                    line: 1,
+                    severity: "error",
+                    message: `glob ${JSON.stringify(g)} ${problem}`,
+                    remediation: GLOB_REMEDIATION,
+                });
+            }
+        }
+    }
     const priority = rule.fields.priority;
     if (priority !== undefined && !Number.isInteger(priority)) {
         diagnostics.push({
@@ -75,6 +93,18 @@ export function validateRule(rule) {
             line: 1,
             severity: "error",
             message: `frontmatter "priority" must be an integer when present (got ${typeOf(priority)})`,
+        });
+    }
+    // #330: a misspelt mode would otherwise read as "disk" and silently drop a
+    // rule the author meant to inject.
+    const load = rule.fields.load;
+    if (load !== undefined && load !== "inject" && load !== "disk") {
+        diagnostics.push({
+            path: rule.path,
+            line: 1,
+            severity: "error",
+            message: `frontmatter "load" must be "inject" or "disk" (got ${JSON.stringify(load)})`,
+            remediation: "Use `load: inject` to copy the rule into CLAUDE.md, or `load: disk` (the default) to leave it in .claude/rules/, which Claude Code loads on its own.",
         });
     }
     // --- AC6: secret-pattern reject ---------------------------------------

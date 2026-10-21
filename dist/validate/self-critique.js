@@ -22,8 +22,10 @@ export const REVIEW_AGENTS = [
 ];
 /** Explicitly exempt skills/agents (AC5) — interactive or reference, not emission gates. */
 export const EXEMPT_NAMES = [
+    // #399 folded `3c-onboard-guide` into this one, so the pair became a single
+    // entry. The exemption is unchanged in KIND — an onboarding skill drives an
+    // interactive conversation rather than emitting a reviewable artefact.
     "3c-onboard",
-    "3c-onboard-guide",
 ];
 /** True if the skill/agent basename is explicitly exempt (no silent exemptions). */
 export function isExempt(name) {

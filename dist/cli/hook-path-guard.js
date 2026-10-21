@@ -16,6 +16,7 @@
 // AC9: both starter subagents are denied Read on `.env*`, `~/.ssh/`,
 // `~/.aws/` regardless of which agent is active.
 import { resolveBrandSlugSync } from "../branding/runtime.js";
+import { hookLimitText, MAX_HOOK_EVENT_BYTES, readErrorCode, readStdinBounded, retryRoute, StdinTooLargeError, } from "../validate/_stdin.js";
 const SECRET_PATTERNS = [
     /(^|[\\/])\.env(\.[\w-]+)?$/,
     /[\\/]\.ssh[\\/]/,
@@ -81,15 +82,28 @@ export async function runHookPathGuard(stdin) {
     }
     return { exitCode: 0, stderr: "" };
 }
-export async function hookPathGuardCli() {
-    const chunks = [];
-    for await (const chunk of process.stdin) {
-        chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+export async function hookPathGuardCli(io = { stdin: process.stdin, stderr: process.stderr }) {
+    let stdin;
+    try {
+        stdin = await readStdinBounded(io.stdin, MAX_HOOK_EVENT_BYTES);
     }
-    const stdin = Buffer.concat(chunks).toString("utf-8");
+    catch (err) {
+        // #416: DENY, explicitly exit 2 — Claude Code treats any other non-zero
+        // exit as "proceed", so an escaping throw is an allow. Over the cap, an
+        // allow would let a subagent pad a Write past this guard; on any other
+        // read failure the guard simply does not know what it is judging. The
+        // event is unread, so the main thread is denied too: the accepted cost of
+        // a 16 MiB bound, with the route stated.
+        const slug = resolveBrandSlugSync();
+        io.stderr.write(err instanceof StdinTooLargeError
+            ? `${slug} hook path-guard: ${hookLimitText(err)}; denied. Write the content in parts under the limit: ` +
+                `one Write, then an Edit per further part, each anchored on the last line already written.\n`
+            : `${slug} hook path-guard: could not read the event (${readErrorCode(err)}); denied. ${retryRoute(slug)}\n`);
+        return 2;
+    }
     const result = await runHookPathGuard(stdin);
     if (result.stderr) {
-        process.stderr.write(result.stderr);
+        io.stderr.write(result.stderr);
     }
     return result.exitCode;
 }

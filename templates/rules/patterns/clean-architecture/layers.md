@@ -2,6 +2,7 @@
 schema_version: 1
 description: Clean Architecture — the four concentric layers and what belongs in each.
 globs: ["**/*.{ts,js,py,go,java,rb,php}"]
+load: inject
 priority: 10
 pattern: "clean-architecture"
 concern: "layers"

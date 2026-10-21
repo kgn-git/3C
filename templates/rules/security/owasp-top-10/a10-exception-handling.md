@@ -2,6 +2,7 @@
 schema_version: 1
 description: Exception handling failure prevention — fail-closed error paths and safe error responses without implementation leakage.
 globs: ["**/*.{py,ts,js,go,java,rb,php}"]
+load: disk
 priority: 10
 owasp_version: "2025"
 owasp_category: "A10:2025"

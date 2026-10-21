@@ -1,4 +1,6 @@
 import type { LayerMap, Violation } from "./types.js";
+/** The layer `relPath` belongs to under `map`, or null when no layer glob matches it. */
+export declare function layerOf(relPath: string, map: LayerMap): string | null;
 export interface RelativeImport {
     readonly line: number;
     readonly resolved: string;

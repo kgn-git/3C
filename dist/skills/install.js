@@ -21,28 +21,34 @@ export async function installSkills(opts) {
         return { ok: false, error: err.message };
     }
     const skillDirs = topEntries.filter((e) => e.isDirectory());
-    for (const entry of skillDirs) {
-        const skillName = entry.name;
-        const skillSource = join(opts.sourceDir, skillName);
-        // #240: installed skills are namespaced by a hyphen brand prefix, since
-        // copy-installed project skills cannot carry a colon namespace. The source
-        // dir `create-issue` installs to `.claude/skills/<slug>-create-issue/`,
-        // matching the `name: ${BRAND_SLUG}-<skill>` frontmatter so the slash
-        // command resolves as `/<slug>-create-issue`.
-        const prefixedName = `${opts.brand.BRAND_SLUG}-${skillName}`;
-        const skillDest = join(opts.destDir, ".claude", "skills", prefixedName);
-        await copyTreeWithSubstitution(skillSource, skillDest, opts.brand, opts.onExisting, installed, skipped);
+    // #452: a failed backup stops the overwrite it was protecting.
+    try {
+        for (const entry of skillDirs) {
+            const skillName = entry.name;
+            const skillSource = join(opts.sourceDir, skillName);
+            // #240: installed skills are namespaced by a hyphen brand prefix, since
+            // copy-installed project skills cannot carry a colon namespace. The source
+            // dir `create-issue` installs to `.claude/skills/<slug>-create-issue/`,
+            // matching the `name: ${BRAND_SLUG}-<skill>` frontmatter so the slash
+            // command resolves as `/<slug>-create-issue`.
+            const prefixedName = `${opts.brand.BRAND_SLUG}-${skillName}`;
+            const skillDest = join(opts.destDir, ".claude", "skills", prefixedName);
+            await copyTreeWithSubstitution(skillSource, skillDest, opts.brand, opts.onExisting, installed, skipped, opts.backup);
+        }
+    }
+    catch (err) {
+        return { ok: false, error: err.message };
     }
     return { ok: true, installed, skipped };
 }
-async function copyTreeWithSubstitution(sourceDir, destDir, brand, onExisting, installed, skipped) {
+async function copyTreeWithSubstitution(sourceDir, destDir, brand, onExisting, installed, skipped, backup) {
     await mkdir(destDir, { recursive: true });
     const entries = await readdir(sourceDir, { withFileTypes: true });
     for (const entry of entries) {
         const src = join(sourceDir, entry.name);
         const dst = join(destDir, entry.name);
         if (entry.isDirectory()) {
-            await copyTreeWithSubstitution(src, dst, brand, onExisting, installed, skipped);
+            await copyTreeWithSubstitution(src, dst, brand, onExisting, installed, skipped, backup);
             continue;
         }
         if (!entry.isFile())
@@ -53,8 +59,27 @@ async function copyTreeWithSubstitution(sourceDir, destDir, brand, onExisting, i
         }
         const raw = await readFile(src, "utf8");
         const substituted = substitute(raw, brand);
+        if (backup && (await differsOnDisk(dst, substituted))) {
+            await backup(dst);
+        }
         await writeFile(dst, substituted, "utf8");
         installed.push(dst);
+    }
+}
+/**
+ * True when `path` exists with content other than `next` — the only case a
+ * backup is worth taking. Only "no such file" means nothing to back up; any
+ * other read failure throws, so the overwrite stops rather than proceeding
+ * unprotected.
+ */
+async function differsOnDisk(path, next) {
+    try {
+        return (await readFile(path, "utf8")) !== next;
+    }
+    catch (err) {
+        if (err.code === "ENOENT")
+            return false;
+        throw err;
     }
 }
 async function fileExists(path) {

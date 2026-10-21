@@ -2,6 +2,7 @@
 schema_version: 1
 description: SQL injection prevention — parameterised queries and least-privilege DB access.
 globs: ["**/*.{sql,py,ts,js,go,rb,php,java}"]
+load: disk
 priority: 10
 owasp_version: "2025"
 owasp_category: "A05:2025"

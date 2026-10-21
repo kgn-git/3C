@@ -2,6 +2,7 @@
 schema_version: 1
 description: Authentication failure prevention — secure session management, credential storage, and account recovery.
 globs: ["**/{auth,login,session,signup,signin}/**/*.{ts,js,py}"]
+load: disk
 priority: 10
 owasp_version: "2025"
 owasp_category: "A07:2025"

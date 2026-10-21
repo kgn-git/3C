@@ -10,13 +10,20 @@
 // optional and never a blocking gate (#306 AC6, #307 NFR). Scope: single-delivery local evidence
 // only; NO accumulated trend view before L3 (#307 binding constraint #2).
 import { contentLines, exceedsSizeCap } from "./_markdown.js";
-/** The canonical list of 3C load-bearing gates (PR-01/02/03/05 + the PreToolUse path-guard). */
+/**
+ * The canonical list of 3C load-bearing gates. Derive the membership from the
+ * entries below, never from this comment — an enumeration in prose beside a
+ * list in code is one of the two copies that drift.
+ */
 export const LOAD_BEARING_GATES = [
     { slug: "scan-secrets", label: "Scan secrets at every write boundary (PR-01)" },
     { slug: "red-before-green", label: "RED before GREEN (PR-02)" },
+    { slug: "verify-gate", label: "Project-level verify gate before the PR (PR-02 §6.a)" },
     { slug: "no-auto-merge", label: "No auto-merge / no force-push / no hook bypass (PR-03)" },
     { slug: "reconcile-anti-improvisation", label: "Reconcile anti-improvisation (PR-05)" },
     { slug: "pretooluse-path-guard", label: "PreToolUse path-guard hook" },
+    { slug: "sprint-readiness", label: "Sprint enrichment + coherence check before implementation (PR-07)" },
+    { slug: "capability-tier", label: "User-facing capability evidenced at the install tier (PR-02 capability head)" },
 ];
 // A markdown table row: `| cell | cell | cell |`. The pipe-split yields >=3 cells for a real row;
 // a separator row (`|------|------|`) is skipped by detecting that every cell is dashes/colons.

@@ -37,6 +37,15 @@ export async function installAgents(opts) {
         }
         const sourceContent = await readFile(join(opts.sourceDir, file), "utf-8");
         const substituted = substitute(sourceContent, opts.brand);
+        if (exists && opts.backup) {
+            try {
+                if ((await readFile(destPath, "utf-8")) !== substituted)
+                    await opts.backup(destPath);
+            }
+            catch (err) {
+                return { ok: false, error: `not overwriting ${destPath}: its backup failed (${err.message})` };
+            }
+        }
         await writeFile(destPath, substituted, "utf-8");
         installed.push(destName);
     }

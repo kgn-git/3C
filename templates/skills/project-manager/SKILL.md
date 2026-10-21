@@ -12,7 +12,7 @@ disable-model-invocation: true
 Drive one issue from scope to a reviewed, shippable change by coordinating the ${BRAND_NAME} crew. This skill
 is **explicit-invocation only** (`disable-model-invocation: true`); never auto-run. The user invokes it as
 `/${BRAND_SLUG}-project-manager <issue-id>`, or with a milestone subcommand (see "Milestone operations"
-below): `/${BRAND_SLUG}-project-manager <plan|enrich|status|sprint-close> [target]`.
+below): `/${BRAND_SLUG}-project-manager <plan|enrich|status|sprint-close|deliver> [target]`.
 
 It composes the existing atomic skills and the specialist agents — it does **not** replace
 `/${BRAND_SLUG}-implement`, `/${BRAND_SLUG}-review`, or `/${BRAND_SLUG}-test`.
@@ -34,10 +34,11 @@ Do not duplicate its logic; follow it.
 
 ### 3. Cross-check (auto)
 Run the `${BRAND_SLUG}-review-board` procedure on the resulting diff: dispatch the specialist agents in
-parallel and reconcile via `${FRAMEWORK_SLUG} reconcile` into one verdict. **If `${FRAMEWORK_SLUG} reconcile`
-fails with `Unknown command` or a non-zero exit, STOP** — the installed CLI predates the reconciler. Do not
-improvise a verdict; tell the user to upgrade/reinstall the CLI from your framework's distribution,
-then verify with `${FRAMEWORK_SLUG} doctor`.
+parallel and reconcile via `${FRAMEWORK_SLUG} reconcile` into one verdict. If `${FRAMEWORK_SLUG} reconcile` refuses its input, the CLI is fine and stderr says why: `exceeds the` byte limit
+(shorten each finding's message and suggestion, then re-run), `cannot read input` (fix the `--file` path or pipe), or
+`invalid findings JSON` (fix the assembled JSON). **If it fails with `Unknown command`, STOP** — the installed
+CLI predates the reconciler. Do not improvise a verdict; tell the user to upgrade/reinstall the CLI from your
+framework's distribution, then verify with `${FRAMEWORK_SLUG} doctor`. On any other non-zero exit, STOP and show the user the error; never improvise a verdict.
 
 ### 4. Reconcile + decide (auto)
 - `clean` / `advisory` → proceed to ship.
@@ -60,14 +61,20 @@ then verify with `${FRAMEWORK_SLUG} doctor`.
   issue: <N>                  # or `issues: [..]` when one delivery closes several
   title: "<issue title>"
   pr: <PR number>
-  merge_sha: <short sha>
-  branch: <feature branch>
+  merge_sha: "<short sha>"    # quoted: an all-digit sha would read as a number
+  branch: "<feature branch>"
   started: <first branch commit, ISO-8601 UTC>
   merged: <merge timestamp, ISO-8601 UTC>
   verdict: { level: <clean|advisory|blocking>, blocking: 0, warnings: 0, suggestions: 0, fixed_in_branch: 0 }   # from the board
   tests_total: <suite size at merge>
   loc: { added: 0, removed: 0, files: 0 }   # from the merge diff shortstat
   follow_ups: []              # issue numbers filed during this delivery
+  gates_fired: []             # OPTIONAL, additive — NO schema bump. The load-bearing gates that
+                             # fired on this delivery, as gate-name strings only: scan-secrets,
+                             # red-before-green, verify-gate, no-auto-merge,
+                             # reconcile-anti-improvisation, pretooluse-path-guard,
+                             # sprint-readiness, capability-tier. Metadata-only: never raw command output, file
+                             # contents, or env values. Missing renders as blank.
   ---
   ```
 
@@ -86,6 +93,36 @@ the single-issue flow is complete at stage 5 whether or not a retro is run.
 
 Sprint-level coordination for the team's issue tracker, alongside the per-issue pipeline above. The
 target repository is whatever the current checkout's tracker is — never hard-code one.
+
+### deliver "<milestone>"
+
+Run the per-issue pipeline (stages 1–5 above) across every open issue in a milestone. This composes
+the pipeline rather than defining a second one.
+
+1. **Resolve the milestone name first** — `gh api repos/<owner>/<repo>/milestones --jq '.[].title'`
+   and require an exact match against that list. Do not interpolate an unmatched name into the
+   command below: `"<name>"` is a shell string, and double quotes do not neutralise `$(…)` or
+   backticks. Reject anything that does not match exactly.
+2. **Fetch and order** — `gh issue list --milestone "<name>" --state open --json number,title,labels,body`.
+   Sequence in **dependency order**, not issue-number order: foundations before dependents, per each
+   issue's `## Dependencies` section — which is why `body` is in the field list. State the resolved
+   order **and the issue count** before starting, so a wrong sequence or an unexpectedly large batch
+   is caught before any branch exists. Past 5 issues, batch per the process rule below.
+3. **Deliver each issue** — run stages 1–5 for issue N to a merged PR, then move to N+1. Batch runs
+   go **straight through** with no per-issue go/no-go checkpoint; the stage-5 confirmations
+   (branch, PR) still apply to each issue individually and are never waived.
+   Iterate the stages **inline in this thread**. Never dispatch `/${BRAND_SLUG}-project-manager` per
+   issue, and never wrap it in a general-purpose subagent: that re-enters the orchestrator and stacks
+   a second dispatch level under it, multiplying the board's parallel agents by the issue count. The
+   flat-dispatch invariant binds skills here, not just agents.
+4. **Serialise** — do not open the next issue's branch until the current issue's PR is merged.
+   Concurrent branches over a shared surface produce conflicting edits to the same files.
+5. **Stop conditions** — a `blocking` board verdict that survives its one bounded fix cycle stops the
+   **batch**, not just that issue; hand off to a human with the board report. A missing or unclear
+   AC section stops that issue only: report it and continue to the next.
+
+Zero open issues → verify the milestone name with `gh api repos/<owner>/<repo>/milestones` before
+reporting the milestone complete.
 
 ### plan "<milestone>" / enrich #<issue>
 
@@ -114,9 +151,50 @@ target repository is whatever the current checkout's tracker is — never hard-c
 5. **Update** — `gh issue edit <n> --body …`. If the existing body already has structured content,
    present a diff before overwriting.
 
+### Sprint readiness — the gate before any implementation
+
+**Implementation MUST NOT begin on a milestone batch until BOTH gates below have run and their
+findings are resolved, or explicitly deferred with a tracked issue reference.** Record
+`sprint-readiness` in the delivery's `gates_fired`.
+
+**1. Enrichment — per issue.** Run `enrich` on every issue in the batch. It asks whether *this* issue
+is buildable: are the acceptance criteria testable actions, is the scope bounded, is the maturity
+level right, could a developer build it without coming back to ask.
+
+**2. Coherence — cross-issue, across the whole batch.** Enrichment cannot see this, because each issue passes its own
+review while the *set* is incoherent. Read every issue in the milestone together and report:
+
+- **Contradictions** — two issues that require opposite things of the same file or rule.
+- **Shared surfaces** — two issues that will both edit the same skill, validator or config, and so
+  cannot be delivered in parallel without one clobbering the other.
+- **Dependency order** — an issue whose premise depends on another that is sequenced after it.
+- **Duplicate or overlapping scope** — work that appears in two issues under different names.
+- **Load-bearing assumptions** — a claim an issue makes about the codebase that is no longer true.
+  Check it, do not assume it: an issue body is the author's belief, not evidence.
+
+Report the findings as a table and stop if any is unresolved. A conflict found here costs minutes; the
+same conflict found mid-sprint costs a delivery.
+
+**Why this is a gate and not advice.** It was added after a sprint that ran implementation-first:
+enrichment run late found blocking defects in four of five issues, including false constraints the
+author had written into the issue bodies. The subcommands existed the whole time — they ran when
+someone remembered, and memory lapses.
+
 ### status / sprint-close "<milestone>"
 
-Produce the sprint summary: a table (issue / priority / lens reviews / status), flags (dependency
+**`sprint-close` runs the full suite first.** Before any summary is produced, run the project's
+aggregate build and check scripts — read the names from the project manifest, never hand-expand them
+into a step list — and **quote the output**. An unquoted "all green" is not evidence.
+
+**Exit gate:** both return zero. A non-zero return blocks the close; fix it, or reopen the issue that
+caused it.
+
+This run MUST NOT be narrowed. `${FRAMEWORK_SLUG} test select` exists for the inner TDD loop only; it
+never applies here, and neither does any hand-picked subset. The reason is structural: per-issue
+selection is a bet that the read-map is complete, and sprint-close is where that bet is settled. A
+sprint closed on a narrowed run has verified nothing about the issues that closed before it.
+
+Then produce the sprint summary: a table (issue / priority / lens reviews / status), flags (dependency
 risks, architecture concerns, cross-cutting dependencies), and health counts (ready for development /
 needs clarification / needs split).
 

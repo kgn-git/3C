@@ -2,6 +2,7 @@
 schema_version: 1
 description: Hard-coded credentials and weak cryptography — secrets in code, broken or misused crypto.
 globs: ["**/*.{ts,js,py,go,rb,php,java,env,yaml,yml,json}"]
+load: disk
 priority: 9
 cwe_version: "4.15"
 cwe_category: "CWE-798,CWE-327,CWE-256"

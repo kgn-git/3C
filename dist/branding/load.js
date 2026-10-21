@@ -19,36 +19,27 @@ export async function loadFramework(rootDir) {
     }
     return parsed;
 }
-export async function loadBrand(rootDir) {
-    const path = join(rootDir, "branding.json");
-    let text;
-    try {
-        text = await readFile(path, "utf8");
-    }
-    catch (err) {
-        if (err.code === "ENOENT") {
-            return {};
-        }
-        throw err;
-    }
-    return JSON.parse(text);
-}
-export function resolveBrand(framework, brand) {
-    const fallback = (override, fw) => {
-        const trimmed = override?.trim();
-        return trimmed && trimmed.length > 0 ? trimmed : fw;
-    };
+/**
+ * The identity every substitution uses: the framework's, with `BRAND_*` as
+ * aliases of `FRAMEWORK_*`.
+ *
+ * #451 retired custom branding — the product is 3C. There is no per-deployment
+ * override any more, so nothing here reads `branding.json`; a stray one in a
+ * workspace is ignored by decision (no released adopters to migrate). Before
+ * #451 this read the WORKSPACE's file while the runtime resolver read the
+ * PACKAGE's, so a branded install named its commands `/acme-*` while writing
+ * state to `.3c/` — the half-broken state the retirement removes.
+ */
+export function resolveBrand(framework) {
     return {
         ...framework,
-        BRAND_NAME: fallback(brand.BRAND_NAME, framework.FRAMEWORK_NAME),
-        BRAND_SLUG: fallback(brand.BRAND_SLUG, framework.FRAMEWORK_SLUG),
-        BRAND_LONG: fallback(brand.BRAND_LONG, framework.FRAMEWORK_LONG),
-        BRAND_VERSION: fallback(brand.BRAND_VERSION, framework.FRAMEWORK_VERSION),
+        BRAND_NAME: framework.FRAMEWORK_NAME,
+        BRAND_SLUG: framework.FRAMEWORK_SLUG,
+        BRAND_LONG: framework.FRAMEWORK_LONG,
+        BRAND_VERSION: framework.FRAMEWORK_VERSION,
     };
 }
 export async function load(rootDir) {
-    const framework = await loadFramework(rootDir);
-    const brand = await loadBrand(rootDir);
-    return resolveBrand(framework, brand);
+    return resolveBrand(await loadFramework(rootDir));
 }
 //# sourceMappingURL=load.js.map

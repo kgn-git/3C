@@ -2,6 +2,7 @@
 schema_version: 1
 description: Path traversal and unrestricted file upload — untrusted paths/filenames reaching the filesystem.
 globs: ["**/{files,upload,storage,fs,assets,download}/**/*.{ts,js,py,go,rb,php,java}"]
+load: disk
 priority: 9
 cwe_version: "4.15"
 cwe_category: "CWE-22,CWE-434"

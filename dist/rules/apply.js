@@ -1,11 +1,33 @@
-// Orchestrates the rule pipeline: load → validate → filter by glob match
-// against workspace → sort → render → inject into CLAUDE.md.
+// Orchestrates the rule pipeline: load → validate → split by load mode →
+// filter injected rules by glob match → sort → render → budget check → inject
+// into CLAUDE.md.
+//
+// #330: Claude Code loads `.claude/rules/**/*.md` into every session on its
+// own (an external behaviour, observed in this repo's own sessions — not
+// something 3C enforces), so copying a rule's body into CLAUDE.md loads it
+// twice and spends the 150-directive budget. A rule is injected only when it
+// says `load: inject`; everything else stays on disk and is named in a
+// one-line pointer. Injection is therefore a deliberate, budgeted double load:
+// the pattern packs opt in to keep their pre-#330 behaviour.
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { resolveBrandSlugSync } from "../branding/runtime.js";
 import { matchAny } from "./glob-match.js";
-import { loadRules } from "./loader.js";
+import { loadModeOf, loadRules } from "./loader.js";
 import { validateRule } from "./validator.js";
+import { countInstructions } from "../validate/instruction-count.js";
+export { loadModeOf };
+// Pack paths are written into CLAUDE.md — the highest-trust prompt file — and
+// to the terminal. A path is the rule's location under `.claude/rules/`, so it
+// is allow-listed rather than escaped: a newline, `-->` or an escape sequence
+// in a directory name has no legitimate use there.
+const SAFE_RULE_PATH = /^[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*$/;
+/** The pack a rule belongs to: its directory under `.claude/rules/`, or the file itself at top level. */
+export function packOf(filename) {
+    const i = filename.lastIndexOf("/");
+    return i === -1 ? filename : filename.slice(0, i);
+}
+const uniqueSorted = (xs) => [...new Set(xs)].sort();
 // --- Pure helpers (exposed for direct testing) -------------------------
 export function sortRules(rules) {
     const copy = [...rules];
@@ -27,17 +49,31 @@ export function filterByGlobMatch(rules, files) {
         return matchAny(globs, files);
     });
 }
-export function renderRulesBlock(rules, frameworkName, generatedAt) {
+function renderRule(r, frameworkName) {
+    // The description sits inside an HTML comment: a newline or `-->` would end
+    // it early and turn the rest into live CLAUDE.md text.
+    const desc = (typeof r.fields.description === "string" ? r.fields.description : "")
+        .replace(/[\r\n]+/g, " ")
+        .replace(/-->/g, "-- >");
+    return `<!-- ${frameworkName}:rule ${r.filename} — ${desc} -->\n${r.body.trim()}`;
+}
+// The pointer is counted against the budget like any other line of CLAUDE.md,
+// so it is worded without an RFC-2119 keyword.
+function diskPointer(diskPacks) {
+    return `Rule packs kept on disk, loaded by Claude Code from \`.claude/rules/\` rather than copied here: ${diskPacks.join(", ")}.`;
+}
+export function renderRulesBlock(rules, frameworkName, generatedAt, diskPacks = []) {
     const begin = `<!-- ${frameworkName}:RULES-BEGIN schema=1 generated_at=${generatedAt} rules_count=${rules.length} -->`;
     const end = `<!-- ${frameworkName}:RULES-END -->`;
-    if (rules.length === 0) {
+    const parts = [];
+    if (diskPacks.length > 0)
+        parts.push(diskPointer(diskPacks));
+    if (rules.length > 0)
+        parts.push(rules.map((r) => renderRule(r, frameworkName)).join("\n\n"));
+    if (parts.length === 0) {
         return [begin, end].join("\n");
     }
-    const ruleBlocks = rules.map((r) => {
-        const desc = typeof r.fields.description === "string" ? r.fields.description : "";
-        return `<!-- ${frameworkName}:rule ${r.filename} — ${desc} -->\n${r.body.trim()}`;
-    });
-    return [begin, "", ruleBlocks.join("\n\n"), end].join("\n");
+    return [begin, "", parts.join("\n\n"), end].join("\n");
 }
 export function injectIntoClaude(claudeMd, block, frameworkName) {
     const slug = resolveBrandSlugSync();
@@ -61,6 +97,12 @@ export function injectIntoClaude(claudeMd, block, frameworkName) {
             const content = claudeMd.slice(0, beginIdx) + block + claudeMd.slice(replaceTo);
             return { ok: true, content, replaced: true };
         }
+        // #330 board: inserting a fresh block here would leave the stale one in
+        // place — loaded twice, and counted as the adopter's own text.
+        return {
+            ok: false,
+            error: `CLAUDE.md has a ${beginMarker} marker with no ${endMarker}; delete the partial rules block and re-run \`${slug} rules apply\`.`,
+        };
     }
     // No existing block — insert after anchor, with a blank-line separator.
     const content = claudeMd.slice(0, anchorEnd) + "\n\n" + block + claudeMd.slice(anchorEnd);
@@ -82,6 +124,8 @@ export async function applyRules(opts) {
                 skippedCount: 0,
                 diagnostics: [],
                 error: `CLAUDE.md not found at ${claudeMdPath}; run \`${slug} init\` first.`,
+                injectedPacks: [],
+                diskPacks: [],
             };
         }
         throw err;
@@ -93,16 +137,48 @@ export async function applyRules(opts) {
         diagnostics.push(e);
     const valid = [];
     for (const r of loaded.rules) {
+        if (!SAFE_RULE_PATH.test(r.filename)) {
+            diagnostics.push({
+                path: r.path,
+                line: 1,
+                severity: "error",
+                message: "rule path has characters outside A-Z a-z 0-9 . _ - / and is skipped",
+                remediation: "Rename the file or its directory under .claude/rules/ using only those characters.",
+            });
+            continue;
+        }
         const v = validateRule(r);
         for (const d of v.diagnostics)
             diagnostics.push(d);
         if (v.valid)
             valid.push(r);
     }
-    const matching = filterByGlobMatch(valid, opts.workspaceFiles);
-    const skippedCount = valid.length - matching.length;
+    // A pack whose rules disagree is half in CLAUDE.md and half not — allowed,
+    // but almost certainly an edit that missed a file.
+    const modesByPack = new Map();
+    for (const r of valid) {
+        const pack = packOf(r.filename);
+        const modes = modesByPack.get(pack) ?? new Set();
+        modes.add(loadModeOf(r));
+        modesByPack.set(pack, modes);
+    }
+    for (const [pack, modes] of modesByPack) {
+        if (modes.size > 1) {
+            diagnostics.push({
+                path: join(rulesDir, pack),
+                line: 1,
+                severity: "warning",
+                message: `pack ${pack} mixes \`load: inject\` and \`load: disk\` rules; give every rule in it the same value`,
+            });
+        }
+    }
+    const toInject = valid.filter((r) => loadModeOf(r) === "inject");
+    const diskPacks = uniqueSorted(valid.filter((r) => loadModeOf(r) === "disk").map((r) => packOf(r.filename)));
+    const matching = filterByGlobMatch(toInject, opts.workspaceFiles);
+    const skippedCount = toInject.length - matching.length;
     const sorted = sortRules(matching);
-    const block = renderRulesBlock(sorted, opts.frameworkName, opts.generatedAt);
+    const injectedPacks = uniqueSorted(sorted.map((r) => packOf(r.filename)));
+    const block = renderRulesBlock(sorted, opts.frameworkName, opts.generatedAt, diskPacks);
     const injected = injectIntoClaude(claudeMd, block, opts.frameworkName);
     if (!injected.ok) {
         return {
@@ -111,6 +187,22 @@ export async function applyRules(opts) {
             skippedCount,
             diagnostics,
             error: injected.error,
+            injectedPacks: [],
+            diskPacks,
+        };
+    }
+    // AC2: judge the file that would be written, with the same test doctor
+    // applies, so `rules apply` can never produce a CLAUDE.md doctor fails.
+    const total = countInstructions(injected.content);
+    if (total.warnLevel === "exceeded") {
+        return {
+            action: "error",
+            appliedCount: 0,
+            skippedCount,
+            diagnostics,
+            error: overBudgetMessage(sorted, opts.frameworkName, total.count, countInstructions(block).count, slug),
+            injectedPacks: [],
+            diskPacks,
         };
     }
     await writeFile(claudeMdPath, injected.content, "utf8");
@@ -119,6 +211,31 @@ export async function applyRules(opts) {
         appliedCount: sorted.length,
         skippedCount,
         diagnostics,
+        injectedPacks,
+        diskPacks,
     };
+}
+function overBudgetMessage(injected, frameworkName, total, blockCount, slug) {
+    const perPack = new Map();
+    for (const r of injected) {
+        const pack = packOf(r.filename);
+        perPack.set(pack, (perPack.get(pack) ?? 0) + countInstructions(renderRule(r, frameworkName)).count);
+    }
+    const lines = [...perPack]
+        .sort(([a], [b]) => (a < b ? -1 : 1))
+        .map(([pack, n]) => `  ${pack}: ${n} (load: inject)`);
+    // `setup --replace` would restore a bundled pack's shipped frontmatter and
+    // undo the `load: disk` edit, so the re-run named here is the plain one.
+    const rerun = `Then re-run \`${slug} rules apply\` (or plain \`${slug} setup\`, without --replace).`;
+    const fix = blockCount === 0
+        ? `Fix: CLAUDE.md's own text is over budget on its own; trim it. ${rerun}`
+        : `Fix: set \`load: disk\` in the frontmatter of each rule in a pack above (.claude/rules/<pack>/*.md) — ` +
+            `Claude Code still loads it from disk — or trim CLAUDE.md. ${rerun}`;
+    return [
+        `CLAUDE.md would carry ${total} RFC-2119 directives; it has to stay below 150. Nothing was written.`,
+        `  CLAUDE.md's own text: ${total - blockCount}`,
+        ...lines,
+        fix,
+    ].join("\n");
 }
 //# sourceMappingURL=apply.js.map

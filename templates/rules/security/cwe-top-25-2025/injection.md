@@ -2,6 +2,7 @@
 schema_version: 1
 description: Injection weaknesses — untrusted data reaching an interpreter (SQL, OS command, code, XSS).
 globs: ["**/{routes,handlers,controllers,api,db,repositories,views,templates}/**/*.{ts,js,py,go,rb,php,java}"]
+load: disk
 priority: 10
 cwe_version: "4.15"
 cwe_category: "CWE-89,CWE-78,CWE-79,CWE-94"

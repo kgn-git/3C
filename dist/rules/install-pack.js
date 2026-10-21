@@ -7,7 +7,7 @@ import { join, resolve, sep } from "node:path";
 import { resolveBrandSlugSync } from "../branding/runtime.js";
 import { substitute } from "../branding/substitute.js";
 import { scanSecrets } from "../validate/secrets.js";
-import { loadRules } from "./loader.js";
+import { loadModeOf, loadRules } from "./loader.js";
 import { countInstructions } from "../validate/instruction-count.js";
 export async function installRulePack(opts) {
     const slug = resolveBrandSlugSync();
@@ -34,7 +34,13 @@ export async function installRulePack(opts) {
     }
     const packDest = join(opts.workspaceDir, ".claude", "rules", opts.packName);
     const secretHits = [];
-    await copyTreeWithSubstitution(packSource, packDest, opts.brand, opts.onExisting, installed, skipped, secretHits);
+    try {
+        await copyTreeWithSubstitution(packSource, packDest, opts.brand, opts.onExisting, installed, skipped, secretHits, opts.backup);
+    }
+    catch (err) {
+        // #452: a failed backup stops the overwrite it was protecting.
+        return { ok: false, error: err.message };
+    }
     if (secretHits.length > 0) {
         return {
             ok: false,
@@ -42,23 +48,27 @@ export async function installRulePack(opts) {
             secretHits,
         };
     }
-    // AC8: after install, count directives across ALL loaded rule bodies in the workspace.
-    // Conservative: ignores glob filtering — if any rule's body lands in CLAUDE.md, its
-    // directives count. Better to over-warn than under-warn.
+    // AC8: after install, count directives across the installed rules that
+    // `rules apply` would inject (#330: `load: inject` only — an on-disk rule
+    // never reaches CLAUDE.md). Conservative: ignores glob filtering — better to
+    // over-warn than under-warn.
     // Best-effort: a failure here MUST NOT propagate — the install already succeeded.
     const rulesDir = join(opts.workspaceDir, ".claude", "rules");
     try {
         const loaded = await loadRules(rulesDir);
-        const totalBody = loaded.rules.map((r) => r.body).join("\n");
+        const totalBody = loaded.rules
+            .filter((r) => loadModeOf(r) === "inject")
+            .map((r) => r.body)
+            .join("\n");
         const count = countInstructions(totalBody);
         if (count.warnLevel === "exceeded") {
-            warnings.push(`directive budget EXCEEDED: ${count.count} RFC-2119 directives across installed rules ` +
-                `(hard limit 150). \`${slug} rules apply\` will produce a CLAUDE.md that exceeds the ` +
-                `Claude Code instruction-budget guidance (CS-02). Consider a smaller pack or per-language pruning.`);
+            warnings.push(`directive budget EXCEEDED: ${count.count} RFC-2119 directives across installed \`load: inject\` rules ` +
+                `(hard limit 150). \`${slug} rules apply\` will refuse to write CLAUDE.md until some of them ` +
+                `are set to \`load: disk\` (CS-02).`);
         }
         else if (count.warnLevel === "warn") {
-            warnings.push(`directive budget: ${count.count} RFC-2119 directives across installed rules ` +
-                `(warn at 120, hard limit 150). Consider a smaller pack or per-language pruning.`);
+            warnings.push(`directive budget: ${count.count} RFC-2119 directives across installed \`load: inject\` rules ` +
+                `(warn at 120, hard limit 150). Consider \`load: disk\` for a pack Claude Code can load from disk.`);
         }
     }
     catch {
@@ -74,14 +84,14 @@ export async function installRulePack(opts) {
 // any failure as "rolled-back-or-not" and re-run with --replace once the
 // source pack is fixed. A transactional rollback is out of scope for L1
 // and tracked for future hardening alongside the cross-installer DRY refactor.
-async function copyTreeWithSubstitution(sourceDir, destDir, brand, onExisting, installed, skipped, secretHits) {
+async function copyTreeWithSubstitution(sourceDir, destDir, brand, onExisting, installed, skipped, secretHits, backup) {
     await mkdir(destDir, { recursive: true });
     const entries = await readdir(sourceDir, { withFileTypes: true });
     for (const entry of entries) {
         const src = join(sourceDir, entry.name);
         const dst = join(destDir, entry.name);
         if (entry.isDirectory()) {
-            await copyTreeWithSubstitution(src, dst, brand, onExisting, installed, skipped, secretHits);
+            await copyTreeWithSubstitution(src, dst, brand, onExisting, installed, skipped, secretHits, backup);
             continue;
         }
         if (!entry.isFile())
@@ -97,6 +107,21 @@ async function copyTreeWithSubstitution(sourceDir, destDir, brand, onExisting, i
             for (const hit of scan.hits)
                 secretHits.push({ path: src, hit });
             continue; // do not write files that triggered a hit
+        }
+        if (backup) {
+            let current = null;
+            try {
+                current = await readFile(dst, "utf8");
+            }
+            catch (err) {
+                // Only a missing file means nothing to back up; anything else stops
+                // the overwrite (fail closed).
+                if (err.code !== "ENOENT")
+                    throw err;
+                current = null;
+            }
+            if (current !== null && current !== substituted)
+                await backup(dst);
         }
         await writeFile(dst, substituted, "utf8");
         installed.push(dst);

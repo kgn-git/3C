@@ -3,5 +3,11 @@ export interface HookPathGuardResult {
     readonly stderr: string;
 }
 export declare function runHookPathGuard(stdin: string): Promise<HookPathGuardResult>;
-export declare function hookPathGuardCli(): Promise<number>;
+export interface HookPathGuardIo {
+    readonly stdin: AsyncIterable<Buffer>;
+    readonly stderr: {
+        write(text: string): unknown;
+    };
+}
+export declare function hookPathGuardCli(io?: HookPathGuardIo): Promise<number>;
 //# sourceMappingURL=hook-path-guard.d.ts.map

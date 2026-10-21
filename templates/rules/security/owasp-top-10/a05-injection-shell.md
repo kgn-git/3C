@@ -2,6 +2,7 @@
 schema_version: 1
 description: Shell/exec injection prevention — array-form invocation and validated arguments for all process spawning.
 globs: ["**/*.{sh,py,ts,js,rb,go}"]
+load: disk
 priority: 10
 owasp_version: "2025"
 owasp_category: "A05:2025"

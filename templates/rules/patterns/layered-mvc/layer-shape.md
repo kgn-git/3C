@@ -2,6 +2,7 @@
 schema_version: 1
 description: Layered/MVC — Three-layer Presentation → Application → Persistence shape.
 globs: ["**/*.{ts,js,py,go,java,rb,php}"]
+load: inject
 priority: 10
 pattern: "layered-mvc"
 concern: "layer-shape"

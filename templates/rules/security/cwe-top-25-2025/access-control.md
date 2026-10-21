@@ -2,6 +2,7 @@
 schema_version: 1
 description: Authorization weaknesses — missing/incorrect authz, missing authentication, privilege management.
 globs: ["**/{routes,handlers,controllers,api,middleware,auth}/**/*.{ts,js,py,go,rb,php,java}"]
+load: disk
 priority: 10
 cwe_version: "4.15"
 cwe_category: "CWE-862,CWE-863,CWE-306,CWE-269"

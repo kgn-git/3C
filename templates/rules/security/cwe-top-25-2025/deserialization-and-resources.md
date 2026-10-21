@@ -2,6 +2,7 @@
 schema_version: 1
 description: Unsafe deserialization and uncontrolled resource consumption.
 globs: ["**/{api,handlers,workers,queue,parsers,serializers}/**/*.{ts,js,py,go,rb,php,java}"]
+load: disk
 priority: 8
 cwe_version: "4.15"
 cwe_category: "CWE-502,CWE-400,CWE-770"

@@ -23,6 +23,7 @@ Apply the four sections below to every changed file. Each section's anchor name 
 ## Testing
 
 - Does every new public function have at least one test exercising the happy path and one edge case?
+- Can each added assertion ever be false? `toBeDefined()`, `toBeTruthy()`, `assert.ok()`, `assertNotNull()` and `is not None` all pass the moment the symbol exists and assert nothing about behaviour — treat one as `critical`.
 - Are tests asserting *behaviour* (return values, side effects, throws) rather than implementation detail (which functions got called)?
 - Are fixtures using obviously-fake credentials (`PLACEHOLDER_API_KEY`, `<<example-token>>`) and not real-looking ones?
 - Are flaky-prone patterns being introduced (sleep-based waits, network-dependent assertions, time-of-day branches)?

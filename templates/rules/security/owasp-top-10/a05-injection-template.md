@@ -2,6 +2,7 @@
 schema_version: 1
 description: Template/XSS injection prevention — output encoding and safe rendering for web and server-side templates.
 globs: ["**/*.{ts,js,jsx,tsx,vue,svelte,py,rb,html,jinja,erb}"]
+load: disk
 priority: 10
 owasp_version: "2025"
 owasp_category: "A05:2025"

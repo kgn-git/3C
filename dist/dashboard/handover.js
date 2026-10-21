@@ -52,6 +52,22 @@ function readLoc(v) {
     }
     return o;
 }
+/** String fields whose unquoted values YAML can retype as numbers (#348). */
+const TEXT_FIELDS = ["merge_sha", "branch"];
+/**
+ * The field's value exactly as written on its own frontmatter line — never
+ * String(number), which turns `88e7253` into "Infinity" and drops a leading
+ * zero. Only a plain token (letters, digits, `._/-`) with an optional trailing
+ * comment is recovered, and only when the key appears once; anything else
+ * (an anchor, a flow mapping, a duplicate key) returns null and the caller
+ * fails closed rather than guess. The key must sit at column 0, as the
+ * template writes it — a uniformly indented root mapping is refused, by design.
+ */
+function rawScalar(fmText, field) {
+    const re = new RegExp(`^${field}:[ \\t]*([0-9A-Za-z][0-9A-Za-z._/-]*)[ \\t]*(?:#.*)?$`, "gm");
+    const hits = [...fmText.matchAll(re)];
+    return hits.length === 1 ? hits[0][1] : null;
+}
 export function parseHandover(fileName, content) {
     const m = FILE_RE.exec(fileName);
     if (!m)
@@ -66,11 +82,12 @@ export function parseHandover(fileName, content) {
     if (close === null) {
         return { kind: "malformed", reason: "unterminated frontmatter" };
     }
+    const fmText = text.slice(4, 3 + close.index);
     let fm;
     try {
         // JSON_SCHEMA: only JSON-shaped scalars — no custom tags, and unquoted
         // ISO timestamps stay strings instead of becoming Date objects.
-        fm = yaml.load(text.slice(4, 3 + close.index), { schema: yaml.JSON_SCHEMA });
+        fm = yaml.load(fmText, { schema: yaml.JSON_SCHEMA });
     }
     catch {
         return { kind: "malformed", reason: "frontmatter is not valid YAML" };
@@ -79,6 +96,16 @@ export function parseHandover(fileName, content) {
         return { kind: "malformed", reason: "frontmatter is not a mapping" };
     }
     const o = fm;
+    // #348: a short sha or branch YAML typed as a NUMBER (`5638459`, or
+    // `88e7253` — scientific notation, Infinity) keeps its original TEXT.
+    for (const field of TEXT_FIELDS) {
+        if (typeof o[field] !== "number")
+            continue;
+        const raw = rawScalar(fmText, field);
+        if (raw === null)
+            return { kind: "malformed", reason: `invalid field: ${field}` };
+        o[field] = raw;
+    }
     if (o["schema"] !== HANDOVER_SCHEMA) {
         return { kind: "malformed", reason: `schema is not ${HANDOVER_SCHEMA}` };
     }

@@ -2,6 +2,7 @@
 schema_version: 1
 description: SSRF and open redirect — server-side requests or redirects driven by untrusted URLs.
 globs: ["**/{http,client,fetch,proxy,webhook,routes,handlers}/**/*.{ts,js,py,go,rb,php,java}"]
+load: disk
 priority: 9
 cwe_version: "4.15"
 cwe_category: "CWE-918,CWE-601"

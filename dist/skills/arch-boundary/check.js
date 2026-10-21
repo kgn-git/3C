@@ -3,30 +3,40 @@
 // exceptions are filtered out here.
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { checkLayerImport } from "../../validate/post-edit/layers.js";
-import { resolveRules } from "./config.js";
-import { isExcepted } from "./exceptions.js";
-// checkLayerImport message: `"X" layer must not import from "Y" layer`.
-const MSG_RE = /"([^"]+)" layer must not import from "([^"]+)" layer/;
-export function exceptionKey(message) {
-    const m = MSG_RE.exec(message);
-    return m ? `${m[1]}->${m[2]}` : null;
-}
+import { checkLayerImport, layerOf } from "../../validate/post-edit/layers.js";
+import { packageSuffix, resolveRulesWithSource } from "../../validate/arch-config.js";
+import { exceptionKey, isExcepted } from "../../validate/arch-exceptions.js";
 export async function checkFiles(ws, files, cfg, exceptions, now) {
     const out = [];
+    let evaluated = 0;
+    let unmatched = 0;
+    let unreadable = 0;
+    let unmapped = 0;
     for (const rel of files) {
         const relPosix = rel.split("\\").join("/");
-        const map = resolveRules(cfg, relPosix);
-        if (!map)
+        const resolved = resolveRulesWithSource(cfg, relPosix);
+        if (!resolved) {
+            unmapped++;
             continue;
+        }
+        if (layerOf(relPosix, resolved.map) === null) {
+            unmatched++;
+            continue;
+        }
         let content;
         try {
             content = await readFile(join(ws, rel), "utf8");
         }
         catch {
+            unreadable++;
             continue;
         }
-        for (const v of checkLayerImport(relPosix, content, map)) {
+        evaluated++;
+        // #427: the gate names the package block exactly as the hook does — the
+        // suffix sits AFTER exceptionKey() reads the layer pair, so waivers keyed
+        // on "from->to" keep matching.
+        const suffix = resolved.source.kind === "package" ? packageSuffix(resolved.source.glob) : "";
+        for (const v of checkLayerImport(relPosix, content, resolved.map)) {
             const key = exceptionKey(v.message);
             if (key && isExcepted(exceptions, key, now))
                 continue;
@@ -34,10 +44,10 @@ export async function checkFiles(ws, files, cfg, exceptions, now) {
                 ruleId: "layer-boundary",
                 file: relPosix,
                 line: v.line,
-                message: v.message,
+                message: `${v.message}${suffix}`,
             });
         }
     }
-    return out;
+    return { violations: out, evaluated, unmatched, unreadable, unmapped };
 }
 //# sourceMappingURL=check.js.map

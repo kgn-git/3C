@@ -2,6 +2,7 @@
 schema_version: 1
 description: Hexagonal — Adapters implement ports; the inverse is forbidden.
 globs: ["**/{infra,infrastructure,adapters}/**/*.{ts,js,py,go,java,rb,php}"]
+load: inject
 priority: 10
 pattern: "hexagonal"
 concern: "infrastructure-boundary"

@@ -12,9 +12,10 @@
 //       network: <bool>                    (optional, default false; AC9)
 //
 // AC10 enforcement: command field is scanned for inline credentials via
-// scanSecrets; matches are rejected. ${OS_KEYCHAIN:NAME} references are
-// resolved at execution time (see credentials.ts) and never appear as
-// secret patterns at validation time.
+// scanSecrets; matches are rejected. `${OS_KEYCHAIN:NAME}` references are
+// retired (#449) and refused per hook by the orchestrator — NOT here: a config
+// error bypasses the whole hook chain (fail-open), so one stale line would
+// disable every blocking hook.
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import * as yaml from "js-yaml";
@@ -163,17 +164,14 @@ function validate(parsed, filePath) {
                 network = networkRaw;
             }
         }
-        // AC10: scan command for inline credentials *after* stripping
-        // ${OS_KEYCHAIN:...} references — those are resolved at execution
-        // time and are not credential leaks.
+        // AC10: scan command for inline credentials.
         if (command !== undefined) {
-            const stripped = command.replace(/\$\{OS_KEYCHAIN:[A-Za-z0-9_]+\}/g, "");
-            const secretScan = scanSecrets(stripped);
+            const secretScan = scanSecrets(command);
             if (secretScan.hits.length > 0) {
                 for (const hit of secretScan.hits) {
                     hookErrors.push({
                         path: filePath,
-                        message: `${indexLabel}: inline credential detected in command (${hit.type}: ${hit.redacted}) — use \${OS_KEYCHAIN:NAME}`,
+                        message: `${indexLabel}: inline credential detected in command (${hit.type}: ${hit.redacted}) — remove it; a hook reads its own secret from the OS credential store`,
                     });
                 }
             }

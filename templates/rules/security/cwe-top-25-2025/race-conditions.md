@@ -2,6 +2,7 @@
 schema_version: 1
 description: Race conditions and TOCTOU — unsynchronised access to shared state or check-then-use gaps.
 globs: ["**/{workers,jobs,concurrency,fs,auth,payments}/**/*.{ts,js,py,go,rb,php,java,c,cc,cpp,rs}"]
+load: disk
 priority: 7
 cwe_version: "4.15"
 cwe_category: "CWE-362,CWE-367"

@@ -38,8 +38,8 @@ If a file was deleted, you have only the pre-image — limit findings to facts v
 ## 3. Load the team's checklist + rules
 
 - Use the **Read tool** to load `.claude/skills/${BRAND_SLUG}-review/checklist.md` now. (It is NOT pre-loaded into context — you must Read it at runtime.)
-- Rules from `.claude/rules/**/*.md` were auto-loaded into your session context by `${FRAMEWORK_SLUG} rules apply`. You do NOT need to re-load them — consult them from memory.
-- If the team has installed the OWASP pack (`.claude/rules/security/owasp-top-10/*.md`) or pattern packs (`.claude/rules/patterns/<name>/*.md`), they are part of your context. Cite the source rule file path when a finding maps to one (AC8).
+- Rules from `.claude/rules/**/*.md` are already in your session context: Claude Code loads `.claude/rules/` on its own, and `${FRAMEWORK_SLUG} rules apply` injects the `load: inject` ones into CLAUDE.md. You do NOT need to re-load them — consult them from memory.
+- If the team has installed the OWASP pack (`.claude/rules/security/owasp-top-10/*.md`) or pattern packs (`.claude/rules/patterns/<name>/*.md`), they are in your context the same way. Cite the source rule file path when a finding maps to one (AC8).
 
 ## 4. Apply the checklist per file
 
@@ -66,6 +66,8 @@ The single-quoted heredoc delimiter (`'SCAN_INPUT_EOF'`) suppresses shell expans
 The command emits JSON on stdout: `{"hits":[{"type":"<type>","match":"<raw>","redacted":"<masked>"}, ...]}`. For each hit, replace the `match` substring with the `redacted` value in the text you emit. The original diff is unchanged — this redaction applies **only** to what you write into the review output. Never emit raw `AKIA…` keys, raw GitHub PATs, real database URIs with credentials, or production IPs/hostnames.
 
 If `scan-secrets` returns an empty `hits` array, emit the finding verbatim.
+
+If it instead prints `{"scanned": false, ...}` and exits non-zero, the finding was NOT scanned (it was over the input limit, or could not be read). That is not a clean result: do not emit it. Scan the finding in parts split at line boundaries, one call each — never mid-line, which can cut a secret in two and scan both halves clean.
 
 ## 6. Render the output
 
@@ -111,10 +113,10 @@ The review ends with the rendered Markdown. The skill does NOT modify any file, 
 ## What this skill does NOT do
 
 - `--fix` auto-apply of suggestions — not currently in scope; this skill emits findings, the developer applies fixes.
-- `--post` to GitHub / GitLab as PR comments — not currently in scope. (Multi-PM MCP — [#70](https://github.com/kgn-git/praise/issues/70) — shipped at L2 for issue creation, not for review-comment posting; the seam would be a separate ext-ticket if/when needed.)
+- `--post` to GitHub / GitLab as PR comments — not currently in scope. (Multi-PM adapter registry — [#70](https://github.com/kgn-git/praise/issues/70) — shipped at L2 for issue creation, not for review-comment posting; the seam would be a separate ext-ticket if/when needed.)
 - `--ignore <finding-id>` persistent suppression — not currently in scope; bypass per-invocation if you need to ship past a finding.
 - Performance / N+1 / runtime analysis in the default checklist — not currently in scope. The L2 Security Scan Gate ([#18](https://github.com/kgn-git/praise/issues/18)) ships SAST + dependency-vulnerability scanning, but performance / N+1 analysis remains outside this skill's and that gate's scope.
-- Drift / trend analysis across reviews — now ships separately as the Standards Drift Detector (`/${BRAND_SLUG}-drift`, [#10](https://github.com/kgn-git/praise/issues/10)) at L2.
+- Trend analysis across reviews — not in scope. The standalone audit verb that once covered this was retired in [#394](https://github.com/kgn-git/praise/issues/394); boundary violations recorded by `${BRAND_SLUG} arch-check check` render on the local dashboard (`${BRAND_SLUG} dashboard`).
 
 ## Subagent dispatch (since #51)
 
@@ -124,4 +126,4 @@ When this skill dispatches the `${BRAND_SLUG}-code-reviewer` subagent for a long
 ~/.claude/projects/<project>/<sessionId>/subagents/agent-<id>.jsonl
 ```
 
-This file is plain append-only JSONL. The agent itself runs read-only (`tools: [Read, Grep, Glob]`) and cannot reach the network. The PreToolUse path-guard (`src/cli/hook-path-guard.ts`, registered via `.claude-plugin/plugin.json`) blocks any attempt to read `.env*`, `~/.ssh/`, or `~/.aws/`.
+This file is plain append-only JSONL. The agent itself runs read-only (`tools: [Read, Grep, Glob]`) and cannot reach the network. The PreToolUse path-guard (`src/cli/hook-path-guard.ts`, registered in `.claude/settings.json` by `${FRAMEWORK_SLUG} hook install`) blocks any attempt to read `.env*`, `~/.ssh/`, or `~/.aws/`.

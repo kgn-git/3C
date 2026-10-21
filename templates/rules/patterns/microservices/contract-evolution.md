@@ -2,6 +2,7 @@
 schema_version: 1
 description: Microservices — backward-compatible contract evolution between independently deployed services.
 globs: ["**/{api,proto,schema,contracts,events}/**/*.{ts,js,py,go,java,rb,php,proto,json,yaml,yml}"]
+load: inject
 priority: 9
 pattern: "microservices"
 concern: "contract-evolution"

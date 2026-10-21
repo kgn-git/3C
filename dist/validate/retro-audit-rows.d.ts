@@ -9,7 +9,11 @@ export interface LoadBearingGate {
     readonly slug: string;
     readonly label: string;
 }
-/** The canonical list of 3C load-bearing gates (PR-01/02/03/05 + the PreToolUse path-guard). */
+/**
+ * The canonical list of 3C load-bearing gates. Derive the membership from the
+ * entries below, never from this comment — an enumeration in prose beside a
+ * list in code is one of the two copies that drift.
+ */
 export declare const LOAD_BEARING_GATES: ReadonlyArray<LoadBearingGate>;
 /** A validation violation: a load-bearing gate with no audit row (silently omitted). */
 export interface AuditRowViolation {

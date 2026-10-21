@@ -2,6 +2,7 @@
 schema_version: 1
 description: Logging and monitoring failure prevention — security-relevant event logging without leaking secrets or PII.
 globs: ["**/*.{py,ts,js,go,java,rb,php}"]
+load: disk
 priority: 10
 owasp_version: "2025"
 owasp_category: "A09:2025"

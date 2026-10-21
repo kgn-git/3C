@@ -2,6 +2,7 @@
 schema_version: 1
 description: Insecure design prevention — threat modelling, deny-by-default, and security requirements for new features.
 globs: ["**/*.{py,ts,js,go,java,rb,php}"]
+load: disk
 priority: 10
 owasp_version: "2025"
 owasp_category: "A06:2025"

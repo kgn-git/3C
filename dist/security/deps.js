@@ -19,11 +19,14 @@ export function addedDependencies(diffText) {
 export function checkDeps(deps, advisory) {
     const out = [];
     for (const dep of deps) {
-        const adv = advisory[dep];
-        if (!adv)
+        // `advisory[dep]` alone walks the prototype chain: a package named
+        // `constructor` would read Object.prototype.constructor as an advisory.
+        if (!Object.hasOwn(advisory, dep))
             continue;
+        const adv = advisory[dep];
         out.push({
-            id: findingId("dep-cve", "package.json", 0),
+            // #413 AC7: per package AND advisory, so suppressing one never hides another.
+            id: findingId("dep-cve", "package.json", `${dep}|${adv.cve}`),
             severity: adv.severity,
             ruleId: "dep-cve",
             file: "package.json",

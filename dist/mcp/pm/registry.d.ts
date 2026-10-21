@@ -1,4 +1,4 @@
-import type { SecretResolver } from "../../hooks/credentials.js";
+import { type SecretResolver } from "../../hooks/credentials.js";
 import type { IssuePayload } from "../../skills/create-issue.js";
 import type { PmAdapter, PmCreateResult, PmTool, HttpClient } from "./types.js";
 export declare function adapterFor(tool: PmTool): PmAdapter | null;

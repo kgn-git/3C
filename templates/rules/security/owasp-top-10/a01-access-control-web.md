@@ -2,6 +2,7 @@
 schema_version: 1
 description: Broken access control prevention — server-side authorisation enforcement on every request boundary.
 globs: ["**/{routes,handlers,controllers,api,middleware}/**/*.{ts,js,py,go,rb,php,java}"]
+load: disk
 priority: 10
 owasp_version: "2025"
 owasp_category: "A01:2025"

@@ -21,7 +21,12 @@ const DETECTORS = [
     },
     {
         type: "internal-hostname",
-        pattern: /\b[a-zA-Z0-9][a-zA-Z0-9-]*\.(?:internal|corp|local)\b/g,
+        // #413: a name followed by a file extension is a FILENAME
+        // (`CLAUDE.local.md`, `settings.local.json`) and one followed by `(` is a
+        // CALL (`threading.local()`), not a host. Only a KNOWN extension excludes:
+        // any other dotted continuation is a qualified host (`svc.internal.acme.com`)
+        // and still matches, as do `db.internal:5432` and `printer.local`.
+        pattern: /\b[a-zA-Z0-9][a-zA-Z0-9-]*\.(?:internal|corp|local)\b(?!\.(?:md|mdx|markdown|json5?|jsonc|ya?ml|toml|ini|cfg|conf|env|txt|log|lock|xml|html?|s?css|[cm]?[jt]sx?|py|rb|go|rs|java|kt|sh|ps1|bat|cmd|bak|tmp)\b|\()/g,
     },
     {
         type: "stripe-key",
@@ -37,6 +42,31 @@ const DETECTORS = [
         pattern: /\b(?:postgresql|postgres|mongodb\+srv|mongodb|mysql|redis):\/\/[^\s/]*:[^\s/@]+@[^\s/]+/g,
     },
 ];
+/** The four octets of a dotted-quad match, or null when any is above 255 (#413 AC2). */
+function octets(ip) {
+    const parts = ip.split(".").map(Number);
+    return parts.length === 4 && parts.every((n) => Number.isInteger(n) && n >= 0 && n <= 255) ? parts : null;
+}
+/**
+ * Addresses that identify nothing (#413 AC1): loopback 127/8, `0.0.0.0`, the
+ * limited broadcast, and the RFC 5737 documentation blocks — what docs and
+ * examples are written with.
+ */
+function isNonIdentifyingAddress([a, b, c, d]) {
+    if (a === 127)
+        return true;
+    if (a === 0 && b === 0 && c === 0 && d === 0)
+        return true;
+    if (a === 255 && b === 255 && c === 255 && d === 255)
+        return true;
+    if (a === 192 && b === 0 && c === 2)
+        return true;
+    if (a === 198 && b === 51 && c === 100)
+        return true;
+    if (a === 203 && b === 0 && c === 113)
+        return true;
+    return false;
+}
 function redact(value) {
     if (value.length <= 4)
         return "***";
@@ -46,26 +76,34 @@ export function scanSecrets(text) {
     const hits = [];
     for (const { type, pattern } of DETECTORS) {
         for (const match of text.matchAll(pattern)) {
-            hits.push({ type, match: match[0], redacted: redact(match[0]) });
+            hits.push({ type, match: match[0], redacted: redact(match[0]), index: match.index });
         }
     }
-    // IP detection: classify each as private (RFC1918) or public.
+    // IP detection: classify each as private (RFC1918) or public. Only a real
+    // address (every octet ≤ 255) that identifies something is reported.
     const privateIps = new Set();
     for (const match of text.matchAll(RFC1918_PATTERN)) {
+        if (octets(match[0]) === null)
+            continue;
         privateIps.add(match[0]);
         hits.push({
             type: "private-ip",
             match: match[0],
             redacted: redact(match[0]),
+            index: match.index,
         });
     }
     for (const match of text.matchAll(ANY_IP_PATTERN)) {
         if (privateIps.has(match[0]))
             continue;
+        const quad = octets(match[0]);
+        if (quad === null || isNonIdentifyingAddress(quad))
+            continue;
         hits.push({
             type: "public-ip",
             match: match[0],
             redacted: redact(match[0]),
+            index: match.index,
         });
     }
     return { hits };

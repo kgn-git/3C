@@ -2,6 +2,7 @@
 schema_version: 1
 description: Microservices — service boundaries own their data and are reached only via their contract.
 globs: ["**/*.{ts,js,py,go,java,rb,php}"]
+load: inject
 priority: 10
 pattern: "microservices"
 concern: "service-boundaries"

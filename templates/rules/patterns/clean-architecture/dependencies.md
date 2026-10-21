@@ -2,6 +2,7 @@
 schema_version: 1
 description: Clean Architecture — Dependency Rule. Source-code dependencies point inward only.
 globs: ["**/*.{ts,js,py,go,java,rb,php}"]
+load: inject
 priority: 10
 pattern: "clean-architecture"
 concern: "dependencies"

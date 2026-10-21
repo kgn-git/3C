@@ -4,6 +4,7 @@ export type DiscoverResult = {
 } | {
     readonly ok: false;
     readonly error: string;
+    readonly cause?: unknown;
 };
 export declare function discoverWorkspaceFiles(workspaceDir: string): Promise<DiscoverResult>;
 //# sourceMappingURL=discover.d.ts.map

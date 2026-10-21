@@ -2,6 +2,7 @@
 schema_version: 1
 description: Improper input validation — untrusted input used without type/range/format checks.
 globs: ["**/{routes,handlers,controllers,api,forms,validators}/**/*.{ts,js,py,go,rb,php,java}"]
+load: disk
 priority: 8
 cwe_version: "4.15"
 cwe_category: "CWE-20,CWE-1284"

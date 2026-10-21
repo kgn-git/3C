@@ -81,13 +81,52 @@ function parseValue(raw, line) {
         const inner = raw.slice(1, -1).trim();
         if (inner === "")
             return { ok: true, value: [] };
-        const items = inner.split(",").map((item) => stripQuotes(item.trim()));
-        return { ok: true, value: items };
+        const split = splitArrayItems(inner);
+        if (split === null) {
+            return {
+                ok: false,
+                error: { line, message: 'unterminated quote in array — close the `"` or remove it' },
+            };
+        }
+        return { ok: true, value: split.map((item) => stripQuotes(item.trim())) };
     }
     if (INTEGER.test(raw)) {
         return { ok: true, value: Number.parseInt(raw, 10) };
     }
     return { ok: true, value: stripQuotes(raw) };
+}
+// #464: split on commas that sit outside double quotes and outside `{…}`, so
+// a brace glob (`"**/*.{ts,js}"`, quoted or not) stays one item. A `"` opens a
+// quote only at the start of an item, as in YAML flow style; mid-token it is
+// an ordinary character. Null when a quote is left open — merging the rest
+// into one item would be a silent guess.
+function splitArrayItems(inner) {
+    const items = [];
+    let quoted = false;
+    let depth = 0;
+    let start = 0;
+    for (let i = 0; i < inner.length; i++) {
+        const c = inner[i];
+        if (quoted) {
+            if (c === '"')
+                quoted = false;
+            continue;
+        }
+        if (c === '"' && inner.slice(start, i).trim() === "")
+            quoted = true;
+        else if (c === "{")
+            depth++;
+        else if (c === "}")
+            depth = Math.max(0, depth - 1);
+        else if (c === "," && depth === 0) {
+            items.push(inner.slice(start, i));
+            start = i + 1;
+        }
+    }
+    if (quoted)
+        return null;
+    items.push(inner.slice(start));
+    return items;
 }
 function stripQuotes(value) {
     if (value.length >= 2 && value.startsWith('"') && value.endsWith('"')) {

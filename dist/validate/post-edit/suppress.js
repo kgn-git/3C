@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import * as yaml from "js-yaml";
 import { resolveBrandSlugSync } from "../../branding/runtime.js";
-import { matchAny } from "../../rules/glob-match.js";
+import { globProblem, matchAny } from "../../rules/glob-match.js";
 import { RULE_IDS } from "./types.js";
 export async function loadSuppress(workspaceDir) {
     const file = join(workspaceDir, `.${resolveBrandSlugSync()}`, "validation.yaml");
@@ -26,7 +26,9 @@ export async function loadSuppress(workspaceDir) {
             continue;
         if (known.has(item))
             ruleIds.add(item);
-        else
+        // #464: a glob that would hang the match, or match only as literal text,
+        // is dropped — the files it named stay checked, which is the closed side.
+        else if (globProblem(item) === null)
             pathGlobs.push(item);
     }
     return { ruleIds, pathGlobs };

@@ -2,6 +2,7 @@
 schema_version: 1
 description: Data integrity failure prevention — safe deserialisation, update verification, and CI/CD pipeline integrity.
 globs: ["**/*.{py,ts,js,go,java,rb,php}"]
+load: disk
 priority: 10
 owasp_version: "2025"
 owasp_category: "A08:2025"

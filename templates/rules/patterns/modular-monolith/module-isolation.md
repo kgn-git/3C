@@ -2,6 +2,7 @@
 schema_version: 1
 description: Modular monolith — modules interact only through explicit public interfaces.
 globs: ["**/*.{ts,js,py,go,java,rb,php}"]
+load: inject
 priority: 10
 pattern: "modular-monolith"
 concern: "module-isolation"

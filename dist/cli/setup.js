@@ -20,7 +20,13 @@ export async function runSetup(steps, log = () => { }) {
         }
         completed.push(s.name);
     }
-    log(`\n✓ setup complete — ${completed.length} of ${total} steps done. Run \`doctor\` anytime to re-check.`);
+    // #396 AC8. `upgrade` was the verb that named this operation, and retiring it
+    // would otherwise leave the route documented nowhere an adopter is looking.
+    // Stated on SUCCESS only: a stopped install needs a repair, not a newer
+    // release. The two-step form matters — re-installing the package alone moves
+    // the CLI while the copied skills and agents stay on the old release.
+    log(`\n✓ setup complete — ${completed.length} of ${total} steps done. Run \`doctor\` anytime to re-check.` +
+        `\n  To update later: \`npm install git+https://github.com/kgn-git/3C.git#<release-sha>\` (the commit sha from the release notes) then \`setup --replace\`.`);
     return { completed, total };
 }
 //# sourceMappingURL=setup.js.map
