@@ -17,7 +17,7 @@
       
       
       
-      <link rel="icon" href="favicon.ico">
+      <link rel="icon" href="assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
     
     
@@ -303,23 +303,6 @@
   
   
     <li class="md-tabs__item">
-      <a href="coaching.html" class="md-tabs__link">
-        
-  
-    
-  
-  Coaching mode
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
       <a href="for-eng-leaders.html" class="md-tabs__link">
         
   
@@ -353,27 +336,10 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="branding.html" class="md-tabs__link">
-        
-  
-    
-  
-  Branding
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
     
     
       <li class="md-tabs__item">
-        <a href="infographic/sdlc-infographic.html" class="md-tabs__link">
+        <a href="infographic/devdaylife-infographic.html" class="md-tabs__link">
           
   
   Infographics
@@ -594,26 +560,6 @@
   
   
     <li class="md-nav__item">
-      <a href="coaching.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Coaching mode
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="for-eng-leaders.html" class="md-nav__link">
         
   
@@ -653,26 +599,6 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="branding.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Branding
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     
     
     
@@ -686,10 +612,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -700,33 +626,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             Infographics
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="infographic/sdlc-infographic.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    SDLC pipeline
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
             
               
                 
@@ -917,7 +822,7 @@
 <li><strong>CWE Top 25 alongside OWASP Top 10.</strong> The L1 OWASP pack stays. L2 adds a CWE-mapped security rule set so AI-assisted code generation sees both lenses at once — the OWASP "what an attacker exploits" framing and the CWE "what weakness was introduced" framing. Reviewers get the explicit OWASP↔CWE mapping in the rule rationale.</li>
 <li><strong>Security Scan Gate as a pre-commit hook.</strong> SAST + dependency-vulnerability scan runs per commit, with team-configurable severity thresholds. Refuses the commit on critical findings; warns and proceeds on lower severities. Writes a JSONL event regardless of outcome — so bypass patterns are visible in the audit log without relying on developers to self-report.</li>
 <li><strong><code>security-reviewer</code> subagent shipped at L2.</strong> A dedicated Claude Code subagent your team's AI can dispatch when touching auth, crypto, or input-handling code paths. Tool allowlist declared in the agent's frontmatter; sandboxed by Claude Code's platform layer; cannot read <code>.env*</code>, <code>~/.ssh/</code>, or <code>~/.aws/</code> per the path-guard hook (verifiable in <code>src/agents/path-guard.ts</code>).</li>
-<li><strong>PM-tool token handling via MCP bundled server.</strong> L2's <code>/3c-create-issue</code> now reaches Jira / Linear / GitLab / GitHub via a bundled MCP server. Tokens resolved through the <strong>OS keychain only</strong> (NFR-SEC-06) — never written to disk, never cached in process, never returned in tool output. The MCP layer is the audited credential boundary; the skill never sees a raw token.</li>
+<li><strong>PM-tool token handling keeps the credential out of the skill.</strong> L2's <code>/3c-create-issue</code> reaches Jira / Linear / GitLab through an in-process adapter registry; GitHub stays on the <code>gh</code> CLI path. The token is resolved per call, handed straight to the adapter, and never written to disk by the framework, cached in process, or returned in tool output. A bundled MCP server was the original design for this boundary (AD-11); it was retired in the 2026-08 consolidation without changing where the credential lives, because it never held it.</li>
 </ul>
 <p><strong>What L2 still does NOT do — and the same honesty discipline applies:</strong></p>
 <ul>

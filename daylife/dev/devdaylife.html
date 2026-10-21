@@ -15,7 +15,7 @@
       
       
       
-      <link rel="icon" href="../../favicon.ico">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
     
     
@@ -301,23 +301,6 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../coaching.html" class="md-tabs__link">
-        
-  
-    
-  
-  Coaching mode
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
       <a href="../../for-eng-leaders.html" class="md-tabs__link">
         
   
@@ -351,27 +334,10 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="../../branding.html" class="md-tabs__link">
-        
-  
-    
-  
-  Branding
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
     
     
       <li class="md-tabs__item">
-        <a href="../../infographic/sdlc-infographic.html" class="md-tabs__link">
+        <a href="../../infographic/devdaylife-infographic.html" class="md-tabs__link">
           
   
   Infographics
@@ -590,26 +556,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../coaching.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Coaching mode
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../for-eng-leaders.html" class="md-nav__link">
         
   
@@ -649,26 +595,6 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../../branding.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Branding
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     
     
     
@@ -682,10 +608,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -696,33 +622,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             Infographics
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../infographic/sdlc-infographic.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    SDLC pipeline
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
             
               
                 
@@ -815,8 +720,9 @@
 <p>Source material on disk:
 <code>site/index.html</code>, <code>site/why-now.html</code>, <code>site/maturity-model.html</code>,
 <code>site/l1-today.html</code>, <code>site/l2-today.html</code>, <code>site/for-developers.html</code>,
-<code>site/coaching.html</code>, <code>site/branding.html</code>,
-<code>site/infographic/sdlc-infographic.html</code> (the visual template),
+<code>site/branding.html</code>,
+<code>docs/infographic/sdlc-infographic.html</code> (the visual template — in-repo only;
+it is unpublished as of #354 and is being re-authored under #365),
 <code>site/infographic/diagrams/*.mmd</code> (existing mermaid sources),
 <code>site/diagrams/{day-with-3c,journey,pillars}.svg</code>.</p>
 </blockquote>
@@ -825,12 +731,12 @@
 <p>Produce a <strong>multi-page, print-ready HTML infographic</strong> titled
 <strong>"A day in the life of a developer using 3C."</strong> It tells the working
 day of one engineer (call her <em>Maya</em>) who is shipping inside a team that
-has adopted <strong>3C — Claude Code Coach</strong> at <strong>L2 (v1.5.0, May 2026)</strong>, and
+has adopted <strong>3C — Claude Code Coach</strong> at <strong>L2</strong>, and
 it makes the workflow legible at a glance: one phase per page, one
 diagram per phase, one key message per phase.</p>
 <p>The deliverable is a <strong>standalone <code>.html</code> file</strong> that mirrors the
 structure, design system, and print posture of
-<code>site/infographic/sdlc-infographic.html</code> — same A4 portrait pages, same
+<code>docs/infographic/sdlc-infographic.html</code> (in-repo; unpublished per #354) — same A4 portrait pages, same
 typography, same colour tokens, same badge / title / diagram / key-
 message / footer rhythm — so the new infographic sits next to the
 existing one as a sibling deliverable, not a one-off.</p>
@@ -857,8 +763,8 @@ editing it manually. This is true even for:</p>
   for a second opinion, and lets the assistant apply the fix)</li>
 <li>tightening an issue body that came back too vague (she iterates
   with <code>/3c-create-issue</code> until it is right)</li>
-<li>correcting a coaching-mode rule violation (she re-prompts Claude
-  Code with the rationale she just read in the coaching segment)</li>
+<li>correcting a boundary violation flagged at post-edit (she
+  re-prompts Claude Code with the finding the validator reported)</li>
 </ul>
 <p>Maya <strong>does</strong> type freely in three places, and only these three:</p>
 <ol>
@@ -866,7 +772,7 @@ editing it manually. This is true even for:</p>
 <li><strong>Issue / PR comments</strong> in GitHub.</li>
 <li><strong>Config-style decisions</strong> — picking the next issue, choosing a
    branch name, approving a destructive-operation prompt with <code>y</code>,
-   running <code>/3c-bypass --reason="..."</code> for a real hot-fix.</li>
+   running <code>3c bypass --reason="..."</code> for a real hot-fix.</li>
 </ol>
 <p>If a phase seems to demand hand-editing, that is a signal the phase is
 under-specified — re-prompt or re-dispatch instead. The infographic
@@ -874,7 +780,7 @@ should reinforce this discipline visibly: in every diagram, the arrow
 that changes code is labelled with the slash command or the assistant
 that did the typing.</p>
 <h2 id="what-to-establish-on-the-cover-page">What to establish on the cover page<a class="headerlink" href="#what-to-establish-on-the-cover-page" title="Permanent link">&para;</a></h2>
-<p>Before the seven phase pages, a cover page establishes:</p>
+<p>Before the six phase pages, a cover page establishes:</p>
 <ul>
 <li><strong>The premise.</strong> 3C is <em>AI engineering alignment</em>: keeping every team
   member's AI assistant working from the same conventions, the same
@@ -888,31 +794,26 @@ that did the typing.</p>
   may be inlined or recreated as a small inset.</li>
 <li><strong>The L2 surface area Maya uses today</strong> — slash commands
   <code>/3c-create-issue</code>, <code>/3c-implement</code>, <code>/3c-review</code>, <code>/3c-test</code>,
-  <code>/3c-drift</code>, <code>/3c-standards history</code>, <code>/3c-explain &lt;rule-id&gt;</code>,
-  <code>/3c-deploy</code>, <code>/3c-bug</code>, <code>/3c-onboard</code>, <code>/3c-onboard-guide</code>,
-  <code>/3c-bypass</code>; the crew orchestrators <code>/3c-review-board</code>,
+  <code>3c bug</code>, <code>/3c-onboard</code> (with <code>--role</code>),
+  <code>3c bypass</code>; the crew orchestrators <code>/3c-review-board</code>,
   <code>/3c-project-manager</code>, <code>/3c-programme-manager</code>; the eight review
   agents <code>architect</code>, <code>code-reviewer</code>, <code>security-reviewer</code>,
   <code>test-author</code>, <code>product-owner</code>, <code>ux-expert</code>, <code>qa-reviewer</code>,
   <code>journey-architect</code>; gate
   chain Post-Edit Validation (&lt; 300 ms) → Pre-Commit (&lt; 10 s) →
-  Coverage Gate + Security Scan Gate (&lt; 60 s) → Drift Detector
-  (on-demand).</li>
-<li><strong>Coaching mode</strong> — ON by default; teaching segment shape
-  (<code>——— 3c coaching ———</code> block) shown verbatim in a sidebar so the
-  reader recognises it later; goes terse after <code>TERSE_AFTER = 2</code>
-  sightings of the same rule by the same developer.</li>
-<li><strong>The brand caveat</strong> (one line, drawn from <code>site/branding.html</code>) —
-  if this team has run <code>npx 3c init --brand="Acme"</code> and chosen the slug
-  <code>acme</code>, the reader will see <code>/acme-review</code> in their terminal instead of
-  <code>/3c-review</code>; the slash <em>prefix</em> is brand-controlled, the upstream
-  code is not. The infographic uses the unbranded <code>/3c-*</code> names
-  throughout for clarity.</li>
+  Security Scan Gate (&lt; 60 s).</li>
+<li><strong>Boundary enforcement</strong> — the post-edit hook checks every file the
+  assistant writes for dependency-direction violations against the team's
+  declared <code>.3c/architecture.yaml</code> and advises at write time;
+  the <code>arch-check</code> gate records the same findings, and they surface in
+  the dashboard's Boundary findings panel.</li>
 <li><strong>The honesty discipline</strong> — 3C deliberately under-claims; reversal
   is <code>git revert</code> of one PR; no source code leaves the workstation.</li>
 </ul>
 <h2 id="page-by-page-structure">Page-by-page structure<a class="headerlink" href="#page-by-page-structure" title="Permanent link">&para;</a></h2>
-<p>The infographic is <strong>10 A4 portrait pages</strong>, in this order:</p>
+<p>The infographic is <strong>9 A4 portrait pages</strong>, in this order. (#516 dropped the
+batch phase — <code>/3c-create-issue</code> has no batch mode — and re-pointed sprint
+assembly to <code>/3c-project-manager</code>; the phases after it moved up one.)</p>
 <table>
 <thead>
 <tr>
@@ -935,40 +836,35 @@ that did the typing.</p>
 <tr>
 <td>2</td>
 <td>Phase 2 — Technical enrichment</td>
-<td><strong>mermaid sequenceDiagram</strong> — Maya ↔ architect ↔ /3c-explain</td>
+<td><strong>mermaid sequenceDiagram</strong> — Maya ↔ architect ↔ the rule file</td>
 </tr>
 <tr>
 <td>3</td>
-<td>Phase 3 — Batch backlog refinement</td>
-<td><strong>mermaid flowchart</strong> — funnel: 18 raw → cleaned set</td>
+<td>Phase 3 — Sprint assembly</td>
+<td><strong>mermaid flowchart</strong> — five coherence checks</td>
 </tr>
 <tr>
 <td>4</td>
-<td>Phase 4 — Sprint assembly</td>
-<td><strong>mermaid flowchart</strong> — checklist crossings</td>
-</tr>
-<tr>
-<td>5</td>
-<td>Phase 5 — One issue, end-to-end</td>
+<td>Phase 4 — One issue, end-to-end</td>
 <td><strong>mermaid stateDiagram-v2</strong> — the /3c-implement loop with gates</td>
 </tr>
 <tr>
+<td>5</td>
+<td>Phase 5 — Working the rest of the sprint</td>
+<td><strong>mermaid flowchart</strong> — compounding loop, boundary findings falling away</td>
+</tr>
+<tr>
 <td>6</td>
-<td>Phase 6 — Working the rest of the sprint</td>
-<td><strong>mermaid flowchart</strong> — compounding loop, coaching going terse</td>
+<td>Phase 6 — Manual end-user testing</td>
+<td><strong>mermaid sequenceDiagram</strong> — Maya → /3c-test writes the integration test → the team's deploy script → 3c bug files an issue</td>
 </tr>
 <tr>
 <td>7</td>
-<td>Phase 7 — Manual end-user testing</td>
-<td><strong>mermaid sequenceDiagram</strong> — Maya → /3c-test integration → /3c-deploy → /3c-bug</td>
-</tr>
-<tr>
-<td>8</td>
 <td>End-of-day reflection — Personal Local Insights Dashboard</td>
 <td>small <strong>mermaid pie or bar</strong> mock-up of dashboard sections</td>
 </tr>
 <tr>
-<td>9</td>
+<td>8</td>
 <td>Closing — common mistakes + pinnable checklist</td>
 <td>no diagram; six "mistake → correction" cards + the checklist</td>
 </tr>
@@ -986,7 +882,7 @@ do not invent a new design language. The writer should re-use:</p>
 <li><strong>Colour tokens</strong> — re-use the existing CSS custom properties exactly:
   <code>--indigo-{50,100,500,600,700,900}</code>, <code>--slate-{50,100,200,500,700,900}</code>,
   <code>--amber-{100,600}</code>, <code>--emerald-{50,500,700}</code>. Indigo for orchestration
-  and skills; amber for shared-context / rationales / coaching; emerald
+  and skills; amber for shared-context / rationales / advisories; emerald
   for quality gates passing; red (<code>#FEE2E2</code> / <code>#DC2626</code> / <code>#7F1D1D</code>) for
   failure / refusal states.</li>
 <li><strong>Per-page chrome</strong>: a <code>.page-header</code> with a left-side <code>.badge</code>
@@ -994,7 +890,7 @@ do not invent a new design language. The writer should re-use:</p>
   (<code>1 / 7</code>); an H2 <code>.diagram-title</code> (~26pt, weight 800,
   letter-spacing <code>-0.02em</code>); a <code>.diagram-subtitle</code> (~12pt); the
   <code>.diagram-wrap</code> (use <code>.tall</code> for sequence diagrams, <code>.xl</code> for the
-  Phase 5 state machine); a <code>.key-message</code> indigo-tinted box at the
+  Phase 4 state machine); a <code>.key-message</code> indigo-tinted box at the
   bottom (<code>.key-label</code> mono uppercase + <code>.key-text</code> 13.5pt weight 500);
   a <code>.page-footer</code> with the phase name on the left and a
   rule / artefact reference on the right.</li>
@@ -1007,15 +903,15 @@ do not invent a new design language. The writer should re-use:</p>
   <code>.takeaway-grid</code> of six <code>.takeaway</code> cards (numbered), and a
   <code>.closing-cta</code> strip with the GitHub source and the topic tags.</li>
 </ul>
-<p>The writer should literally open <code>site/infographic/sdlc-infographic.html</code>,
+<p>The writer should literally open <code>docs/infographic/sdlc-infographic.html</code>,
 copy its <code>&lt;style&gt;</code> block wholesale, and adapt only what the new content
-requires (e.g. adding a small "coaching segment" callout style and a
+requires (e.g. adding a small "post-edit advisory" callout style and a
 prompt/snippet style).</p>
 <h2 id="diagram-requirements-one-per-phase">Diagram requirements — one per phase<a class="headerlink" href="#diagram-requirements-one-per-phase" title="Permanent link">&para;</a></h2>
 <p>All diagrams are <strong>mermaid sources</strong>. The writer should commit a <code>.mmd</code>
 file per diagram into <code>site/infographic/diagrams/</code> following the
 existing naming pattern (<code>f-intake.mmd</code>, <code>g-enrichment.mmd</code>,
-<code>h-batch.mmd</code>, <code>i-sprint-assembly.mmd</code>, <code>j-implement.mmd</code>,
+<code>i-sprint-assembly.mmd</code>, <code>j-implement.mmd</code>,
 <code>k-sprint-throughput.mmd</code>, <code>l-uat.mmd</code>, <code>m-dashboard.mmd</code>), pre-render
 each to SVG with the same toolchain (<code>puppeteer.config.json</code> is already
 in the folder), and inline the SVGs into the HTML at the
@@ -1029,46 +925,38 @@ match. Pick the right diagram type per phase:</p>
 (structured: title, user-story, scope, out-of-scope, ACs, deps, source-
 link). Label the iteration arrow <code>Maya re-prompts /3c-create-issue</code>
 explicitly. Annotate the GitHub Issue node with the 6 required fields
-as a sub-list. Footer reference: <code>L2 Multi-PM MCP adapter · GitHub
+as a sub-list. Footer reference: <code>L2 Multi-PM adapter · GitHub
 default at L1</code>.</p>
 <h3 id="diagram-g-phase-2-technical-enrichment-sequencediagram">Diagram G — Phase 2 — Technical enrichment (<code>sequenceDiagram</code>)<a class="headerlink" href="#diagram-g-phase-2-technical-enrichment-sequencediagram" title="Permanent link">&para;</a></h3>
-<p>Actors: <strong>Maya</strong>, <strong><code>architect</code></strong> (subagent), <strong><code>/3c-explain</code></strong> (skill),
-<strong>GitHub Issue</strong>. Steps: Maya dispatches <code>architect</code> with the issue
-context; <code>architect</code> returns affected components / approach / risks /
-open questions / complexity / testing strategy; Maya reads, identifies
-one proposed pattern that doesn't fit the codebase, runs
-<code>/3c-explain &lt;rule-id&gt;</code> against a rule she's not sure about, pushes
-back to <code>architect</code> with the rationale, gets a revised analysis,
-appends it to the GitHub Issue. <strong>Critical: no node labelled "Maya
+<p>Actors: <strong>Maya</strong>, <strong><code>architect</code></strong> (subagent), <strong>the rule file</strong>
+(<code>.claude/rules/</code>), <strong>GitHub Issue</strong>. Steps: Maya dispatches <code>architect</code>
+with the issue context; <code>architect</code> returns affected components /
+approach / risks / open questions / complexity / testing strategy; Maya
+reads, identifies one proposed pattern that doesn't fit the codebase,
+opens the rule file for the standard she's not sure about, pushes
+back to <code>architect</code> with the rule's own reasoning, gets a revised
+analysis, appends it to the GitHub Issue. <strong>Critical: no node labelled "Maya
 edits the analysis"</strong> — every change to the analysis is made by
 <code>architect</code> after Maya's prompt or by <code>/3c-implement</code> later.</p>
-<h3 id="diagram-h-phase-3-batch-backlog-refinement-flowchart-lr">Diagram H — Phase 3 — Batch backlog refinement (<code>flowchart LR</code>)<a class="headerlink" href="#diagram-h-phase-3-batch-backlog-refinement-flowchart-lr" title="Permanent link">&para;</a></h3>
-<p>Funnel: <strong>18 raw items</strong> → <strong>batch prompt template</strong> →
-<strong><code>/3c-create-issue</code> ×18</strong> → near-duplicate detection (a diamond
-decision node; merged duplicates loop back into the count) →
-<strong>human-clarification flag</strong> (a small branch off for items that are
-internally contradictory or missing context — these do <em>not</em> proceed)
-→ <strong><code>/3c-drift</code></strong> check that no issue references a non-existent rule →
-<strong>cleaned set</strong> (e.g. 12 ready, 4 merged, 2 flagged for human
-clarification). The diagram makes the <em>funnel shape</em> visible: 18 in,
-12 out, with the lost mass labelled.</p>
-<h3 id="diagram-i-phase-4-sprint-assembly-flowchart-tb">Diagram I — Phase 4 — Sprint assembly (<code>flowchart TB</code>)<a class="headerlink" href="#diagram-i-phase-4-sprint-assembly-flowchart-tb" title="Permanent link">&para;</a></h3>
-<p>A <strong>5-check grid</strong> above a single output node. Top row, left to right:
-<strong>overlap scan</strong>, <strong>AC contradiction scan</strong>, <strong>missing-deps scan</strong>,
-<strong>coverage-gap scan</strong>, <strong>doc-uniformity scan</strong> — each invoked by
-<code>/3c-review</code> adapted for sprint scope, with <code>/3c-standards history</code> as
-a side-node feeding <em>all five</em>. Bottom node: <strong>Tightened sprint
-(deduplicated, internally consistent)</strong> with one issue explicitly
-<strong>punted</strong> (a side-arrow labelled <code>needs ADR-level discussion</code>).</p>
-<h3 id="diagram-j-phase-5-one-issue-end-to-end-statediagram-v2">Diagram J — Phase 5 — One issue, end-to-end (<code>stateDiagram-v2</code>)<a class="headerlink" href="#diagram-j-phase-5-one-issue-end-to-end-statediagram-v2" title="Permanent link">&para;</a></h3>
+<h3 id="diagram-i-phase-3-sprint-assembly-flowchart-tb">Diagram I — Phase 3 — Sprint assembly (<code>flowchart TB</code>)<a class="headerlink" href="#diagram-i-phase-3-sprint-assembly-flowchart-tb" title="Permanent link">&para;</a></h3>
+<p><code>/3c-project-manager plan "&lt;milestone&gt;"</code> above <strong>five coherence checks</strong>,
+named as the shipped skill's sprint-readiness gate names them:
+<strong>Contradictions</strong>, <strong>Shared surfaces</strong>, <strong>Dependency order</strong>, <strong>Duplicate or
+overlapping scope</strong>, <strong>Load-bearing assumptions</strong>. Four feed a <strong>coherent
+sprint (merged, sequenced, rewritten)</strong>; one finding is <strong>held</strong> for a human
+to resolve or defer — the gate stops rather than guessing. (Until #516 this
+diagram showed <code>/3c-review</code> "adapted for sprint scope" — a flag that skill
+never had; it reviews a branch diff.)</p>
+<h3 id="diagram-j-phase-4-one-issue-end-to-end-statediagram-v2">Diagram J — Phase 4 — One issue, end-to-end (<code>stateDiagram-v2</code>)<a class="headerlink" href="#diagram-j-phase-4-one-issue-end-to-end-statediagram-v2" title="Permanent link">&para;</a></h3>
 <p>The most detailed diagram — give it the <code>.xl</code> diagram-wrap class.
 States, in order: <code>Issue selected</code> → <code>/3c-implement plan</code> →
-<code>branch created</code> → <code>/3c-test scaffolds failing tests</code> →
-<code>Claude Code implements</code> → <code>Post-Edit Validator (&lt;300ms)</code> →
-<em>loop back to Claude Code on failure</em> → <code>git stage + commit</code> →
+<code>branch created</code> → <code>/3c-test writes a failing test</code> →
+<code>Claude Code implements</code> → <code>Post-Edit Validator (~300ms)</code> →
+<em>loop back to Claude Code on failure, with the <code>layer-boundary</code>
+advisory naming the two layers</em> → <code>git stage + commit</code> →
 <code>Pre-Commit Hook (&lt;10s)</code> (lint / types / unit / secret) → <em>loop back
-on failure with coaching segment shown</em> → <code>Coverage Gate +
-Security Scan Gate (&lt;60s)</code> → <code>/3c-implement PR description</code> →
+on failure with the failing check named</em> → <code>Security Scan Gate
+(&lt;60s)</code> → <code>/3c-implement PR description</code> →
 <code>/3c-review-board</code> → <em>eight-agent panel (architect, code-reviewer,
 security-reviewer, test-author, product-owner, ux-expert,
 qa-reviewer, journey-architect)</em> → <code>reconciled verdict (blocking / advisory / clean)</code> →
@@ -1076,14 +964,15 @@ qa-reviewer, journey-architect)</em> → <code>reconciled verdict (blocking / ad
 <code>merge to main</code>. Show the verdict as <strong>advisory</strong> — Maya still
 decides. Every edge that changes code is labelled with <strong>who typed
 it</strong> (<code>Claude Code applies</code>, <code>/3c-implement applies</code>,
-<code>/3c-test scaffolds</code>) — never Maya.</p>
-<h3 id="diagram-k-phase-6-working-the-rest-of-the-sprint-flowchart-td">Diagram K — Phase 6 — Working the rest of the sprint (<code>flowchart TD</code>)<a class="headerlink" href="#diagram-k-phase-6-working-the-rest-of-the-sprint-flowchart-td" title="Permanent link">&para;</a></h3>
+<code>/3c-test writes</code>) — never Maya.</p>
+<h3 id="diagram-k-phase-5-working-the-rest-of-the-sprint-flowchart-td">Diagram K — Phase 5 — Working the rest of the sprint (<code>flowchart TD</code>)<a class="headerlink" href="#diagram-k-phase-5-working-the-rest-of-the-sprint-flowchart-td" title="Permanent link">&para;</a></h3>
 <p>A <strong>compounding loop</strong>: <code>Issue 2</code> → <code>Issue 3</code> → <code>Issue 4</code>, each
 running through a compact box labelled <code>/3c-implement (full loop, see
 Diagram J)</code>. Off to the side, three loops that get tighter each
 iteration:
-- <strong>Coaching loop</strong>: verbose teaching segment on issue 2 → terse on
-  issue 4 (annotate <code>TERSE_AFTER = 2</code>).
+- <strong>Boundary loop</strong>: a <code>layer-boundary</code> advisory on issue 2 (an
+  <code>app</code> → <code>infra</code> import the assistant wrote) → a clean run on issue 4
+  once the declared direction is second nature.
 - <strong>Pattern-reuse loop</strong>: prompt to <code>/3c-implement</code> references the
   merged PR (<code>"follow the shape of #1284"</code>) — no re-pasting of
   standards into context (annotate <code>150-instruction budget held</code>).
@@ -1091,32 +980,32 @@ iteration:
   call; <code>security-reviewer</code> dispatched before PR for an auth-touching
   change.</p>
 <p>A side-branch shows the <strong>hot-fix path</strong>:
-<code>prod incident → /3c-bypass --reason="prod hotfix #INC-417" →
+<code>prod incident → 3c bypass --reason="prod hotfix #INC-417" →
 JSONL event recorded → ship → follow-up issue auto-created</code>.</p>
 <p>A second side-branch shows <strong>the tricky-failure path</strong> (this is the
 one to design carefully so it stays consistent with the hard
-constraint above): <code>Pre-Commit fails on tricky test → Maya reads
-coaching rationale → Maya prompts Claude Code: "the rule is right,
+constraint above): <code>Pre-Commit fails on tricky test → Maya reads the
+failing assertion → Maya prompts Claude Code: "the rule is right,
 the test asserts the wrong contract, regenerate it" → Claude Code
 revises the test → gate passes</code>. <strong>No node labelled "Maya edits the
 test in IDE"</strong> — instead, the diagram makes visible that the rule's
 authority routes the fix through the assistant, not around it.</p>
-<h3 id="diagram-l-phase-7-manual-end-user-testing-sequencediagram">Diagram L — Phase 7 — Manual end-user testing (<code>sequenceDiagram</code>)<a class="headerlink" href="#diagram-l-phase-7-manual-end-user-testing-sequencediagram" title="Permanent link">&para;</a></h3>
-<p>Actors: <strong>Maya</strong>, <strong><code>/3c-test --mode=integration</code></strong>, <strong><code>/3c-deploy</code></strong>,
-<strong>Staging environment</strong>, <strong><code>/3c-bug</code></strong>, <strong>GitHub Issue</strong>. Sequence:
-Maya invokes <code>/3c-test --mode=integration</code> for a UI/integration
-change → skill scaffolds a UAT checklist + edge cases (test-author
-subagent assists) → Maya invokes <code>/3c-deploy --env=staging</code> → deploy
-runs pre-flight checks → health check passes → Maya runs the
-checklist manually in staging → finds a regression → Maya invokes
-<code>/3c-bug</code> → skill captures OS, runtime, project state, recent
-commits, scrubbed env vars → structured report appended to original
-GitHub Issue → Maya comments and reopens or marks done. Annotate the
-production-deploy arrow with <code>requires --yes</code>.</p>
+<h3 id="diagram-l-phase-6-manual-end-user-testing-sequencediagram">Diagram L — Phase 6 — Manual end-user testing (<code>sequenceDiagram</code>)<a class="headerlink" href="#diagram-l-phase-6-manual-end-user-testing-sequencediagram" title="Permanent link">&para;</a></h3>
+<p>Actors: <strong>Maya</strong>, <strong><code>/3c-test</code></strong>, <strong>the team's deploy script</strong>,
+<strong>Staging environment</strong>, <strong><code>3c bug</code></strong>, <strong>GitHub Issue</strong>. Sequence:
+Maya invokes <code>/3c-test</code> for the UI
+change → the skill writes the integration test test-first (test-author
+subagent assists) → Maya runs the team's own deploy script against
+staging → its pre-flight checks run → health check passes → Maya walks the
+acceptance criteria manually in staging → finds a regression → Maya runs
+<code>3c bug</code> in her terminal → it captures OS, runtime, project state, recent
+commits, scrubbed env vars → files a structured bug issue → Maya links it
+from the original issue. Annotate the
+production-deploy arrow with <code>the team's own approval</code>.</p>
 <h3 id="diagram-m-end-of-day-reflection-pie-or-flowchart">Diagram M — End-of-day reflection (<code>pie</code> or <code>flowchart</code>)<a class="headerlink" href="#diagram-m-end-of-day-reflection-pie-or-flowchart" title="Permanent link">&para;</a></h3>
 <p>A small mock-up of the <strong>Personal Local Insights Dashboard</strong> at
-<code>.3c/dashboard.html</code>. Three panels:
-- <em>Rules that fired most for me today</em> (top 5 list)
+<code>.3c/dashboard.html</code>, written by <code>npx 3c dashboard</code> (a terminal command). Three panels:
+- <em>Gates that fired most for me today</em> (top 5 list)
 - <em>First-try gate pass-rate</em> (one big number, e.g. "78%")
 - <em>Post-edit validation deltas trend</em> (sparkline placeholder)</p>
 <p>Annotate plainly: <strong>local-only · gitignored · never egressed at L2 ·
@@ -1132,26 +1021,21 @@ phase narrative should:</p>
 <li>Phase 1 — the literal <code>/3c-create-issue</code> prompt she sends, then
     the resulting issue body (truncated to ~10 lines).</li>
 <li>Phase 2 — the <code>architect</code> subagent's output snippet (3–4 bullet
-    points), then a one-line <code>/3c-explain &lt;rule-id&gt;</code> invocation and
-    its reply.</li>
-<li>Phase 3 — the batch-prompt template (5 lines) and the human-
-    clarification flag email/comment (2 lines).</li>
-<li>Phase 4 — the <code>/3c-review</code> adapted prompt and its summary of
-    findings (5 lines).</li>
+    points), then the rule-file excerpt (<code>.claude/rules/&lt;rule&gt;.md</code>)
+    Maya quotes back at it.</li>
+<li>Phase 3 — the <code>/3c-project-manager plan "&lt;milestone&gt;"</code> invocation
+    and its coherence report (one finding per check, 5 lines).</li>
 <li>
-<p>Phase 5 — the <strong>coaching teaching segment exactly as shipped</strong>:</p>
-<div class="highlight"><pre><span></span><code>——— 3c coaching ———
-• import-order
-Why:  imports should be ordered stdlib, third-party, local —
-      fewer merge conflicts in long-lived branches.
-Do:   import { readFile } from &quot;node:fs/promises&quot;;
-Docs: https://kgn-git.github.io/3C/
-———————————————
+<p>Phase 4 — the <strong>post-edit advisory exactly as shipped</strong>:</p>
+<div class="highlight"><pre><span></span><code>3c post-edit validation found 1 issue(s) — please self-correct:
+  - [layer-boundary] src/account/home/orders-panel.tsx:3 —
+    &quot;app&quot; layer must not import from &quot;infra&quot; layer
 </code></pre></div>
 <p>plus a <strong>JSONL gate event</strong> verbatim (one line).
-  - Phase 6 — a <strong>terse coaching segment</strong> (bullet + <code>Why:</code> only) and
-the JSONL <strong>bypass event</strong> with the <code>reason</code> field populated.
-  - Phase 7 — a <code>/3c-bug</code> structured report header (5 lines, scrubbed).
+  - Phase 5 — the <code>layers</code> / <code>deny</code> stanza of
+<code>.3c/architecture.yaml</code> the advisory was checked against,
+and the JSONL <strong>bypass event</strong> with the <code>reason</code> field populated.
+  - Phase 6 — a <code>3c bug</code> structured report header (5 lines, scrubbed).
 - Close with the three call-outs (as compact bullets, not boxes —
   the <code>.key-message</code> box already does the visual emphasis):
   - <em>What 3C does for you here.</em>
@@ -1179,9 +1063,10 @@ correction. Required mistakes:</p>
 <li>Bypassing without a real <code>--reason</code>; <strong>correction:</strong> the JSONL event
    is permanent and reviewable — <em>"forgot why"</em> in the reason field is
    how teams lose trust in the bypass mechanism.</li>
-<li>Treating coaching segments as noise; <strong>correction:</strong> the second
-   sighting goes terse on its own — read it the first time and the
-   framework gets quieter on its own.</li>
+<li>Treating boundary findings as noise; <strong>correction:</strong> a post-edit
+   advisory is the architecture <em>your team declared</em>, not a style
+   opinion — fix the direction, or change
+   <code>.3c/architecture.yaml</code> on purpose.</li>
 <li>Running <code>/3c-implement</code> on issues that haven't been enriched;
    <strong>correction:</strong> enrich first (Phase 2), then implement — <code>architect</code>
    is cheaper before code than after.</li>
@@ -1192,26 +1077,24 @@ correction. Required mistakes:</p>
 <p><strong>Pinnable checklist</strong> (single card spanning both columns, ≤ 20 lines).
 Required content, in this order:</p>
 <ul>
-<li>Slash commands by phase: <code>/3c-create-issue</code> · <code>/3c-explain</code> ·
-  <code>/3c-drift</code> · <code>/3c-review</code> · <code>/3c-standards history</code> ·
-  <code>/3c-implement</code> · <code>/3c-test [--mode=integration]</code> ·
-  <code>/3c-deploy --env=&lt;…&gt;</code> · <code>/3c-bug</code> · <code>/3c-bypass --reason="..."</code>.</li>
+<li>Slash commands by phase: <code>/3c-create-issue</code> ·
+  <code>/3c-project-manager</code> · <code>/3c-implement</code> · <code>/3c-test</code> · <code>/3c-review</code> ·
+  <code>3c bug</code> · <code>3c bypass --reason="..."</code>.</li>
 <li>Subagents and when to dispatch each: <code>architect</code> (design call),
   <code>security-reviewer</code> (auth/crypto/input-handling), <code>code-reviewer</code>
-  (pre-PR findings), <code>test-author</code> (test scaffolding inside <code>/3c-test</code>),
+  (pre-PR findings), <code>test-author</code> (writes the failing test inside <code>/3c-test</code>),
   <code>product-owner</code> (scope/priority), <code>ux-expert</code> (screen-level UX),
   <code>qa-reviewer</code> (AC traceability), <code>journey-architect</code> (journey
   reachability) — or convene all eight at once with
   <code>/3c-review-board</code>, which reconciles their findings into one verdict.</li>
 <li>Gate chain in firing order: Post-Edit Validation (&lt; 300 ms) →
-  Pre-Commit (&lt; 10 s) → Coverage + Security Scan (&lt; 60 s) → Drift
-  (on-demand).</li>
-<li>Bypass syntax: <code>/3c-bypass --reason="&lt;one-line&gt;"</code> — logged, never
+  Pre-Commit (&lt; 10 s) → Security Scan (&lt; 60 s).</li>
+<li>Bypass syntax: <code>3c bypass --reason="&lt;one-line&gt;"</code> — logged, never
   silent.</li>
 <li>File paths to remember: <code>CLAUDE.md</code> (root, ≤ 150 instructions),
-  <code>.claude/rules/&lt;rule&gt;.rationale.yaml</code>, <code>.3c/coaching.yaml</code>,
-  <code>.3c/coaching/&lt;user&gt;.yaml</code>,
-  <code>.3c/events/*.jsonl</code>, <code>.3c/dashboard.html</code>.</li>
+  <code>.claude/rules/&lt;rule&gt;.md</code>,
+  <code>.3c/architecture.yaml</code>,
+  <code>.3c/telemetry/hooks/*.jsonl</code>, <code>.3c/dashboard.html</code>.</li>
 <li>The one rule that summarises the rest: <strong>the assistant types, you
   instruct.</strong></li>
 </ul>
@@ -1221,12 +1104,12 @@ Required content, in this order:</p>
   what it does NOT do at every step. Read <code>site/why-now.html</code> and
   <code>site/for-developers.html</code> and lift the cadence directly.</li>
 <li>Match the existing infographic's punchy diagram titles ("Skills talk
-  to skills — on purpose."). Each of the seven phase titles should
+  to skills — on purpose."). Each of the six phase titles should
   read as a single, opinionated sentence with a full stop. Examples
   the writer can refine but should not copy verbatim:</li>
 <li>Phase 1: <em>"Raw inputs in. Reviewable issue out."</em></li>
-<li>Phase 5: <em>"One issue, six gates, zero hand-edits."</em></li>
-<li>Phase 6: <em>"Compounding is the product."</em></li>
+<li>Phase 4: <em>"One issue, every gate, zero hand-edits."</em></li>
+<li>Phase 5: <em>"Compounding is the product."</em></li>
 <li>No emoji except the small lifecycle emoji already used in the
   source <code>.mmd</code> files (🔧 🏁 📚 🔄). Do not introduce new emoji.</li>
 </ul>

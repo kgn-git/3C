@@ -13,13 +13,13 @@
         <link rel="canonical" href="https://kgn-git.github.io/3C/for-eng-leaders.html">
       
       
-        <link rel="prev" href="coaching.html">
+        <link rel="prev" href="for-developers.html">
       
       
         <link rel="next" href="uninstall-upgrade.html">
       
       
-      <link rel="icon" href="favicon.ico">
+      <link rel="icon" href="assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
     
     
@@ -303,23 +303,6 @@
         
   
   
-  
-    <li class="md-tabs__item">
-      <a href="coaching.html" class="md-tabs__link">
-        
-  
-    
-  
-  Coaching mode
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
     
   
   
@@ -357,27 +340,10 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="branding.html" class="md-tabs__link">
-        
-  
-    
-  
-  Branding
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
     
     
       <li class="md-tabs__item">
-        <a href="infographic/sdlc-infographic.html" class="md-tabs__link">
+        <a href="infographic/devdaylife-infographic.html" class="md-tabs__link">
           
   
   Infographics
@@ -593,26 +559,6 @@
       
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="coaching.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Coaching mode
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
     
   
   
@@ -767,26 +713,6 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="branding.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Branding
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     
     
     
@@ -800,10 +726,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -814,33 +740,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             Infographics
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="infographic/sdlc-infographic.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    SDLC pipeline
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
             
               
                 
@@ -942,17 +847,17 @@
 <p>Anchored to the three pillars — and these are the <strong>measured</strong> end-of-adoption-week deltas the sprint captures (convention-consistency on AI-authored diffs; the share of changes moving through the <code>/3c-*</code> skills; the pre-commit gate pass-rate and what it caught pre-review), not promises that mature on faith. They are visible by the end of the adoption week and compound from there:</p>
 <ul>
 <li><strong>Standards layer →</strong> by the end of the adoption week, two engineers on the same repo produce structurally consistent code without a reviewer forcing it. Architectural drift stops compounding.</li>
-<li><strong>Workflow layer →</strong> by the end of the adoption week, issue-creation, implementation, review, and test-generation run the same way on every laptop — onboarding a new hire is reading one <code>CLAUDE.md</code>, not shadowing for a month.</li>
+<li><strong>Workflow layer →</strong> by the end of the adoption week, issue-creation, implementation, review, and test authoring run the same way on every laptop — onboarding a new hire is reading one <code>CLAUDE.md</code>, not shadowing for a month.</li>
 <li><strong>Quality layer →</strong> by the end of the adoption week, lint/types/tests/secret-scan run before code review, every commit — the review queue stops absorbing what a gate should have caught.</li>
 </ul>
 <h2 id="what-l2-adds-shipped-may-2026-v150">What L2 adds — shipped May 2026 (v1.5.0)<a class="headerlink" href="#what-l2-adds-shipped-may-2026-v150" title="Permanent link">&para;</a></h2>
 <p>L2 is the <strong>Automate</strong> level. Same install, same <code>.claude/</code> footprint, same reversal posture — but the standards your team agreed to at L1 now enforce themselves before code review.</p>
 <p>For the eng-leader audience, the things to forward up:</p>
 <ul>
-<li><strong>The gate chain becomes automatic.</strong> Post-Edit Validation runs at the point of AI generation (<code>&lt;300ms</code>); the Coverage Gate and Security Scan Gate run pre-PR; the Standards Drift Detector runs on demand. Every gate is independently disable-able and writes a JSONL event regardless of pass / fail / bypass. The review queue stops absorbing what a gate should have caught — and you can prove it from the events log without asking developers.</li>
-<li><strong>Coaching mode turns gate failures into mentorship moments.</strong> When a junior's commit fails the hook, the failure message includes the rule's rationale, an example of the right shape, and a link to the ADR or incident that produced it. The thing senior engineers normally do in PR review, automated. Off-switch in <code>.3c/coaching.yaml</code>. The Standards Rationale Database (<code>/3c-explain &lt;rule-id&gt;</code>) is the structured backbone — every rule traceable to its origin.</li>
-<li><strong>The PM-tool integration is no longer GitHub-only.</strong> <code>/3c-create-issue</code> now routes to <strong>Jira Cloud, Linear, GitLab Issues, and GitHub</strong> via the bundled MCP server. Tokens via OS keychain only — never cached, never returned in tool output, never committable. Same skill UX across all four.</li>
-<li><strong>White-label deployment is one command.</strong> <code>npx 3c init --brand="&lt;Brand Name&gt;"</code> plus <code>npx 3c skills install</code> copies your team's skills and agents in under their own slash prefix (e.g. <code>/acme-*</code>, with specialists <code>acme-architect</code> / <code>acme-code-reviewer</code>) against the upstream <code>kgn-git/3C</code> source — no fork, the files live in your repo under git. The deployment-init CLI is the path from "we adopted 3C" to "we have <em>our</em> AI coding standards" without forking a maintained dependency.</li>
+<li><strong>The gate chain becomes automatic.</strong> Post-Edit Validation runs at the point of AI generation (<code>~300ms</code>); the Security Scan Gate runs pre-PR; the Architecture Boundary Enforcer blocks dependency-direction violations at the commit gate. Every gate is independently disable-able and writes a JSONL event regardless of pass / fail / bypass. The review queue stops absorbing what a gate should have caught — and you can prove it from the events log without asking developers.</li>
+<li><strong>Every rule stays traceable to its origin.</strong> A rule is a plain markdown file under <code>.claude/rules/</code> that travels with the repo: the bundled OWASP pack cites its source on the rule itself, and your team's own rules carry their reasoning through the PRs that change them — provenance you audit from git history, not from a database beside it. When a junior asks why one of the team's own standards exists, the answer is in the repo — the rule file and the PR thread that shaped it — instead of an interruption to a senior.</li>
+<li><strong>The PM-tool integration is not GitHub-only.</strong> <code>/3c-create-issue</code> routes to <strong>Jira Cloud, Linear and GitLab Issues</strong> through an in-process adapter registry, and to <strong>GitHub</strong> through the <code>gh</code> CLI. The bundled MCP server that once wrapped the registry was retired in the 2026-08 consolidation. The token is resolved per call, never cached and never returned in tool output. Same skill UX across all four.</li>
+<li><strong>Your team owns the copy, not a fork.</strong> <code>npx 3c skills install</code> copies the skills and agents into your repo under git as <code>/3c-*</code>, against the upstream <code>kgn-git/3C</code> source. Your team evolves them in pull requests like any other code, without forking a maintained dependency.</li>
 <li><strong>Your senior-review process, made consistent.</strong> The L2 surface grew a <strong>multi-agent crew</strong> that runs the review-and-delivery process your best engineers run by hand — the same way on every change, regardless of who is at the keyboard or what hour it is. <code>/3c-review-board</code> convenes eight specialist reviewers (architecture, code, security, tests, product, UX, QA, customer-journey) and reconciles their findings into one <em>deterministic</em> verdict — <em>blocking</em>, <em>advisory</em>, or <em>clean</em> — with genuine disagreements surfaced for a human rather than averaged away. <code>/3c-project-manager</code> carries an issue through that review on the way to a PR; <code>/3c-programme-manager</code> does it for a dependency-ordered chain of projects across one workspace. Every verdict is advisory and every git action is checkpointed — the crew accelerates the process, it does not take the decision. It is also the bridge to L3: these per-change verdicts are exactly what the L3 dashboards roll up.</li>
 </ul>
 <p><strong>What L2 does NOT change:</strong></p>
@@ -961,7 +866,7 @@
 <li><strong>No new vendor lock-in.</strong> Still MIT, still Agent Skills standard, still git-installable, still <code>git revert</code>-removable.</li>
 <li><strong>No compliance or regulatory framing.</strong> That business case is parked. L2 is a developer-productivity and team-quality layer, full stop.</li>
 </ul>
-<p><strong>The L2 adoption sprint</strong> is the same shape as L1: one focused week from <code>npm install ...#v1.5.0</code> to measurable deltas. The four metrics it captures: pre-PR gate pass-rate, post-edit validation findings per AI-authored diff, coaching-mode rationale link-throughs, and drift-detector audit delta week-over-week. If you're at L1 and your team is ready for the next level, the <a href="l2-today.html">L2 today page</a> is the technical brief; this page is the business one.</p>
+<p><strong>The L2 adoption sprint</strong> is the same shape as L1: one focused week from <code>npm install ...#v1.5.0</code> to measurable deltas. The three metrics it captures: pre-PR gate pass-rate, post-edit validation findings per AI-authored diff, and the boundary findings arch-check records at the commit gate. If you're at L1 and your team is ready for the next level, the <a href="l2-today.html">L2 today page</a> is the technical brief; this page is the business one.</p>
 <h2 id="bus-factor-and-succession">Bus-factor and succession<a class="headerlink" href="#bus-factor-and-succession" title="Permanent link">&para;</a></h2>
 <p>Here's how succession works in this project — the steward role is documented and transferable; fork rights are explicit (MIT); contributor pathway is open via GitHub Discussions; any structural change to project governance will be announced in an ADR before code lands. We do not yet have a named succession plan; we have a succession process.</p>
 <h2 id="the-architect">The architect<a class="headerlink" href="#the-architect" title="Permanent link">&para;</a></h2>

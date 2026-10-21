@@ -19,7 +19,7 @@
         <link rel="next" href="maturity-model.html">
       
       
-      <link rel="icon" href="favicon.ico">
+      <link rel="icon" href="assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
     
     
@@ -307,23 +307,6 @@
   
   
     <li class="md-tabs__item">
-      <a href="coaching.html" class="md-tabs__link">
-        
-  
-    
-  
-  Coaching mode
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
       <a href="for-eng-leaders.html" class="md-tabs__link">
         
   
@@ -357,27 +340,10 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="branding.html" class="md-tabs__link">
-        
-  
-    
-  
-  Branding
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
     
     
       <li class="md-tabs__item">
-        <a href="infographic/sdlc-infographic.html" class="md-tabs__link">
+        <a href="infographic/devdaylife-infographic.html" class="md-tabs__link">
           
   
   Infographics
@@ -669,26 +635,6 @@
   
   
     <li class="md-nav__item">
-      <a href="coaching.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Coaching mode
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="for-eng-leaders.html" class="md-nav__link">
         
   
@@ -728,26 +674,6 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="branding.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Branding
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     
     
     
@@ -761,10 +687,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -775,33 +701,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             Infographics
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="infographic/sdlc-infographic.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    SDLC pipeline
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
             
               
                 
@@ -894,24 +799,31 @@
 the first time; <strong>update to latest</strong> for an existing deployment moving to the current release. Both sit
 at the current release — there is nothing older to pin.</p>
 <blockquote>
-<p><strong>Current release: v1.7.3.</strong> 3C ships as a private, git-installed package from
+<p><strong>Current release: v2.0.0.</strong> 3C ships as a private, git-installed package from
 <a href="https://github.com/kgn-git/3C"><code>kgn-git/3C</code></a> — there is no public npm package to install.</p>
 </blockquote>
 <hr />
 <h2 id="fresh-install">Fresh install<a class="headerlink" href="#fresh-install" title="Permanent link">&para;</a></h2>
 <p>A new project, adopting 3C for the first time. From the project root:</p>
-<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>git+https://github.com/kgn-git/3C#v1.7.3
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>git+https://github.com/kgn-git/3C.git#&lt;release-sha&gt;
+<span class="c1"># &lt;release-sha&gt;: the commit sha listed for that version at github.com/kgn-git/3C/releases</span>
 npx<span class="w"> </span>3c<span class="w"> </span>setup<span class="w">            </span><span class="c1"># one shot: CLAUDE.md + rules + hooks + skills + agents + arch-check, then doctor</span>
 </code></pre></div>
 <p><code>3c setup</code> is a thin sequencer over the individual commands (<code>init</code>, <code>rules install</code>, <code>hook install</code>,
 <code>skills install</code>, <code>agents install</code>, <code>arch-check init</code>, <code>doctor</code>) — each still runs on its own if you
 would rather step through it. Everything lands <strong>in your repo under git</strong>; nothing is installed globally
 and nothing phones home.</p>
-<p>Running in CI or a container, with no terminal to answer prompts? Use the non-interactive form:</p>
+<p>Running in CI, a container or a script, with no terminal to answer prompts? Plain <code>npx 3c setup</code>
+detects that and takes the wizard's defaults, printing which ones it used. <code>--yes</code> asks for the same
+thing explicitly and stays quiet about it:</p>
 <div class="highlight"><pre><span></span><code>npx<span class="w"> </span>3c<span class="w"> </span>setup<span class="w"> </span>--yes<span class="w">      </span><span class="c1"># accepts defaults; no prompts</span>
 </code></pre></div>
+<p>Neither form overwrites a CLAUDE.md, skill or agent you already have. Overwriting is always a flag
+you pass: <code>npx 3c setup --replace</code> refreshes skills, agents and rules (setup never touches CLAUDE.md),
+and <code>npx 3c init --merge</code> rewrites CLAUDE.md with your new answers, keeping a backup of the old one —
+run it in a terminal to choose different answers. On Windows Git Bash, use PowerShell, cmd or <code>winpty</code>.</p>
 <p>Verify at any time:</p>
-<div class="highlight"><pre><span></span><code>3c<span class="w"> </span>--version<span class="w">            </span><span class="c1"># should report 1.7.3</span>
+<div class="highlight"><pre><span></span><code>3c<span class="w"> </span>--version<span class="w">            </span><span class="c1"># should report 2.0.0</span>
 3c<span class="w"> </span>doctor<span class="w">               </span><span class="c1"># confirms the install and flags anything missing</span>
 </code></pre></div>
 <hr />
@@ -922,22 +834,35 @@ project.</p>
 the most common cause</strong> of "command not found" or a crew skill silently degrading. Reinstall the global
 CLI at the current release:</p>
 <div class="highlight"><pre><span></span><code>npm<span class="w"> </span>uninstall<span class="w"> </span>-g<span class="w"> </span>@kgn-git/3c
-npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>git+https://github.com/kgn-git/3C#v1.7.3
-3c<span class="w"> </span>--version<span class="w">            </span><span class="c1"># should report 1.7.3</span>
+npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>git+https://github.com/kgn-git/3C.git#&lt;release-sha&gt;
+3c<span class="w"> </span>--version<span class="w">            </span><span class="c1"># should report the release you pinned</span>
 </code></pre></div>
 <p><strong>2. Refresh the project.</strong> Upgrading the CLI does not rewrite the skills, agents, and rules already
-copied into a project. Re-run the one-shot installer from the project root — it is <strong>idempotent and
-preserves your <code>.claude/</code> tree</strong>, adding only what is new (for example, a newly added crew agent):</p>
-<div class="highlight"><pre><span></span><code>3c<span class="w"> </span>setup<span class="w">                </span><span class="c1"># idempotent — already-installed steps are skipped with a notice</span>
-3c<span class="w"> </span>doctor<span class="w">               </span><span class="c1"># confirms the installed skills match the upgraded CLI</span>
+copied into a project. Plain <code>3c setup</code> only <em>adds</em> what is new — it skips every file that already
+exists, so a skill whose contents changed upstream stays exactly as it was. To pick up changed
+skills and agents you need <code>--replace</code>. Commit <code>.claude/</code> first: <code>--replace</code> <strong>overwrites every skill
+and agent that still ships upstream</strong>, so any local edits are lost.</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>-A<span class="w"> </span>.claude<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;checkpoint before 3c setup --replace&quot;</span>
+3c<span class="w"> </span>setup<span class="w"> </span>--replace<span class="w">      </span><span class="c1"># refreshes changed skills/agents, not just missing ones</span>
+git<span class="w"> </span>diff<span class="w"> </span>HEAD<span class="w"> </span>--<span class="w"> </span>.claude<span class="w">   </span><span class="c1"># review what changed; re-apply any local edits</span>
+3c<span class="w"> </span>doctor<span class="w">               </span><span class="c1"># confirms the installed artefacts match the upgraded CLI</span>
 </code></pre></div>
-<p><code>3c doctor</code> closes the loop: it fails loudly if the installed skills expect a command your CLI does not
-provide, so a version mismatch tells you to upgrade instead of failing quietly.</p>
+<p><code>3c doctor</code> closes the loop in <strong>both</strong> directions, which matters because they need opposite repairs:</p>
+<ul>
+<li><strong>CLI older than your skills</strong> — a skill invokes a command your <code>3c</code> binary lacks. Upgrade the CLI
+  (step 1 above).</li>
+<li><strong>CLI newer than your skills</strong> — a skill still invokes a command that has been <strong>retired</strong>. The
+  binary moved on; your copy-installed markdown did not. Repair with <code>3c skills install --replace</code> /
+  <code>3c agents install --replace</code> (which is what <code>3c setup --replace</code> runs for you).</li>
+</ul>
+<p>Doctor also reports <strong>orphaned</strong> artefacts — a skill or agent under your <code>3c-</code> prefix that no longer
+ships at all. No install command can clear those, because the installer only ever copies files that
+still exist upstream; delete them by hand once you have checked nothing local depends on them.</p>
 <h3 id="install-traps-to-avoid">Install traps to avoid<a class="headerlink" href="#install-traps-to-avoid" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong><code>npm i -g 3c</code></strong> installs an <strong>unrelated public package</strong>, not this one — never use it.</li>
 <li><strong><code>npm i -g @kgn-git/3c</code></strong> fails with <strong>E404</strong>: the package is private and git-only. Install from the
-  <code>git+https://github.com/kgn-git/3C#v1.7.3</code> URL above.</li>
+  <code>git+https://github.com/kgn-git/3C.git#&lt;release-sha&gt;</code> URL above — by commit sha, because a tag can be moved and a sha cannot.</li>
 <li>If a command still resolves to an old build, a <strong>project-local copy is shadowing the global</strong> — run
   <code>Get-Command 3c</code> (PowerShell) or <code>which 3c</code>. A <code>node_modules/.bin/3c</code> inside a project takes precedence
   over the global binary; upgrade or remove that local install too.</li>

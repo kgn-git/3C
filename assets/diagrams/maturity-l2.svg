@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 210" role="img" aria-label="L2 Automate: the quality bar stops being aspirational — gates run automatically before review, telemetry is captured, juniors get coaching.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 210" role="img" aria-label="L2 Automate: the quality bar stops being aspirational — gates run automatically before review, telemetry is captured, rules carry their reasoning in the rule files themselves.">
   <title>L2 — Automate</title>
-  <desc>Quality gates become automatic: post-edit validation, a test-coverage gate and a security-scan gate run before code review every time. Hook telemetry is captured for later observability, and coaching mode explains the why to juniors.</desc>
+  <desc>Quality gates become automatic: post-edit validation and a security-scan gate run before code review every time. Hook telemetry is captured for later observability, and every rule file carries its own reasoning, versioned with the repo.</desc>
   <style>text{font-family:Inter,system-ui,sans-serif}.t{fill:#0F172A}.m{fill:#64748B}.s{font-family:Inter,Georgia,serif;fill:#0F172A}.b{fill:#F8FAFC;stroke:#E2E8F0}</style>
   <rect width="660" height="210" rx="18" fill="#F8FAFC"/>
   <text x="330" y="30" text-anchor="middle" class="s" font-size="16">L2 — Automate</text>
@@ -9,8 +9,7 @@
   <rect x="30" y="64" width="180" height="100" rx="9" fill="#F8FAFC" stroke="#047857" stroke-width="1.4"/>
   <text x="120" y="84" text-anchor="middle" class="t" font-size="11" font-weight="700">Automatic gates</text>
   <text x="120" y="104" text-anchor="middle" class="m" font-size="10">post-edit validation</text>
-  <text x="120" y="120" text-anchor="middle" class="m" font-size="10">coverage gate</text>
-  <text x="120" y="136" text-anchor="middle" class="m" font-size="10">security-scan gate</text>
+  <text x="120" y="120" text-anchor="middle" class="m" font-size="10">security-scan gate</text>
   <text x="120" y="154" text-anchor="middle" fill="#047857" font-size="10" font-weight="700">before review, every time</text>
 
   <path d="M214,114 L250,114" stroke="#4F46E5" stroke-width="2.4" stroke-linecap="round" marker-end="url(#a)"/>
@@ -22,8 +21,8 @@
   <text x="339" y="134" text-anchor="middle" class="m" font-size="10">anonymisable · local-first</text>
 
   <rect class="b" x="448" y="74" width="184" height="80" rx="9" stroke-width="1"/>
-  <text x="540" y="98" text-anchor="middle" class="t" font-size="11" font-weight="700">Coaching mode</text>
-  <text x="540" y="118" text-anchor="middle" class="m" font-size="10">explains the "why"</text>
+  <text x="540" y="98" text-anchor="middle" class="t" font-size="11" font-weight="700">Rules carry their why</text>
+  <text x="540" y="118" text-anchor="middle" class="m" font-size="10">reasoning in the rule file</text>
   <text x="540" y="134" text-anchor="middle" class="m" font-size="10">guided onboarding</text>
 
   <text x="330" y="190" text-anchor="middle" class="m" font-size="11">Active development — telemetry can be disabled; paced to your quality-debt curve</text>

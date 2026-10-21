@@ -16,10 +16,10 @@
         <link rel="prev" href="l2-today.html">
       
       
-        <link rel="next" href="coaching.html">
+        <link rel="next" href="for-eng-leaders.html">
       
       
-      <link rel="icon" href="favicon.ico">
+      <link rel="icon" href="assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
     
     
@@ -307,23 +307,6 @@
   
   
     <li class="md-tabs__item">
-      <a href="coaching.html" class="md-tabs__link">
-        
-  
-    
-  
-  Coaching mode
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
       <a href="for-eng-leaders.html" class="md-tabs__link">
         
   
@@ -357,27 +340,10 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="branding.html" class="md-tabs__link">
-        
-  
-    
-  
-  Branding
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
     
     
       <li class="md-tabs__item">
-        <a href="infographic/sdlc-infographic.html" class="md-tabs__link">
+        <a href="infographic/devdaylife-infographic.html" class="md-tabs__link">
           
   
   Infographics
@@ -650,9 +616,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#coaching-mode-the-hook-tells-you-why-not-just-no" class="md-nav__link">
+  <a href="#the-boundary-gate-and-the-command-that-drafts-its-config" class="md-nav__link">
     <span class="md-ellipsis">
-      Coaching mode — the hook tells you why, not just no
+      The boundary gate — and the command that drafts its config
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-why-behind-every-rule-it-lives-in-the-rule-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      The why behind every rule — it lives in the rule file
     </span>
   </a>
   
@@ -680,6 +655,15 @@
   <a href="#cross-platform-workflow-skills" class="md-nav__link">
     <span class="md-ellipsis">
       Cross-platform workflow skills
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#narrowed-test-runs-that-never-fake-a-green" class="md-nav__link">
+    <span class="md-ellipsis">
+      Narrowed test runs that never fake a green
     </span>
   </a>
   
@@ -741,26 +725,6 @@
   
   
     <li class="md-nav__item">
-      <a href="coaching.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Coaching mode
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="for-eng-leaders.html" class="md-nav__link">
         
   
@@ -800,26 +764,6 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="branding.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Branding
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     
     
     
@@ -833,10 +777,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -847,33 +791,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             Infographics
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="infographic/sdlc-infographic.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    SDLC pipeline
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
             
               
                 
@@ -973,27 +896,20 @@
 </ol>
 <p>That's L1. It's enough for a long time.</p>
 <h2 id="what-l2-adds-for-you-specifically">What L2 adds for you specifically<a class="headerlink" href="#what-l2-adds-for-you-specifically" title="Permanent link">&para;</a></h2>
-<p>L2 — v1.5, shipped May 2026 — is where 3C starts paying you back for the conventions L1 captured. Five things start mattering for the IC:</p>
+<p>L2 — v1.5, shipped May 2026 — is where 3C starts paying you back for the conventions L1 captured. Here's what starts mattering for you:</p>
 <h3 id="pre-commit-gates-that-catch-the-obvious-before-review">Pre-commit gates that catch the obvious before review<a class="headerlink" href="#pre-commit-gates-that-catch-the-obvious-before-review" title="Permanent link">&para;</a></h3>
 <p>Beyond L1's lint / types / unit-tests / secret-scan baseline, L2 adds three more gates that fire automatically before code review:</p>
 <ul>
-<li><strong>Post-Edit Validation</strong> runs the moment Claude Code finishes an edit — checks imports, naming, and architectural-direction rules against the change. Catches "the AI imported from <code>internal/</code>" or "the AI named it <code>getUser</code> when our convention is <code>fetchUser</code>" in <code>&lt;300ms</code>, before you've even staged the file.</li>
-<li><strong>Coverage Gate</strong> refuses to PR a change that drops coverage below the team threshold. Tunable per test type (unit / integration / contract). Off by default; turn it on when the team's actually ready for it.</li>
+<li><strong>Post-Edit Validation</strong> runs the moment Claude Code finishes an edit — checks the change against the layer-boundary rules your team declared. Catches "the AI imported from <code>internal/</code>" in <code>~300ms</code>, before you've even staged the file.</li>
 <li><strong>Security Scan Gate</strong> runs SAST + dependency-vulnerability scan per commit. Refuses on critical findings; warns on lower severities. You get the warning in the same buffer as the test failures — no separate dashboard to check.</li>
 </ul>
-<p>All gates write a JSONL event regardless of pass / fail / bypass, so the picture stays complete even when you <code>/3c-bypass --reason="hotfix"</code> to ship a critical change.</p>
-<h3 id="coaching-mode-the-hook-tells-you-why-not-just-no">Coaching mode — the hook tells you <em>why</em>, not just <em>no</em><a class="headerlink" href="#coaching-mode-the-hook-tells-you-why-not-just-no" title="Permanent link">&para;</a></h3>
-<p>The annoying part of pre-commit hooks is they fail you at the worst time and tell you nothing. L2 changes that.</p>
-<p>When a rule fails and <strong>coaching mode</strong> is on, the hook output includes:</p>
-<ul>
-<li>The rule's rationale (why it exists).</li>
-<li>A 5-line example of the right shape.</li>
-<li>A link to the ADR or incident that produced the rule, if one exists.</li>
-</ul>
-<p>It's the thing senior engineers do in code review, automated and immediate. Turn it off in <code>.3c/coaching.yaml</code> once the team's past needing it — the rules still enforce, you just stop seeing the explanations.</p>
-<p><strong>Activation:</strong> coaching is ON by default — you don't need to do anything to enable it. To disable for the whole repo, write <code>enabled: false</code> into <code>.3c/coaching.yaml</code>. To disable for specific users only, use <code>disabledUsers: [&lt;user&gt;]</code> in the same file.</p>
-<p>The rationale itself comes from the <strong>Standards Rationale Database</strong>: a structured "why" repository linking every rule to its origin. You can also look it up directly with <code>/3c-explain &lt;rule-id&gt;</code> when you're curious why a rule exists without waiting for it to bite you.</p>
-<p>→ <a href="coaching.html">Coaching mode in full</a> covers the rationale-authoring path, the adaptive teaching after two sightings, and what coaching deliberately does NOT do.</p>
+<p>All gates write a JSONL event regardless of pass / fail / bypass, so the picture stays complete even when you <code>3c bypass --reason="hotfix"</code> to ship a critical change.</p>
+<h3 id="the-boundary-gate-and-the-command-that-drafts-its-config">The boundary gate — and the command that drafts its config<a class="headerlink" href="#the-boundary-gate-and-the-command-that-drafts-its-config" title="Permanent link">&para;</a></h3>
+<p>The boundary gate is the one check in 3C that enforces <em>your</em> architecture rather than ours: <code>.3c/architecture.yaml</code> declares your layers and, under <code>deny</code>, the import directions you forbid. Run <code>npx 3c arch-check check</code> at your commit gate or in CI and it exits non-zero when a change crosses one, naming the file, the line, and the direction — <code>"domain" layer must not import from "infra" layer</code>. (With nothing staged — the usual CI checkout — it checks the whole tracked tree, so adopt it on a baseline you have cleaned.) These rules live in that YAML file, not under <code>.claude/rules/</code>; the rule id in the output is <code>layer-boundary</code> — and it is the same rule set the post-edit validator applies live: one file, two moments, the assistant's edit and your commit. <code>npx 3c setup</code> scaffolds the file <strong>inert</strong> — all comments, checking nothing — because nobody but your team knows your layers.</p>
+<p>You don't have to write it by hand. <code>npx 3c arch-check discover</code> reads your repo's tracked import graph (it walks <code>git ls-files</code>, so stage or commit your JS/TS source first) and drafts the config from how your code actually depends on itself: directory clusters are grouped into dependency tiers, which become your layers, and each upward direction — a lower tier importing a higher one — becomes a <code>deny</code> pair, so the draft never flags the code you have right now. The layer names it emits are deliberately generic (<code>tier-0</code>, <code>tier-1</code>, …): rename them to what your team calls those layers — in both <code>layers</code> and the <code>deny</code> pairs — prune what you don't want, and once the draft has at least two layers the gate is live. If nothing in your tree imports across a directory boundary — everything under one directory, or several that never reference each other — you get a single layer and no <code>deny</code> pairs; the command says so, and the gate stays quiet until your imports span more directories. On a repo with no tracked multi-directory JS/TS source there is nothing to cluster yet: the draft says so and, when it is your active config, keeps the worked example for hand-editing, and the gate stays inert until source lands. When your <code>architecture.yaml</code> parses to real layers, the same command writes <code>.3c/architecture.proposed.yaml</code> beside it and leaves your rules untouched.</p>
+<h3 id="the-why-behind-every-rule-it-lives-in-the-rule-file">The <em>why</em> behind every rule — it lives in the rule file<a class="headerlink" href="#the-why-behind-every-rule-it-lives-in-the-rule-file" title="Permanent link">&para;</a></h3>
+<p>The annoying part of inheriting someone else's standard is a rule with no reasoning attached. L2 keeps the reasoning where the rule is.</p>
+<p>Every rule is a plain markdown file under <code>.claude/rules/</code>, versioned with the repo, so the standard and its reasoning travel together: the bundled OWASP pack cites its source on the rule itself, and your team's own rules accumulate their "why" through the PRs that change them — the review thread is the provenance. Open any rule file and you're reading the standard itself, not a summary of it.</p>
 <h3 id="your-ai-assistant-gets-two-more-agents">Your AI assistant gets two more agents<a class="headerlink" href="#your-ai-assistant-gets-two-more-agents" title="Permanent link">&para;</a></h3>
 <p>L1 shipped <code>code-reviewer</code> and <code>test-author</code> as subagents your AI can dispatch. L2 adds two more:</p>
 <ul>
@@ -1011,31 +927,39 @@
 <p>The verdict is always advisory — you decide. Run <code>npx 3c doctor</code> if you ever wonder whether the crew installed cleanly; it checks all eight agents and three orchestrators are wired.</p>
 <h3 id="cross-platform-workflow-skills">Cross-platform workflow skills<a class="headerlink" href="#cross-platform-workflow-skills" title="Permanent link">&para;</a></h3>
 <p>If your team uses Jira Cloud, Linear, or GitLab Issues instead of GitHub: <code>/3c-create-issue</code> now routes to all four. Token via OS keychain (Keychain on macOS, Credential Manager on Windows, Secret Service on Linux). Nothing cached, nothing returned in tool output, nothing committable as a secret.</p>
-<p>If your test runner is Mocha, Playwright, or JUnit (not just Jest / Vitest / Pytest): <code>/3c-test</code> recognises and scaffolds for those too. New at L2: an integration-test mode separate from unit-test scaffolding.</p>
+<p>If your test runner is Mocha, Playwright, or JUnit (not just Jest / Vitest / Pytest): <code>/3c-test</code> recognises those too, and writes in that runner's idiom. It does not generate test bodies from your source — it requires a test that fails on its assertion before the implementation exists, and the review board rejects an assertion that cannot fail.</p>
+<h3 id="narrowed-test-runs-that-never-fake-a-green">Narrowed test runs that never fake a green<a class="headerlink" href="#narrowed-test-runs-that-never-fake-a-green" title="Permanent link">&para;</a></h3>
+<p>Inner TDD iterations don't need the whole suite. <code>/3c-implement</code>'s inner loop asks <code>npx 3c test select</code> which tests the current changeset needs — and you can run it yourself when you're driving the loop by hand. It prints the command(s) worth running and the reason it chose them, because a narrowed run must never be silent about being narrowed. The reason to care is the failure behaviour, not the speed-up:</p>
+<ul>
+<li><strong>Git unreadable? Full suite.</strong> If it cannot read the changeset from git, it escalates to running everything instead of presenting "nothing changed".</li>
+<li><strong>Typo in a flag? An error.</strong> A flag it doesn't recognise is rejected, not silently ignored.</li>
+<li><strong>Unmapped input? Wider, not narrower.</strong> Anything the test map doesn't cover widens the run, and <code>/3c-implement</code>, which drives it, treats "no test files found" as a failure, never a pass.</li>
+</ul>
+<p>The pre-PR gate still runs everything, by rule.</p>
 <h3 id="your-own-local-insights-dashboard">Your own local insights dashboard<a class="headerlink" href="#your-own-local-insights-dashboard" title="Permanent link">&para;</a></h3>
-<p>L2 captures hook telemetry to <code>.3c/events/*.jsonl</code> — local-only, gitignored, never egressed at L2. The <strong>Personal Local Insights Dashboard</strong> renders it as a static HTML file you open in your browser:</p>
+<p>L2 captures hook telemetry to <code>.3c/events/*.jsonl</code> — local-only, gitignored, never egressed at L2. The <strong>Personal Local Insights Dashboard</strong> renders it as a static HTML file: run <code>npx 3c dashboard</code> in your terminal, then open <code>.3c/dashboard.html</code> in your browser:</p>
 <ul>
 <li>Which rules fire most for you (so you know what to internalise).</li>
-<li>How often your commits pass the gate on first try (so you know if coaching mode is still earning its keep).</li>
+<li>How often your commits pass the gate on first try (so you know whether the team's standards are sinking in).</li>
 <li>The post-edit validation deltas trend (so you can see your own AI-assisted-quality curve).</li>
 </ul>
 <p>It's the <em>developer's</em> mirror of what the L3 team-backend dashboard will roll up across the team — but at L2, the data does not leave your machine. Your manager can't see this dashboard. Only you can.</p>
 <h2 id="what-l2-does-not-change-for-you">What L2 does NOT change for you<a class="headerlink" href="#what-l2-does-not-change-for-you" title="Permanent link">&para;</a></h2>
 <p>The framework is designed to disappear when it's not needed. So:</p>
 <ul>
-<li><strong>You can still bypass.</strong> <code>/3c-bypass --reason="hotfix for prod"</code> skips the hook chain for the next commit. Logged in the JSONL events; never silently suppressed.</li>
+<li><strong>You can still bypass.</strong> <code>npx 3c bypass --reason="hotfix for prod"</code> — run in your terminal, not as a slash command — skips the hook chain for the next commit. Logged in the JSONL events; never silently suppressed.</li>
 <li><strong>You can still edit by hand.</strong> The post-edit validator only fires when Claude Code is the editor. Editing a file directly in your IDE bypasses it — same as if the file didn't have rules. (This is intentional; 3C governs AI-assisted change, not human IDE work.)</li>
 <li><strong>Your model interactions don't change.</strong> Whether Claude Code is talking to Sonnet, Opus, or a local model — 3C sits <em>between</em> you and the editor, not between Claude Code and its provider. Your existing model-traffic agreement is undisturbed.</li>
-<li><strong>You don't have to learn a new tool.</strong> The four L1 slash commands plus the L2 additions (<code>/3c-drift</code>, <code>/3c-standards history</code>, <code>/3c-explain</code>, <code>/3c-deploy</code>, <code>/3c-bug</code>, <code>/3c-onboard</code>, <code>/3c-bypass</code>) and the crew orchestrators (<code>/3c-review-board</code>, <code>/3c-project-manager</code>, <code>/3c-programme-manager</code>) all live where every other Claude Code skill does. There's no separate CLI to keep open in another terminal.</li>
+<li><strong>You don't have to learn a new tool.</strong> The four L1 slash commands plus <code>/3c-onboard</code>, <code>/3c-retrospective</code> and the crew orchestrators (<code>/3c-review-board</code>, <code>/3c-project-manager</code>, <code>/3c-programme-manager</code>) all live where every other Claude Code skill does. A few things are <strong>terminal commands</strong> rather than slash commands — <code>npx 3c dashboard</code>, <code>npx 3c bug</code> and <code>npx 3c bypass --reason="…"</code> among them — run them in your shell, not in Claude Code.</li>
 </ul>
 <h2 id="how-to-adopt-l2-if-youre-already-at-l1">How to adopt L2 if you're already at L1<a class="headerlink" href="#how-to-adopt-l2-if-youre-already-at-l1" title="Permanent link">&para;</a></h2>
 <p>Realistically, half a day of focused work for the IC who's championing it:</p>
 <ol>
-<li><code>npm install git+https://github.com/kgn-git/3C#v1.7.3</code> — pin v1.7.</li>
-<li><code>npx 3c setup</code> — one command provisions everything (CLAUDE.md, rules, hooks, the L2 skills, the crew agents <code>product-owner</code>/<code>ux-expert</code>/<code>qa-reviewer</code>, an inert arch-check), then runs <code>3c doctor</code> to verify. Idempotent over an existing L1 tree, which it preserves; the individual <code>init</code> / <code>skills install</code> / <code>agents install</code> / <code>hook install</code> commands still run on their own if you prefer to step through.</li>
-<li><code>npx 3c doctor</code> — re-check anytime; it now also flags a stale <code>3c</code> CLI that's behind your installed skills, so a degraded crew skill tells you to upgrade instead of failing quietly.</li>
-<li>Enable one gate at a time and watch the JSONL events accumulate for a few days before turning on the next. Recommended sequence: <strong>Post-Edit Validation → Coaching Mode → Drift Detector → Coverage Gate → Security Scan Gate</strong>.</li>
-<li>Open <code>.3c/dashboard.html</code> after a week and see your own data.</li>
+<li><code>npm install git+https://github.com/kgn-git/3C.git#&lt;release-sha&gt;</code> — pin the release by its commit sha (listed at github.com/kgn-git/3C/releases); a tag can be moved, a sha cannot.</li>
+<li><code>npx 3c setup --replace</code> — one command provisions everything (CLAUDE.md, rules, hooks, the L2 skills, the crew agents <code>product-owner</code>/<code>ux-expert</code>/<code>qa-reviewer</code>, an inert arch-check), then runs <code>3c doctor</code> to verify. Use <code>--replace</code> when upgrading an existing tree: without it, every file you already have is skipped, so a skill that <em>changed</em> upstream stays stale. It overwrites local edits — commit <code>.claude/</code> first and read <code>git diff</code> after. The individual <code>init</code> / <code>skills install</code> / <code>agents install</code> / <code>hook install</code> commands still run on their own if you prefer to step through.</li>
+<li><code>npx 3c doctor</code> — re-check anytime. It flags both directions of skew: a stale <code>3c</code> CLI that's behind your installed skills (upgrade the CLI), and installed skills that still invoke a <strong>retired</strong> command because your CLI moved ahead of them (re-install with <code>--replace</code>). It also names orphaned skills and agents that no longer ship at all, which only a manual delete can clear.</li>
+<li>Enable one gate at a time and watch the JSONL events accumulate for a few days before turning on the next. Recommended sequence: <strong>Post-Edit Validation → Security Scan Gate</strong>.</li>
+<li>After a week, run <code>npx 3c dashboard</code> and open <code>.3c/dashboard.html</code> to see your own data.</li>
 <li>After shipping a piece of work, optionally capture a retrospective with <code>/3c-retrospective &lt;scope&gt;</code> — a single-project, evidence-based retro that is a suggestion, never a gate.</li>
 </ol>
 <h2 id="see-also">See also<a class="headerlink" href="#see-also" title="Permanent link">&para;</a></h2>
@@ -1047,7 +971,7 @@
 </ul>
 <div class="admonition note learning">
 <p class="admonition-title">What we're learning</p>
-<p>The patterns that work best are coaching mode + drift detector together — coaching catches the per-commit issues with rationale, drift catches the slow regressions that landed before a rule was written. If you're trying this on your own team, <a href="https://github.com/kgn-git/3C/discussions">tell us how it goes</a>.</p>
+<p>The patterns that work best are post-edit validation + the boundary gate together — post-edit catches issues the moment the assistant writes them, and arch-check holds the dependency direction your team declared at the commit gate. If you're trying this on your own team, <a href="https://github.com/kgn-git/3C/discussions">tell us how it goes</a>.</p>
 </div>
 
 

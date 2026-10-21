@@ -16,10 +16,10 @@
         <link rel="prev" href="for-eng-leaders.html">
       
       
-        <link rel="next" href="branding.html">
+        <link rel="next" href="infographic/devdaylife-infographic.html">
       
       
-      <link rel="icon" href="favicon.ico">
+      <link rel="icon" href="assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
     
     
@@ -305,23 +305,6 @@
   
   
     <li class="md-tabs__item">
-      <a href="coaching.html" class="md-tabs__link">
-        
-  
-    
-  
-  Coaching mode
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
       <a href="for-eng-leaders.html" class="md-tabs__link">
         
   
@@ -357,27 +340,10 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="branding.html" class="md-tabs__link">
-        
-  
-    
-  
-  Branding
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
     
     
       <li class="md-tabs__item">
-        <a href="infographic/sdlc-infographic.html" class="md-tabs__link">
+        <a href="infographic/devdaylife-infographic.html" class="md-tabs__link">
           
   
   Infographics
@@ -596,26 +562,6 @@
   
   
     <li class="md-nav__item">
-      <a href="coaching.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Coaching mode
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="for-eng-leaders.html" class="md-nav__link">
         
   
@@ -682,9 +628,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#white-label-deployments" class="md-nav__link">
+  <a href="#moving-to-a-later-release" class="md-nav__link">
     <span class="md-ellipsis">
-      White-label deployments
+      Moving to a later release
     </span>
   </a>
   
@@ -713,26 +659,6 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="branding.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Branding
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     
     
     
@@ -746,10 +672,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -760,33 +686,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             Infographics
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="infographic/sdlc-infographic.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    SDLC pipeline
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
             
               
                 
@@ -882,11 +787,17 @@ account to close and no remote state to purge.</p>
 <p><strong>Installing or upgrading?</strong> Both routes — fresh install and update to latest, with the traps to
 avoid — are on <strong><a href="get-started.html">Get started</a></strong>.</p>
 </blockquote>
-<h2 id="white-label-deployments">White-label deployments<a class="headerlink" href="#white-label-deployments" title="Permanent link">&para;</a></h2>
-<p>A branded deployment (<code>3c init --brand=&lt;name&gt;</code>) re-points to a new upstream framework release with a dedicated command — this is distinct from reinstalling the npm CLI:</p>
-<div class="highlight"><pre><span></span><code>3c<span class="w"> </span>upgrade<span class="w"> </span>--upstream-ref<span class="o">=</span>&lt;ref&gt;<span class="w"> </span>--framework-version<span class="o">=</span>&lt;x.y.z&gt;
+<h2 id="moving-to-a-later-release">Moving to a later release<a class="headerlink" href="#moving-to-a-later-release" title="Permanent link">&para;</a></h2>
+<p>There is no separate upgrade command. The dedicated verb that used to do this is <strong>retired</strong> (#396): it ran <code>git verify-tag</code> against the package directory npm installs <em>without</em> a <code>.git</code>, so for a project-local install git walked up and verified the adopter's own repository rather than the framework's. It refused for every adopter it was meant to serve.</p>
+<p>Re-install the release, then refresh the copied artefacts:</p>
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>git+https://github.com/kgn-git/3C.git#&lt;release-sha&gt;
+<span class="c1"># &lt;release-sha&gt;: the commit sha listed for that version at github.com/kgn-git/3C/releases</span>
+npx<span class="w"> </span>3c<span class="w"> </span>setup<span class="w"> </span>--replace<span class="w">   </span><span class="c1"># backs up every file it overwrites to .3c/backups/</span>
+npx<span class="w"> </span>3c<span class="w"> </span>doctor<span class="w">            </span><span class="c1"># reports any skill still invoking a retired command</span>
 </code></pre></div>
-<p>It preserves your <code>BRAND_*</code> config and refuses unsigned upstream refs.</p>
+<p><strong>The second step is not optional.</strong> Installing the package moves the <em>CLI</em>; it rewrites nothing under <code>.claude/</code>. On its own it moves you to a release where a command may have been <strong>retired</strong> while your installed skills still instruct it — which is precisely what <code>doctor</code> reports on. Your <code>BRAND_*</code> config is preserved across the refresh.</p>
+<p><code>--replace</code> overwrites every skill and agent that still ships upstream. Before it overwrites a file whose content differs, it copies it into <code>.3c/backups/&lt;timestamp&gt;/</code> (git-ignored) and prints where — an edit is one copy away from recovery. Commit <code>.claude/</code> first anyway, and review <code>git diff .claude/</code> afterwards.</p>
+<p><strong>What is and is not verified.</strong> The integrity of what you install rests on the <strong>commit sha</strong> you pin: a tag can be moved to a different commit, a sha cannot, and npm records the resolved sha in your <code>package-lock.json</code>, so <code>npm ci</code> reinstalls exactly that commit. 3C does <strong>not</strong> verify a signature on the package — nothing checks that the commit you pinned is a genuine release other than where you copied the sha from (the release notes on github.com/kgn-git/3C). Signed releases are planned for when 3C is productised.</p>
 <h2 id="uninstall">Uninstall<a class="headerlink" href="#uninstall" title="Permanent link">&para;</a></h2>
 <p>Because 3C is copied into your repo under git, the cleanest removal is to <strong>revert the install</strong>:</p>
 <div class="highlight"><pre><span></span><code>git<span class="w"> </span>revert<span class="w"> </span>&lt;install-commit-or-PR-merge&gt;
@@ -896,7 +807,7 @@ avoid — are on <strong><a href="get-started.html">Get started</a></strong>.</p
 <li><code>.claude/skills/</code>, <code>.claude/agents/</code>, <code>.claude/rules/</code> — the copied workflow skills, crew agents, and rule packs.</li>
 <li>the <strong>PreToolUse</strong> hook entries in <code>.claude/settings.json</code> — the orchestrator + path-guard (<code>git revert</code> removes them if they were committed; otherwise edit the file).</li>
 <li><code>CLAUDE.md</code> (and the companion <code>CLAUDE.local.md.example</code> + the <code>.gitignore</code> lines init added).</li>
-<li>the <code>.3c/</code> directory — architecture and hook config plus all local state: <code>events/*.jsonl</code> telemetry, the local SQLite config, coaching/onboarding data, and <code>dashboard.html</code>.</li>
+<li>the <code>.3c/</code> directory — architecture and hook config plus all local state: <code>events/*.jsonl</code> telemetry, the local SQLite config, onboarding data, and <code>dashboard.html</code>.</li>
 </ul>
 <p>Then remove the global CLI:</p>
 <div class="highlight"><pre><span></span><code>npm<span class="w"> </span>uninstall<span class="w"> </span>-g<span class="w"> </span>@kgn-git/3c

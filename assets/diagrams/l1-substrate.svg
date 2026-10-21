@@ -24,7 +24,7 @@
   <rect x="34" y="250" width="340" height="150" rx="14" fill="#EEF2FF" stroke="#C7D2FE"/>
   <text x="54" y="276" class="s" font-size="15">Starter agents</text>
   <text x="54" y="298" class="d" font-size="11.5">code-reviewer — review subagent</text>
-  <text x="54" y="318" class="d" font-size="11.5">test-author — test-generation subagent</text>
+  <text x="54" y="318" class="d" font-size="11.5">test-author — writes the failing test</text>
   <text x="54" y="342" class="d" font-size="11.5">yours to extend, not a black box</text>
   <text x="54" y="368" class="m" font-size="10.5">templates/agents/{code-reviewer,test-author}.md</text>
 

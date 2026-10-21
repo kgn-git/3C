@@ -19,7 +19,7 @@
         <link rel="next" href="l2-today.html">
       
       
-      <link rel="icon" href="favicon.ico">
+      <link rel="icon" href="assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
     
     
@@ -307,23 +307,6 @@
   
   
     <li class="md-tabs__item">
-      <a href="coaching.html" class="md-tabs__link">
-        
-  
-    
-  
-  Coaching mode
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
       <a href="for-eng-leaders.html" class="md-tabs__link">
         
   
@@ -357,27 +340,10 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="branding.html" class="md-tabs__link">
-        
-  
-    
-  
-  Branding
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
     
     
       <li class="md-tabs__item">
-        <a href="infographic/sdlc-infographic.html" class="md-tabs__link">
+        <a href="infographic/devdaylife-infographic.html" class="md-tabs__link">
           
   
   Infographics
@@ -723,26 +689,6 @@
   
   
     <li class="md-nav__item">
-      <a href="coaching.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Coaching mode
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="for-eng-leaders.html" class="md-nav__link">
         
   
@@ -782,26 +728,6 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="branding.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Branding
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     
     
     
@@ -815,10 +741,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -829,33 +755,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             Infographics
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="infographic/sdlc-infographic.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    SDLC pipeline
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
             
               
                 
@@ -946,10 +851,11 @@
 <h1 id="3c-what-l1-ships-today">3C — what L1 ships today<a class="headerlink" href="#3c-what-l1-ships-today" title="Permanent link">&para;</a></h1>
 <p>L1 is the Standardise level: every team member's AI assistant follows the same conventions, the same workflow skills, and the same pre-commit gates. This is the honest scope page — what you get in week one, and what you deliberately do not.</p>
 <h2 id="install">Install<a class="headerlink" href="#install" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>git+https://github.com/kgn-git/3C#v1.7.3
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>git+https://github.com/kgn-git/3C.git#&lt;release-sha&gt;
+<span class="c1"># &lt;release-sha&gt;: the commit sha listed for that version at github.com/kgn-git/3C/releases</span>
 npx<span class="w"> </span>3c<span class="w"> </span>init
 </code></pre></div>
-<p><code>npx 3c init</code> writes <code>.claude/CLAUDE.md</code> (and offers the optional namespace prompt). Then <code>npx 3c rules install</code>, <code>npx 3c hook install</code>, <code>npx 3c skills install</code>, and <code>npx 3c agents install</code> layer in the standards substrate, the pre-commit gate, the workflow skills, and the starter subagents — each copied into your repo under git. Finish with <code>npx 3c doctor</code> to confirm the install is coherent. The one-shot <code>npx 3c setup</code> runs all of it in a single command — full routes (fresh install and update to latest) are on <strong><a href="get-started.html">Get started</a></strong>.</p>
+<p><code>npx 3c init</code> writes <code>.claude/CLAUDE.md</code>. Then <code>npx 3c rules install</code>, <code>npx 3c hook install</code>, <code>npx 3c skills install</code>, and <code>npx 3c agents install</code> layer in the standards substrate, the pre-commit gate, the workflow skills, and the starter subagents — each copied into your repo under git. Finish with <code>npx 3c doctor</code> to confirm the install is coherent. The one-shot <code>npx 3c setup</code> runs all of it in a single command — full routes (fresh install and update to latest) are on <strong><a href="get-started.html">Get started</a></strong>.</p>
 <div class="admonition note">
 <p class="admonition-title">Rollback</p>
 <p><code>git revert</code> of one PR removes 3C from your project. The <code>.claude/</code> tree is plain version-controlled files — no daemon, no global install, no workstation state to unwind.</p>
@@ -973,17 +879,17 @@ npx<span class="w"> </span>3c<span class="w"> </span>init
 <li><strong>Issue Creation Skill</strong> — <code>/3c-create-issue</code>, structured issue creation.</li>
 <li><strong>Feature Implementation Skill</strong> — <code>/3c-implement</code>, the standardised TDD development workflow.</li>
 <li><strong>Code Review Skill</strong> — <code>/3c-review</code>, the team review checklist with severities.</li>
-<li><strong>Test Generation Skill</strong> — <code>/3c-test</code>, tests following team conventions.</li>
+<li><strong>Test Authoring Skill</strong> — <code>/3c-test</code>, tests written test-first, following team conventions.</li>
 </ul>
 <p><strong>Quality layer</strong></p>
 <ul>
 <li><strong>Pre-Commit Hook Engine</strong> — PreToolUse hooks running lint, typecheck, unit tests, and secret scan under a 10-second budget.</li>
 </ul>
 <h2 id="the-l1-gate-chain-what-runs-before-a-code-review">The L1 gate chain — what runs before a code review<a class="headerlink" href="#the-l1-gate-chain-what-runs-before-a-code-review" title="Permanent link">&para;</a></h2>
-<p>L1 ships with one <strong>PreToolUse hook</strong> registered in <code>.claude-plugin/plugin.json</code> that runs <strong>four checks in sequence</strong> before every AI-assisted commit. The whole chain completes in <code>&lt;10s</code> for repos under 500 files (NFR-PERF-01).</p>
+<p>L1 ships with one <strong>PreToolUse hook</strong> registered in <code>.claude/settings.json</code> by <code>3c hook install</code> that runs <strong>four checks in sequence</strong> before every AI-assisted commit. The whole chain completes in <code>&lt;10s</code> for repos under 500 files (NFR-PERF-01).</p>
 <figure class="fg-figure fg-figure--wide">
 <img src="assets/diagrams/l1-gate-chain.svg" alt="L1 gate chain: one PreToolUse hook firing four sequential checks — lint, types, unit tests, secret scan — under a 10-second budget, blocks the commit on failure">
-<figcaption>L1 runs <strong>four</strong> checks in <strong>one</strong> hook. The chain blocks the commit on failure — there is no override flag at L1; the bypass path is <code>/3c-bypass --reason="…"</code> with the reason logged.</figcaption>
+<figcaption>L1 runs <strong>four</strong> checks in <strong>one</strong> hook. The chain blocks the commit on failure — there is no override flag at L1; the bypass path is <code>3c bypass --reason="…"</code>, run in your terminal, with the reason logged.</figcaption>
 </figure>
 
 <p>The four checks, in order:</p>
@@ -993,17 +899,15 @@ npx<span class="w"> </span>3c<span class="w"> </span>init
 <li><strong>Unit tests</strong> — your project's unit suite runs against the touched modules. The narrowest fast signal — if these fail, nothing downstream runs.</li>
 <li><strong>Secret scan</strong> — every file written or edited by an AI session that 3C governs is scanned for credentials before the write lands. Catches accidental commits of AWS access keys, GitHub tokens, database URLs, etc.</li>
 </ol>
-<p><strong>L1's hook is blocking.</strong> If any of the four checks fails, the commit is refused. This is the conscious L1 trade-off: simple, predictable, no telemetry-driven advisory layer. The escape hatch is <code>/3c-bypass --reason="&lt;one-line&gt;"</code> which logs the bypass and proceeds — but the bypass is recorded, not silent.</p>
+<p><strong>L1's hook is blocking.</strong> If any of the four checks fails, the commit is refused. This is the conscious L1 trade-off: simple, predictable, no telemetry-driven advisory layer. The escape hatch is <code>npx 3c bypass --reason="&lt;one-line&gt;"</code> — a terminal command, not a slash command — which logs the bypass and proceeds — but the bypass is recorded, not silent.</p>
 <h3 id="what-l1-does-not-have">What L1 does NOT have<a class="headerlink" href="#what-l1-does-not-have" title="Permanent link">&para;</a></h3>
 <p>The honesty discipline carries over from the rest of this page. L1 is <strong>not</strong> L2. The following gates ship at <strong>L2</strong> and are not part of the L1 hook chain:</p>
 <ul>
-<li><strong>Post-Edit Validation</strong> — runs the moment Claude Code finishes an edit (<code>&lt;300ms</code>), validating imports / naming / architectural-direction rules before the file is even staged.</li>
-<li><strong>Coverage Gate</strong> — refuses the PR if coverage drops below team thresholds per test type.</li>
+<li><strong>Post-Edit Validation</strong> — runs the moment Claude Code finishes an edit (<code>~300ms</code>), checking the dependency direction you declared in <code>.3c/architecture.yaml</code> before the file is even staged.</li>
 <li><strong>Security Scan Gate</strong> — SAST plus dependency-vulnerability scan with severity-thresholded refusal.</li>
 <li><strong>Architecture Boundary Enforcer</strong> — static analysis of dependency direction per <code>.3c/architecture.yaml</code>.</li>
-<li><strong>Standards Drift Detector</strong> — <code>/3c-drift</code> on-demand audit of the codebase against current rules, with trend over time.</li>
 </ul>
-<p>If you need any of those, the upgrade is one line: <code>npm install git+https://github.com/kgn-git/3C#v1.7.3</code> then <code>npx 3c init</code>. See <a href="l2-today.html">what L2 ships today</a>.</p>
+<p>If you need any of those, upgrade the pin and then refresh the copied artefacts — <code>npx 3c init</code> alone rewrites <code>CLAUDE.md</code> and leaves your skills and agents untouched, so anything that changed upstream stays stale. The full route (including what <code>--replace</code> overwrites) is on <a href="get-started.html">get-started → update to latest</a>. See also <a href="l2-today.html">what L2 ships today</a>.</p>
 <h2 id="the-4-workflow-skills">The 4 workflow skills<a class="headerlink" href="#the-4-workflow-skills" title="Permanent link">&para;</a></h2>
 <p>Each ships as an Agent Skill at <code>.claude/skills/&lt;name&gt;/SKILL.md</code>. Previews:</p>
 <p><div class="highlight"><pre><span></span><code><span class="c1"># /3c-create-issue</span>
@@ -1029,9 +933,11 @@ Explicit-invocation only. Walks an issue from fetch → plan → branch → TDD 
 Read-only: never modifies files, never calls the network, never echoes credentials. Produces a pre-PR findings report.</p>
 <p><div class="highlight"><pre><span></span><code><span class="c1"># /3c-test</span>
 <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test</span>
-<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Generate unit tests following team conventions for</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">Jest, Vitest, or pytest. Detects framework from package config,</span>
-<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">reads conventions from .claude/rules/, respects team patterns.</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Write unit or integration tests test-first, following</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">team conventions, for whatever framework the project uses. Detects</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">the framework from package configuration, reads conventions from</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">.claude/rules/, and writes a test that FAILS before the</span>
+<span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">implementation exists.</span>
 </code></pre></div>
 Never overwrites existing tests; the first write per session asks for confirmation.</p>
 <h2 id="the-pre-commit-hook-engine">The pre-commit hook engine<a class="headerlink" href="#the-pre-commit-hook-engine" title="Permanent link">&para;</a></h2>
@@ -1059,7 +965,7 @@ Never overwrites existing tests; the first write per session asks for confirmati
 <li><strong>The roadmap</strong> — the <a href="maturity-model.html">maturity model</a> shows L1 → L4 as a portfolio plan.</li>
 </ul>
 <h2 id="how-this-is-recorded">How this is recorded<a class="headerlink" href="#how-this-is-recorded" title="Permanent link">&para;</a></h2>
-<p>The architecture behind the hook engine and the white-label model is documented in the project's internal architectural decision records. Every claim here is traceable to a reviewed PR — happy to walk an evaluator through it; <a href="https://github.com/kgn-git/3C/discussions">start a discussion</a> and we'll share what's useful.</p>
+<p>The architecture behind the hook engine and the identity model is documented in the project's internal architectural decision records. Every claim here is traceable to a reviewed PR — happy to walk an evaluator through it; <a href="https://github.com/kgn-git/3C/discussions">start a discussion</a> and we'll share what's useful.</p>
 <div class="admonition note learning">
 <p class="admonition-title">What we're learning</p>
 <p>The honest scope above is what we believe today. If you try L1 and something is missing that you expected, that's useful signal — <a href="https://github.com/kgn-git/3C/discussions">tell us</a>.</p>

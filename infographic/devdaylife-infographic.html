@@ -381,8 +381,8 @@
     max-height: none;
   }
 
-  /* New: coaching segment callout — used in cover page sidebar (#216 AC5) */
-  .coaching-callout {
+  /* New: post-edit advisory callout — used in cover page sidebar (#216 AC5) */
+  .advisory-callout {
     margin: 4mm 0;
     padding: 4mm 5mm;
     background: var(--amber-100);
@@ -394,7 +394,7 @@
     color: var(--slate-900);
     white-space: pre-wrap;
   }
-  .coaching-callout-label {
+  .advisory-callout-label {
     font-family: 'Inter', sans-serif;
     font-size: 9pt;
     font-weight: 600;
@@ -413,7 +413,7 @@
   <div>
     <div class="cover-eyebrow">3C &middot; AI engineering alignment</div>
     <h1 class="cover-title">A day in the life of<br>a developer using <span>3C</span>.</h1>
-    <p class="cover-sub">One engineer's working day inside a team that has adopted <strong>3C &mdash; Claude Code Coach</strong> at <strong>L2 (v1.5.0)</strong>. The slash commands she runs, the gates she passes, the rules that coach her, and the things she never types by hand.</p>
+    <p class="cover-sub">One engineer's working day inside a team that has adopted <strong>3C &mdash; Claude Code Coach</strong> at <strong>L2</strong>. The slash commands she runs, the gates she passes, the boundaries her team declared, and the things she never types by hand.</p>
 
     <div class="cover-highlights">
       <div class="hl">
@@ -422,32 +422,27 @@
       </div>
       <div class="hl">
         <div class="hl-num">Workflow</div>
-        <div class="hl-text">The <code>/3c-*</code> slash commands &mdash; <code>create-issue</code>, <code>implement</code>, <code>review</code>, <code>test</code>, <code>drift</code>, <code>explain</code>, <code>deploy</code>, <code>bug</code>, <code>onboard</code>, <code>bypass</code>. The same lifecycle on every laptop.</div>
+        <div class="hl-text">The <code>/3c-*</code> slash commands &mdash; <code>create-issue</code>, <code>implement</code>, <code>review</code>, <code>test</code>, <code>onboard</code>, <code>retrospective</code>, and the orchestrators <code>project-manager</code>, <code>programme-manager</code> and <code>review-board</code> &mdash; plus the terminal commands <code>3c bug</code> and <code>3c bypass</code>. The same lifecycle on every laptop.</div>
       </div>
       <div class="hl">
         <div class="hl-num">Quality</div>
-        <div class="hl-text">Post-Edit Validation (&lt;300ms) &rarr; Pre-Commit Hook (&lt;10s) &rarr; Coverage Gate + Security Scan Gate (&lt;60s) &rarr; Drift Detector on demand. Every gate fired, every event logged.</div>
+        <div class="hl-text">Post-Edit Validation (~300ms) &rarr; Pre-Commit Hook (&lt;10s) &rarr; Security Scan Gate (&lt;60s). Every gate fired, every event logged.</div>
       </div>
     </div>
 
-    <p class="cover-sub" style="font-size: 11pt; margin-top: 6mm; line-height: 1.5;"><strong>Specialists on call:</strong> the AI dispatches <code>code-reviewer</code>, <code>test-author</code>, <code>architect</code>, and <code>security-reviewer</code> when one perspective isn't enough. <strong>Coaching mode:</strong> gate failures explain <em>why</em>, not just <em>no</em> &mdash; rationale, example, ADR link &mdash; and go terse after two sightings of the same rule. <strong>Honesty discipline:</strong> one <code>git revert</code> removes 3C entirely; no source code leaves the workstation; the framework under-claims by design.</p>
+    <p class="cover-sub" style="font-size: 11pt; margin-top: 6mm; line-height: 1.5;"><strong>Specialists on call:</strong> an eight-agent crew &mdash; <code>architect</code>, <code>code-reviewer</code>, <code>journey-architect</code>, <code>product-owner</code>, <code>qa-reviewer</code>, <code>security-reviewer</code>, <code>test-author</code> and <code>ux-expert</code> &mdash; dispatched when one perspective isn't enough; <code>/3c-review-board</code> runs them in parallel and reconciles one verdict. <strong>The why travels with the rule:</strong> every team rule is plain markdown in <code>.claude/rules/</code>, versioned with the repo &mdash; the OWASP pack cites its source on the rule itself, and the team's own rules accumulate their <em>why</em> through the PRs that change them. <strong>Honesty discipline:</strong> one <code>git revert</code> removes 3C entirely; no source code leaves the workstation; the framework under-claims by design.</p>
 
-    <div class="coaching-callout">
-      <span class="coaching-callout-label">Coaching segment &mdash; what Maya sees when a rule fails</span>
-——— 3c coaching ———
-• import-order
-  Why: imports should be ordered stdlib, third-party, local —
-        fewer merge conflicts in long-lived branches.
-  Do:  import { readFile } from "node:fs/promises";
-  Docs: kgn-git.github.io/3C/
-———————————————
+    <div class="advisory-callout">
+      <span class="advisory-callout-label">Post-edit advisory &mdash; what Maya sees when a write crosses a layer</span>
+3c post-edit validation found 1 issue(s) — please self-correct:
+  - [layer-boundary] src/account/home/orders-panel.tsx:3 —
+    "app" layer must not import from "infra" layer
     </div>
 
-    <p class="cover-sub" style="font-size: 11pt; margin-top: 6mm;"><strong>One brand note:</strong> if Maya's team ran <code>npx 3c init --brand="Acme Standards"</code>, she invokes <code>/acme-standards:review</code> instead of <code>/3c-review</code>. This infographic uses the unbranded <code>/3c-*</code> names throughout for clarity. The upstream code is unchanged; only the slash namespace is brand-local.</p>
   </div>
 
   <div class="cover-meta">
-    <div class="cover-tag">kgn-git/3C &middot; v1.5.0 &middot; 2026&#8209;05&#8209;20 &middot; <a href="./3C-Devdaylife-Infographic.pdf" style="color: var(--indigo-600); text-decoration: none; font-weight: 600;">↓ Download PDF</a></div>
+    <div class="cover-tag">kgn-git/3C &middot; <a href="./3C-Devdaylife-Infographic.pdf" style="color: var(--indigo-600); text-decoration: none; font-weight: 600;">↓ Download PDF</a></div>
     <div class="cover-brand"><strong>3C</strong><br>Claude Code Coach</div>
   </div>
 </section>
@@ -456,7 +451,7 @@
 <section class="page diagram-page">
   <div class="page-header">
     <div class="badge">01 &middot; INTAKE</div>
-    <div class="page-num">1 / 7</div>
+    <div class="page-num">1 / 6</div>
   </div>
   <h2 class="diagram-title">Raw inputs in. Reviewable issue out.</h2>
   <p class="diagram-subtitle">Maya's morning starts with a PM brief, a Slack thread, and a CSV of customer feedback. She invokes <code>/3c-create-issue</code>, iterates on the draft, and ends with one GitHub issue carrying six required fields. The assistant types the issue body; Maya picks intent and judges fit.</p>
@@ -466,7 +461,7 @@
   </div>
 
   <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">The exact prompt Maya sends, and the resulting issue body she reviews:</p>
-  <div class="snippet">/3c-create-issue --repo=acme/web
+  <div class="snippet">/3c-create-issue "account home: surface last 5 orders" --template=feature
 
 We want logged-in users to see their last 5 orders on the
 account home. PM brief attached (link).
@@ -493,7 +488,7 @@ Deps: none new. Source: <a>Slack #cx-feedback…</a></div>
 
   <div class="page-footer">
     <div>Phase 1 &middot; Intake</div>
-    <div>L2 Multi-PM MCP adapter &middot; GitHub default at L1</div>
+    <div>L2 Multi-PM adapter &middot; GitHub default at L1</div>
   </div>
 </section>
 
@@ -501,16 +496,16 @@ Deps: none new. Source: <a>Slack #cx-feedback…</a></div>
 <section class="page diagram-page">
   <div class="page-header">
     <div class="badge">02 &middot; ENRICH</div>
-    <div class="page-num">2 / 7</div>
+    <div class="page-num">2 / 6</div>
   </div>
   <h2 class="diagram-title">Dispatch a specialist before code.</h2>
-  <p class="diagram-subtitle">The issue is structured, not yet technical. Maya dispatches the <code>architect</code> subagent for an approach analysis, looks up the rationale for a pattern she's unsure about with <code>/3c-explain</code>, and re-prompts the architect with the rationale until the analysis fits.</p>
+  <p class="diagram-subtitle">The issue is structured, not yet technical. Maya dispatches the <code>architect</code> subagent for an approach analysis, opens the rule file for a pattern she's unsure about, and re-prompts the architect with the rule's own reasoning until the analysis fits.</p>
 
   <div class="diagram-wrap tall">
-    <img src="diagrams/g-enrichment.svg" alt="Phase 2 enrichment: Maya dispatches architect subagent, reviews its output, runs /3c-explain for an unclear rule, re-dispatches with rationale; architect revises and appends to issue" class="diagram-svg">
+    <img src="diagrams/g-enrichment.svg" alt="Phase 2 enrichment: Maya dispatches architect subagent, reviews its output, opens the rule file for an unclear rule, re-dispatches quoting it; architect revises and appends to issue" class="diagram-svg">
   </div>
 
-  <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">What the architect returns (first pass), and Maya's <code>/3c-explain</code> lookup:</p>
+  <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">What the architect returns (first pass), and the rule file Maya quotes back &mdash; the directive her orders panel would cross:</p>
   <div class="snippet">Affected: src/account/home/, src/api/orders/list.ts
 Approach: paginate via existing /api/orders?limit=5&amp;sort=-date
 Risks: stale-cache on order-creation (TTL 5 min on this route)
@@ -518,12 +513,10 @@ Open questions: empty state copy? confirm with PM
 Complexity: S (≤ 1 day)
 Testing: unit on pagination + integration on empty state</div>
 
-  <div class="snippet">/3c-explain layered-mvc.api-vs-page-boundary
+  <div class="snippet">.claude/rules/patterns/layered-mvc/layer-shape.md
 
-Why: API routes own data shape; page components consume + render.
-     A page importing another page's data layer is a boundary violation.
-Do:  fetch in the page route handler, hand props to component
-Docs: kgn-git.github.io/3C/</div>
+- Dependencies MUST flow downward only: Presentation MAY call Application;
+  Application MAY call Persistence; the reverse MUST NOT hold.</div>
 
   <p style="font-size: 10pt; line-height: 1.55; color: var(--slate-700); margin: 3mm 0 0 0;">
     <strong>What 3C does for you:</strong> dispatches a specialist that reads your standards before answering. <strong>What Maya still owns:</strong> noticing the analysis doesn't fit, and choosing to re-dispatch — the architect re-writes; Maya doesn't. <strong>What 3C does NOT do:</strong> design the solution unilaterally; the architect proposes, you accept or push back.
@@ -531,7 +524,7 @@ Docs: kgn-git.github.io/3C/</div>
 
   <div class="key-message">
     <div class="key-label">Key takeaway</div>
-    <div class="key-text">The architect is cheaper before code than after. One re-dispatch with a rationale beats fifty minutes of refactoring.</div>
+    <div class="key-text">The architect is cheaper before code than after. One re-dispatch quoting the rule beats fifty minutes of refactoring.</div>
   </div>
 
   <div class="page-footer">
@@ -540,81 +533,32 @@ Docs: kgn-git.github.io/3C/</div>
   </div>
 </section>
 
-<!-- PAGE 3 — PHASE 3 BATCH (sub-issue #219) -->
+<!-- PAGE 3 — PHASE 3 SPRINT ASSEMBLY (sub-issue #220; re-pointed to /3c-project-manager by #516) -->
 <section class="page diagram-page">
   <div class="page-header">
-    <div class="badge">03 &middot; BATCH</div>
-    <div class="page-num">3 / 7</div>
+    <div class="badge">03 &middot; ASSEMBLE</div>
+    <div class="page-num">3 / 6</div>
   </div>
-  <h2 class="diagram-title">Eighteen rows in. Twelve issues out.</h2>
-  <p class="diagram-subtitle">After lunch, Maya processes the backlog dump. A batch prompt template runs <code>/3c-create-issue</code> against each row; duplicates collapse, two items kick back for human clarification, and <code>/3c-drift</code> catches any reference to a rule that has since been retired.</p>
+  <h2 class="diagram-title">Five checks, one coherent sprint.</h2>
+  <p class="diagram-subtitle">With the sprint's candidate issues in a milestone, Maya runs <code>/3c-project-manager plan</code> before anyone writes code. It enriches each issue first &mdash; showing her a diff before it rewrites a body &mdash; and then its sprint-readiness gate reads every issue together: five checks for the inconsistencies a single-issue review cannot see, because each issue passes on its own while the set does not.</p>
 
   <div class="diagram-wrap">
-    <img src="diagrams/h-batch.svg" alt="Phase 3 batch funnel: 18 raw items into /3c-create-issue ×18, near-duplicate detection merges 4, 2 flagged for human clarification, /3c-drift check, 12 cleaned set out" class="diagram-svg">
+    <img src="diagrams/i-sprint-assembly.svg" alt="Phase 3 sprint assembly: /3c-project-manager plan reads every issue in the milestone together and runs five coherence checks (contradictions, shared surfaces, dependency order, duplicate or overlapping scope, load-bearing assumptions); one issue is held for a decision, the rest form a coherent sprint" class="diagram-svg">
   </div>
 
-  <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">The batch template Maya wraps each row in, and the clarification comment she sends back to the PM for one of the rejected items:</p>
-  <div class="snippet">/3c-create-issue --batch --repo=acme/web
+  <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">The invocation, and the coherence findings it reports (abridged &mdash; the skill reports them as a table):</p>
+  <div class="snippet">/3c-project-manager plan "Sprint 24"</div>
 
-For each row in customer-feedback.csv:
-  - title from "summary" column
-  - user-story from "asker_voice" column
-  - source-link from row URL
-  - mark as "needs human clarification" if "type" column is empty</div>
-
-  <div class="snippet">Hi Sam — row 12 of cx-feedback says "shipping flow broken on
-mobile" but no device / steps / expected behaviour. Two issues
-about shipping in the same week, possibly the same bug. Could
-you (or a customer) attach a screen recording and confirm?
-— Maya (via /3c-bug template)</div>
+  <div class="snippet">Sprint readiness — coherence, across all 12 issues:
+- Contradictions: #1289 AC2 contradicts #1284 AC3 on empty-state. Decide.
+- Shared surfaces: #1287 + #1291 both edit src/account/home/. Serialise.
+- Dependency order: #1292 needs a util that #1295 refactors. Sequence.
+- Duplicate or overlapping scope: #1288 and #1293 both add pagination. Merge.
+- Load-bearing assumptions: #1290 assumes /api/orders sorts by date;
+  it does not. Fix the issue body before it is built.</div>
 
   <p style="font-size: 10pt; line-height: 1.55; color: var(--slate-700); margin: 3mm 0 0 0;">
-    <strong>What 3C does for you:</strong> consistent shape across eighteen issues + dedup + drift check, in one pass. <strong>What Maya still owns:</strong> reading the two flagged items and deciding "ask the human" vs "drop it". <strong>What 3C does NOT do:</strong> invent acceptance criteria for unclear rows; the human-clarification branch is the framework saying "I cannot make this concrete; you decide."
-  </p>
-
-  <div class="key-message">
-    <div class="key-label">Key takeaway</div>
-    <div class="key-text">The funnel shape is the point: 18 in, 12 out, 4 merged, 2 deferred. The framework loses items on purpose, not by accident.</div>
-  </div>
-
-  <div class="page-footer">
-    <div>Phase 3 &middot; Batch refinement</div>
-    <div>L2 Standards Drift Detector (#10)</div>
-  </div>
-</section>
-
-<!-- PAGE 4 — PHASE 4 SPRINT ASSEMBLY (sub-issue #220) -->
-<section class="page diagram-page">
-  <div class="page-header">
-    <div class="badge">04 &middot; ASSEMBLE</div>
-    <div class="page-num">4 / 7</div>
-  </div>
-  <h2 class="diagram-title">Five scans, one tightened sprint.</h2>
-  <p class="diagram-subtitle">With 12 clean issues in hand, Maya runs <code>/3c-review</code> over the sprint as a whole — five checks that catch the inconsistencies a single-issue review misses. <code>/3c-standards history</code> feeds every check so the assertions match the rules that existed on the relevant date.</p>
-
-  <div class="diagram-wrap">
-    <img src="diagrams/i-sprint-assembly.svg" alt="Phase 4 sprint assembly: /3c-review runs 5 scans (overlap, AC contradiction, missing deps, coverage gap, doc uniformity), fed by /3c-standards history; tightened sprint with one issue punted to ADR" class="diagram-svg">
-  </div>
-
-  <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">The <code>/3c-review</code> invocation adapted for sprint scope, and the resulting summary of findings:</p>
-  <div class="snippet">/3c-review --scope=sprint --issues=#1284..#1295
-
-For the 12 issues in the candidate sprint:
-  1. flag overlapping files across issues
-  2. flag contradictory ACs across issues
-  3. flag deps that aren't in scope
-  4. flag modules changed without test issues
-  5. flag issue-body shape uniformity</div>
-
-  <div class="snippet">Findings:
-- #1287 + #1291 both touch src/account/home/. Merge order matters.
-- #1289 AC2 contradicts #1284 AC3 on empty-state. Decide.
-- #1292 depends on a util that #1295 will refactor. Sequence.
-- #1290 changes /api/orders/ but no test-issue. PUNT to needs-ADR.
-- 11/12 issue bodies match shape. #1293 missing out-of-scope.</div>
-
-  <p style="font-size: 10pt; line-height: 1.55; color: var(--slate-700); margin: 3mm 0 0 0;">
-    <strong>What 3C does for you:</strong> five inconsistency checks across the whole sprint, dated against the rules that actually applied. <strong>What Maya still owns:</strong> choosing whether to merge, sequence, or punt each finding — the skill flags, she decides. <strong>What 3C does NOT do:</strong> reject the sprint; one issue gets punted for ADR-level discussion, the rest proceed.
+    <strong>What 3C does for you:</strong> five cross-issue checks before the first branch exists, each finding naming the issues it concerns. <strong>What Maya still owns:</strong> choosing whether to merge, sequence, rewrite or hold each finding &mdash; the skill reports and stops, she decides. <strong>What 3C does NOT do:</strong> reorder or rewrite the sprint for her; an unresolved finding stops the plan until a human resolves or defers it.
   </p>
 
   <div class="key-message">
@@ -623,37 +567,33 @@ For the 12 issues in the candidate sprint:
   </div>
 
   <div class="page-footer">
-    <div>Phase 4 &middot; Sprint assembly</div>
-    <div>L2 Standards Version History (#21) &middot; Drift (#10)</div>
+    <div>Phase 3 &middot; Sprint assembly</div>
+    <div>L2 /3c-project-manager &middot; sprint readiness</div>
   </div>
 </section>
 
-<!-- PAGE 5 — PHASE 5 IMPLEMENT (sub-issue #221) -->
+<!-- PAGE 4 — PHASE 4 IMPLEMENT (sub-issue #221) -->
 <section class="page diagram-page">
   <div class="page-header">
-    <div class="badge">05 &middot; IMPLEMENT</div>
-    <div class="page-num">5 / 7</div>
+    <div class="badge">04 &middot; IMPLEMENT</div>
+    <div class="page-num">4 / 6</div>
   </div>
-  <h2 class="diagram-title">One issue, six gates, zero hand-edits.</h2>
-  <p class="diagram-subtitle">Maya picks issue #1284 and runs <code>/3c-implement</code>. From branch creation through merge, every keystroke that changes code, tests, or the PR description is typed by Claude Code or by a <code>/3c-*</code> skill. Maya prompts, judges, and approves.</p>
+  <h2 class="diagram-title">One issue, every gate, zero hand-edits.</h2>
+  <p class="diagram-subtitle">Maya picks issue #1284 and runs <code>/3c-implement 1284</code>. From branch creation through merge, every keystroke that changes code, tests, or the PR description is typed by Claude Code or by a <code>/3c-*</code> skill. Maya prompts, judges, and approves.</p>
 
   <div class="diagram-wrap xl">
-    <img src="diagrams/j-implement.svg" alt="Phase 5 implement loop: state machine from issue selection through /3c-implement, branch, /3c-test scaffold, Claude Code implements, Post-Edit Validator, Pre-Commit, Coverage + Security Scan Gate, optional security-reviewer, code-reviewer findings, merge" class="diagram-svg">
+    <img src="diagrams/j-implement.svg" alt="Phase 4 implement loop: state machine from issue selection through /3c-implement, branch, /3c-test writes a failing test, Claude Code implements, Post-Edit Validator, Pre-Commit, Security Scan Gate, optional security-reviewer, code-reviewer findings, merge" class="diagram-svg">
   </div>
 
-  <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">The coaching segment Maya sees when the Pre-Commit hook flags her import order, and the JSONL event the hook telemetry records:</p>
-  <div class="snippet">——— 3c coaching ———
-• import-order
-  Why: imports should be ordered stdlib, third-party, local —
-        fewer merge conflicts in long-lived branches.
-  Do:  import { readFile } from "node:fs/promises";
-  Docs: kgn-git.github.io/3C/
-———————————————</div>
+  <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">Claude Code reaches straight into the infra client from the orders panel. The post-edit hook checks that write against the layers her team declared in <code>.3c/architecture.yaml</code> and names the direction it crossed; the <code>arch-check</code> gate records the same finding into the run history her dashboard reads:</p>
+  <div class="snippet">3c post-edit validation found 1 issue(s) — please self-correct:
+  - [layer-boundary] src/account/home/orders-panel.tsx:3 —
+    "app" layer must not import from "infra" layer</div>
 
-  <div class="snippet">{"ts":"2026-05-20T14:32:11Z","gate":"pre-commit","rule":"import-order","outcome":"fail","duration_ms":487,"file":"src/account/home/orders-panel.tsx","user":"maya","session":"j-1284-2"}</div>
+  <div class="snippet">{"schema_version":1,"hook_id":"architecture-boundary","trigger_event":"PreToolUse","summary":"arch-check","exit_code":2,"failure_category":"validation","duration_ms":118,"network_used":false,"self_correction_count":0,"actor_token":"a3f9c1","timestamp":"2026-05-20T14:32:11Z"}</div>
 
   <p style="font-size: 10pt; line-height: 1.55; color: var(--slate-700); margin: 3mm 0 0 0;">
-    <strong>What 3C does for you:</strong> six gates fire automatically; failures explain why; every event is recorded. <strong>What Maya still owns:</strong> reading the coaching segment, deciding "rule is right, regenerate" vs "rule is wrong, push to standards-history". <strong>What 3C does NOT do:</strong> fix the code for her unbidden — every revision happens because Maya re-prompted Claude Code with the diagnosis.
+    <strong>What 3C does for you:</strong> the gates fire automatically; every finding names the rule, the file, and the line it fired on; every event is recorded. <strong>What Maya still owns:</strong> reading the advisory and deciding &mdash; "the boundary is right, route this through the domain layer" vs "the boundary is wrong, change the rule through a PR". <strong>What 3C does NOT do:</strong> fix the code for her unbidden &mdash; every revision happens because Maya re-prompted Claude Code with the diagnosis.
   </p>
 
   <div class="key-message">
@@ -662,61 +602,63 @@ For the 12 issues in the candidate sprint:
   </div>
 
   <div class="page-footer">
-    <div>Phase 5 &middot; Implementation loop</div>
-    <div>L2 Post-Edit (#16) &middot; Coverage (#17) &middot; Security Scan (#18) &middot; Coaching (#23)</div>
+    <div>Phase 4 &middot; Implementation loop</div>
+    <div>L2 Post-Edit (#16) &middot; Security Scan (#18)</div>
   </div>
 </section>
 
-<!-- PAGE 6 — PHASE 6 COMPOUNDING (sub-issue #222) -->
+<!-- PAGE 5 — PHASE 5 COMPOUNDING (sub-issue #222) -->
 <section class="page diagram-page">
   <div class="page-header">
-    <div class="badge">06 &middot; COMPOUND</div>
-    <div class="page-num">6 / 7</div>
+    <div class="badge">05 &middot; COMPOUND</div>
+    <div class="page-num">5 / 6</div>
   </div>
   <h2 class="diagram-title">Compounding is the product.</h2>
-  <p class="diagram-subtitle">After issue #1284 ships, Maya runs issues #1285, #1286, #1287 through the same loop. Coaching goes terse on rules she has seen twice. New prompts reference shipped PRs as patterns, holding the 150-instruction budget. The hot-fix path and the tricky-failure path both route through the assistant — never around it.</p>
+  <p class="diagram-subtitle">After issue #1284 ships, Maya runs issues #1285, #1286, #1287 through the same loop. Boundary findings fall away as the declared architecture becomes second nature. New prompts reference shipped PRs as patterns, holding the 150-instruction budget. The hot-fix path and the tricky-failure path both route through the assistant — never around it.</p>
 
   <div class="diagram-wrap">
-    <img src="diagrams/k-sprint-throughput.svg" alt="Phase 6 compounding: issues 2-4 through /3c-implement, three side-loops (verbose→terse coaching, pattern-reuse, subagent dispatch), plus hot-fix branch (/3c-bypass + JSONL event) and tricky-failure branch (Maya re-prompts; Claude Code revises)" class="diagram-svg">
+    <img src="diagrams/k-sprint-throughput.svg" alt="Phase 5 compounding: issues 2-4 through /3c-implement, three side-loops (post-edit boundary advisory then a clean run, pattern-reuse, subagent dispatch), plus hot-fix branch (3c bypass + JSONL event) and tricky-failure branch (Maya re-prompts; Claude Code revises)" class="diagram-svg">
   </div>
 
-  <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">The terse coaching segment Maya sees on a third sighting of <code>import-order</code>, and the JSONL bypass event when she ships a hot-fix:</p>
-  <div class="snippet">——— 3c coaching ———
-• import-order
-  Why: imports should be ordered stdlib, third-party, local.
-———————————————</div>
+  <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">The stanza of <code>.3c/architecture.yaml</code> the post-edit hook checked #1285 against, and the JSONL bypass event when she ships a hot-fix:</p>
+  <div class="snippet">layers:
+  app:    ["src/account/**"]
+  domain: ["src/domain/**"]
+  infra:  ["src/infra/**"]
+deny:
+  - ["app", "infra"]   # app must not import from infra</div>
 
-  <div class="snippet">{"ts":"2026-05-20T16:14:02Z","gate":"pre-commit","outcome":"bypass","reason":"prod hotfix #INC-417 — null-deref on /api/orders, fix in 3 lines","user":"maya","session":"hotfix-INC-417"}</div>
+  <div class="snippet">{"schema_version":1,"hook_id":"pre-commit","trigger_event":"PreToolUse","summary":"bypass: prod hotfix #INC-417","exit_code":0,"failure_category":"none","duration_ms":94,"network_used":false,"self_correction_count":0,"actor_token":"a3f9c1","timestamp":"2026-05-20T16:14:02Z"}</div>
 
   <p style="font-size: 10pt; line-height: 1.55; color: var(--slate-700); margin: 3mm 0 0 0;">
-    <strong>What 3C does for you:</strong> coaching gets quieter, prompts get shorter, gates fire the same. Velocity compounds because the team's standards are doing the standardising, not the developers. <strong>What Maya still owns:</strong> the decision to bypass, the rationale she writes, the follow-up issue she files after shipping. <strong>What 3C does NOT do:</strong> erase the bypass — every event is permanent and reviewable.
+    <strong>What 3C does for you:</strong> the boundary check runs on every write, prompts get shorter, gates fire the same. Velocity compounds because the team's standards are doing the standardising, not the developers. <strong>What Maya still owns:</strong> the decision to bypass, the rationale she writes, the follow-up issue she files after shipping. <strong>What 3C does NOT do:</strong> erase the bypass — every event is permanent and reviewable.
   </p>
 
   <div class="key-message">
     <div class="key-label">Key takeaway</div>
-    <div class="key-text">The framework gets out of your way as you internalise it. The first sighting is mentorship; the third is just a bullet.</div>
+    <div class="key-text">The framework gets out of your way as you internalise it. By issue four, the boundary check has nothing left to say.</div>
   </div>
 
   <div class="page-footer">
-    <div>Phase 6 &middot; Compounding</div>
-    <div>L2 Hook Telemetry (#20) &middot; Coaching (#23)</div>
+    <div>Phase 5 &middot; Compounding</div>
+    <div>L2 Hook Telemetry (#20)</div>
   </div>
 </section>
 
-<!-- PAGE 7 — PHASE 7 UAT (sub-issue #223) -->
+<!-- PAGE 6 — PHASE 6 UAT (sub-issue #223) -->
 <section class="page diagram-page">
   <div class="page-header">
-    <div class="badge">07 &middot; UAT</div>
-    <div class="page-num">7 / 7</div>
+    <div class="badge">06 &middot; UAT</div>
+    <div class="page-num">6 / 6</div>
   </div>
   <h2 class="diagram-title">Walk the path. File the gap.</h2>
-  <p class="diagram-subtitle">For #1287 (a UI change), Maya scaffolds an integration checklist via <code>/3c-test --mode=integration</code>, deploys to staging through <code>/3c-deploy --env=staging</code>, walks the checklist by hand, and uses <code>/3c-bug</code> to file the one regression she found — appended directly to the original issue with full environment capture.</p>
+  <p class="diagram-subtitle">For #1287 (a UI change), <code>/3c-test</code> sets out what the integration test must assert, and the <code>test-author</code> subagent writes it, test-first. Maya deploys to staging with the team's own deploy script, walks the acceptance criteria by hand, and uses <code>3c bug</code> to file the one regression she found as a structured issue, with the environment captured and secrets scrubbed.</p>
 
   <div class="diagram-wrap tall">
-    <img src="diagrams/l-uat.svg" alt="Phase 7 UAT sequence: Maya invokes /3c-test --mode=integration, /3c-deploy --env=staging, walks UAT checklist manually, /3c-bug captures environment, structured report appended to issue" class="diagram-svg">
+    <img src="diagrams/l-uat.svg" alt="Phase 6 UAT sequence: /3c-test sets out the integration test and test-author writes it, Maya runs the team's deploy script against staging, walks the acceptance criteria manually, 3c bug captures environment and files a structured bug issue" class="diagram-svg">
   </div>
 
-  <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">The header of the <code>/3c-bug</code> report appended to issue #1287 (env values scrubbed):</p>
+  <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">The header of the issue <code>3c bug</code> files for the #1287 regression (env values scrubbed):</p>
   <div class="snippet">Bug report — #1287 follow-up
 OS: macOS 14.5 (Darwin 23.5.0)
 Runtime: Node 20.12.2, npm 10.5.0
@@ -727,7 +669,7 @@ Repro: navigate /account, log out, log in as user with 0 orders
 Expected: empty-state copy. Actual: orders panel renders [object Object].</div>
 
   <p style="font-size: 10pt; line-height: 1.55; color: var(--slate-700); margin: 3mm 0 0 0;">
-    <strong>What 3C does for you:</strong> the integration checklist is generated, the environment is captured, the bug report is structured — no "works on my machine" archaeology. <strong>What Maya still owns:</strong> walking the checklist with human eyes; only humans notice that empty-state looks broken. <strong>What 3C does NOT do:</strong> deploy to production for her — production deploys require <code>--yes</code> on the deploy command.
+    <strong>What 3C does for you:</strong> the integration test is specified against the change's behaviour rather than from memory, the environment is captured, the bug report is structured — no "works on my machine" archaeology. <strong>What Maya still owns:</strong> walking the acceptance criteria with human eyes; only humans notice that empty-state looks broken. <strong>What 3C does NOT do:</strong> deploy to production for her — production still goes through the team's own approval.
   </p>
 
   <div class="key-message">
@@ -736,8 +678,8 @@ Expected: empty-state copy. Actual: orders panel renders [object Object].</div>
   </div>
 
   <div class="page-footer">
-    <div>Phase 7 &middot; Manual UAT</div>
-    <div>L2 Deployment Skill (#12) &middot; Bug Report (#14)</div>
+    <div>Phase 6 &middot; Manual UAT</div>
+    <div>Bug Report (#14)</div>
   </div>
 </section>
 
@@ -748,14 +690,14 @@ Expected: empty-state copy. Actual: orders panel renders [object Object].</div>
     <div class="page-num">&nbsp;</div>
   </div>
   <h2 class="diagram-title">Your data. Your machine. Your reflection.</h2>
-  <p class="diagram-subtitle">Maya opens <code>.3c/dashboard.html</code> in her browser. Three panels: which rules fired most today, what proportion of her commits passed the gate on first try, and the trend of post-edit findings across the sprint. <strong>Local-only. Gitignored. Never egressed at L2. Her manager cannot see this.</strong></p>
+  <p class="diagram-subtitle">Maya runs <code>npx 3c dashboard</code> in her terminal, then opens <code>.3c/dashboard.html</code> in her browser. Three panels: which gates fired most today, what proportion of her commits passed the gate on first try, and the trend of post-edit findings across the sprint. <strong>Local-only. Gitignored. Never egressed at L2. Her manager cannot see this.</strong></p>
 
   <div class="diagram-wrap">
-    <img src="diagrams/m-dashboard.svg" alt="End-of-day dashboard mockup: .3c/events/*.jsonl feeds .3c/dashboard.html with three panels (rules fired today, first-try pass rate, post-edit deltas trend); local-only, gitignored, never egressed at L2" class="diagram-svg">
+    <img src="diagrams/m-dashboard.svg" alt="End-of-day dashboard mockup: .3c/telemetry/hooks/*.jsonl feeds .3c/dashboard.html with three panels (gates fired today, first-try pass rate, post-edit deltas trend); local-only, gitignored, never egressed at L2" class="diagram-svg">
   </div>
 
   <p style="font-size: 10pt; line-height: 1.55; color: var(--slate-700); margin: 3mm 0 0 0;">
-    <strong>What 3C does for you:</strong> rolls up the day's local JSONL events into three signals you can act on tomorrow. <strong>What Maya still owns:</strong> what to do about a 78% pass rate — push it higher with practice, or write a new rationale so coaching helps her? <strong>What 3C does NOT do at L2:</strong> share this with anyone. Not the team. Not the manager. The L3 team-observability dashboard is a different surface, opt-in per team, on a self-hostable backend — not a stealth pipe from this view.
+    <strong>What 3C does for you:</strong> rolls up the day's local JSONL events into three signals you can act on tomorrow. <strong>What Maya still owns:</strong> what to do about a 78% pass rate — push it higher with practice, or sharpen the rule file itself so the next refusal explains itself properly? <strong>What 3C does NOT do at L2:</strong> share this with anyone. Not the team. Not the manager. The L3 team-observability dashboard is a different surface, opt-in per team, on a self-hostable backend — not a stealth pipe from this view.
   </p>
 
   <div class="key-message">
@@ -775,7 +717,7 @@ Expected: empty-state copy. Actual: orders panel renders [object Object].</div>
     <div class="closing-head">Common mistakes &middot; pinnable checklist</div>
     <h2 class="closing-title">The assistant types.<br>You instruct.</h2>
     <div class="closing-body">
-      <p>Six wrong turns most teams make in their first week with 3C, and the one rule that summarises the rest. Print this page, pin it next to your laptop &mdash; the framework gets quieter as the team internalises it.</p>
+      <p>Six wrong turns most teams make in their first week with 3C, and the one rule that summarises the rest. Print this page, pin it next to your laptop &mdash; week one is where these wrong turns cost the most.</p>
     </div>
 
     <div class="takeaway-grid">
@@ -792,8 +734,8 @@ Expected: empty-state copy. Actual: orders panel renders [object Object].</div>
         <div class="takeaway-text">The JSONL event is permanent and reviewable. <strong>"forgot why"</strong> in the reason field is how teams lose trust in the bypass mechanism.</div>
       </div>
       <div class="takeaway mistake">
-        <div class="takeaway-num mistake">04 &middot; Treating coaching as noise</div>
-        <div class="takeaway-text">The second sighting goes terse on its own. <strong>Read it the first time</strong> and the framework gets quieter on its own.</div>
+        <div class="takeaway-num mistake">04 &middot; Treating boundary findings as noise</div>
+        <div class="takeaway-text">A post-edit finding is the architecture <em>your team declared</em>, not a style opinion. <strong>Fix the direction</strong> &mdash; or change <code>.3c/architecture.yaml</code> on purpose.</div>
       </div>
       <div class="takeaway mistake">
         <div class="takeaway-num mistake">05 &middot; Implement on un-enriched issues</div>
@@ -806,11 +748,12 @@ Expected: empty-state copy. Actual: orders panel renders [object Object].</div>
 
       <div class="checklist">
         <strong>Pinnable checklist</strong> &middot; pin next to your laptop<br><br>
-        <strong>Slash commands by phase:</strong> <code>/3c-create-issue</code> &middot; <code>/3c-explain</code> &middot; <code>/3c-drift</code> &middot; <code>/3c-review</code> &middot; <code>/3c-standards history</code> &middot; <code>/3c-implement</code> &middot; <code>/3c-test [--mode=integration]</code> &middot; <code>/3c-deploy --env=&lt;…&gt;</code> &middot; <code>/3c-bug</code> &middot; <code>/3c-bypass --reason="..."</code><br><br>
-        <strong>Subagents &mdash; when to dispatch:</strong> <code>architect</code> for design calls &middot; <code>security-reviewer</code> for auth/crypto/input-handling &middot; <code>code-reviewer</code> pre-PR &middot; <code>test-author</code> for scaffolding inside <code>/3c-test</code><br><br>
-        <strong>Gate chain (firing order):</strong> Post-Edit Validation (&lt;300ms) &rarr; Pre-Commit (&lt;10s) &rarr; Coverage + Security Scan (&lt;60s) &rarr; Drift on demand<br><br>
-        <strong>Bypass syntax:</strong> <code>/3c-bypass --reason="&lt;one-line&gt;"</code> &mdash; logged, never silent<br><br>
-        <strong>File paths to remember:</strong> <code>CLAUDE.md</code> (root, &le;150 instructions) &middot; <code>.claude/rules/&lt;rule&gt;.rationale.yaml</code> &middot; <code>.3c/coaching.yaml</code> &middot; <code>.3c/coaching/&lt;user&gt;.yaml</code> &middot; <code>.3c/events/*.jsonl</code> &middot; <code>.3c/dashboard.html</code><br><br>
+        <strong>Slash commands by phase:</strong> <code>/3c-create-issue</code> &middot; <code>/3c-project-manager</code> &middot; <code>/3c-implement</code> &middot; <code>/3c-test</code> &middot; <code>/3c-review</code> before the PR<br><br>
+        <strong>Terminal commands</strong> (run in your shell, not as slash commands): <code>npx 3c bug --summary "…" --repro "…" --expected "…" --actual "…"</code> &middot; <code>npx 3c bypass --reason="..."</code> &middot; <code>npx 3c dashboard</code> (after <code>npm install</code> + <code>npx 3c setup</code>)<br><br>
+        <strong>Subagents &mdash; when to dispatch:</strong> <code>architect</code> for design calls &middot; <code>security-reviewer</code> for auth/crypto/input-handling &middot; <code>code-reviewer</code> pre-PR &middot; <code>test-author</code> to write the failing test <code>/3c-test</code> specifies<br><br>
+        <strong>Gate chain (firing order):</strong> Post-Edit Validation (~300ms) &rarr; Pre-Commit (&lt;10s) &rarr; Security Scan (&lt;60s)<br><br>
+        <strong>Bypass syntax (terminal):</strong> <code>npx 3c bypass --reason="&lt;one-line&gt;"</code> &mdash; logged, never silent<br><br>
+        <strong>File paths to remember:</strong> <code>.claude/CLAUDE.md</code> (&le;150 instructions) &middot; <code>.claude/rules/&lt;rule&gt;.md</code> &middot; <code>.3c/architecture.yaml</code> &middot; <code>.3c/telemetry/hooks/*.jsonl</code> &middot; <code>.3c/dashboard.html</code><br><br>
         <strong>The one rule that summarises the rest: the assistant types, you instruct.</strong>
       </div>
     </div>

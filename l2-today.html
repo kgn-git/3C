@@ -19,7 +19,7 @@
         <link rel="next" href="for-developers.html">
       
       
-      <link rel="icon" href="favicon.ico">
+      <link rel="icon" href="assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.50">
     
     
@@ -307,23 +307,6 @@
   
   
     <li class="md-tabs__item">
-      <a href="coaching.html" class="md-tabs__link">
-        
-  
-    
-  
-  Coaching mode
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
       <a href="for-eng-leaders.html" class="md-tabs__link">
         
   
@@ -357,27 +340,10 @@
   
   
   
-    <li class="md-tabs__item">
-      <a href="branding.html" class="md-tabs__link">
-        
-  
-    
-  
-  Branding
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
     
     
       <li class="md-tabs__item">
-        <a href="infographic/sdlc-infographic.html" class="md-tabs__link">
+        <a href="infographic/devdaylife-infographic.html" class="md-tabs__link">
           
   
   Infographics
@@ -611,9 +577,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#whats-new-in-l2-the-21-features" class="md-nav__link">
+  <a href="#whats-new-in-l2-the-14-features" class="md-nav__link">
     <span class="md-ellipsis">
-      What's new in L2 — the 21 features
+      What's new in L2 — the 14 features
     </span>
   </a>
   
@@ -699,26 +665,6 @@
   
   
     <li class="md-nav__item">
-      <a href="coaching.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Coaching mode
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="for-eng-leaders.html" class="md-nav__link">
         
   
@@ -758,26 +704,6 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="branding.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Branding
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     
     
     
@@ -791,10 +717,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
-          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -805,33 +731,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_11">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             Infographics
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="infographic/sdlc-infographic.html" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    SDLC pipeline
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
             
               
                 
@@ -923,12 +828,13 @@
 <p>L2 is the Automate level: every L1 standard your team agreed to is now enforced by a hook before code review, every time. L1 made conventions explicit. L2 makes them stop being aspirational.</p>
 <p>This is the honest scope page for L2 — what you get when you upgrade from L1, and what L2 still deliberately does not do.</p>
 <h2 id="install">Install<a class="headerlink" href="#install" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>git+https://github.com/kgn-git/3C#v1.7.3
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>git+https://github.com/kgn-git/3C.git#&lt;release-sha&gt;
+<span class="c1"># &lt;release-sha&gt;: the commit sha listed for that version at github.com/kgn-git/3C/releases</span>
 npx<span class="w"> </span>3c<span class="w"> </span>setup<span class="w">            </span><span class="c1"># one shot: CLAUDE.md + rules + hooks + skills + agents + arch-check, then doctor</span>
 </code></pre></div>
-<p><code>3c setup</code> is a thin sequencer over the individual commands (<code>init</code>, <code>rules install</code>, <code>hook install</code>, <code>skills install</code>, <code>agents install</code>, <code>arch-check init</code>, <code>doctor</code>) — each still runs on its own if you'd rather step through it. Everything lands in your repo under git. The current release is <strong>v1.7.3</strong> on the same <code>kgn-git/3C</code> repo as L1; existing L1/L2 deployments upgrade in place — re-run <code>3c setup</code>, which is idempotent and preserves your <code>.claude/</code> tree:</p>
-<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>git+https://github.com/kgn-git/3C#v1.7.3
-npx<span class="w"> </span>3c<span class="w"> </span>setup<span class="w">            </span><span class="c1"># idempotent — already-installed steps are skipped with a notice</span>
+<p><code>3c setup</code> is a thin sequencer over the individual commands (<code>init</code>, <code>rules install</code>, <code>hook install</code>, <code>skills install</code>, <code>agents install</code>, <code>arch-check init</code>, <code>doctor</code>) — each still runs on its own if you'd rather step through it. Everything lands in your repo under git. The current release is <strong>v2.0.0</strong> on the same <code>kgn-git/3C</code> repo as L1; existing L1/L2 deployments upgrade in place — re-run <code>3c setup --replace</code>. Plain <code>3c setup</code> adds only what is missing and skips every file that already exists, so a skill whose contents changed upstream would stay stale; <code>--replace</code> overwrites them, so commit <code>.claude/</code> first and review the diff afterwards:</p>
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>git+https://github.com/kgn-git/3C.git#&lt;release-sha&gt;
+npx<span class="w"> </span>3c<span class="w"> </span>setup<span class="w"> </span>--replace<span class="w">  </span><span class="c1"># refreshes CHANGED skills/agents; without --replace they are skipped</span>
 </code></pre></div>
 <p>Installing for the first time, or moving an existing project to the current release? Both routes —
 with the traps to avoid — are on <strong><a href="get-started.html">Get started</a></strong>.</p>
@@ -936,60 +842,52 @@ with the traps to avoid — are on <strong><a href="get-started.html">Get starte
 <p class="admonition-title">Reversal posture is unchanged from L1</p>
 <p><code>git revert</code> of one PR still removes 3C from your project. L2 adds local JSONL telemetry events to <code>.3c/events/</code> and a SQLite config file — both gitignored, both reversible by removing the directory. No daemon, no global install, no workstation state to unwind.</p>
 </div>
-<h2 id="whats-new-in-l2-the-21-features">What's new in L2 — the 21 features<a class="headerlink" href="#whats-new-in-l2-the-21-features" title="Permanent link">&para;</a></h2>
-<p>L2 brings <strong>21 features</strong> layered on top of L1's 9. Grouped by the layer they extend:</p>
+<h2 id="whats-new-in-l2-the-14-features">What's new in L2 — the 14 features<a class="headerlink" href="#whats-new-in-l2-the-14-features" title="Permanent link">&para;</a></h2>
+<p>L2 brings <strong>14 features</strong> layered on top of L1's 9. Grouped by the layer they extend:</p>
 <figure class="fg-figure fg-figure--wide">
-<img src="assets/diagrams/l2-substrate.svg" alt="What L2 adds to L1: extended rule families, automated quality gates, hook telemetry, coaching mode, and the workflow-skill expansion">
+<img src="assets/diagrams/l2-substrate.svg" alt="What L2 adds to L1, in four quadrants: extended rule families, automated quality gates with hook telemetry, the workflow-skill expansion, and the DX &amp; observability additions up to the personal local insights dashboard — a surface that has since grown into an eight-agent review crew">
 <figcaption>Everything L2 adds is layered on the L1 substrate — same <code>.claude/</code> tree, same <code>git revert</code> reversal, more capability per commit.</figcaption>
 </figure>
 
-<p><strong>Standards layer — five additions</strong></p>
+<p><strong>Standards layer — three additions</strong></p>
 <ul>
-<li><strong>Standards Drift Detector</strong> (<code>/3c-drift</code>) — audits the codebase against the rules you've defined and reports trend over time. Catches regressions that the pre-commit gate didn't see because the rule landed <em>after</em> the code.</li>
 <li><strong>Dynamic Context Loader</strong> — loads only the rules relevant to the file types and directories under work, so the 150-instruction budget holds even as your rule library grows past it.</li>
-<li><strong>Standards Version History</strong> (<code>/3c-standards history</code>, <code>/3c-standards as-of &lt;date&gt;</code>) — git-native timeline of every rule change with author, date, PR link, and reconstruction of the effective rule set on any past date.</li>
 <li><strong>Architecture pattern library extension</strong> — <code>microservices</code> and <code>modular-monolith</code> packs alongside L1's clean-architecture / hexagonal / layered-mvc.</li>
 <li><strong>Security pack extension</strong> — <code>cwe-top-25</code> alongside L1's OWASP Top 10, with mappings between the two so reviewers see both lenses at once.</li>
 </ul>
-<p><strong>Quality layer — five new gates</strong></p>
+<p><strong>Quality layer — four new gates</strong></p>
 <ul>
-<li><strong>Post-Edit Validation</strong> — PostToolUse hook firing the moment Claude Code finishes an edit, validating imports, naming, and architectural boundary direction <em>before</em> the change is even staged.</li>
-<li><strong>Test Coverage Gate</strong> — pre-PR hook enforcing coverage thresholds per test type (unit / integration / contract). Configurable; off by default.</li>
+<li><strong>Post-Edit Validation</strong> — PostToolUse hook firing the moment Claude Code finishes an edit, validating the layer-boundary rules your team declared <em>before</em> the change is even staged.</li>
 <li><strong>Security Scan Gate</strong> — SAST + dependency-vulnerability scan per commit, with severity thresholds. Refuses the commit on critical findings; warns and proceeds on lower severities.</li>
 <li><strong>Architecture Boundary Enforcer</strong> — static analysis of dependency direction per <code>.3c/architecture.yaml</code>. Catches the "module A reaching into module B's internals" pattern at commit time.</li>
 <li><strong>Hook Telemetry</strong> — every hook run writes a <code>.3c/events/*.jsonl</code> event with pass/fail, timing, and rule attribution. The L2 substrate for everything observability-related downstream — local-only, no egress at L2.</li>
 </ul>
-<p><strong>Workflow layer — six additions</strong></p>
+<p><strong>Workflow layer — four additions</strong></p>
 <ul>
-<li><strong>Deployment Skill</strong> (<code>/3c-deploy --env &lt;name&gt;</code>) — runs team-defined pre-flight checks, deploys, runs health check, auto-rolls back on health failure. Production environments require <code>--yes</code> confirmation.</li>
-<li><strong>Bug Report Skill</strong> (<code>/3c-bug</code>) — captures the environment (OS, runtime, project state, recent commits, scrubbed env vars) into a structured report — no more "works on my machine" reproduction archaeology.</li>
+<li><strong>Bug Report command</strong> (<code>npx 3c bug</code>, run in your terminal — not a slash command) — captures the environment (OS, runtime, project state, recent commits, scrubbed env vars) into a structured report — no more "works on my machine" reproduction archaeology.</li>
 <li><strong>Onboarding Skill</strong> (<code>/3c-onboard</code>) — guided codebase orientation with per-developer progress tracking. Pause/resume across sessions; local state, no cloud account needed.</li>
-<li><strong>Multi-PM MCP Adapter</strong> — <code>/3c-create-issue</code> now routes to Jira Cloud / Linear / GitLab Issues alongside the L1 GitHub path. Token via OS keychain only, never cached, never returned in tool output.</li>
-<li><strong><code>init --brand</code> white-label scaffolder</strong> — <code>npx 3c init --brand="Acme"</code> plus <code>npx 3c skills install</code> copies the skills and agents in under your own slash prefix (<code>/acme-*</code>) against the upstream framework source — the files land in your repo under git, no fork. See <a href="branding.html">deploying with custom branding</a> for the full two-tier identity model and adoption flow.</li>
-<li><strong>Test framework extension</strong> — Mocha / Playwright / JUnit recognised alongside L1's Jest / Vitest / Pytest, plus a new integration-test mode for <code>/3c-test</code>.</li>
+<li><strong>Multi-PM Adapter</strong> — <code>/3c-create-issue</code> now routes to Jira Cloud / Linear / GitLab Issues alongside the L1 GitHub path. Token via OS keychain only, never cached, never returned in tool output.</li>
+<li><strong>Test framework extension</strong> — Mocha / Playwright / JUnit recognised alongside L1's Jest / Vitest / Pytest, so <code>/3c-test</code> writes in the runner your project already uses.</li>
 </ul>
-<p><strong>DX &amp; observability layer — five additions</strong></p>
+<p><strong>DX &amp; observability layer — three additions</strong></p>
 <ul>
-<li><strong>Interactive Onboarding Guide</strong> (<code>/3c-onboard-guide --role &lt;frontend|backend|devops&gt;</code>) — role-tailored variant of the onboarding skill. Same pause/resume, role-specific module sequence.</li>
-<li><strong>Coaching Mode for Juniors</strong> — pre-commit hooks that <em>fail</em> on a rule violation also <em>explain why</em>: the rule's rationale, an example of the right shape, a link to the relevant ADR or incident. Turn off in <code>.3c/coaching.yaml</code> once the team's past needing it.</li>
-<li><strong>Standards Rationale Database</strong> (<code>/3c-explain &lt;rule-id&gt;</code>) — structured "why" repository linking every rule to its origin, ADR, incident reference, or research citation. The thing the coaching-mode hooks read from.</li>
+<li><strong>Role-tailored onboarding</strong> (<code>/3c-onboard --role &lt;frontend|backend|devops&gt;</code>) — role modules are appended to the project-derived roadmap, so a role gets the team's own CLAUDE.md and scripts as well as its own sequence. Same pause/resume. This shipped as a separate <code>onboard-guide</code> skill and was folded into the onboarding skill, which is why the count above is unchanged.</li>
 <li><strong>Extended starter subagents</strong> — <code>architect</code> and <code>security-reviewer</code> subagents alongside L1's <code>code-reviewer</code> and <code>test-author</code>. All four still under the 150-instruction CS-02 budget (<code>npm run cs02</code> audits it).</li>
-<li><strong>Personal Local Insights Dashboard</strong> — local-only <code>.3c/dashboard.html</code> showing your own hook telemetry: which rules fire most for you, how often your changes pass review on first try, how the coaching mode is helping. The local mirror of what the L3 team backend will roll up across the team.</li>
+<li><strong>Personal Local Insights Dashboard</strong> — run <code>npx 3c dashboard</code> to write the local-only <code>.3c/dashboard.html</code>, showing your own hook telemetry: which rules fire most for you, how often your changes pass review on first try, and the boundary findings arch-check has recorded. The local mirror of what the L3 team backend will roll up across the team.</li>
 </ul>
 <h2 id="the-l2-gate-chain-what-runs-before-a-code-review">The L2 gate chain — what runs before a code review<a class="headerlink" href="#the-l2-gate-chain-what-runs-before-a-code-review" title="Permanent link">&para;</a></h2>
 <figure class="fg-figure fg-figure--wide">
-<img src="assets/diagrams/l2-feedback-loop.svg" alt="L2 feedback loop: pre-commit hooks catch issues, post-edit validation catches them earlier, coverage and security gates run before PR, hook telemetry feeds coaching mode, drift detector audits over time">
-<figcaption>Every loop arrow in this diagram is a hook engine entry that ships at L2 — none is aspirational.</figcaption>
+<img src="assets/diagrams/l2-feedback-loop.svg" alt="L2 feedback loop: post-edit validation fires on each edit; the pre-commit hook chain and the pre-PR coverage and security gates run before review; every gate writes a telemetry event; hook telemetry and arch-check's boundary findings feed the personal dashboard; and the rule files hold each standard's reasoning, which the developer opens by hand before returning to the next edit">
+<figcaption>Solid arrows are what a hook or gate runs at L2 — none is aspirational. Dashed arrows are the developer's own steps: staging the change, opening a rule file, returning to the edit.</figcaption>
 </figure>
 
-<p>In a typical L2-adopting team's commit lifecycle, 3C runs four gate types automatically:</p>
+<p>In a typical L2-adopting team's commit lifecycle, 3C runs three gate types automatically:</p>
 <ol>
-<li><strong>PostToolUse — Post-Edit Validation</strong> (<code>&lt;300ms</code>) — the moment Claude Code finishes an edit, validates imports, naming, and architectural-direction rules against the relevant file.</li>
-<li><strong>PreToolUse — Pre-Commit Hook</strong> (<code>&lt;10s</code>) — lint, types, unit tests, secret scan, and (if coaching mode is on) rationale-linked explanations for failures.</li>
-<li><strong>Pre-PR — Coverage Gate + Security Scan Gate</strong> (<code>&lt;60s typical</code>) — coverage thresholds per test type; SAST + dependency vulnerabilities.</li>
-<li><strong>Standing — Drift Detector</strong> (on demand via <code>/3c-drift</code>) — audit current code against current rules to catch regressions the gates missed.</li>
+<li><strong>PostToolUse — Post-Edit Validation</strong> (<code>~300ms</code>) — the moment Claude Code finishes an edit, validates the layer-boundary rules your team declared against the relevant file.</li>
+<li><strong>PreToolUse — Pre-Commit Hook</strong> (<code>&lt;10s</code>) — lint, types, unit tests, secret scan.</li>
+<li><strong>Pre-PR — Security Scan Gate</strong> (<code>&lt;60s typical</code>) — SAST + dependency vulnerabilities.</li>
 </ol>
-<p>Each gate is independently disable-able. Each writes a JSONL event regardless of pass / fail / skip — so the picture is complete even when a gate is bypassed under <code>/3c-bypass --reason="..."</code>.</p>
+<p>Each gate is independently disable-able. Each writes a JSONL event regardless of pass / fail / skip — so the picture is complete even when a gate is bypassed under <code>npx 3c bypass --reason="..."</code> (a terminal command, not a slash command).</p>
 <h2 id="the-multi-agent-crew-your-teams-development-process-automated">The multi-agent crew — your team's development process, automated<a class="headerlink" href="#the-multi-agent-crew-your-teams-development-process-automated" title="Permanent link">&para;</a></h2>
 <p>The gate chain enforces standards on every commit. The <strong>multi-agent crew</strong>, added to the L2 surface after v1.5, goes one layer up: it automates the <em>process</em> your team runs around the code — issue enrichment, planning, test-first implementation, multi-lens review, and delivery — as a panel of specialist agents coordinated by explicit orchestrator skills. It is the part of senior-engineer judgement that usually lives in people's heads, written down and made repeatable.</p>
 <figure class="fg-figure fg-figure--wide">
@@ -1008,7 +906,7 @@ with the traps to avoid — are on <strong><a href="get-started.html">Get starte
 <li><code>qa-reviewer</code> — acceptance-criteria traceability and edge cases.</li>
 <li><code>journey-architect</code> — customer-journey reachability: can a user still reach every capability and recover from every state.</li>
 </ul>
-<p>The first four shipped with L1/L2; <code>product-owner</code>, <code>ux-expert</code>, <code>qa-reviewer</code>, and <code>journey-architect</code> complete the eight-agent crew. All install under your slug (<code>3c-architect</code>, or <code>acme-architect</code> after a rebrand) and stay within the 150-instruction CS-02 budget (<code>npm run cs02</code> audits it).</p>
+<p>The first four shipped with L1/L2; <code>product-owner</code>, <code>ux-expert</code>, <code>qa-reviewer</code>, and <code>journey-architect</code> complete the eight-agent crew. All install as <code>3c-*</code> (<code>3c-architect</code>, …) and stay within the 150-instruction CS-02 budget (<code>npm run cs02</code> audits it).</p>
 <p><strong>Three orchestrator skills</strong> drive them. These are explicit-invocation only — you type them; Claude never auto-runs them:</p>
 <ul>
 <li><strong><code>/3c-review-board</code></strong> — convenes the panel on a change, then <strong>reconciles their findings deterministically</strong> into one verdict: <em>blocking</em>, <em>advisory</em>, or <em>clean</em>. It de-duplicates the findings agents agree on, surfaces where two agents disagree on severity for a human to settle, and ranks the rest. The reconciliation is tested code (<code>3c reconcile</code>), not a model's free-text summary — identical inputs always produce the same verdict.</li>
@@ -1029,13 +927,13 @@ with the traps to avoid — are on <strong><a href="get-started.html">Get starte
 <h2 id="how-to-adopt-l2">How to adopt L2<a class="headerlink" href="#how-to-adopt-l2" title="Permanent link">&para;</a></h2>
 <p>If you're already at L1, the upgrade is a focused half-day:</p>
 <ol>
-<li><code>npm install git+https://github.com/kgn-git/3C#v1.7.3</code> — pin the new version.</li>
+<li><code>npm install git+https://github.com/kgn-git/3C.git#&lt;release-sha&gt;</code> — pin the new release by its commit sha (listed at github.com/kgn-git/3C/releases).</li>
 <li><code>npx 3c init</code> — idempotent; re-runs against your existing <code>.claude/</code> tree, refreshing CLAUDE.md.</li>
-<li><code>npx 3c skills install &amp;&amp; npx 3c agents install</code> — re-copy the workflow skills and the crew agents under your slug (picks up the new crew orchestrators and the <code>product-owner</code> / <code>ux-expert</code> / <code>qa-reviewer</code> agents).</li>
+<li><code>npx 3c skills install --replace &amp;&amp; npx 3c agents install --replace</code> — re-copy the workflow skills and the crew agents under your slug (picks up the new crew orchestrators and the <code>product-owner</code> / <code>ux-expert</code> / <code>qa-reviewer</code> agents). <code>--replace</code> is what refreshes a skill that <em>changed</em>; without it both commands skip every file you already have. Commit <code>.claude/</code> first — it overwrites your local edits.</li>
 <li><code>npx 3c hook install</code> — re-registers the PreToolUse + PostToolUse hooks (you may need to confirm the diff once).</li>
-<li><code>npx 3c doctor</code> — confirm the result is coherent: every skill and agent prefixed, both hooks present, no stale references.</li>
-<li>Decide what gates to turn on first. We recommend in this order: <strong>Post-Edit Validation → Coaching Mode → Drift Detector → Coverage Gate → Security Scan Gate</strong>. Each can be enabled independently in <code>.3c/hooks.yaml</code>.</li>
-<li>Run an L2 adoption sprint — same one-week shape as L1, just measuring different deltas. The four metrics that prove L2 is working: pre-PR gate pass-rate, post-edit validation findings per AI-authored diff, coaching-mode rationale link-throughs, drift-detector audit delta week-over-week.</li>
+<li><code>npx 3c doctor</code> — confirm the result is coherent: every skill and agent prefixed, every hook registered (PreToolUse <em>and</em> PostToolUse), no stale references. A <code>fail</code> on hooks means step 4 has not been run against this workspace.</li>
+<li>Give the boundary gate something to check: <code>npx 3c arch-check discover</code> drafts your layers and <code>deny</code> pairs from the repo's own import graph. Until layers exist, neither the commit gate nor the post-edit hook has anything to check. Post-Edit Validation is registered by step 4 and runs from then on — advisory only, it never blocks an edit. To waive a layer pair, the advisory prints the exact <code>arch-check except</code> command, and that waiver is honoured by <strong>both</strong> the hook and the commit gate. A <code>suppress:</code> list in <code>.3c/validation.yaml</code> silences paths for the <strong>post-edit advisory only</strong> — the commit gate does not read it, so a path silenced there will still block at commit time.</li>
+<li>Run an L2 adoption sprint — same one-week shape as L1, just measuring different deltas. The three metrics that prove L2 is working: pre-PR gate pass-rate, post-edit validation findings per AI-authored diff, and the boundary findings arch-check records at the commit gate.</li>
 </ol>
 <p>If you're new to 3C, start at <a href="l1-today.html">what L1 ships</a> — L1 is a fine place to stay for a long time, and L2 layers on it cleanly when you're ready.</p>
 <h2 id="see-it-from-your-seat">See it from your seat<a class="headerlink" href="#see-it-from-your-seat" title="Permanent link">&para;</a></h2>
@@ -1046,7 +944,7 @@ with the traps to avoid — are on <strong><a href="get-started.html">Get starte
 </ul>
 <div class="admonition note learning">
 <p class="admonition-title">What we're learning</p>
-<p>The L2 sprint shipped 21 features across 6 sprints with 1256/1256 tests green at merge. The full per-feature handover record is maintained upstream — every decision is traceable. If you're evaluating, the rationale is there: <a href="https://github.com/kgn-git/3C/discussions">start a discussion</a>.</p>
+<p>The L2 sprint shipped 21 features across 6 sprints with 1256/1256 tests green at merge; seven have since been retired, leaving the 14 listed above. The full per-feature handover record is maintained upstream — every decision is traceable. If you're evaluating, the rationale is there: <a href="https://github.com/kgn-git/3C/discussions">start a discussion</a>.</p>
 </div>
 
 

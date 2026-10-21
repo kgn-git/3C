@@ -5,8 +5,8 @@ flowchart TD
     I3["Issue #1286<br/>/3c-implement loop"]
     I4["Issue #1287<br/>/3c-implement loop"]
 
-    COACH_V["📚 verbose coaching<br/>seg full Why / Do / Docs"]
-    COACH_T["✂️ terse coaching<br/>bullet + Why only<br/><i>TERSE_AFTER = 2</i>"]
+    BOUND_V["📚 boundary advisory<br/>app → infra import"]
+    BOUND_T["✅ clean at #1287<br/>no boundary hits<br/><i>direction learned</i>"]
 
     REUSE["pattern-reuse loop<br/>prompt: 'follow the shape of #1284'<br/><i>no re-paste of standards</i>"]
     BUDGET["✅ 150-instruction budget held"]
@@ -14,12 +14,12 @@ flowchart TD
     ARCH["architect dispatched once<br/><i>(hard design call on #1286)</i>"]
     SEC["security-reviewer dispatched<br/><i>(auth-touching #1287)</i>"]
 
-    HOTFIX["🚨 prod incident<br/>/3c-bypass --reason='prod hotfix INC-417'"]
+    HOTFIX["🚨 prod incident<br/>3c bypass --reason='prod hotfix INC-417'"]
     JSONL["JSONL bypass event recorded<br/>{...,'bypassed':true,'reason':'prod hotfix INC-417'}"]
     FU["✏️ follow-up issue auto-created"]
 
     TRICKY["pre-commit fails on tricky test"]
-    TR_READ["Maya reads coaching rationale"]
+    TR_READ["Maya reads the failing assertion"]
     TR_PROMPT["Maya prompts Claude Code:<br/>'rule is right, test asserts wrong<br/>contract, regenerate it'"]
     TR_PASS["✅ Claude Code revises test<br/>gate passes"]
 
@@ -27,8 +27,8 @@ flowchart TD
     I2 --> I3
     I3 --> I4
 
-    I2 -.coach.-> COACH_V
-    I4 -.coach.-> COACH_T
+    I2 -.layer.-> BOUND_V
+    I4 -.layer.-> BOUND_T
 
     I2 -.reuse.-> REUSE
     REUSE --> BUDGET
@@ -46,13 +46,13 @@ flowchart TD
     TR_PROMPT --> TR_PASS
 
     classDef issue fill:#EEF2FF,stroke:#4F46E5,color:#1E1B4B,stroke-width:1.5px
-    classDef coachv fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:1.5px
-    classDef coacht fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:1.5px,stroke-dasharray:3 3
+    classDef boundv fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:1.5px
+    classDef boundt fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:1.5px,stroke-dasharray:3 3
     classDef ok fill:#ECFDF5,stroke:#10B981,color:#047857,stroke-width:1.5px
     classDef warn fill:#FEE2E2,stroke:#DC2626,color:#7F1D1D,stroke-width:1.5px
     class I1,I2,I3,I4 issue
-    class COACH_V coachv
-    class COACH_T coacht
+    class BOUND_V boundv
+    class BOUND_T boundt
     class REUSE,ARCH,SEC issue
     class BUDGET,TR_PASS ok
     class HOTFIX,TRICKY warn

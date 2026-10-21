@@ -2,28 +2,28 @@
 sequenceDiagram
     autonumber
     participant Maya as Maya
-    participant Test as /3c-test --mode=integration
-    participant Deploy as /3c-deploy
+    participant Test as /3c-test
+    participant Deploy as the team's deploy script
     participant Stage as Staging env
-    participant Bug as /3c-bug
+    participant Bug as 3c bug
     participant Issue as GitHub Issue
 
-    Maya->>Test: invoke for UI/integration change
-    Note over Test: test-author subagent assists
-    Test-->>Maya: UAT checklist + edge cases scaffolded
+    Maya->>Test: invoke for the UI change
+    Note over Test: sets out what the test must assert
+    Test-->>Maya: test-author writes it, test-first
 
-    Maya->>Deploy: --env=staging
-    Note over Deploy: pre-flight checks run
+    Maya->>Deploy: run it against staging
+    Note over Deploy: the team's own pre-flight checks run
     Deploy->>Stage: deploy succeeds
     Stage-->>Deploy: health check passes
     Deploy-->>Maya: ready for UAT
 
-    Note over Maya: walks the checklist<br/>manually in staging
+    Note over Maya: walks the acceptance criteria<br/>manually in staging
     Maya->>Maya: finds a regression in empty-state
 
-    Maya->>Bug: invoke /3c-bug
+    Maya->>Bug: invoke 3c bug
     Note over Bug: captures OS / runtime /<br/>project state / recent commits /<br/>scrubbed env vars
-    Bug-->>Issue: structured report appended
-    Maya->>Issue: re-opens and comments
+    Bug-->>Issue: files a structured bug issue
+    Maya->>Issue: links it from #1287
 
-    Note over Deploy: production deploys<br/>require --yes
+    Note over Deploy: production still goes<br/>through the team's own approval

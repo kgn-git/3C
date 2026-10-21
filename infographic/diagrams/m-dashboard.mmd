@@ -1,10 +1,10 @@
 %%{init: {'theme':'base','themeVariables':{'primaryColor':'#EEF2FF','primaryTextColor':'#1E1B4B','primaryBorderColor':'#4F46E5','lineColor':'#6366F1','fontFamily':'Inter, sans-serif','fontSize':'16px'}}}%%
 flowchart LR
-    SOURCE["📁 .3c/events/*.jsonl<br/><i>local-only · gitignored</i>"]
+    SOURCE["📁 .3c/telemetry/hooks/*.jsonl<br/><i>local-only · gitignored</i>"]
 
-    DASH["📊 .3c/dashboard.html<br/><i>opens in your browser</i>"]
+    DASH["📊 .3c/dashboard.html<br/><i>npx 3c dashboard · opens in your browser</i>"]
 
-    P1["Panel 1 — Rules fired today<br/>1. import-order × 7<br/>2. naming-fetch-prefix × 3<br/>3. arch-boundary × 2<br/>4. secret-scan × 1<br/>5. coverage-threshold × 1"]
+    P1["Panel 1 — Gates fired today<br/>1. layer-boundary × 7<br/>2. secret-scan × 3<br/>3. unit-tests × 2<br/>4. security-scan × 1<br/>5. post-edit × 1"]
 
     P2["Panel 2 — First-try pass rate<br/><b style='font-size:24px'>78%</b><br/><i>11 of 14 PRs passed on first attempt</i>"]
 

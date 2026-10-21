@@ -4,18 +4,18 @@ stateDiagram-v2
     [*] --> IssueSelected
     IssueSelected --> ImplementPlan: Maya invokes /3c-implement
     ImplementPlan --> BranchCreated: /3c-implement creates branch
-    BranchCreated --> TestScaffold: /3c-test scaffolds failing tests
-    TestScaffold --> ClaudeImpl: Claude Code implements
+    BranchCreated --> FailingTest: /3c-test specifies it, test-author writes the failing test
+    FailingTest --> ClaudeImpl: Claude Code implements
 
     ClaudeImpl --> PostEdit
 
     state PostEdit <<choice>>
     PostEdit --> ClaudeImpl: fail — Claude Code revises
-    PostEdit --> StageCommit: pass under 300ms
+    PostEdit --> StageCommit: pass in ~300ms
 
     StageCommit --> PreCommit: Maya runs git commit
     state PreCommit <<choice>>
-    PreCommit --> ClaudeImpl: fail — coaching shows rationale\nClaude Code regenerates
+    PreCommit --> ClaudeImpl: fail — lint / types / unit / secret\nClaude Code regenerates
     PreCommit --> GateChain: pass under 10s
 
     GateChain --> SecurityReviewer: optional dispatch\nfor auth-touching change
@@ -32,5 +32,5 @@ stateDiagram-v2
         transition labelled
         with who typed it —
         Claude Code, /3c-implement,
-        /3c-test. Never Maya.
+        test-author. Never Maya.
     end note
