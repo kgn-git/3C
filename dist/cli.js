@@ -60,7 +60,7 @@ const RETIREMENT_REPLACEMENTS = {
     // what exists" (HELP_TEMPLATE below) — so it would exit 0 having refreshed
     // nothing, while installed skills still invoke retired verbs: the stale-skill
     // defect reproduced inside the recovery message for it.
-    upgrade: "It verified a git tag inside a package directory npm installs with no .git, so it refused for every adopter. Re-install the release, then refresh the copied artefacts: `npm install git+https://github.com/kgn-git/3C.git#<release-sha>` (the commit sha from the release notes) then `${FRAMEWORK_SLUG} setup --replace` (a plain `setup` only adds what is missing). `${FRAMEWORK_SLUG} doctor` afterwards reports any skill still invoking a retired command.",
+    upgrade: "It verified a git tag inside a package directory npm installs with no .git, so it refused for every adopter. Re-install the release, then refresh the copied artefacts: `npm install --allow-git=root git+https://github.com/kgn-git/3C.git#<release-sha>` (the commit sha from the release notes) then `${FRAMEWORK_SLUG} setup --replace` (a plain `setup` only adds what is missing). `${FRAMEWORK_SLUG} doctor` afterwards reports any skill still invoking a retired command.",
     // Retired as a GROUP: `history` and `as-of` both went. `as-of` fetched
     // every file's content over N git subprocesses to print filenames, and
     // neither is named anywhere in templates/. Deliberately NOT relocated to a

@@ -121,7 +121,7 @@ export async function runDoctor(opts) {
     const incompat = checkCliSkillCompat(skillTexts, slug, supported).filter((i) => !verbsRetired.has(i.command));
     if (incompat.length) {
         const cmds = [...new Set(incompat.map((i) => i.command))].join(", ");
-        add("fail", "cli-compat", `installed skills/agents invoke CLI command(s) [${cmds}] your \`${slug}\` binary doesn't provide — the CLI on PATH is older than the installed skills. Upgrade/reinstall: npm install -g git+https://github.com/kgn-git/3C.git#<release-sha> (the commit sha from the release notes) (and check \`Get-Command ${slug}\` / \`which ${slug}\` for a stale shadowing copy).`);
+        add("fail", "cli-compat", `installed skills/agents invoke CLI command(s) [${cmds}] your \`${slug}\` binary doesn't provide — the CLI on PATH is older than the installed skills. Upgrade/reinstall: npm install -g --allow-git=root git+https://github.com/kgn-git/3C.git#<release-sha> (the commit sha from the release notes) (and check \`Get-Command ${slug}\` / \`which ${slug}\` for a stale shadowing copy).`);
     }
     else {
         add("ok", "cli-compat", "installed skills only invoke commands the running CLI supports.");

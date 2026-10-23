@@ -26,7 +26,7 @@ export async function runSetup(steps, log = () => { }) {
     // release. The two-step form matters — re-installing the package alone moves
     // the CLI while the copied skills and agents stay on the old release.
     log(`\n✓ setup complete — ${completed.length} of ${total} steps done. Run \`doctor\` anytime to re-check.` +
-        `\n  To update later: \`npm install git+https://github.com/kgn-git/3C.git#<release-sha>\` (the commit sha from the release notes) then \`setup --replace\`.`);
+        `\n  To update later: \`npm install --allow-git=root git+https://github.com/kgn-git/3C.git#<release-sha>\` (the commit sha from the release notes) then \`setup --replace\`.`);
     return { completed, total };
 }
 //# sourceMappingURL=setup.js.map
