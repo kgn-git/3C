@@ -3,10 +3,10 @@ import type { FindingsRun } from "./types.js";
 /**
  * The clean case is interpreted too — a bare zero teaches users to ignore it.
  *
- * Two things this deliberately does NOT do, both found by the #394 board:
+ * Two things this deliberately does NOT do:
  *
  *   - It does not describe every stored run as a boundary finding. Keeping the
- *     on-disk path is what lets an adopter's pre-#394 history survive the
+ *     on-disk path is what lets an adopter's older-version history survive the
  *     upgrade, and that history is keyed by rules this version cannot produce
  *     (`import-order`, `naming-convention`). Labelling those "boundary
  *     findings" and offering `arch-check except` as the remedy is false in

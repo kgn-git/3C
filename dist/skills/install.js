@@ -21,12 +21,12 @@ export async function installSkills(opts) {
         return { ok: false, error: err.message };
     }
     const skillDirs = topEntries.filter((e) => e.isDirectory());
-    // #452: a failed backup stops the overwrite it was protecting.
+    // A failed backup stops the overwrite it was protecting.
     try {
         for (const entry of skillDirs) {
             const skillName = entry.name;
             const skillSource = join(opts.sourceDir, skillName);
-            // #240: installed skills are namespaced by a hyphen brand prefix, since
+            // Installed skills are namespaced by a hyphen brand prefix, since
             // copy-installed project skills cannot carry a colon namespace. The source
             // dir `create-issue` installs to `.claude/skills/<slug>-create-issue/`,
             // matching the `name: ${BRAND_SLUG}-<skill>` frontmatter so the slash

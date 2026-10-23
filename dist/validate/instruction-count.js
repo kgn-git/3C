@@ -1,4 +1,4 @@
-// RFC-2119 directive regex per AC3 of issue #1.
+// RFC-2119 directive regex.
 // Case-sensitive, word-boundary on both sides; MUST/SHALL/SHOULD optionally followed
 // by NOT (with arbitrary whitespace including newlines).
 // Decision is load-bearing for VP-03-F08 telemetry and VP-04-F01 dashboard counting —

@@ -23,15 +23,14 @@ export async function postEditValidate(event, workspaceDir) {
         return empty; // AC4: never throw
     }
     const relPath = isAbsolute(fp) ? relative(workspaceDir, fp) : fp;
-    // #394: layer-boundary is the ONLY rule this hook runs — the adopter-declared
-    // check survives; the imposed style rules (import-order, naming-convention)
-    // and the coaching segment that decorated their advisory are retired.
+    // layer-boundary is the ONLY rule this hook runs: it is the adopter-declared
+    // check; imposed style rules are not this hook's business.
     const all = [];
-    // #427: the same loader arch-check uses, so the hook honours the adopter's
+    // The same loader arch-check uses, so the hook honours the adopter's
     // declared `packages:` blocks instead of silently applying the root map.
     // matchAny normalises separators, so the raw relPath is safe to resolve on.
     //
-    // #430 AC14: this hook stays ADVISORY on every kind — fail-closed belongs to
+    // This hook stays ADVISORY on every kind — fail-closed belongs to
     // the commit gate, which runs once per commit, not to a hook that fires on
     // every edit. A malformed config yields no rules here and no exception; the
     // adopter learns about it from `arch-check check` and `doctor`, which can
@@ -51,10 +50,10 @@ export async function postEditValidate(event, workspaceDir) {
                 message: `${v.message}${packageSuffix(src.glob)}`,
             }))));
     }
-    // #430 AC11 — one waiver contract. The hook consulted `validation.yaml`'s
-    // `suppress:` only, so a layer pair the adopter had formally waived on the
-    // gate (`arch-check except`) still fired here, live, on every edit. Both
-    // surfaces now read both stores, and `exceptionKey` reads the pair from the
+    // One waiver contract: a layer pair the adopter waived on the gate
+    // (`arch-check except`) must not fire here on every edit. Both surfaces
+    // read the exceptions store (`suppress:` in `validation.yaml` is this
+    // hook's alone), and `exceptionKey` reads the pair from the
     // message before any `(package rules: …)` suffix — so one key waives the
     // pair on the gate and the hook identically.
     const sup = await loadSuppress(workspaceDir);
@@ -83,11 +82,10 @@ export async function postEditValidate(event, workspaceDir) {
             : null,
         timestamp: new Date().toISOString(),
     };
-    // Board r1 (security): this await used to sit AHEAD of the message, so an
-    // append failure (EACCES on `.3c/`, ENOSPC, read-only checkout) threw past
-    // the already-computed violations into the orchestrator's blanket catch —
-    // which emits nothing and exits 0. The outcome was byte-identical to a clean
-    // edit, on every edit, permanently. Observability must never be able to
+    // Caught, because an append failure (EACCES on `.3c/`, ENOSPC, read-only
+    // checkout) thrown past the computed violations would reach the
+    // orchestrator's blanket catch — which emits nothing and exits 0, an outcome
+    // byte-identical to a clean edit, on every edit. Observability must never be able to
     // suppress the finding it observes.
     try {
         await writeTelemetryEvent(workspaceDir, evt, tcfg);
@@ -98,10 +96,9 @@ export async function postEditValidate(event, workspaceDir) {
     if (violations.length === 0)
         return empty;
     const slug = resolveBrandSlugSync();
-    // Board r1 (security, demonstrated): `relPath` was the one interpolation on
-    // this line that was NOT clamped, and this text now reaches the MODEL. A
-    // filename carrying U+202E (legal on NTFS and POSIX) arrived intact — the
-    // Trojan-Source forgery clampLabel exists to stop — and on POSIX a filename
+    // `relPath` is clamped because this text reaches the MODEL. A filename
+    // carrying U+202E (legal on NTFS and POSIX) would otherwise arrive intact —
+    // the Trojan-Source forgery clampLabel exists to stop — and on POSIX a filename
     // may contain a newline, letting repo content forge extra advisory lines or
     // a whole second hook message inside the model's context. JSON.stringify
     // protects the envelope's well-formedness; the model receives the DECODED
@@ -110,12 +107,10 @@ export async function postEditValidate(event, workspaceDir) {
     const lines = violations
         .map((v) => `  - [${v.ruleId}] ${safePath}:${v.line} — ${v.message}`)
         .join("\n");
-    // #384 AC9: name the off-switch where the adopter meets the advisory. The
-    // commit-time gate has always printed this; the post-edit path printed
-    // nothing, which was survivable while the hook never fired and a dead-end
-    // (#344) once it fires on every edit. Same computed key as the gate — a
-    // `<from>-><to>` placeholder produces a well-formed waiver that matches
-    // nothing (#430 AC12).
+    // Name the off-switch where the adopter meets the advisory, as the
+    // commit-time gate does: an advisory that fires on every edit with no way
+    // out is a dead-end. Same computed key as the gate — a `<from>-><to>`
+    // placeholder would produce a well-formed waiver that matches nothing.
     const keys = [...new Set(violations.map((v) => exceptionKey(v.message) ?? ""))]
         .filter((k) => k !== "")
         .sort()
@@ -130,7 +125,7 @@ export async function postEditValidate(event, workspaceDir) {
     return {
         violations,
         message: 
-        // Board r1 (journey): the sibling commit-time gate says "commit blocked",
+        // The sibling commit-time gate says "commit blocked",
         // and this text now lands in the model's context. With no qualifier, an
         // agent that has seen the gate's wording can read an after-the-fact
         // advisory as a stop — and abandon or revert work the hook never

@@ -1,4 +1,5 @@
 import { type DashboardState } from "./state.js";
+import { type SourceDeps } from "./delivery-source.js";
 /** The only host this server ever binds. */
 export declare const LOOPBACK = "127.0.0.1";
 /**
@@ -11,7 +12,8 @@ export interface ServerOptions {
     readonly port?: number;
     /** Overridable for tests; defaults to the bundle shipped in dist/ui. */
     readonly assetDir?: string;
-    readonly docsDir?: string;
+    /** Test seam for the handover-issue fetch; defaults to the real gh and git. */
+    readonly delivery?: SourceDeps;
     readonly since?: string;
     /**
      * Where post-listen socket failures are reported. Without it an accept error
@@ -19,42 +21,24 @@ export interface ServerOptions {
      */
     readonly log?: (message: string) => void;
     /**
-     * Overridable for tests only. The CWE-400 claim is about the COST of a
-     * request, and cost is not observable from a status code — a gate moved
-     * below the build still returns the same 403. This seam makes the number of
-     * builds assertable.
+     * Test seam: request cost (CWE-400) is invisible in a status code, so tests
+     * count builds instead.
      */
     readonly buildState?: () => Promise<DashboardState>;
 }
 export interface RunningServer {
     readonly url: string;
     readonly port: number;
-    /** The address the socket is actually bound to, read from server.address(). */
     readonly host: string;
     readonly close: () => Promise<void>;
 }
 /**
- * Where `npm run build` puts the bundle, resolved relative to this module.
- *
- * Two candidates because this module runs from two layouts: `dist/dashboard/`
- * in an install (bundle at `dist/ui`), and `src/dashboard/` under the test
- * runner or tsx (bundle still at `dist/ui`, one level further up). Returning
- * only the first would make every source-run start fail closed on a bundle
- * that is in fact present.
+ * Two candidates: this module runs from `dist/dashboard/` and, under tsx or
+ * tests, `src/dashboard/`. Only the first would refuse every source-run start.
  */
 export declare function defaultAssetDir(): string;
-/**
- * What the developer is told when the listening socket fails after start-up.
- *
- * The errno CLASS and nothing else: the thrown Error's message and stack stay
- * server-side (A10), and the line names the recovery rather than the cause.
- */
+/** The errno class only: message and stack stay server-side (A10). */
 export declare function socketErrorMessage(code: string | undefined): string;
-/**
- * Starts the loopback dashboard server.
- *
- * Rejects — rather than falling back to another port — when the requested port
- * cannot be bound. Silently moving would make the printed URL a guess.
- */
+/** No fallback port on a bind failure: silently moving would make the printed URL a guess. */
 export declare function startDashboardServer(opts: ServerOptions): Promise<RunningServer>;
 //# sourceMappingURL=server.d.ts.map

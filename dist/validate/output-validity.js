@@ -1,4 +1,4 @@
-// Output validity per AC2 of issue #1 (L1 scope).
+// Output validity (L1 scope).
 // Checks: line-count ≤200; no top-of-file YAML frontmatter.
 // Out of L1: full CommonMark parse, @import 5-hop resolution, block-only HTML
 // comment enforcement — would require a parser dependency. Defer if needed.

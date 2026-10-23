@@ -1,8 +1,7 @@
-// #239 (T0-1): `3c doctor` — read-only install & wiring diagnostic. Composes
-// existing checks (branding, secret/instruction validators, arch config) into
-// a single health report. Verifies the install-coherence fixes shipped in the
-// L2-fix sprint (#240 hyphen namespace, #242 path-guard, #246 inert gate).
-// Local-only — no network I/O.
+// `3c doctor` — read-only install & wiring diagnostic. Composes existing
+// checks (branding, secret/instruction validators, arch config) into a single
+// health report covering install coherence (hyphen namespace, path-guard,
+// inert gate). Local-only — no network I/O.
 import { readdir, readFile, stat } from "node:fs/promises";
 import { join, relative, resolve, sep } from "node:path";
 import { loadFramework } from "../branding/load.js";
@@ -90,12 +89,12 @@ export async function runDoctor(opts) {
     const add = (level, check, message) => findings.push({ level, check, message });
     // Install mode (AC2).
     const framework = await loadFramework(packageRoot);
-    // #451: one identity. Custom branding is retired, so the installed prefix
+    // One identity. Custom branding is retired, so the installed prefix
     // (`/3c-test`, `.claude/skills/3c-test/`) and the CLI binary that skills
     // invoke (`3c test …`) are the same slug — one name, read from framework.json.
     const slug = framework.FRAMEWORK_SLUG;
     if (await pathExists(join(workspaceDir, ".claude-plugin", "plugin.json"))) {
-        // #396. The directory is inert — nothing reads it, and its only writer
+        // The directory is inert — nothing reads it, and its only writer
         // (the retired white-label scaffolder) and only updater (the retired
         // `upgrade`) are both gone — so the honest instruction is to delete it.
         add("warn", "install-mode", "a .claude-plugin/ directory is present and nothing reads it — the plugin distribution path is retired (AD-16). " +
@@ -109,7 +108,7 @@ export async function runDoctor(opts) {
     const agentFiles = await walkFiles(join(workspaceDir, ".claude", "agents"));
     const files = [...(await walkFiles(skillsDir)), ...agentFiles];
     const contents = await Promise.all(files.map(async (f) => [f, await readFile(f, "utf8")]));
-    // Skill↔CLI version-compat (#278): installed skills that invoke a command the running
+    // Skill↔CLI version-compat: installed skills that invoke a command the running
     // CLI lacks mean the binary on PATH is older than the installed skills.
     const supported = opts.supportedCommands ?? CLI_COMMANDS;
     const skillTexts = contents.map(([f, t]) => ({ name: f.split(/[\\/]/).pop() ?? f, text: t }));
@@ -127,14 +126,14 @@ export async function runDoctor(opts) {
     else {
         add("ok", "cli-compat", "installed skills only invoke commands the running CLI supports.");
     }
-    // Retired subcommands (#406) — the INVERSE skew to cli-compat above.
+    // Retired subcommands — the INVERSE skew to cli-compat above.
     //
     // A retirement moves enforcement out of a CLI verb (which upgrades with npm)
     // and into copy-installed markdown (which does not: installSkills skips
     // existing files, installAgents aborts). So the adopter's CLI is NEWER than
     // their artefacts, and `referencedCliCommands` cannot see it because it reads
     // only the top-level verb — `3c test scaffold` resolves to the still-valid
-    // `test`. Deny-list driven, per #406 D1.
+    // `test`. Deny-list driven.
     const retiredHits = [];
     const unscannable = [];
     let needsReplaceCaution = false;
@@ -186,13 +185,13 @@ export async function runDoctor(opts) {
         // A confirmed stale invocation is a hard failure. A file merely too large to
         // read is unverified, not broken — reported, but not a permanently-red gate
         // for a condition the adopter may have no way to change (same reasoning as
-        // the orphan branch: a doctor that is always red stops being read, #355).
+        // the orphan branch: a doctor that is always red stops being read).
         add(retiredHits.length ? "fail" : "warn", "retired-command", parts.join(". ") + ".");
     }
     else {
         add("ok", "retired-command", "no installed artefact invokes a retired command.");
     }
-    // Orphaned framework artefacts (#406 AC8/D3) — installed under our prefix but
+    // Orphaned framework artefacts — installed under our prefix but
     // with no counterpart in the bundled templates. No installer ever visits
     // these: installSkills/installAgents iterate the SOURCE tree only, so nothing
     // in the CLI can clear them. Report the path; never delete.
@@ -241,7 +240,7 @@ export async function runDoctor(opts) {
     }
     // Unsubstituted brand/framework tokens (AC3).
     //
-    // #355: a token can appear two ways. USED — a placeholder that install should
+    // A token can appear two ways. USED — a placeholder that install should
     // have substituted (`${FRAMEWORK_SLUG} agents install`), which is the defect
     // this check exists to catch. NAMED — prose documenting the AD-16
     // substitution model itself, e.g. a line defining what `${FRAMEWORK_NAME}`
@@ -259,7 +258,7 @@ export async function runDoctor(opts) {
     // detection alive. The rationale rides in the same comment so it cannot drift
     // away from what it explains.
     //
-    // Matched outside fenced blocks (#317's shared helper): otherwise a file that
+    // Matched outside fenced blocks (the shared markdown helper): otherwise a file that
     // merely SHOWS the marker in an example would silently exempt itself.
     const MARKER_RE = /<!--\s*3c-doctor:\s*allow-brand-tokens([^>]*?)-->/;
     const declaredIn = (text) => {
@@ -298,7 +297,7 @@ export async function runDoctor(opts) {
     else {
         add("ok", "namespace", `commands use the hyphen namespace /${slug}-…`);
     }
-    // All registered hooks present (AC5; #384 added the PostToolUse half).
+    // All registered hooks present (PreToolUse and PostToolUse).
     let pre = [];
     let post = [];
     try {
@@ -314,17 +313,13 @@ export async function runDoctor(opts) {
         (e.hooks ?? []).some((h) => typeof h.command === "string" && h.command.includes(needle)));
     const hasOrchestrator = hasCmd("Bash", "hook run");
     const hasPathGuard = hasCmd("Read|Edit|Write", "hook path-guard");
-    // #384: keyed on OUR command, not on the event key. An adopter may run other
+    // Keyed on OUR command, not on the event key. An adopter may run other
     // people's PostToolUse hooks; the presence of one says nothing about whether
-    // post-edit validation is registered. Before this check doctor read only
-    // `hooks.PreToolUse`, so an install predating #384 reported healthy hooks
-    // while the capability was unreachable — and doctor is the only route by
-    // which an existing install learns it must re-register.
-    // Board r1 (qa + journey): the first version checked the command only. The
-    // PreToolUse probes above check matcher AND command, and for good reason —
-    // an entry carrying our command under a matcher that never fires on an edit
-    // is a registration that does nothing, reported as health. That is the same
-    // silent gap this check was added to close, one field over.
+    // post-edit validation is registered. Doctor is the only route by which an
+    // existing install learns it must re-register.
+    // Matcher AND command, like the PreToolUse probes above: an entry carrying
+    // our command under a matcher that never fires on an edit is a registration
+    // that does nothing, and must not be reported as health.
     const hasPostEdit = post.some((e) => typeof e.matcher === "string" &&
         e.matcher.split("|").includes("Edit") &&
         (e.hooks ?? []).some((h) => typeof h.command === "string" &&
@@ -347,7 +342,7 @@ export async function runDoctor(opts) {
             continue;
         const t = await readFile(p, "utf8");
         const c = countInstructions(t);
-        // #330: only a file carrying an injected rules block can be shrunk by
+        // Only a file carrying an injected rules block can be shrunk by
         // `rules apply`; anything else (a root CLAUDE.md, which apply never
         // writes) is the adopter's own text to trim.
         const remedy = t.includes(":RULES-BEGIN")
@@ -363,24 +358,18 @@ export async function runDoctor(opts) {
             add("fail", "claude-md", "CLAUDE.md contains potential secret(s).");
         break;
     }
-    // Inert boundary gate (AC8; #401 AC2) — post-#394 the config is load-bearing
-    // for the gate itself (layer-boundary is the sole post-edit rule, and the
-    // commit-gate check reads the same file), so the advisory no longer keys on
-    // the architect agent's presence. Severity stays `warn`: doctor's exit code
-    // is a contract (`{argv:["doctor"],codes:[0]}` at the capability tier).
-    // Board r1 (ux): after `setup` the file EXISTS as the inert starter, and
-    // `arch-check init` would answer "already exists — left unchanged" — a
-    // no-op must not be the advertised repair, so the routes differ by state.
+    // Inert boundary gate — the config is load-bearing for the gate itself
+    // (layer-boundary is the sole post-edit rule, and the commit-gate check
+    // reads the same file), so the advisory does not key on the architect
+    // agent's presence. Severity stays `warn`: doctor's exit code is a contract
+    // (`{argv:["doctor"],codes:[0]}` at the capability tier).
     {
-        // #430 AC7: the loader now answers WHICH state it found, so this reports
-        // three different things instead of one hedge. Before, a config that
-        // failed to parse and an unedited starter produced the same `warn` with
-        // the same lead repair — and that repair (`discover`) REWROTE the broken
-        // file, which is how the product came to steer an adopter into losing
-        // their own rules. The path comes from the loader's own export, so a
-        // probe can never disagree with it about which file it means (#401 fixed
-        // one such divergence here by hand). `slug` remains right for the
-        // COMMAND names in the message.
+        // The loader answers WHICH state it found, so each state gets its own
+        // report. A config that fails to parse must not get the starter's lead
+        // repair: `discover` REWRITES the file, which would steer an adopter into
+        // losing their own rules. The path comes from the loader's own export, so
+        // the probe and the loader agree about which file they mean. `slug`
+        // remains right for the COMMAND names in the message.
         const loaded = await loadArchConfig(workspaceDir);
         const cfgPath = archConfigPath(workspaceDir);
         if (loaded.kind === "malformed") {
@@ -395,7 +384,7 @@ export async function runDoctor(opts) {
             add("warn", "arch-gate", `${cfgPath} declares layers but no \`deny\` pair, so the boundary gate enforces nothing. Add the pairs you want blocked — the file carries a worked example — then check with \`${slug} arch-check check\`.`);
         }
         else if (loaded.kind === "inert") {
-            // Board r1 (ux): after `setup` the file EXISTS as the inert starter, and
+            // After `setup` the file EXISTS as the inert starter, and
             // `arch-check init` would answer "already exists — left unchanged" — a
             // no-op must not be the advertised repair, so the routes differ by state.
             add("warn", "arch-gate", `${cfgPath} declares no layers the gate can read — it is inert. Normal for the scaffolded starter, which parses to nothing. Run \`${slug} arch-check discover\` to draft layers/deny from the import graph (it replaces this starter), or define them by hand there — the starter and drafted files include a worked example.`);
@@ -407,7 +396,7 @@ export async function runDoctor(opts) {
             add("ok", "arch-gate", "architecture boundary gate is configured.");
         }
     }
-    // Crew presence + agent naming (#260).
+    // Crew presence + agent naming.
     const EXPECTED_ROLES = [
         "architect", "code-reviewer", "security-reviewer", "test-author",
         "product-owner", "ux-expert", "qa-reviewer", "journey-architect",
@@ -426,13 +415,46 @@ export async function runDoctor(opts) {
             add("warn", "crew", `stale bare-name agent file(s) (pre-rename): ${staleBare.map((r) => `${r}.md`).join(", ")} — remove them; use ${slug}-<role>.md.`);
         }
     }
-    // Orchestrator skills (#260) — report when present.
+    // Orchestrator skills — report when present.
     for (const orch of ["review-board", "project-manager"]) {
         if (await pathExists(join(workspaceDir, ".claude", "skills", `${slug}-${orch}`, "SKILL.md"))) {
             add("ok", "orchestrators", `${slug}-${orch} orchestrator skill present.`);
         }
     }
-    // Optional retrospective skill (#13).
+    // The pipeline's ship step renders its handover from this template.
+    if (await pathExists(join(workspaceDir, ".claude", "skills", `${slug}-project-manager`, "SKILL.md"))) {
+        const template = join(workspaceDir, ".github", "ISSUE_TEMPLATE", "handover.md");
+        if (await pathExists(template)) {
+            // The label is what the dashboard queries; a template without it files issues nothing reads.
+            const line = /^labels:(.*)$/m.exec(await readFile(template, "utf8").catch(() => ""))?.[1] ?? "";
+            const labelled = line.split(/[\s,[\]"']+/).includes("handover");
+            if (labelled)
+                add("ok", "handover-template", ".github/ISSUE_TEMPLATE/handover.md present.");
+            else
+                add("warn", "handover-template", `.github/ISSUE_TEMPLATE/handover.md lacks \`labels: handover\`, so issues filed from it are not read — run \`${slug} setup --replace\`.`);
+        }
+        else {
+            add("warn", "handover-template", `.github/ISSUE_TEMPLATE/handover.md is missing, so the ship step has no handover form — run \`${slug} setup\`.`);
+        }
+    }
+    // Fill-in rule packs ship `{{NAME}}` blanks the adopter replaces. A warning,
+    // never a failure: an unfilled blank weakens a rule, it does not break one.
+    const ruleFiles = (await walkFiles(join(workspaceDir, ".claude", "rules"))).filter((f) => f.endsWith(".md"));
+    const blanks = [];
+    for (const f of ruleFiles) {
+        // Outside fenced blocks: a token shown in an example is not a blank.
+        const text = stripFencedBlocks(await readFile(f, "utf8").catch(() => ""));
+        const found = [...new Set(text.match(/\{\{[A-Z][A-Z_]*\}\}/g) ?? [])];
+        if (found.length > 0)
+            blanks.push(`${relative(workspaceDir, f).split(sep).join("/")} (${found.join(", ")})`);
+    }
+    if (blanks.length > 0) {
+        add("warn", "rule-blanks", `installed rules still hold blanks to fill in — edit ${blanks.join("; ")}, replacing each token with this project's value.`);
+    }
+    else if (ruleFiles.length > 0) {
+        add("ok", "rule-blanks", "no unfilled blanks in the installed rules.");
+    }
+    // Optional retrospective skill.
     if (await pathExists(join(workspaceDir, ".claude", "skills", `${slug}-retrospective`, "SKILL.md"))) {
         add("ok", "retrospective", `${slug}-retrospective skill present (optional post-ship retro).`);
     }

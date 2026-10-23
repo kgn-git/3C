@@ -50,13 +50,15 @@ framework's distribution, then verify with `${FRAMEWORK_SLUG} doctor`. On any ot
 - **Confirm with the user before** creating a branch and **before** opening a PR. These are the external,
   hard-to-reverse steps.
 - **Never** auto-merge, **never** force-push, **never** bypass hooks (`--no-verify`) or the pre-commit gate.
-- Write the handover document (`docs/Handover-<N>.md`). It MUST open with a `3c-handover/1` YAML
-  frontmatter block, computed by the pipeline **at ship time** — this is what the
-  `${BRAND_SLUG} dashboard` delivery view reads (it performs no git or network calls, so anything
-  missing here renders as a blank):
+- File the handover as a **closed `handover`-labelled issue**, never a committed file. Render the body
+  from `.github/ISSUE_TEMPLATE/handover.md` (installed by `${BRAND_SLUG} setup`): it MUST open with a fenced
+  `yaml` block holding the `3c-handover/1` metadata, computed by the pipeline **at ship time**. That
+  block is what the `${BRAND_SLUG} dashboard` delivery view reads (from `handover`-labelled issues through
+  `gh`, cached locally for 15 minutes; only owners', members' and collaborators' issues count; a failed
+  fetch is named, and anything missing here renders as a blank):
 
+  ````markdown
   ```yaml
-  ---
   schema: 3c-handover/1
   issue: <N>                  # or `issues: [..]` when one delivery closes several
   title: "<issue title>"
@@ -75,14 +77,20 @@ framework's distribution, then verify with `${FRAMEWORK_SLUG} doctor`. On any ot
                              # reconcile-anti-improvisation, pretooluse-path-guard,
                              # sprint-readiness, capability-tier. Metadata-only: never raw command output, file
                              # contents, or env values. Missing renders as blank.
-  ---
   ```
+  ````
 
-- The frontmatter carries delivery metadata only — it MUST NOT embed credentials, tokens, or any
-  secret material (same discipline as the scan-secrets pass on plan and PR text; handovers are
-  committed files).
-- Below the frontmatter, the narrative stays human-first: what changed, the board verdict, any
-  needs-human items, follow-ups.
+- File it with `${BRAND_SLUG} implement file-handover < handover.md`. It files nothing when the block
+  would not validate or the body matches a secret pattern, finds an already-filed handover for the same
+  delivery instead of filing a second, and closes the issue it opens. When the `handover` label does not
+  exist yet, create it first:
+  `gh label create handover --description "3C delivery handover" --color 0E8A16`.
+  If filing fails it prints the exact `gh` commands that finish the job — run them; a handover is never
+  dropped.
+- The block carries delivery metadata only — it MUST NOT embed credentials, tokens, command output,
+  environment values or diff content (an issue's edit history keeps whatever was first posted).
+- Below the block, the narrative stays human-first: what changed, the board verdict, any needs-human
+  items, follow-ups.
 
 ### 6. Retrospective (optional)
 After shipping, **optionally** capture a retrospective: `/${BRAND_SLUG}-retrospective <scope>`. This is a

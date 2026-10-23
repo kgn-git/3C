@@ -40,6 +40,22 @@ export interface HandoverScan {
     readonly legacy: number;
     readonly malformed: number;
 }
-export declare function parseHandover(fileName: string, content: string): HandoverParse;
-export declare function readHandovers(docsDir: string): Promise<HandoverScan>;
+/** Parses a handover body whose metadata block opens it. */
+export declare function parseHandoverBody(handover: number, body: string): HandoverParse;
+/** Validates the YAML between the fences, numbering the record `handover`. */
+export declare function validateHandoverFrontmatter(fmText: string, handover: number): {
+    kind: "record";
+    record: HandoverRecord;
+} | {
+    kind: "malformed";
+    reason: string;
+};
+/** Validates a parsed handover mapping; the delivery cache re-checks its records with it. */
+export declare function validateHandoverObject(fm: unknown, handover: number): {
+    kind: "record";
+    record: HandoverRecord;
+} | {
+    kind: "malformed";
+    reason: string;
+};
 //# sourceMappingURL=handover.d.ts.map

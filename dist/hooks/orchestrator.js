@@ -1,6 +1,5 @@
-// Synchronous hook orchestrator. AD-03 amendment (#69): the daemon
-// originally specified for L1 defers to L2; this module is the L1
-// alternative — it runs hooks via `child_process.spawn` parallelised
+// Synchronous hook orchestrator. Per AD-03 the daemon defers to L2; this
+// module is the L1 alternative — it runs hooks via `child_process.spawn` parallelised
 // with `Promise.all`, per-hook timeout via `AbortController`, no IPC.
 import { spawn as nodeSpawn } from "node:child_process";
 import { readFile } from "node:fs/promises";
@@ -28,11 +27,11 @@ export async function runHookOrchestrator(opts) {
         eventResult = await readHookEventFromStdin(opts.stdin);
     }
     catch (err) {
-        // #416: an over-cap or unreadable event is NOT a parse failure. Allowing
+        // An over-cap or unreadable event is NOT a parse failure. Allowing
         // it would let a padded command walk past the commit gate, so a PreToolUse
         // is denied — explicitly exit 2: Claude Code reads any other non-zero,
         // including an escaping throw, as "proceed". The advisory PostToolUse
-        // never blocks (#16 AC4), so it only says so.
+        // never blocks, so it only says so.
         const cause = err instanceof StdinTooLargeError ? hookLimitText(err) : `could not read the event (${readErrorCode(err)})`;
         if (opts.event === "PostToolUse") {
             opts.stderr.write(`${slug} hook run: ${cause}; post-edit validation skipped for this edit\n`);
@@ -49,8 +48,8 @@ export async function runHookOrchestrator(opts) {
         return { exitCode: 0 };
     }
     const event = eventResult.event;
-    // 1a. #16 VP-03-F02: PostToolUse edit validation — advisory only,
-    //     self-contained, never blocks (AC4); separate from the commit chain.
+    // 1a. PostToolUse edit validation — advisory only, self-contained, never
+    //     blocks; separate from the commit chain.
     if (opts.event === "PostToolUse" &&
         /^(Edit|Write|MultiEdit)$/.test(event.tool_name)) {
         try {
@@ -58,7 +57,7 @@ export async function runHookOrchestrator(opts) {
             if (r.message !== "") {
                 // Human-readable copy first, for `--debug` and the transcript.
                 opts.stderr.write(r.message);
-                // #384: and the same content on the channel the model actually reads.
+                // And the same content on the channel the model actually reads.
                 // Emitted ONLY when there is something to say — a clean edit is the
                 // common case and an envelope on every one of them would inject noise
                 // into the model's context forever.
@@ -171,9 +170,9 @@ async function runOne(hook, event, triggerEvent, opts, spawn, tcfg, actorToken) 
         actor_token: actorToken,
         timestamp: startedAt,
     }, tcfg);
-    // #449: credential references are retired. The hook is refused here, per
-    // hook, so a blocking hook still blocks — a config error would have
-    // bypassed the whole chain. Nothing is resolved or substituted any more.
+    // Credential references are retired. The hook is refused here, per hook,
+    // so a blocking hook still blocks — a config error would bypass the whole
+    // chain. Nothing is resolved or substituted.
     if (hook.command.includes("${OS_KEYCHAIN:")) {
         await emit(-1, 0, deriveFailureCategory({ exitCode: -1, timedOut: false, configError: true, spawnError: false }));
         return {

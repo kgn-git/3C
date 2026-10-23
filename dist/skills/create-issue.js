@@ -1,13 +1,13 @@
 // Issue Creation Skill — runtime helper.
 //
 // `createIssue(payload)` is the AC10 swap-point: L1 shells out to `gh
-// issue create`; L2's bundled MCP server (#70 follow-on) substitutes
+// issue create`; L2's bundled MCP server substitutes
 // `pm.create_issue` without changing the function signature or the
 // skill UX.
 //
 // `preflight(body)` runs the AC7 secret-pattern + AC8 large-code-block
 // checks before any external publish. Reuses the `scanSecrets`
-// substrate completed in #71.
+// substrate.
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { scanSecrets } from "../validate/secrets.js";
@@ -47,7 +47,7 @@ export async function createIssue(payload, options = {}) {
     if (hasBlockingWarning && !options.force) {
         return { ok: false, warnings };
     }
-    // #70: route through the bundled MCP PM server when configured; the
+    // Route through the bundled MCP PM server when configured; the
     // preflight above already ran, so UX/guarantees are identical to gh.
     if (options.pmRouter) {
         const routed = await options.pmRouter(payload);

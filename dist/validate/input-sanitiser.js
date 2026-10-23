@@ -1,4 +1,4 @@
-// Input sanitisation per AC11 of issue #1.
+// Input sanitisation.
 // Two responsibilities, kept separate in the result:
 // 1. Strip ASCII control characters (always applied; never rejects).
 // 2. Detect prompt-injection patterns that should never reach Claude's context.

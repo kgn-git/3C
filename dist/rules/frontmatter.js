@@ -1,6 +1,6 @@
 // Minimal YAML-subset frontmatter parser for `.claude/rules/*.md` files.
 //
-// Supported shapes (per #3 frontmatter contract):
+// Supported shapes (per the frontmatter contract):
 //   schema_version: 1
 //   description: <string>
 //   globs: ["**/*.ts", "**/*.tsx"]   or   [foo, bar]   or   []
@@ -95,7 +95,7 @@ function parseValue(raw, line) {
     }
     return { ok: true, value: stripQuotes(raw) };
 }
-// #464: split on commas that sit outside double quotes and outside `{…}`, so
+// Split on commas that sit outside double quotes and outside `{…}`, so
 // a brace glob (`"**/*.{ts,js}"`, quoted or not) stays one item. A `"` opens a
 // quote only at the start of an item, as in YAML flow style; mid-token it is
 // an ordinary character. Null when a quote is left open — merging the rest

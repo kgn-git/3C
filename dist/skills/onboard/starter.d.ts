@@ -8,9 +8,9 @@ export interface StarterTask {
     readonly title: string;
 }
 /**
- * What a starter search found. #343 board: the two misses need different
- * advice — "try another --level" cannot fix a missing or signed-out `gh`, and
- * telling a developer without `gh` to change a label sent them in a loop.
+ * What a starter search found. The two misses need different advice — "try
+ * another --level" cannot fix a missing or signed-out `gh`, and telling a
+ * developer without `gh` to change a label sends them in a loop.
  */
 export type StarterOutcome = {
     readonly kind: "found";

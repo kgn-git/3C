@@ -1,8 +1,8 @@
 // Registration-time PreToolUse policy for the L1 starter subagents.
 // Returns an allow/deny decision for a (agent, tool, path) triple.
 //
-// AC8 (#51): test-author Edit/Write restricted to **/*.test.* and tests/**
-// AC9 (#51): both agents denied Read on .env*, ~/.ssh/, ~/.aws/
+// test-author Edit/Write restricted to **/*.test.* and tests/**
+// both agents denied Read on .env*, ~/.ssh/, ~/.aws/
 const SECRET_PATTERNS = [
     /(^|[\\/])\.env(\.[\w-]+)?$/,
     /[\\/]\.ssh[\\/]/,

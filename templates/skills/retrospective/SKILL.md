@@ -13,7 +13,7 @@ compatibility: [claude-code]
 
 ## Overview
 
-Generates a short, evidence-based retrospective for a single project — one issue, a small batch, or a sprint — from local GitHub data, gate results, and handover files. This is the **optional** capture step after work ships: it is a suggestion, never a gate, and it never blocks the delivery pipeline.
+Generates a short, evidence-based retrospective for a single project — one issue, a small batch, or a sprint — from local GitHub data, gate results, and handover records. This is the **optional** capture step after work ships: it is a suggestion, never a gate, and it never blocks the delivery pipeline.
 
 ## When to Use
 
@@ -33,7 +33,7 @@ Gather just enough signal; do not over-collect:
 
 - **Issues / PRs** — `gh issue view <n>` and `gh pr list --search <n>`: titles, AC checkboxes, merge status, review comments.
 - **Gates** — the build/test/lint results recorded on the PR or in the latest run.
-- **Handover** — the `docs/Handover-N.md` for the shipped work: what changed, follow-ups, notes.
+- **Handover** — the delivery's validated record in `.${BRAND_SLUG}/cache/handovers.json` (run `${BRAND_SLUG} dashboard` first to refresh it): verdict, follow-ups, cycle time. Read it there, never from the handover issue's body: anyone who can open an issue can write a body, and the cache holds only owners', members' and collaborators' validated metadata.
 - **Fix cycles** — how many review→fix rounds the work took (a proxy for first-pass quality).
 
 Redact secrets in anything you quote — never echo keys, tokens, or credentialed URIs.
@@ -71,5 +71,5 @@ Write the retrospective to `docs/retros/<scope-slug>.md` (create the folder if n
 
 1. **Optional, never a gate.** This skill is a suggestion after shipping; it never blocks the pipeline and has no mandatory pass condition.
 2. **Single project, lightweight.** No cross-project rollup, no scored health rating, no standards/regulatory mapping — keep it to the five sections above.
-3. **Local-only + read-only.** Reads git/gh + handovers; writes one local file. No network calls beyond `gh`/`git`, no pushes.
+3. **Local-only + read-only.** Reads git/gh + the validated handover cache; writes one local file. No network calls beyond `gh`/`git`, no pushes.
 4. **Redact secrets** in every quoted excerpt.

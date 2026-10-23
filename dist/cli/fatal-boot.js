@@ -1,15 +1,7 @@
-// #448 board: installs the fatal handlers BEFORE the rest of the CLI loads.
-//
-// `src/cli.ts` imports this module first. ESM evaluates imports in order, so
-// the handlers are live before cli.ts's OTHER modules run — a throw while the
-// CLI is still loading reaches `reportFatal`, not Node's printer. Installing
-// them in cli.ts's own body came too late for that. Not before EVERY module:
-// fatal.ts's own imports (branding/runtime, validate/secrets) load first, so
-// keep their top level free of anything that can throw.
-//
-// Only when the CLI is the process entry point: tests import cli.ts, and a
-// process-wide `uncaughtException` listener in a test worker would swallow
-// the runner's own failures.
+// Imported first by `src/cli.ts`, so ESM order arms the fatal handlers before
+// its other modules evaluate. fatal.ts's own imports load earlier still: keep
+// their top level throw-free. Entry-point only: in a test worker a global
+// `uncaughtException` listener would swallow the runner's failures.
 import { realpathSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { installFatalHandlers } from "./fatal.js";

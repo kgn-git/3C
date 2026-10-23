@@ -1,30 +1,20 @@
-// #408: the file set the security gate scans.
+// The file set the security gate scans. Deliberately not shared with any other
+// caller: these four states are what this gate needs, and widening a shared
+// helper to include untracked files would change its other callers' results.
 //
-// Deliberately NOT the shared `gitChangedLines` this replaced. That function
-// had a second caller, `evaluateCoverageGate`, which marked every changed line
-// of a file with no coverage entry as uncovered — so widening it to include
-// untracked files would have silently failed the coverage gate on new
-// fixtures, docs and config. Both symbols were retired with `coverage-gate`
-// (#396); the constraint is recorded in the past tense because the
-// counter-example is no longer in the tree to check. The decision stands on
-// its own terms: the four states below are what the security gate needs, and
-// no other caller should be made to share them.
-//
-// The states a change is actually in, and why all four are needed:
 //   * unstaged  — the pre-commit hook's moment;
 //   * staged    — `git add`ed, about to be committed;
 //   * untracked — a NEWLY WRITTEN file, which is what a generated test is;
-//   * committed since the merge-base — the state `/3c-review-board` meets, where
-//     `git diff` and `git diff --cached` are BOTH empty. The gate's only
-//     documented consumer has always run in exactly this state, so a file set
-//     without it scans nothing for the one caller that exists.
+//   * committed since the merge-base — what `/3c-review-board` meets, where
+//     `git diff` and `git diff --cached` are BOTH empty; without it the gate
+//     scans nothing for its documented consumer.
 import { stat } from "node:fs/promises";
 import { join } from "node:path";
 import { defaultGitRunner } from "./git.js";
 /**
  * The base ref could not be resolved, so the span to scan is unknown. Callers
- * MUST fail closed on this (a10-exception-handling): a gate that reports a pass
- * over a tree it never read is the defect #408 exists to close.
+ * MUST fail closed on this (a10-exception-handling): a pass over a tree the
+ * gate never read is a fail-open.
  */
 export class SecurityBaseError extends Error {
     constructor(message) {
@@ -43,28 +33,24 @@ const BASE_CANDIDATES = [
     "refs/heads/main",
     "refs/heads/master",
 ];
-/** Short names for the refusal message — full refspecs are noise to an adopter. */
 const CANDIDATE_LABELS = "origin/HEAD, origin/main, origin/master, main, master";
 /**
- * CWE-400. The untracked half is unbounded by construction — a workspace that
- * has never been committed lists its entire tree — and every path here becomes
- * a file read. Both caps fail closed with a route that narrows the set.
+ * CWE-400. The untracked half is unbounded — a never-committed workspace lists
+ * its whole tree — and every path becomes a file read. Both caps fail closed
+ * with a route that narrows the set.
  */
 export const MAX_SCANNED_FILES = 5000;
 export const MAX_SCANNED_BYTES = 1_048_576;
 /**
- * Pick which of several concurrent git failures is reported as THE cause (#422).
+ * Pick which of several concurrent git failures is reported as THE cause,
+ * ranked by how much the message tells the reader:
  *
- * Ranked by how much the message tells the reader, not by which finished first:
- *
- *   3. names the missing repository, as a `fatal:` — git's clearest statement
+ *   3. names the missing repository, as a `fatal:`
  *   2. names the missing repository at all (`git diff` says it as a `warning:`)
  *   1. any other `fatal:` — a real failure inside a real repository
- *   0. everything else, including git USAGE errors
- *
- * Rank 0 is where `error: unknown option \`cached'` lands. It is never chosen
- * over a message that names a cause, which is the whole point: a usage error
- * points the reader at this CLI, and there is nothing they can do with it.
+ *   0. everything else, including git usage errors such as
+ *      `error: unknown option \`cached'`, which point at this CLI and give the
+ *      reader nothing to act on
  *
  * Ties keep array order, so the choice is stable across runs and platforms.
  */
@@ -92,13 +78,12 @@ function mostInformative(failures) {
     return best;
 }
 const lines = (out) => 
-// No trim() per entry: a path may legitimately begin or end with a space, and
-// silently renaming it would drop it from the scan.
+// No trim(): a path may begin or end with a space.
 out.split(/\r?\n/).filter((l) => l !== "");
 export async function securityFileSet(workspaceDir, opts = {}) {
     const runner = opts.runner ?? defaultGitRunner;
-    // `core.quotePath=false` so a non-ASCII path arrives as a path rather than as
-    // git's octal-escaped rendering of one, which would never resolve on disk.
+    // `core.quotePath=false` so a non-ASCII path arrives as a path, not git's
+    // octal-escaped rendering that never resolves on disk.
     const git = (args) => runner(["-C", workspaceDir, "-c", "core.quotePath=false", ...args]);
     /** For probes where "this ref does not exist" is an answer, not a failure. */
     const probe = async (args) => {
@@ -111,9 +96,7 @@ export async function securityFileSet(workspaceDir, opts = {}) {
         }
     };
     const base = await resolveBase(probe, opts.base);
-    // These four are NOT probes. A git failure here (an I/O error, or a listing
-    // that overflows the runner's buffer) must not degrade to an empty file set —
-    // that is the fail-open this whole issue is about.
+    // NOT probes: a git failure here must throw, never degrade to an empty set.
     const settled = await Promise.allSettled([
         git(["diff", "--name-only", "--no-color"]).then(lines),
         git(["diff", "--cached", "--name-only", "--no-color"]).then(lines),
@@ -122,22 +105,11 @@ export async function securityFileSet(workspaceDir, opts = {}) {
             ? Promise.resolve([])
             : git(["diff", "--name-only", "--no-color", base]).then(lines),
     ]);
-    // #422. `Promise.all` rejects with whichever of the four settles FIRST, and in
-    // a directory that is not a repository all four fail with three different
-    // messages — so the cause reported to the user was decided by scheduling.
-    // One of the three is git's option parser rejecting `--cached` before
-    // repository discovery runs, which names nothing an adopter can act on and
-    // reads as a bug in this CLI passing a bad flag to git.
-    //
-    // #408 added this refusal so a block would carry a route forward; leaving the
-    // cause to a race satisfied that only probabilistically, and the guard pinning
-    // it failed under full-suite concurrency rather than in isolation.
-    //
-    // `allSettled` + a fixed ranking keeps the failure closed exactly as before —
-    // any rejection still throws — while making WHICH cause is reported a property
-    // of the messages rather than of the scheduler. Adding a pre-flight
-    // `rev-parse` probe instead would have been one more git invocation on a path
-    // sequenced to become a 10s-budget hook (#384/#401).
+    // `allSettled` + a fixed ranking, not `Promise.all`: outside a repository all
+    // four fail with different messages, and `Promise.all` would report whichever
+    // settled first — often git rejecting `--cached` before repository discovery.
+    // Any rejection still throws. A pre-flight `rev-parse` would add a spawn on a
+    // path budgeted to run as a hook.
     const failures = settled.flatMap((s) => (s.status === "rejected" ? [s.reason] : []));
     if (failures.length > 0)
         throw mostInformative(failures);
@@ -148,10 +120,8 @@ export async function securityFileSet(workspaceDir, opts = {}) {
             `Narrow the span with \`--base=<ref>\`, or add build output and vendored ` +
             `directories to .gitignore.`);
     }
-    // CWE-400 again, per file: the scanner reads whole file contents, and the
-    // untracked half can now surface a vendored bundle or a media asset. Oversize
-    // files are REPORTED rather than dropped — a file the gate did not read is
-    // not a file the gate found clean.
+    // CWE-400 per file: the scanner reads whole contents. Oversize files are
+    // reported, because a file the gate did not read is not a file it found clean.
     const scannable = [];
     const skipped = [];
     for (const rel of files) {
@@ -187,22 +157,15 @@ async function resolveBase(probe, explicit) {
         }
         return merged;
     }
-    // No commits at all: nothing is committed, so the committed half is honestly
-    // empty. This is not the unresolvable case — the staged and untracked halves
+    // No commits: the committed half is honestly empty, and staged + untracked
     // still cover everything that exists.
     if (head === null)
         return null;
-    // ONE `for-each-ref` rather than a `rev-parse` per candidate. Process spawn
-    // dominates this function's cost — especially on Windows — and probing five
-    // refs individually made every scan pay for four failures before its first
-    // success. The gate is sequenced to become a hook (#384/#401) under a 10s
-    // budget, so the fixed cost per invocation is not free.
+    // One `for-each-ref` rather than a `rev-parse` per candidate: process spawn
+    // dominates cost (especially on Windows) under a hook's time budget.
     const listed = await probe(["for-each-ref", "--format=%(refname)", ...BASE_CANDIDATES]);
-    // `probe` cannot tell "no candidate exists" from "the spawn failed", and this
-    // is now ONE call covering all five candidates — so a single failure would
-    // refuse to scan a repository whose default branch is sitting right there.
-    // An empty result falls back to asking per candidate, which degrades one ref
-    // at a time the way the pre-batch form did.
+    // `probe` cannot tell "no candidate exists" from "the spawn failed", so an
+    // empty result falls back to probing each candidate rather than refusing.
     const present = listed === null ? null : new Set(lines(listed));
     for (const candidate of BASE_CANDIDATES) {
         if (present !== null && !present.has(candidate))

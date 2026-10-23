@@ -21,9 +21,9 @@ const verdictCell = (r) => {
         ? esc(level)
         : `${esc(level)} <small>(${counts.join(" · ")})</small>`;
 };
-// #301 AC3/AC4: the issue-centric delivery view — one row per issue, plain
+// The issue-centric delivery view — one row per issue, plain
 // #N references (no links: the document must stay free of external refs).
-function deliverySection(d) {
+function deliverySection(d, source) {
     const rows = d.rows
         .map((r) => `<tr><td>#${r.issue}</td><td>${esc(r.title ?? "")}</td>` +
         `<td>${verdictCell(r)}</td>` +
@@ -44,8 +44,9 @@ function deliverySection(d) {
             ? `${d.malformed} handover${d.malformed === 1 ? "" : "s"} with malformed frontmatter (warning)`
             : null,
     ].filter((n) => n !== null);
+    const origin = source === null ? "all deliveries on record" : [source.header, source.status, ...source.notes].map(esc).join(" · ");
     return `<h2>Delivery</h2>
-<p><small>all deliveries on record</small></p>
+<p><small>${origin}</small></p>
 <div class="kpi">
 <div><small>Issues shipped</small><b>${d.rows.length}</b></div>
 <div><small>Median cycle</small><b>${d.medianCycleMs !== null ? fmtCycle(d.medianCycleMs) : "—"}</b></div>
@@ -58,7 +59,7 @@ function deliverySection(d) {
 <table><tbody>${weeks || "<tr><td>no dated deliveries</td></tr>"}</tbody></table>
 ${notes.length > 0 ? `<p><small>${notes.join(" · ")}</small></p>` : ""}`;
 }
-// #180: telemetry gate metrics — demoted to a secondary section (#301 AC5).
+// Telemetry gate metrics — a secondary section.
 function gateSection(m, windowLabel) {
     const cats = Object.entries(m.failureCategories)
         .sort(([, a], [, b]) => b - a)
@@ -81,11 +82,11 @@ function gateSection(m, windowLabel) {
 <h3>Pass-rate trend</h3>
 <table><tbody>${trend}</tbody></table>`;
 }
-// AC1/AC4/AC5 (#180) preserved: a single self-contained HTML document.
+// A single self-contained HTML document.
 // Inline CSS only; no network refs, no scripts; personal/local wording only.
-export function renderDashboardHtml(delivery, gates, windowLabel) {
+export function renderDashboardHtml(delivery, gates, windowLabel, source = null) {
     const sections = [
-        delivery !== null ? deliverySection(delivery) : null,
+        delivery !== null ? deliverySection(delivery, source) : null,
         gates !== null ? gateSection(gates, windowLabel) : null,
     ].filter((s) => s !== null);
     return `<!doctype html>

@@ -7,7 +7,7 @@ export interface InstallRulePackOptions {
     readonly brand: ResolvedBrand;
     readonly onExisting: "abort" | "replace";
     /**
-     * #452: called with an existing file's path before it is overwritten with
+     * Called with an existing file's path before it is overwritten with
      * different content. A rejection stops that overwrite (fail closed).
      */
     readonly backup?: (absPath: string) => Promise<void>;

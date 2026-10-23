@@ -1,4 +1,4 @@
-// #280 — `setup` one-shot installer orchestrator. Sequences existing command
+// `setup` one-shot installer orchestrator. Sequences existing command
 // wrappers (each returns an exit code) with fail-fast + a resume hint.
 export async function runSetup(steps, log = () => { }) {
     const completed = [];
@@ -20,8 +20,8 @@ export async function runSetup(steps, log = () => { }) {
         }
         completed.push(s.name);
     }
-    // #396 AC8. `upgrade` was the verb that named this operation, and retiring it
-    // would otherwise leave the route documented nowhere an adopter is looking.
+    // No separate verb names the update operation, so without this line its
+    // route would be documented nowhere an adopter is looking.
     // Stated on SUCCESS only: a stopped install needs a repair, not a newer
     // release. The two-step form matters — re-installing the package alone moves
     // the CLI while the copied skills and agents stay on the old release.

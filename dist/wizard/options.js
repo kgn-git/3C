@@ -1,4 +1,4 @@
-// Curated wizard options for `${BRAND_SLUG} init` per #1 ACs.
+// Curated wizard options for `${BRAND_SLUG} init`.
 // Each option carries an id (stable, used for fragment lookup), a human label,
 // a one-line description, and (where applicable) an authoritative source citation.
 // Per session feedback memory: prefer source-grounded curated lists over runtime

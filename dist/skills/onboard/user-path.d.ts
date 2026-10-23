@@ -11,15 +11,11 @@ export declare class OnboardPathError extends Error {
 }
 /** The name used when the OS account name normalises to nothing usable. */
 export declare const FALLBACK_USER = "developer";
-/** Is `name` usable verbatim as an onboarding file stem? */
 export declare function isSafeUser(name: string): boolean;
 /**
- * The OS account name made safe — for the DEFAULT only (AC4).
- *
- * A developer who never typed a name must not be refused for the one their
- * machine gave them (`DOMAIN\jsmith`, `j smith`). An explicit `--user` is NOT
- * passed through here: normalising a typed name would silently map two people
- * onto one file, so it is validated and refused instead.
+ * The OS account name made safe, for the default only: a developer must not be
+ * refused for the name their machine gave them. A typed `--user` is refused
+ * instead, since normalising it could map two people onto one file.
  */
 export declare function normaliseDefaultUser(raw: string): string;
 /**
@@ -29,22 +25,17 @@ export declare function normaliseDefaultUser(raw: string): string;
  */
 export declare function onboardingFile(ws: string, user: string, sub?: string): string;
 /**
- * Layer 2 on its own: `dir/name` resolved, then confirmed to be a direct child
- * of `dir`. Exported so it is tested directly — through `onboardingFile` the
- * allow-list makes it unreachable, which is the point of a second layer and
- * also why a test through the public API cannot prove it works.
+ * Layer 2: `dir/name` must resolve to a direct child of `dir`. Exported for
+ * direct tests, since the allow-list makes it unreachable via `onboardingFile`.
  */
 export declare function containedFile(dir: string, name: string): string;
 /** A progress record is a few hundred bytes; anything this size is not one. */
 export declare const MAX_RECORD_BYTES: number;
 /**
- * Read `user`'s record, or `null` when there is nothing safe to read: an unsafe
- * name, a link anywhere on the path, a target that is not a regular file (a
- * FIFO would block forever), a hard-linked file, or one over the size cap.
- * Never throws — the reader's contract is "corrupt or missing → fresh".
+ * `user`'s record, or `null` when nothing is safe to read (a FIFO would block
+ * forever). Never throws: corrupt or missing means fresh.
  */
 export declare function readOnboardingFile(ws: string, user: string): Promise<string | null>;
-/** Does any directory on the chain, or the file itself, resolve through a link? */
 export declare function anyLinked(ws: string, user: string, sub?: string): Promise<boolean>;
 /** Is the onboarding directory itself reached through a link? (The dashboard's question.) */
 export declare function onboardingDirLinked(ws: string): Promise<boolean>;

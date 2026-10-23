@@ -1,10 +1,10 @@
-// #15 VP-02-F09 — onboarding skill compose. Seeds the roadmap, resumes from
-// persisted progress, advances modules, answers from local sources, and
-// recommends a level-appropriate starter task.
+// Onboarding skill compose. Seeds the roadmap, resumes from persisted
+// progress, advances modules, answers from local sources, and recommends a
+// level-appropriate starter task.
 //
-// #399 folded VP-06-F01 (`onboard-guide`) in as `--role`. The two commands
-// shared one state file and wrote conflicting meanings into its `level` field,
-// so running either after the other re-seeded the record the other had written.
+// Role-based onboarding is `--role` here, not a second command: two commands
+// sharing one state file would write conflicting meanings into its `level`
+// field, each re-seeding the record the other had written.
 import { resolveBrandSlugSync } from "../../branding/runtime.js";
 import { loadProgress, saveProgress } from "./progress.js";
 import { KNOWN_ROLES, buildRoadmap } from "./roadmap.js";
@@ -45,9 +45,8 @@ export async function runOnboard(ws, opts) {
     const roadmap = await buildRoadmap(ws, role);
     const ids = roadmap.map((m) => m.id);
     // Seed on first contact only. The gate requires BOTH fields empty, which is
-    // what keeps a FINISHED record (current null, completed full) from re-seeding
-    // — the defect #343 filed against `onboard-guide`, whose own guard read
-    // `level === role && current !== null` and so re-seeded at terminal state.
+    // what keeps a FINISHED record (current null, completed full) from
+    // re-seeding at terminal state.
     if (progress.current === null && progress.completed.length === 0) {
         progress = {
             user: opts.user,
@@ -81,7 +80,7 @@ export async function runOnboard(ws, opts) {
     if (droppedRole !== null) {
         notes.push(`Ignoring stored role \`${forConsole(droppedRole)}\` — this version knows only ` +
             `${KNOWN_ROLES.join(", ")}. Set one with, e.g., ` +
-            // #343 AC8: a runnable command, not "re-run with --role" — and a
+            // A runnable command, not "re-run with --role" — and a
             // concrete one: `<a|b|c>` is a redirect and a pipe when pasted.
             `\`${resolveBrandSlugSync()} onboard --role ${KNOWN_ROLES[1] ?? KNOWN_ROLES[0]}` +
             `${opts.explicitUser ? ` --user ${opts.user}` : ""}\` (roles: ${KNOWN_ROLES.join(", ")}).`);
@@ -96,11 +95,11 @@ export async function runOnboard(ws, opts) {
         notes.push(`Dropped ${stale.length} module id(s) not in this roadmap: ${[...new Set(stale)].join(", ")}. ` +
             `Resuming at ${next ?? "the end"}.`);
     }
-    // #343 board: a FINISHED record (no current module) whose roadmap has since
-    // gained modules — a developer who completes onboarding, then adds `--role`
-    // — was stranded. The seed gate needs `completed` empty and the stale pass
-    // only drops ids, so `current` stayed null: the role's modules were
-    // unreachable while the output said "All modules complete".
+    // A FINISHED record (no current module) whose roadmap has since gained
+    // modules — a developer who completes onboarding, then adds `--role` — must
+    // resume here. The seed gate needs `completed` empty and the stale pass only
+    // drops ids, so `current` would stay null: the role's modules unreachable
+    // while the output says "All modules complete".
     if (progress.current === null && progress.completed.length > 0) {
         const done = progress.completed;
         const next = ids.find((id) => !done.includes(id)) ?? null;
@@ -122,7 +121,6 @@ export async function runOnboard(ws, opts) {
         await saveProgress(ws, opts.user, progress);
         if (next === null) {
             completedAll = true;
-            // Ported from `onboard-guide/completion.ts` by #399, artifact-only.
             await recordCompletion(ws, opts.user);
         }
     }

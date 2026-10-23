@@ -2,7 +2,7 @@
 
 # ${BRAND_NAME} default review checklist
 
-Apply the four sections below to every changed file. Each section's anchor name is stable; future ${BRAND_NAME} extensions add new sections rather than restructure these.
+Apply every section below to every changed file. Each section's anchor name is stable; future ${BRAND_NAME} extensions add new sections rather than restructure these.
 
 ## Code Quality
 
@@ -36,3 +36,18 @@ Apply the four sections below to every changed file. Each section's anchor name 
 - Does this introduce a new third-party dependency? If yes, name the dependency, surface it as a `suggestion`-severity finding, and explain why it warrants a vendoring/security review.
 - Is a public API being changed in a way that would break downstream consumers without a corresponding deprecation note?
 - Does the file's responsibility grow beyond its named purpose (a file called `auth.ts` accumulating routing logic, etc.)?
+
+## File size and comments
+
+Read `.claude/rules/quality/file-size-and-comments/file-size-and-comments.md` and apply it to the lines the change touches. Its thresholds live in that file only. If `.claude/rules/quality/file-size-and-comments/` is absent, skip this section, say in the report that it was skipped, and name `${FRAMEWORK_SLUG} rules install quality/file-size-and-comments` to restore it. Each check opens with its id and default severity; start a finding's description with the id.
+
+- `size-cap` (`major`) — Does a changed file now exceed the pack's code-line cap, or sit in its tolerance band without a header comment saying why no seam exists?
+- `size-signal` (`suggestion`) — Has a changed non-test file passed the pack's review signal while a behavioural seam to split it along is visible?
+- `comment-what` (`minor`) — Does an added comment restate what the code does, or annotate code that explains itself?
+- `comment-history` (`minor`) — Does an added comment narrate development history (what the code used to do, who changed it, which issue asked for it)? A history comment on an untouched line of an edited file is at most a `suggestion` to remove.
+- `comment-safeguard` (`major`) — Does an added comment stand in for a safeguard ("do not remove", "keep in sync") where a test should pin the behaviour?
+- `comment-claim` (`major`) — Does an added comment make a property claim ("only", "every", "never", "cannot") that the code does not show and no test pins?
+- `comment-line-ref` (`minor`) — Does an added comment cite a line number instead of a symbol?
+- `commented-out-code` (`minor`) — Is commented-out code being committed?
+- `comment-ratio` (`suggestion`) — Does a changed implementation file read as mostly comment? Judge it by eye against the pack's ratio; configuration files are exempt.
+- `pack-changed` (`major`) — Does the change edit the file-size-and-comments pack itself? Flag it for a reviewer's explicit sign-off, and judge the rest of the change against the base branch's copy of the pack, not the edited one.

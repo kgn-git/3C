@@ -1,16 +1,16 @@
-// #440 (Group B): the WRITE path of the architecture waiver store, split out
-// of arch-exceptions.ts so the module the post-edit hook loads on every edit
-// carries no writer (AC18c). Only the CLI imports this.
+// The WRITE path of the architecture waiver store, kept out of
+// arch-exceptions.ts so the module the post-edit hook loads on every edit
+// carries no writer. Only the CLI imports this.
 //
-// Three ways recording a waiver used to damage the waivers already there:
+// Recording a waiver must not damage the waivers already there:
 //  - a SHAPE-invalid entry (`expiry:` for `expires:`, an unquoted `2099`)
-//    parsed fine, was dropped by the shared reader filter, and the rewrite
-//    left it out — at exit 0, "Exception recorded" (AC4/AC5);
-//  - every entry was rebuilt as exactly {reason, expires}, stripping the
-//    adopter's `owner:` / `ticket:` provenance (AC6);
-//  - the file was written through whatever sat at its path — a symlink,
-//    dangling or not, carried it out of `.3c/` (CWE-59, AC7) — and in place,
-//    so an interrupted write left a truncated store (AC8).
+//    parses fine but is dropped by the shared reader filter, so a rewrite
+//    would leave it out at exit 0 — the writer refuses instead;
+//  - an entry keeps the adopter's own keys (`owner:` / `ticket:`), rather
+//    than being rebuilt as exactly {reason, expires};
+//  - the file is never written through whatever sits at its path — a
+//    symlink, dangling or not, would carry it out of `.3c/` (CWE-59) — nor
+//    in place, where an interrupted write would leave a truncated store.
 import { lstat, mkdir, readFile, rename, unlink, writeFile } from "node:fs/promises";
 import { randomBytes } from "node:crypto";
 import { basename, dirname, join } from "node:path";
@@ -138,23 +138,21 @@ async function writeStoreAtomically(f, text) {
     }
 }
 /** Layer names come from adopter-authored YAML keys and may contain spaces
- *  (`domain layer:` is legal YAML), so this deliberately excludes only `>`
- *  — a `\s` exclusion would fail closed on a waiver that works today. */
-// Board r3: `[^>]` matches a newline and there is no `m` flag, so a
-// multi-line key passed the shape check and then printed a standalone,
+ *  (`domain layer:` is legal YAML), so this excludes `>` and line terminators
+ *  but not `\s`, which would fail closed on a waiver that works today. */
+// `[^>]` alone matches a newline and there is no `m` flag, so a multi-line
+// key would pass the shape check and then print a standalone,
 // attacker-chosen advisory line at exit 0 (CWE-117) — the exact forgery
-// clampLabel's own docstring names, on the one channel it was never
-// applied to. Excluding line terminators makes the SHAPE check fail closed
+// clampLabel's own docstring names. Excluding line terminators makes the SHAPE check fail closed
 // too, so the clamp is defence in depth rather than the only guard.
 const KEY_RE = /^[^>\r\n\u2028\u2029]+->[^>\r\n\u2028\u2029]+$/;
 export async function addException(ws, key, reason, expires) {
     if (reason.trim() === "") {
         throw new Error("architecture exception requires a non-empty --reason");
     }
-    // #430 AC11 (CWE-20, fail closed). `addException` wrote ANY key verbatim
-    // and the CLI reported success, so a key that `isExcepted` could never
-    // match was accepted and confirmed — the gate kept blocking and nothing
-    // said why. The shape check alone does NOT close this: the obvious paste,
+    // CWE-20, fail closed. A key that `isExcepted` can never match must not be
+    // accepted and confirmed — the gate would keep blocking and nothing would
+    // say why. The shape check alone does NOT close this: the obvious paste,
     // `ui->data (package rules: "pkg-a/**")`, satisfies the shape. Validating
     // the pair against the layers the adopter actually declared is what catches
     // it — and catches a plain typo in the same stroke.
@@ -169,13 +167,12 @@ export async function addException(ws, key, reason, expires) {
     const [from, to] = key.trim().split("->").map((s) => s.trim());
     const normalisedKey = `${from}->${to}`;
     const loaded = await loadArchConfig(ws);
-    // Board r3, measured regression caused by the r2 fix. Making a
-    // `deny`-without-`layers` config `malformed` moved a whole class of configs
-    // out of `ok` — and the declared-layer check below only ran on `ok`, so on
-    // exactly those configs the `(package rules: …)` paste this function exists
-    // to reject became accepted at exit 0 and PERSISTED. After the adopter
-    // repairs the config the recorded waiver silently never matches: accepted,
-    // confirmed, inert forever.
+    // A `deny`-without-`layers` config is `malformed`, not `ok`, and the
+    // declared-layer check below only runs on `ok` — so without this refusal,
+    // on exactly those configs the `(package rules: …)` paste this function
+    // exists to reject would be accepted at exit 0 and PERSISTED. After the
+    // adopter repairs the config the recorded waiver would silently never
+    // match: accepted, confirmed, inert forever.
     //
     // Deny by default. A config we cannot read is a vocabulary we cannot check,
     // so recording is refused rather than guessed. `absent` and `inert` still
@@ -199,7 +196,7 @@ export async function addException(ws, key, reason, expires) {
         const unknown = [from, to].filter((n) => !declared.has(n));
         if (unknown.length > 0) {
             // This module deliberately neither names the architecture config nor
-            // calls its path accessor: the #427 one-parser guard flags any file
+            // calls its path accessor: the one-parser guard flags any file
             // that parses YAML and reaches that path, and this one parses a
             // DIFFERENT file. The declared-layer list is the actionable half
             // anyway; `doctor` is where the path is named.
@@ -210,16 +207,14 @@ export async function addException(ws, key, reason, expires) {
                 `\`(package rules: …)\` suffix records a waiver that can never match.`);
         }
     }
-    // Board r1 (code + security, blocking): validate the NORMALISED key, then
-    // store that same string. Validating `key.trim()` and persisting the raw
-    // `key` meant `except "ui -> data"` was accepted, confirmed, and written as
-    // `ui -> data` — while the runtime lookup is always `exceptionKey(message)`
-    // = `ui->data`. Accepted, confirmed, can never match: the exact dead-end
-    // AC11 exists to close, one trim apart.
+    // Validate the NORMALISED key, then store that same string. Validating
+    // `key.trim()` and persisting the raw `key` would accept `except "ui -> data"`
+    // and write `ui -> data` — while the runtime lookup is always
+    // `exceptionKey(message)` = `ui->data`. Accepted, confirmed, can never
+    // match: the same dead-end as above, one trim apart.
     const f = exceptionsFile(ws);
     const cur = await loadStoreStrict(f);
-    // #440 AC6: the adopter's own keys on an entry (`owner:`, `ticket:`) are
-    // kept — the writer used to rebuild every entry as exactly {reason, expires}.
+    // The adopter's own keys on an entry (`owner:`, `ticket:`) are kept.
     const prev = cur[normalisedKey];
     cur[normalisedKey] = { ...(prev && typeof prev === "object" ? prev : {}), reason, expires };
     await writeStoreAtomically(f, yaml.dump({ schema_version: 1, ...cur }));

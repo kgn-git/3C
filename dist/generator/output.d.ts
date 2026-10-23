@@ -5,9 +5,9 @@ export interface WriteOptions {
     readonly atRoot?: boolean;
     readonly onExisting?: OnExisting;
     readonly companionEnabled?: boolean;
-    /** Framework slug used to namespace the backup file (e.g. `${BRAND_SLUG}` → `.pre-${BRAND_SLUG}.bak`). */
+    /** Framework slug that namespaces the backup file (e.g. `${BRAND_SLUG}` → `.pre-${BRAND_SLUG}.bak`). */
     readonly frameworkSlug?: string;
-    /** #452: called with the existing file before `replace` or `merge` overwrites different content. */
+    /** Called with the existing file before `replace` or `merge` overwrites different content. */
     readonly backup?: (absPath: string) => Promise<void>;
 }
 export interface WriteResult {

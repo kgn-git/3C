@@ -16,7 +16,7 @@ export interface RunArchResult {
     readonly filesUnreadable?: number;
     readonly filesUnmapped?: number;
 }
-/** Why the gate could not list the files to check, and what the adopter can do about it (#434). */
+/** Why the gate could not list the files to check, and what the adopter can do about it. */
 export interface GitFailure {
     readonly cause: string;
     readonly repair: string;

@@ -13,7 +13,7 @@ export type ParseEventResult = {
 };
 export declare function parseHookEvent(json: string): ParseEventResult;
 /**
- * Reads the event bounded at MAX_HOOK_EVENT_BYTES (#416). Over the cap it
+ * Reads the event bounded at MAX_HOOK_EVENT_BYTES. Over the cap it
  * THROWS `StdinTooLargeError` rather than returning a parse failure: the
  * right response differs per event (deny a PreToolUse, skip an advisory
  * PostToolUse), so the caller decides, and an unparsable payload is not

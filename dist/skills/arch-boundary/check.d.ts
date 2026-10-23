@@ -10,10 +10,9 @@ export interface BoundaryViolation {
  * What was found, and what was actually judged. A candidate is EVALUATED only
  * when it resolves to a LAYER under its rule map and can be read — so
  * `evaluated + unmatched + unreadable` accounts for every candidate that
- * resolved a rule map. #440: this used to count every file that resolved a
- * MAP, and a root block resolves for every path, so a config whose globs
- * matched nothing reported "37 file(s) checked" having judged none — the false
- * assurance #408 removed from the security gate, one layer in.
+ * resolved a rule map. Counting every file that resolved a MAP would be false
+ * assurance: a root block resolves for every path, so a config whose globs
+ * match nothing would report files "checked" having judged none.
  */
 export interface BoundaryCheckResult {
     readonly violations: ReadonlyArray<BoundaryViolation>;

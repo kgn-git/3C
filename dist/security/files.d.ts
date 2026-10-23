@@ -1,8 +1,8 @@
 import { type GitRunner } from "./git.js";
 /**
  * The base ref could not be resolved, so the span to scan is unknown. Callers
- * MUST fail closed on this (a10-exception-handling): a gate that reports a pass
- * over a tree it never read is the defect #408 exists to close.
+ * MUST fail closed on this (a10-exception-handling): a pass over a tree the
+ * gate never read is a fail-open.
  */
 export declare class SecurityBaseError extends Error {
     constructor(message: string);
@@ -23,9 +23,9 @@ export interface SecurityFileSet {
     readonly depDiff: string;
 }
 /**
- * CWE-400. The untracked half is unbounded by construction — a workspace that
- * has never been committed lists its entire tree — and every path here becomes
- * a file read. Both caps fail closed with a route that narrows the set.
+ * CWE-400. The untracked half is unbounded — a never-committed workspace lists
+ * its whole tree — and every path becomes a file read. Both caps fail closed
+ * with a route that narrows the set.
  */
 export declare const MAX_SCANNED_FILES = 5000;
 export declare const MAX_SCANNED_BYTES = 1048576;

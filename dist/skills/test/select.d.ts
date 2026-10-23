@@ -58,9 +58,8 @@ export declare function isSafeRef(ref: string): boolean;
 /**
  * The directory deployment-local config lives in (`.3c/`).
  *
- * #451 retired custom branding, so neither the workspace's own `branding.json`
- * (which this used to consult FIRST) nor the workspace's `framework.json` is
- * read: the directory is the package slug's, as it is for every other command.
+ * Custom branding is not supported, so neither the workspace's own
+ * `branding.json` nor the workspace's `framework.json` is read: the directory is the package slug's, as it is for every other command.
  *
  * The slug is still validated before use. This value becomes a path segment
  * (`join(root, dir, …)`), a regular-expression literal, and a string echoed to

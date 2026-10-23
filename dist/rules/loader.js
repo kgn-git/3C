@@ -3,7 +3,7 @@
 import { readFile, readdir } from "node:fs/promises";
 import { join, posix } from "node:path";
 import { parseFrontmatter } from "./frontmatter.js";
-/** A rule's load mode (#330); anything but an explicit `inject` stays on disk. */
+/** A rule's load mode; anything but an explicit `inject` stays on disk. */
 export function loadModeOf(rule) {
     return rule.fields.load === "inject" ? "inject" : "disk";
 }

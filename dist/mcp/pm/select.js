@@ -1,6 +1,6 @@
-// #70 AC4 — resolve which PM tool create-issue routes to: the `--tool` flag
+// Resolve which PM tool create-issue routes to: the `--tool` flag
 // overrides `.${BRAND_SLUG}/skills/create-issue.yaml`. Returns null when the
-// effective tool is github/absent (the unchanged gh path — AC7).
+// effective tool is github/absent (the unchanged gh path).
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import * as yaml from "js-yaml";

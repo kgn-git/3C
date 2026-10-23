@@ -13,7 +13,7 @@
 //
 // AC10 enforcement: command field is scanned for inline credentials via
 // scanSecrets; matches are rejected. `${OS_KEYCHAIN:NAME}` references are
-// retired (#449) and refused per hook by the orchestrator — NOT here: a config
+// retired and refused per hook by the orchestrator — NOT here: a config
 // error bypasses the whole hook chain (fail-open), so one stale line would
 // disable every blocking hook.
 import { readFile } from "node:fs/promises";

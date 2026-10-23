@@ -1,4 +1,4 @@
-// #70 AC1 — Jira Cloud REST v3 adapter. Network only via the injected
+// Jira Cloud REST v3 adapter. Network only via the injected
 // HttpClient (no live network in tests). Token never logged or cached.
 export const jiraAdapter = {
     tool: "jira",

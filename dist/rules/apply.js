@@ -2,13 +2,13 @@
 // filter injected rules by glob match → sort → render → budget check → inject
 // into CLAUDE.md.
 //
-// #330: Claude Code loads `.claude/rules/**/*.md` into every session on its
+// Claude Code loads `.claude/rules/**/*.md` into every session on its
 // own (an external behaviour, observed in this repo's own sessions — not
 // something 3C enforces), so copying a rule's body into CLAUDE.md loads it
 // twice and spends the 150-directive budget. A rule is injected only when it
 // says `load: inject`; everything else stays on disk and is named in a
 // one-line pointer. Injection is therefore a deliberate, budgeted double load:
-// the pattern packs opt in to keep their pre-#330 behaviour.
+// the pattern packs opt in to it.
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { resolveBrandSlugSync } from "../branding/runtime.js";
@@ -97,7 +97,7 @@ export function injectIntoClaude(claudeMd, block, frameworkName) {
             const content = claudeMd.slice(0, beginIdx) + block + claudeMd.slice(replaceTo);
             return { ok: true, content, replaced: true };
         }
-        // #330 board: inserting a fresh block here would leave the stale one in
+        // Inserting a fresh block here would leave the stale one in
         // place — loaded twice, and counted as the adopter's own text.
         return {
             ok: false,

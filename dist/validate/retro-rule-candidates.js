@@ -1,4 +1,4 @@
-// 3C retro rule-candidate derivation gate (issue #306).
+// 3C retro rule-candidate derivation gate.
 // Validates `RULE-CANDIDATE — <slug>` blocks emitted by `/3c-retrospective`'s optional
 // derivation annex against the 3C-native discipline: a candidate is accepted only if it is
 // DERIVED (a full chain) — never HARVESTED (a bare rule statement), never NUMBERED (a human
@@ -10,11 +10,11 @@
 // PRESENCE, not semantic truth — it cannot verify the origin against merged code, nor detect a
 // "best practice" line that secretly still references the incident, nor enforce that an
 // existing-rule-overlap citation is actually framed as an amendment (FOLD). Those are the rules
-// review's job (#305 curation). This gates candidate *structural* quality only, never shipping.
+// review's job. This gates candidate *structural* quality only, never shipping.
 import { contentLines, stripFencedBlocks, exceedsSizeCap } from "./_markdown.js";
 // A candidate label line. Whitespace classes are `[ \t]` (not `\s`): `\s` crosses newlines, so
-// `\s*` after the em-dash would match the newline and capture the *next* line as the slug — the
-// cross-line capture shape caught in #305. The slug MUST NOT be a number or a `PR-NN` id: the
+// `\s*` after the em-dash would match the newline and capture the *next* line as the slug. The
+// slug MUST NOT be a number or a `PR-NN` id: the
 // retro PROPOSES, never PROMOTES; a human numbers at the review.
 const LABEL_LINE = /^RULE-CANDIDATE[ \t]+—[ \t]*(.+?)[ \t]*$/;
 const NUMBERED_SLUG = /^(?:PR-\d+|\d+)$/i;
@@ -33,7 +33,7 @@ const FIELD_PATTERNS = {
 // disqualifier tokens reject; anything else is unknown (and therefore rejecting). The `\b`
 // prevents `none` from matching the prefix of a longer word like `nonexistent`.
 const DISQUALIFIER_TOKEN = /^(none|existing-gate-caught-it|product-defect|engineering-technique)\b/i;
-// Fence-aware (#317): a field label inside a fenced example within the span must NOT satisfy the
+// Fence-aware: a field label inside a fenced example within the span must NOT satisfy the
 // field — the span is stripped of fenced regions before matching.
 function extractField(block, field) {
     const match = stripFencedBlocks(block).match(FIELD_PATTERNS[field]);

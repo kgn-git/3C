@@ -1,0 +1,1 @@
+{"version":3,"file":"arch.d.ts","sourceRoot":"","sources":["../../../src/cli/commands/arch.ts"],"names":[],"mappings":"AAUA,MAAM,WAAW,OAAO;IACtB,QAAQ,CAAC,GAAG,EAAE,MAAM,CAAC;IACrB,QAAQ,CAAC,GAAG,CAAC,EAAE,CAAC,GAAG,EAAE,MAAM,KAAK,IAAI,CAAC;CACtC;AAwBD,wBAAsB,WAAW,CAC/B,IAAI,EAAE,SAAS,MAAM,EAAE,EACvB,GAAG,GAAE,OAAgC,GACpC,OAAO,CAAC,MAAM,CAAC,CA2NjB"}

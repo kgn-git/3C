@@ -15,7 +15,7 @@ export interface NextStepContext {
     /**
      * What a `--starter` request on THIS run found, if one was made. After a
      * miss, suggesting `--starter` again would loop; after a hit, "pick a first
-     * task" would contradict the task just printed (#343 board).
+     * task" would contradict the task just printed.
      */
     readonly starter?: {
         readonly kind: "found";
@@ -25,11 +25,11 @@ export interface NextStepContext {
     };
 }
 /**
- * #343 AC1. The lines that end every `onboard` run: how far along the developer
- * is and the exact next command. Pure, so each state is testable without the CLI.
+ * The lines that end every `onboard` run: how far along the developer is and
+ * the exact next command. Pure, so each state is testable without the CLI.
  *
- * Suggested commands never carry `--role`: the role is remembered in the record
- * (#399), and repeating it would invite a typo that changes the roadmap.
+ * Suggested commands never carry `--role`: the role is remembered in the record,
+ * and repeating it would invite a typo that changes the roadmap.
  */
 export declare function onboardNextLines(roadmapIds: ReadonlyArray<string>, progress: Progress, ctx: NextStepContext): string[];
 //# sourceMappingURL=present.d.ts.map

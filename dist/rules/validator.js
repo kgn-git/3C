@@ -70,7 +70,7 @@ export function validateRule(rule) {
         });
     }
     else {
-        // #464: a malformed brace would otherwise match only as literal text, so
+        // A malformed brace would otherwise match only as literal text, so
         // the rule would silently apply to nothing; an over-long or globstar-heavy
         // glob could hang the match.
         for (const g of globs) {
@@ -95,7 +95,7 @@ export function validateRule(rule) {
             message: `frontmatter "priority" must be an integer when present (got ${typeOf(priority)})`,
         });
     }
-    // #330: a misspelt mode would otherwise read as "disk" and silently drop a
+    // A misspelt mode would otherwise read as "disk" and silently drop a
     // rule the author meant to inject.
     const load = rule.fields.load;
     if (load !== undefined && load !== "inject" && load !== "disk") {

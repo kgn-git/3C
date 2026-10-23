@@ -1,4 +1,4 @@
-// 3C process-rule derivation & curation discipline (issue #305).
+// 3C process-rule derivation & curation discipline.
 // Validates the canonical rulebook at `.claude/skills/_shared-context/process-rules.md`
 // against the 3C-native derivation standard: every rule MUST carry (a) a witnessed-failure
 // origin, (b) a named enforcement point in a skill/agent file, and (c) a counterfactual
@@ -18,7 +18,7 @@ const FIELD_PATTERNS = {
     enforcementPoint: /^\*\*Enforcement point:\*\*[ \t]*(.+?)[ \t]*$/m,
     counterfactual: /^\*\*Counterfactual:\*\*[ \t]*(.+?)[ \t]*$/m,
 };
-// Field extraction is fence-aware (#317): a `**Origin:**` line inside a fenced example within a
+// Field extraction is fence-aware: a `**Origin:**` line inside a fenced example within a
 // rule block must NOT satisfy the field — the block is stripped of fenced regions first.
 function extractField(block, field) {
     const match = stripFencedBlocks(block).match(FIELD_PATTERNS[field]);
@@ -49,8 +49,8 @@ export function parseRulebook(md) {
         });
     };
     // contentLines skips fenced-block lines (same-char close, ``` and ~~~), so a heading inside a
-    // prose example is never taken as a real rule entry; `index` is the original line index used to
-    // slice each rule's block from the source.
+    // prose example is never taken as a real rule entry; `index` is the original line index that
+    // slices each rule's block from the source.
     for (const { index, text } of contentLines(md)) {
         const header = text.match(RULE_HEADER);
         if (header) {

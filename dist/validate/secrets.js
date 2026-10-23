@@ -1,4 +1,4 @@
-// Regex-based secret-leakage scan per AC10 of issue #1.
+// Regex-based secret-leakage scan.
 // Pragmatic L1 scope: AWS access keys, GitHub PATs (classic + fine-grained),
 // JWT tokens, RFC1918 private IPs, public IPs, internal hostnames.
 // An IP-shaped run that is immediately followed by `-<alphanumeric>` is part of
@@ -21,7 +21,7 @@ const DETECTORS = [
     },
     {
         type: "internal-hostname",
-        // #413: a name followed by a file extension is a FILENAME
+        // A name followed by a file extension is a FILENAME
         // (`CLAUDE.local.md`, `settings.local.json`) and one followed by `(` is a
         // CALL (`threading.local()`), not a host. Only a KNOWN extension excludes:
         // any other dotted continuation is a qualified host (`svc.internal.acme.com`)
@@ -42,13 +42,13 @@ const DETECTORS = [
         pattern: /\b(?:postgresql|postgres|mongodb\+srv|mongodb|mysql|redis):\/\/[^\s/]*:[^\s/@]+@[^\s/]+/g,
     },
 ];
-/** The four octets of a dotted-quad match, or null when any is above 255 (#413 AC2). */
+/** The four octets of a dotted-quad match, or null when any is above 255. */
 function octets(ip) {
     const parts = ip.split(".").map(Number);
     return parts.length === 4 && parts.every((n) => Number.isInteger(n) && n >= 0 && n <= 255) ? parts : null;
 }
 /**
- * Addresses that identify nothing (#413 AC1): loopback 127/8, `0.0.0.0`, the
+ * Addresses that identify nothing: loopback 127/8, `0.0.0.0`, the
  * limited broadcast, and the RFC 5737 documentation blocks — what docs and
  * examples are written with.
  */

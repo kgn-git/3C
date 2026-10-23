@@ -1,4 +1,4 @@
-// Curated syntactic conflict detection per AC4 of issue #1.
+// Curated syntactic conflict detection.
 // L1 scope: ~30 keyword pairs across common decision axes.
 // Semantic conflict detection (e.g. NLI on contradictory rules) deferred to VP-01-F05 (L2).
 const PAIRS = [

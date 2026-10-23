@@ -44,6 +44,14 @@ This is the check that replaces the retired scaffold generator, so it is not opt
 generator could pattern-match a fixed list of shapes, and you can reason about whether the
 assertion has any falsifying input at all. That is why the job moved here.
 
+## A rule re-pinned at an upper layer is a finding
+
+Check each added test against `.claude/rules/quality/test-layering/test-layering.md`: a rule is pinned
+once, at the lowest layer that owns it, and an upper layer tests only that it is wired to that layer.
+A rule re-pinned at an upper layer is a `warning`: name the lower-layer test that already holds it,
+and suggest cutting the upper test down to one wiring path. A defect fix tested where it was seen
+rather than where it lived is the same finding.
+
 ## Output — findings schema
 
 Emit your findings as a single fenced `json` block: an array of objects, one per issue you raise.

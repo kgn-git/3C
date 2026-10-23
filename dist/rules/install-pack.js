@@ -38,7 +38,7 @@ export async function installRulePack(opts) {
         await copyTreeWithSubstitution(packSource, packDest, opts.brand, opts.onExisting, installed, skipped, secretHits, opts.backup);
     }
     catch (err) {
-        // #452: a failed backup stops the overwrite it was protecting.
+        // A failed backup stops the overwrite it was protecting.
         return { ok: false, error: err.message };
     }
     if (secretHits.length > 0) {
@@ -48,8 +48,8 @@ export async function installRulePack(opts) {
             secretHits,
         };
     }
-    // AC8: after install, count directives across the installed rules that
-    // `rules apply` would inject (#330: `load: inject` only — an on-disk rule
+    // After install, count directives across the installed rules that
+    // `rules apply` would inject (`load: inject` only — an on-disk rule
     // never reaches CLAUDE.md). Conservative: ignores glob filtering — better to
     // over-warn than under-warn.
     // Best-effort: a failure here MUST NOT propagate — the install already succeeded.

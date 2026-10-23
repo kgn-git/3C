@@ -1,14 +1,11 @@
-// #15 AC1 — deterministic onboarding roadmap sourced from local project
-// signals (CLAUDE.md, .claude/rules, package scripts). No network.
+// Deterministic onboarding roadmap sourced from local project signals
+// (CLAUDE.md, .claude/rules, package scripts). No network.
 //
-// #399 folded `onboard-guide` in here. The role table below is the one from
-// `onboard-guide/roles.ts`, moved rather than re-derived: deriving role content
-// from a workspace is an inference problem (nothing in a tree says "these files
-// are the frontend"), and that is L3 shaped. What the fold DOES fix is the
-// composition — a role APPENDS its modules to the workspace-derived ones rather
-// than replacing them, so `--role` can never be the weaker path. The whole
-// reason `onboard-guide` was worth retiring is that it never read the project;
-// a fold that kept that property would have moved the defect, not closed it.
+// The role table below is a static scaffold, not derived from the workspace:
+// deriving role content is an inference problem (nothing in a tree says "these
+// files are the frontend"), and that is L3 shaped. A role APPENDS its modules
+// to the workspace-derived ones rather than replacing them, so `--role` is
+// never the path that skips reading the project.
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 async function read(ws, rel) {
@@ -23,9 +20,9 @@ async function read(ws, rel) {
  * Role-tailored modules, appended to the workspace roadmap.
  *
  * Content is the default scaffold; teams replace the bodies with their own.
- * The ids are UNCHANGED from `onboard-guide/roles.ts` — deliberately, because
- * that is what makes the #399 progress migration lossless. A developer part-way
- * through the frontend roadmap keeps every completed module across the fold.
+ * The ids match the retired `onboard-guide/roles.ts` deliberately, because
+ * that is what makes the progress migration lossless. A developer part-way
+ * through the frontend roadmap keeps every completed module.
  */
 const ROLE_MODULES = {
     frontend: [
@@ -51,10 +48,9 @@ export function isKnownRole(role) {
     return Object.hasOwn(ROLE_MODULES, role);
 }
 /**
- * How much of a module body the console shows at once (#399 AC4).
+ * How much of a module body the console shows at once.
  *
- * The bodies were computed and thrown away before this — the CLI printed
- * `id — title` only, discarding the project-derived content that is the whole
+ * The bodies are printed because the project-derived content is the whole
  * difference between this and a static checklist. Printing them UNBOUNDED is
  * the other failure: `architecture`'s body IS the whole of CLAUDE.md, so an
  * adopter with a 400-line file would get it dumped on every invocation.
@@ -73,9 +69,9 @@ export function excerptBody(body) {
 /**
  * The workspace-derived roadmap, plus the role's modules when one is given.
  *
- * Fails closed on an unrecognised role. Pre-#399 an unknown value fell through
- * to a GENERIC roadmap, so a typo silently seeded a different set of modules
- * under the developer's name — deny-by-default is the house rule for a
+ * Fails closed on an unrecognised role. Falling through to a GENERIC roadmap
+ * would let a typo silently seed a different set of modules under the
+ * developer's name — deny-by-default is the house rule for a
  * validated input, and a roadmap is exactly the thing a typo must not choose.
  */
 export async function buildRoadmap(ws, role) {

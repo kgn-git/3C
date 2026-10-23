@@ -1,18 +1,12 @@
 export interface Progress {
     readonly user: string;
-    /** Maturity level (L1/L2/…) — never a role. See the migration below. */
+    /** Maturity level (L1/L2/…), never a role; see the migration in `loadProgress`. */
     readonly level: string | null;
-    /** frontend | backend | devops, or null. Added by #399. */
+    /** frontend | backend | devops, or null. */
     readonly role: string | null;
     readonly completed: ReadonlyArray<string>;
     readonly current: string | null;
-    /**
-     * A stored role this build does not recognise, discarded on read (#399 r2).
-     *
-     * Transient: it is never written back, and exists only so the caller can TELL
-     * the developer their role was dropped. Optional so `saveProgress` and every
-     * constructed `Progress` stay unchanged.
-     */
+    /** An unrecognised stored role, discarded on read so the caller can say so; never saved. */
     readonly droppedRole?: string | null;
 }
 export declare function loadProgress(ws: string, user: string): Promise<Progress>;

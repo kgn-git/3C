@@ -1,4 +1,4 @@
-// #360 — choose which tests a changeset needs, for the TDD loop only.
+// Choose which tests a changeset needs, for the TDD loop only.
 //
 // Why this exists rather than just calling `vitest related`: measured on this
 // repo, `vitest related` against a `.md` file prints "No test files found" and
@@ -207,9 +207,8 @@ const SLUG_OK = /^[a-z0-9][a-z0-9-]{1,31}$/;
 /**
  * The directory deployment-local config lives in (`.3c/`).
  *
- * #451 retired custom branding, so neither the workspace's own `branding.json`
- * (which this used to consult FIRST) nor the workspace's `framework.json` is
- * read: the directory is the package slug's, as it is for every other command.
+ * Custom branding is not supported, so neither the workspace's own
+ * `branding.json` nor the workspace's `framework.json` is read: the directory is the package slug's, as it is for every other command.
  *
  * The slug is still validated before use. This value becomes a path segment
  * (`join(root, dir, …)`), a regular-expression literal, and a string echoed to
@@ -218,8 +217,8 @@ const SLUG_OK = /^[a-z0-9][a-z0-9-]{1,31}$/;
  * discarded rather than sanitised.
  */
 export function testMapDir(_root) {
-    // The PACKAGE's slug only (#451 board, security lens). A workspace has no
-    // legitimate identity override any more, so reading the workspace's own
+    // The PACKAGE's slug only. A workspace has no legitimate identity
+    // override, so reading the workspace's own
     // framework.json would leave one untrusted file able to steer the directory
     // (within SLUG_OK, but still steering). `_root` stays in the signature for
     // the callers that pass it.

@@ -1,43 +1,21 @@
-// #378 — the one place a developer's name becomes a filesystem path. CWE-22.
+// Turns a developer's name into an onboarding path (CWE-22) in two layers:
+//   1. an allow-list on the name (CWE-20): a bare file stem, never a
+//      separator, dot-name, flag or Windows device;
+//   2. resolve-then-relative containment on the result.
+// Layer 2 is redundant while layer 1 holds, deliberately: widening the
+// allow-list must not be the only guard against a write outside the tree.
 //
-// `--user` (or the OS account name) was joined straight into
-// `.3c/onboarding/<user>.yaml` by three call sites, so `--user ../../../x` wrote
-// above the workspace — reproduced by the #399 review board. Every onboarding
-// path is now built here, in two independent layers:
+// `mkdir` and `writeFile` follow a linked directory, so the chain is `lstat`ed
+// first; the file goes via a temp file renamed into place, since `rename`
+// replaces a link instead of writing through it (CWE-367). That is race-only
+// and not deterministically testable.
 //
-//   1. an ALLOW-LIST on the name (deny-by-default, CWE-20): a bare file stem,
-//      nothing that is a separator, a dot-name, a flag, or a Windows device;
-//   2. a resolve-then-relative CONTAINMENT check on the result (the
-//      path-and-upload rule: canonicalise first, then confirm the base contains
-//      it — never a substring filter before resolution).
+// Accepted residual: the window stays open on the directory chain. Node has no
+// `openat`/`O_NOFOLLOW` directory API, and exploiting it needs a process that
+// can already write the workspace; a link committed to a repo is caught.
 //
-// Layer 2 is redundant while layer 1 holds, deliberately: a later widening of
-// the allow-list must not be the only thing between a name and a write outside
-// the tree.
-//
-// Links are the other escape (AC5). `mkdir({recursive:true})` and `writeFile`
-// both follow a symlinked `.3c`, `onboarding` or `completions` directory, so the
-// directory chain is `lstat`ed before use. The FILE is written via a fresh temp
-// file renamed into place: `rename` replaces a link at the destination rather
-// than writing through it, so the check-to-write window (CWE-367) is closed for
-// the file itself. That defence is race-only — no deterministic test can open
-// the window — and is recorded as such rather than claimed as tested.
-//
-// ACCEPTED RESIDUAL (#378 board): the window stays open on the DIRECTORY chain,
-// for writes and for reads. Node has no `openat`/`O_NOFOLLOW` directory-handle
-// API to close it, and exploiting it needs a concurrent process that can
-// already write the developer's workspace — which can edit CLAUDE.md, hooks and
-// source directly. A link COMMITTED to a cloned repository, the realistic
-// threat, is static and is caught.
-//
-// Names are matched by the filesystem's own rules: on a case-insensitive volume
-// (NTFS, APFS) `Ada` and `ada` are one record. That stays inside the tree and is
-// not a boundary; it is stated so nobody mistakes it for one. Likewise
-// `normaliseDefaultUser` can map two OS names onto one stem (`Zoë`, `Zoé`).
-//
-// The link checks and the rename-write are not onboarding-specific. #440 (the
-// arch-exceptions waiver store) needs the same primitive; extract it to the
-// platform tier there, with a second consumer to shape the API.
+// On a case-insensitive volume `Ada` and `ada` are one record, as are two OS
+// names `normaliseDefaultUser` maps to one stem; neither leaves the tree.
 import { randomBytes } from "node:crypto";
 import { lstat, mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
@@ -56,30 +34,24 @@ export class OnboardPathError extends Error {
         this.kind = kind;
     }
 }
-/** Letters, digits, `.`, `_`, `-`; must start with a letter, digit or `_`. */
 const SAFE = /^[A-Za-z0-9_][A-Za-z0-9._-]{0,63}$/;
-/** Windows device names, which name a device rather than a file in any directory. */
+/** Windows device names name a device, not a file, in any directory. */
 const DEVICE = /^(con|prn|aux|nul|com[0-9]|lpt[0-9])(\..*)?$/i;
 /** The name used when the OS account name normalises to nothing usable. */
 export const FALLBACK_USER = "developer";
-/** Is `name` usable verbatim as an onboarding file stem? */
 export function isSafeUser(name) {
     // A trailing dot is stripped by Windows, so `x.` and `x` would be one file.
     return SAFE.test(name) && !name.endsWith(".") && !DEVICE.test(name);
 }
 /**
- * The OS account name made safe — for the DEFAULT only (AC4).
- *
- * A developer who never typed a name must not be refused for the one their
- * machine gave them (`DOMAIN\jsmith`, `j smith`). An explicit `--user` is NOT
- * passed through here: normalising a typed name would silently map two people
- * onto one file, so it is validated and refused instead.
+ * The OS account name made safe, for the default only: a developer must not be
+ * refused for the name their machine gave them. A typed `--user` is refused
+ * instead, since normalising it could map two people onto one file.
  */
 export function normaliseDefaultUser(raw) {
     let s = raw.replace(/[^A-Za-z0-9._-]/g, "_").replace(/^[.-]+/, "").replace(/\.+$/, "");
     s = s.slice(0, 64).replace(/\.+$/, "");
-    // PREFIXED, not suffixed: the device rule matches any extension, so `con.txt_`
-    // would still be a device and fall through to the fallback name.
+    // Prefixed: the device rule matches any extension, so a suffix would not help.
     if (DEVICE.test(s))
         s = `_${s.slice(0, 63)}`;
     return isSafeUser(s) ? s : FALLBACK_USER;
@@ -101,19 +73,15 @@ export function onboardingFile(ws, user, sub) {
     return containedFile(chain(ws, sub).at(-1), `${user}.yaml`);
 }
 /**
- * Layer 2 on its own: `dir/name` resolved, then confirmed to be a direct child
- * of `dir`. Exported so it is tested directly — through `onboardingFile` the
- * allow-list makes it unreachable, which is the point of a second layer and
- * also why a test through the public API cannot prove it works.
+ * Layer 2: `dir/name` must resolve to a direct child of `dir`. Exported for
+ * direct tests, since the allow-list makes it unreachable via `onboardingFile`.
  */
 export function containedFile(dir, name) {
     const base = resolve(dir);
     const target = resolve(base, name);
     const rel = relative(base, target);
-    // `dirname(target) === base` is what "direct child" means, on every platform.
-    // `rel !== name` alone was not: on POSIX `relative()` returns `a/x.yaml`
-    // verbatim, so a nested path compared equal and passed — the Linux gate
-    // caught what Windows (`a\x.yaml`) hid.
+    // `rel !== name` alone passes a nested name on POSIX, where `relative()`
+    // returns `a/x.yaml` verbatim; `dirname` checks "direct child" everywhere.
     if (rel === "" || rel.startsWith("..") || isAbsolute(rel) || rel !== name || dirname(target) !== base) {
         throw new OnboardPathError("invalid-user");
     }
@@ -122,10 +90,8 @@ export function containedFile(dir, name) {
 /** A progress record is a few hundred bytes; anything this size is not one. */
 export const MAX_RECORD_BYTES = 64 * 1024;
 /**
- * Read `user`'s record, or `null` when there is nothing safe to read: an unsafe
- * name, a link anywhere on the path, a target that is not a regular file (a
- * FIFO would block forever), a hard-linked file, or one over the size cap.
- * Never throws — the reader's contract is "corrupt or missing → fresh".
+ * `user`'s record, or `null` when nothing is safe to read (a FIFO would block
+ * forever). Never throws: corrupt or missing means fresh.
  */
 export async function readOnboardingFile(ws, user) {
     try {
@@ -133,8 +99,8 @@ export async function readOnboardingFile(ws, user) {
             return null;
         const target = onboardingFile(ws, user);
         const st = await lstat(target);
-        // `nlink > 1`: a hard link shares its content with a path outside the tree.
-        // Records this module writes always have one link (temp file + rename).
+        // A hard link may share content with a file outside the tree; records
+        // written by `writeOnboardingFile` have one link.
         if (!st.isFile() || st.nlink > 1 || st.size > MAX_RECORD_BYTES)
             return null;
         return await readFile(target, "utf8");
@@ -143,7 +109,7 @@ export async function readOnboardingFile(ws, user) {
         return null;
     }
 }
-/** True when `p` exists and is a symbolic link or junction. Absence is not a link. */
+/** A missing path is not a link. */
 async function isLink(p) {
     try {
         return (await lstat(p)).isSymbolicLink();
@@ -154,7 +120,6 @@ async function isLink(p) {
         throw err;
     }
 }
-/** Does any directory on the chain, or the file itself, resolve through a link? */
 export async function anyLinked(ws, user, sub) {
     for (const p of [...chain(ws, sub), onboardingFile(ws, user, sub)]) {
         if (await isLink(p))
@@ -175,8 +140,7 @@ export async function onboardingDirLinked(ws) {
  */
 export async function writeOnboardingFile(ws, user, content, sub) {
     const target = onboardingFile(ws, user, sub);
-    // Each level is checked BEFORE it is created or entered: `mkdir -p` follows
-    // a linked parent, so checking after it would be checking too late.
+    // Checked before `mkdir`, which follows a linked parent.
     for (const d of chain(ws, sub)) {
         if (await isLink(d))
             throw new OnboardPathError("linked-path");
@@ -186,8 +150,7 @@ export async function writeOnboardingFile(ws, user, content, sub) {
     }
     if (await isLink(target))
         throw new OnboardPathError("linked-path");
-    // CSPRNG-named temp file, created exclusively (`wx` fails on any existing
-    // entry, a planted link included), then renamed over the destination.
+    // `wx` fails on any existing entry, a planted link included.
     const tmp = join(resolve(target, ".."), `.${user}.${randomBytes(8).toString("hex")}.tmp`);
     try {
         await writeFile(tmp, content, { encoding: "utf8", flag: "wx" });

@@ -1,4 +1,4 @@
-// #15 AC5 — recommend a level-appropriate starter task from the backlog via
+// Recommend a level-appropriate starter task from the backlog via
 // an injected gh runner (SpawnFn-shaped; default = real gh in the CLI layer).
 export async function findStarter(_ws, levelLabel, spawn) {
     const r = await spawn("gh", [

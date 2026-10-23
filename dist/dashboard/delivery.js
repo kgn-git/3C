@@ -63,7 +63,9 @@ export function deliveryMetrics(scan) {
     const shippedPerWeek = [...byWeek.entries()]
         .sort(([a], [b]) => a.localeCompare(b))
         .map(([week, count]) => ({ week, count }));
-    const verdictDistribution = {};
+    // No prototype, for callers that build records without the validator's
+    // level allow-list: `constructor` or `__proto__` stays an ordinary key.
+    const verdictDistribution = Object.create(null);
     for (const r of scan.records) {
         const level = r.verdict?.level;
         if (level === undefined)

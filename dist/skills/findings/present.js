@@ -1,10 +1,6 @@
-// #394 (was #346, for #342): the findings store's mapping from a run to the
-// shared convention. "Skills own interpretation; the presenter owns the
-// envelope" — the dashboard boundary panel renders exactly what this returns.
-//
-// The console rendering of a run lives here too, moved in from the deleted
-// `group.ts`: the presenter is its only surviving caller, and the JSON/HTML
-// branches died with the `drift analyze` verb that selected them.
+// The findings store's mapping from a run to the shared convention. "Skills
+// own interpretation; the presenter owns the envelope" — the dashboard
+// boundary panel renders exactly what this returns.
 /** Directory rows the dashboard panel lists — a summary, not the full map. */
 const MAX_DIRECTORIES = 5;
 function rows(m) {
@@ -21,7 +17,7 @@ function worst(counts) {
     }
     return top;
 }
-/** The only rule this version can record. Anything else is pre-#394 history. */
+/** The only rule this version can record. Anything else comes from an older version's run. */
 const LIVE_RULE = "layer-boundary";
 /** `2026-07-20T00:00:00Z` → `2026-07-20`; anything unparseable renders as-is. */
 function day(timestamp) {
@@ -30,10 +26,10 @@ function day(timestamp) {
 /**
  * The clean case is interpreted too — a bare zero teaches users to ignore it.
  *
- * Two things this deliberately does NOT do, both found by the #394 board:
+ * Two things this deliberately does NOT do:
  *
  *   - It does not describe every stored run as a boundary finding. Keeping the
- *     on-disk path is what lets an adopter's pre-#394 history survive the
+ *     on-disk path is what lets an adopter's older-version history survive the
  *     upgrade, and that history is keyed by rules this version cannot produce
  *     (`import-order`, `naming-convention`). Labelling those "boundary
  *     findings" and offering `arch-check except` as the remedy is false in
@@ -58,8 +54,8 @@ export function presentFindings(latest) {
     //
     // `source: "scan"` is the tell for a run this version could not have
     // written: only `appendExternalViolations` writes now, and it always sets
-    // "external". Keying on the rule ids ALONE missed the empty case — a
-    // pre-#394 audit that found nothing has `byRule: {}`, and describing that
+    // "external". Keying on the rule ids ALONE would miss the empty case — an
+    // older version's audit that found nothing has `byRule: {}`, and describing that
     // as "no boundary violation — that run was clean" manufactures a boundary
     // verdict from a run that never evaluated a boundary.
     const legacyOnly = (ruleIds.length > 0 && !ruleIds.includes(LIVE_RULE)) || latest.source === "scan";
@@ -102,9 +98,8 @@ export function presentFindings(latest) {
     const topDir = worst(latest.byDirectory);
     const share = topDir === null ? null : Math.round((topDir.count / total) * 100);
     const concentrated = topDir !== null ? `, concentrated in ${topDir.key} (${topDir.count})` : "";
-    // The old sentence said the findings were advisory. That was true of the
-    // verb that wrote them and is false of the gate that writes them now:
-    // arch-check blocks a commit that adds a cross-boundary import.
+    // Not "advisory": the gate that writes these findings blocks a commit that
+    // adds a cross-boundary import.
     const gateSentence = "New violations block at the arch-check gate; fix the dependency direction or file a time-boxed exception.";
     const meaning = topRule !== null && ruleIds.length === 1
         ? `${total === 1 ? "The single violation is" : `All ${total} violations are`} one rule — ${topRule.key}${concentrated}. ${gateSentence}`

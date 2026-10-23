@@ -1,4 +1,4 @@
-// #70 AC2 — Linear GraphQL adapter. Network only via injected HttpClient.
+// Linear GraphQL adapter. Network only via injected HttpClient.
 const MUTATION = "mutation($t:String!,$d:String,$tm:String!){issueCreate(input:{title:$t,description:$d,teamId:$tm}){issue{url identifier}}}";
 export const linearAdapter = {
     tool: "linear",

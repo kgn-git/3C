@@ -1,4 +1,4 @@
-// #70 AC3 — GitLab Issues REST v4 adapter. Network only via injected HttpClient.
+// GitLab Issues REST v4 adapter. Network only via injected HttpClient.
 export const gitlabAdapter = {
     tool: "gitlab",
     async createIssue(payload, ctx) {

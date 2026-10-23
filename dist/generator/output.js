@@ -20,7 +20,7 @@ export async function writeOutput(opts) {
     await mkdir(dirname(targetPath), { recursive: true });
     let backupPath;
     let action;
-    // #452: a timestamped backup first, for both overwriting modes. A failed
+    // A timestamped backup first, for both overwriting modes. A failed
     // backup throws before anything is written.
     if (exists && opts.backup && (await readFile(targetPath, "utf8")) !== opts.content) {
         await opts.backup(targetPath);

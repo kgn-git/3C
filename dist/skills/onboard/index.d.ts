@@ -8,7 +8,7 @@ export interface RunOnboardOpts {
     readonly action?: "advance" | "ask" | "starter";
     readonly query?: string;
     readonly spawn?: Spawn;
-    /** True when the developer TYPED `--user`, so printed commands must repeat it (#343). */
+    /** True when the developer TYPED `--user`, so printed commands must repeat it. */
     readonly explicitUser?: boolean;
 }
 export interface RunOnboardResult {
@@ -16,7 +16,7 @@ export interface RunOnboardResult {
     readonly progress: Progress;
     readonly answer?: string;
     readonly starter?: StarterTask | null;
-    /** Set on a `--starter` run: found, none, or unavailable (#343 board). */
+    /** Set on a `--starter` run: found, none, or unavailable. */
     readonly starterOutcome?: StarterOutcome;
     /** True on the run that advanced past the last module. */
     readonly completedAll: boolean;

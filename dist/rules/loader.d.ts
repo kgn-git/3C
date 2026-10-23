@@ -6,7 +6,7 @@ export interface RuleFile {
     readonly bodyStartLine: number;
 }
 export type LoadMode = "inject" | "disk";
-/** A rule's load mode (#330); anything but an explicit `inject` stays on disk. */
+/** A rule's load mode; anything but an explicit `inject` stays on disk. */
 export declare function loadModeOf(rule: RuleFile): LoadMode;
 export interface LoadError {
     readonly path: string;

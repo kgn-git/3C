@@ -23,7 +23,7 @@ This file is loaded by Claude Code at session start. Keep it under **200 lines**
 ## General
 
 - Code MUST follow existing conventions in the surrounding codebase.
-- Public functions and classes SHOULD have a one-sentence purpose comment.
+- Public functions and classes SHOULD have a one-sentence purpose comment when the name alone does not say it.
 - Comments SHOULD explain *why* the code is shaped this way; the code itself explains *what*.
 - Secrets MUST NOT appear in committed files.
 

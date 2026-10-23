@@ -1,5 +1,5 @@
-// #19 AC1/AC2: per-file boundary check. The validation kernel is #16's
-// checkLayerImport (reused, not reimplemented — CS-04). Non-expired
+// Per-file boundary check. The validation kernel is checkLayerImport
+// (reused, not reimplemented — CS-04). Non-expired
 // exceptions are filtered out here.
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -32,7 +32,7 @@ export async function checkFiles(ws, files, cfg, exceptions, now) {
             continue;
         }
         evaluated++;
-        // #427: the gate names the package block exactly as the hook does — the
+        // The gate names the package block exactly as the hook does — the
         // suffix sits AFTER exceptionKey() reads the layer pair, so waivers keyed
         // on "from->to" keep matching.
         const suffix = resolved.source.kind === "package" ? packageSuffix(resolved.source.glob) : "";

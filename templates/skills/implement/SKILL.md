@@ -253,21 +253,27 @@ On success, surface the PR URL to the user.
 
 ## 8. Handover artefact (after the PR merges)
 
-If you write a handover document for this delivery (`docs/Handover-<N>.md`), it MUST open with a
-`3c-handover/1` YAML frontmatter block computed at ship time: `issue` (or `issues: [..]`), `title`,
-`pr`, `merge_sha`, `branch`, `started` (first branch commit, ISO-8601 UTC), `merged`,
+File the handover for this delivery as a closed `handover`-labelled issue, never a committed file. Its
+body comes from `.github/ISSUE_TEMPLATE/handover.md` and MUST open with a fenced `yaml` block holding
+the `3c-handover/1` metadata computed at ship time: `issue` (or `issues: [..]`), `title`, `pr`,
+`merge_sha`, `branch`, `started` (first branch commit, ISO-8601 UTC), `merged`,
 `verdict: { level, blocking, warnings, suggestions, fixed_in_branch }` (when a review board ran),
 `tests_total`, `loc: { added, removed, files }` from the merge diff, the OPTIONAL additive
 `gates_fired` (an array of load-bearing gate-name strings: `scan-secrets`, `red-before-green`,
 `verify-gate`, `no-auto-merge`, `reconcile-anti-improvisation`, `pretooluse-path-guard`,
-`sprint-readiness`, `capability-tier`; metadata-only — never raw command output, file contents, or env values), and
-`follow_ups` (issue numbers
-filed during the delivery). The `${BRAND_SLUG} dashboard` delivery view reads exactly this block and
-performs no git or network calls — omitted fields render as blanks. The frontmatter carries
-delivery metadata only — it MUST NOT embed credentials, tokens, or any secret material (handovers
-are committed files; same discipline as the scan-secrets pass on plan and PR text). The narrative
-below the frontmatter stays human-first. The full block shape is specified in the
-`/${BRAND_SLUG}-project-manager` skill's ship stage; keep the two in sync.
+`sprint-readiness`, `capability-tier`; metadata-only — never raw command output, file contents, or env
+values), and `follow_ups` (issue numbers filed during the delivery). The `${BRAND_SLUG} dashboard`
+delivery view reads exactly this block from `handover`-labelled issues through `gh`, cached locally for
+15 minutes; a failed fetch is named, never shown as an empty view, and omitted fields render as blanks.
+
+File it with `${BRAND_SLUG} implement file-handover < handover.md`: it files nothing when the block would
+not validate or the body matches a secret pattern, never files a second handover for the same delivery,
+and closes the issue it opens. When the `handover` label is missing, create it first with
+`gh label create handover --description "3C delivery handover" --color 0E8A16`. If filing fails, run the
+`gh` commands it prints; never drop the handover. The block carries delivery metadata only — no
+credentials, tokens, command output, environment values or diff content. The narrative below the block
+stays human-first. The full block shape is specified in the `/${BRAND_SLUG}-project-manager` skill's ship
+stage; keep the two in sync.
 
 ## What this skill does NOT do
 

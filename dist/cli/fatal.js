@@ -1,15 +1,15 @@
-// #448 (A10): the application boundary for errors nothing else handled.
+// A10: the application boundary for errors nothing else handled.
 //
-// An exception escaping a command used to reach Node's default printer: a raw
-// stack trace with the adopter's absolute install paths and our module layout,
-// pasted into whatever bug report or chat followed. Here it becomes ONE line
+// An exception escaping a command would otherwise reach Node's default printer:
+// a raw stack trace with the adopter's absolute install paths and our module
+// layout, pasted into whatever bug report or chat followed. Here it becomes ONE line
 // with a reference id, and the full detail goes to a local file under that id
 // — never a network sink (NFR-SEC-01).
 //
 // Everything on this path is SYNCHRONOUS. It runs from `uncaughtException`
 // and right before `process.exit`, where an awaited write can be cut off; and
 // the one line goes to fd 2 with writeSync because `hook run` owns stdout for
-// Claude Code's JSON envelope (#384).
+// Claude Code's JSON envelope.
 //
 // And it is TOTAL: `reportFatal` cannot throw. A throw from inside the
 // `uncaughtException` listener goes straight to Node's printer and exits 7 —
@@ -23,7 +23,7 @@ import { scanSecrets } from "../validate/secrets.js";
 /**
  * The event `hook run` handles: the LAST `--event=` wins, PreToolUse by
  * default. One parser for the command and for the crash classifier — two
- * parsers for one flag disagree silently (#399).
+ * parsers for one flag disagree silently.
  */
 export function hookRunEvent(rest) {
     let event = "PreToolUse";
@@ -34,7 +34,7 @@ export function hookRunEvent(rest) {
 }
 /**
  * The exit code for a crash in `argv`'s command. A PreToolUse hook exits 2:
- * Claude Code reads any other non-zero exit as "proceed" (#416), so a crash in
+ * Claude Code reads any other non-zero exit as "proceed", so a crash in
  * the path-guard or the commit gate would wave the call through. Anything not
  * the advisory PostToolUse hook counts as PreToolUse.
  */

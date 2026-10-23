@@ -1,4 +1,4 @@
-// #262: intra-workspace cross-project dependency graph — the deterministic core
+// Intra-workspace cross-project dependency graph — the deterministic core
 // behind /3c-programme-manager. Discovers `project.yaml` files, reads the
 // `.3c/dependencies.yaml` edge ledger, resolves a delivery order (topological,
 // cycle-detecting), and validates new edges. Pure + tested; the prose skill

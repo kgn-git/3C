@@ -88,7 +88,7 @@ export async function hookPathGuardCli(io = { stdin: process.stdin, stderr: proc
         stdin = await readStdinBounded(io.stdin, MAX_HOOK_EVENT_BYTES);
     }
     catch (err) {
-        // #416: DENY, explicitly exit 2 — Claude Code treats any other non-zero
+        // DENY, explicitly exit 2 — Claude Code treats any other non-zero
         // exit as "proceed", so an escaping throw is an allow. Over the cap, an
         // allow would let a subagent pad a Write past this guard; on any other
         // read failure the guard simply does not know what it is judging. The

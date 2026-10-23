@@ -1,4 +1,4 @@
-// #241 (VP-06-F05): read-only discoverability of installed skills and agents.
+// Read-only discoverability of installed skills and agents.
 // Skills are user-invoked slash commands; agents are dispatched workers (Task
 // tool / auto-selection) — never slash-invoked. These listers feed
 // `3c skills list` / `3c agents list` and the "Skills vs Agents" docs.

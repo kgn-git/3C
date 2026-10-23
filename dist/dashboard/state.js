@@ -1,16 +1,18 @@
-// #346: the view-model the local dashboard app renders.
+// The view-model the local dashboard app renders.
 //
 // Every number here comes from an existing builder — deliveryMetrics,
 // dashboardMetrics, readRuns, loadProgress. This module maps their results into
-// the shared `Presentation` shape (#341) and re-implements no aggregation; a
-// second copy of the maths is exactly what the epic set out to stop.
+// the shared `Presentation` shape and re-implements no aggregation; a second
+// copy of the maths could drift from the first.
 //
-// Workstation-local by construction (NFR-SEC-01): every source is a file under
-// the workspace, and nothing here opens a socket.
+// Every source is a file under the workspace, and nothing here opens a
+// socket: delivery rows come from the handover-issue cache, which is filled
+// outside the request path (NFR-SEC-01).
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { resolveBrandSlugSync } from "../branding/runtime.js";
-import { readHandovers } from "./handover.js";
+import { readDelivery } from "./delivery-source.js";
+import { describeDelivery } from "./delivery-status.js";
 import { deliveryMetrics } from "./delivery.js";
 import { dashboardMetrics } from "./metrics.js";
 import { loadTelemetryConfig } from "../telemetry/config.js";
@@ -31,11 +33,10 @@ const fmtCycle = (ms) => {
     return `${(ms / 86_400_000).toFixed(1)}d`;
 };
 const pct = (n) => `${Math.round(n * 100)}%`;
-// "All 1 violations" is the kind of seam this epic exists to remove — the
-// meaning line is prose and has to read like prose.
+// The meaning line is prose and has to read like prose, not "All 1 violations".
 const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
-// The worst offender in a count map, or null when the map is empty. Used by
-// three panels to turn a distribution into the one sentence a reader needs.
+// The worst offender in a count map, or null when the map is empty: the gate
+// panel turns a distribution into the one sentence a reader needs.
 function worst(counts) {
     let top = null;
     for (const [key, count] of Object.entries(counts)) {
@@ -45,43 +46,34 @@ function worst(counts) {
     return top;
 }
 async function deliveryPanel(env) {
-    const scan = await readHandovers(env.docsDir ?? join(env.cwd, "docs"));
-    const d = deliveryMetrics(scan);
+    const src = await readDelivery(env.cwd, env.now ?? new Date());
+    const said = describeDelivery(src);
+    const d = deliveryMetrics(src.scan);
     const n = d.rows.length;
-    if (n === 0 && d.malformed === 0) {
-        return {
-            id: "delivery",
-            label: "Delivery",
-            results: "No issues shipped on record.",
-            meaning: "No handover carries delivery frontmatter yet — this view fills in as work ships.",
-            nextSteps: ["3c dashboard --serve"],
-        };
-    }
+    const summary = n === 0
+        ? ["No issues shipped on record."]
+        : [
+            `${plural(n, "issue")} shipped across ${plural(src.scan.records.length, "delivery", "deliveries")}`,
+            `Median cycle: ${d.medianCycleMs !== null ? fmtCycle(d.medianCycleMs) : "—"}`,
+            `Follow-ups per delivery: ${d.followUpRatio !== null ? d.followUpRatio.toFixed(1) : "—"}`,
+        ];
     const verdicts = Object.entries(d.verdictDistribution)
         .sort(([, a], [, b]) => b - a)
         .map(([k, v]) => `${k}: ${v}`)
         .join(" · ");
-    const results = [
-        `${plural(n, "issue")} shipped across ${plural(scan.records.length, "delivery", "deliveries")}`,
-        `Median cycle: ${d.medianCycleMs !== null ? fmtCycle(d.medianCycleMs) : "—"}`,
-        `Follow-ups per delivery: ${d.followUpRatio !== null ? d.followUpRatio.toFixed(1) : "—"}`,
-        verdicts === "" ? null : `Verdicts: ${verdicts}`,
-    ]
-        .filter((s) => s !== null)
-        .join("\n");
-    const meaning = d.malformed > 0
-        ? `${plural(d.malformed, "handover")} ${d.malformed === 1 ? "has" : "have"} malformed frontmatter, so the numbers above are incomplete.`
-        : `Delivery data is complete for all ${plural(scan.records.length, "recorded delivery", "recorded deliveries")}.`;
-    const nextSteps = [];
-    // #348: a route that exists — nothing lists malformed handovers by name, so
-    // the step names where the schema lives instead of promising a listing.
-    if (d.malformed > 0) {
-        nextSteps.push("Check each docs/Handover-*.md frontmatter against the `3c-handover/1` block in .claude/skills/3c-project-manager/SKILL.md");
-    }
-    if (d.legacy > 0) {
-        nextSteps.push(`Backfill frontmatter in the ${plural(d.legacy, "handover")} predating the schema`);
-    }
-    return { id: "delivery", label: "Delivery", results, meaning, nextSteps };
+    if (verdicts !== "")
+        summary.push(`Verdicts: ${verdicts}`);
+    const results = [said.header, said.status, ...summary, ...said.notes].join("\n");
+    const meaning = said.stale
+        ? "These rows are from an earlier fetch; the latest one failed."
+        : said.unread
+            ? "The handover issues could not be read, so an empty view here is not a true zero."
+            : d.malformed > 0
+                ? `${plural(d.malformed, "handover")} ${d.malformed === 1 ? "has" : "have"} a malformed delivery block, so the numbers above are incomplete.`
+                : n === 0
+                    ? "No handover issue carries a delivery block yet — this view fills in as work ships."
+                    : `Delivery data is complete for all ${plural(src.scan.records.length, "recorded delivery", "recorded deliveries")}.`;
+    return { id: "delivery", label: "Delivery", results, meaning, nextSteps: [...said.nextSteps] };
 }
 async function gatesPanel(env) {
     const cfg = await loadTelemetryConfig(env.cwd);
@@ -116,11 +108,8 @@ async function gatesPanel(env) {
     const meaning = top === null
         ? `Every gate run passed in the ${win.label}.`
         : `${top.count} of ${m.totalRuns} runs snagged on ${top.key} — the largest single cause.`;
-    // #395 retired `explain`, so the conditional offer that lived here — guarded
-    // by `explainableRuleIds` (the #342 dead-end fix), a guard that resolved
-    // nothing in any real install because zero rationale files ever shipped —
-    // went with the verb. The diagnosis above stays; a replacement pointer would
-    // be new capability, which is not part of a retirement.
+    // No next step: no rationale files ship for a rule to point at, so any offer
+    // here would be a dead-end. The diagnosis above stands on its own.
     return {
         id: "gates",
         label: "Gate health",
@@ -131,9 +120,8 @@ async function gatesPanel(env) {
 }
 // The two panels below delegate their interpretation to the owning skill, so
 // the console surface and this panel cannot describe one run differently.
-// #394: the panel renders the findings STORE, which outlived the drift verb —
-// arch-check appends layer-boundary runs and an adopter's pre-#394 history
-// still parses, so this panel keeps rendering across the retirement.
+// The panel renders the findings STORE, not a verb: arch-check appends
+// layer-boundary runs to it, and an adopter's older history still parses.
 async function boundaryPanel(env) {
     const runs = await readRuns(env.cwd);
     return {
@@ -146,7 +134,7 @@ async function onboardingPanel(env) {
     const dir = join(env.cwd, `.${resolveBrandSlugSync()}`, "onboarding");
     let names;
     try {
-        // #378 AC6: only stems the CLI itself could have written, and never through
+        // Only stems the CLI itself could have written, and never through
         // a link — a linked directory or entry is skipped, not read.
         names = (await onboardingDirLinked(env.cwd))
             ? []

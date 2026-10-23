@@ -1,4 +1,4 @@
-// #256: deterministic reconciliation of multi-agent review findings — the core
+// Deterministic reconciliation of multi-agent review findings — the core
 // the review board's cross-check is built on. Pure functions + a JSON entry
 // point so prose-orchestrated skills can invoke it deterministically (via the
 // `3c reconcile` CLI), the way `/3c-review` shells out for secret-scanning.

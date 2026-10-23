@@ -1,6 +1,6 @@
-// #19 VP-03-F05 — compose: resolve changed files → check → exceptions →
-// bypass → findings append (AC5) → content-free telemetry (AC7) → block (AC2).
-// Standalone gate CLI pattern (mirrors #18 security scan); AD-03 L1-form, no daemon.
+// Compose: resolve changed files → check → exceptions → bypass → findings
+// append → content-free telemetry → block.
+// Standalone gate CLI pattern (mirrors the security scan); AD-03 L1-form, no daemon.
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { userInfo } from "node:os";
@@ -46,10 +46,11 @@ export function classifyGitFailure(err) {
     return { cause: "git failed", repair: `Run \`git status\` here to see why, then re-run; or ${FILES_ROUTE}.` };
 }
 /**
- * The staged sources, or every tracked source when nothing is staged. #434:
- * a listing that FAILED is not an empty listing. Returning `[]` here made a
- * gate that read nothing exit 0, so a chain gated on its status admitted every
- * cross-boundary import. An empty list from a WORKING git is still a real zero.
+ * The staged sources, or every tracked source when nothing is staged. A
+ * listing that FAILED is not an empty listing: returning `[]` would make a
+ * gate that read nothing exit 0, so a chain gated on its status would admit
+ * every cross-boundary import. An empty list from a WORKING git is still a
+ * real zero.
  */
 async function listSourceFiles(ws) {
     let stagedError;
@@ -74,8 +75,8 @@ async function listSourceFiles(ws) {
     return { ok: false, failure: first !== undefined && first.cause !== "git failed" ? first : listed };
 }
 /**
- * AC7: content-free gate telemetry — counts and an exit code, never a file
- * path or import string. One writer so the config-error branch (#430) records
+ * Content-free gate telemetry — counts and an exit code, never a file
+ * path or import string. One writer so the config-error branch records
  * on the same channel as a violation block rather than passing silently.
  */
 async function recordGateEvent(ws, exitCode, failureCategory) {
@@ -86,10 +87,10 @@ async function recordGateEvent(ws, exitCode, failureCategory) {
         trigger_event: "PreToolUse",
         summary: safeSummary("arch-check"),
         exit_code: exitCode,
-        // Board r1: passed in, NOT derived from the exit code. Deriving it made a
+        // Passed in, NOT derived from the exit code. Deriving it would make a
         // BYPASSED violation record "none", which src/telemetry/aggregate.ts
         // counts as a pass — so a week of emergency-bypassed boundary blocks
-        // aggregated as a 100% pass rate. A bypassed run is not a pass.
+        // would aggregate as a 100% pass rate. A bypassed run is not a pass.
         failure_category: failureCategory,
         duration_ms: 0,
         network_used: false,
@@ -102,7 +103,7 @@ async function recordGateEvent(ws, exitCode, failureCategory) {
 export async function runArchBoundary(ws, opts) {
     const loaded = await loadArchConfig(ws);
     const now = opts.now ?? new Date();
-    // #430 AC2: absent and inert stay advisory at exit 0 (the shipped starter
+    // Absent and inert stay advisory at exit 0 (the shipped starter
     // is inert BY DESIGN — blocking here would fail every fresh install). A
     // config that exists but cannot be used is a different answer entirely:
     // the gate can no longer tell whether this commit is clean, so it must not
@@ -189,8 +190,7 @@ export async function runArchBoundary(ws, opts) {
             filesUnreadable: unreadable,
             filesUnmapped: unmapped,
         };
-    // AC5: record into the SAME findings history (#10's store, kept by #394),
-    // keyed by rule_id.
+    // Record into the SAME findings history as other gates, keyed by rule_id.
     await appendExternalViolations(ws, "layer-boundary", violations.map((v) => ({
         file: v.file,
         line: v.line,
@@ -209,11 +209,11 @@ export async function runArchBoundary(ws, opts) {
             message: `${slug} architecture boundary: ${violations.length} violation(s) — allowed via emergency bypass (recorded).\n${lines}\n`,
         };
     }
-    // #430 AC12: render the key the adopter would actually file, not a
+    // Render the key the adopter would actually file, not a
     // `<from>-><to>` placeholder they have to compose from prose. The violation
     // line above carries the layer names inside a sentence AND a
-    // `(package rules: "…")` suffix — so the obvious paste produced a
-    // well-formed waiver `isExcepted` could never match, and nothing said why.
+    // `(package rules: "…")` suffix — so the obvious paste would produce a
+    // well-formed waiver `isExcepted` could never match, and nothing would say why.
     // exceptionKey reads the pair from the message before the suffix, so these
     // keys round-trip through `arch-check except` by construction.
     const keys = [...new Set(violations.map((v) => exceptionKey(v.message) ?? ""))]

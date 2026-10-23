@@ -1,4 +1,4 @@
-// #70 AC4/AC6 — adapter registry + the pm.create_issue dispatch. Token is
+// Adapter registry + the pm.create_issue dispatch. Token is
 // resolved ONLY through the injected SecretResolver (OS keychain via the
 // shipped defaultResolver) at call time and never cached, logged, or returned.
 import { credentialLookupHint, credentialStoreName, isValidCredentialName, } from "../../hooks/credentials.js";
@@ -28,7 +28,7 @@ export async function pmCreateIssue(payload, ctx) {
     }
     const token = await ctx.resolver(ctx.tokenRef);
     if (token === null || token === "") {
-        // #449: keychain only — no environment fallback — so the refusal says
+        // Keychain only — no environment fallback — so the refusal says
         // exactly what to store, where, and in what form.
         const p = process.platform;
         return {

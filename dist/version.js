@@ -1,4 +1,4 @@
-// #279 — Release version single-source-of-truth.
+// Release version single-source-of-truth.
 // `package.json.version` is the single source; framework.json + the CLI --version
 // derive from / are asserted equal to it.
 import { readFileSync } from "node:fs";

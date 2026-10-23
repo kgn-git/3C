@@ -93,6 +93,12 @@ Consult `.claude/CLAUDE.md` for team-specific test-file location, fixture-naming
 conventions. The rules pipeline has already loaded matching rules from `.claude/rules/` into your
 context — follow them.
 
+**Where to pin the rule.** Write the test at the lowest layer that owns the behaviour
+(`.claude/rules/quality/test-layering/test-layering.md`): a domain rule in the domain test, a parsing
+rule in the parser test, an access rule in the server-boundary test. A test at an upper layer checks
+only that it is wired to the layer below, by one path; it does not repeat the rule's cases. A defect
+fix gets its test where the defect lived, not where it was seen.
+
 ## 7. Write the test file
 
 Run:

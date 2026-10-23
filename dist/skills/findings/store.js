@@ -1,7 +1,7 @@
-// #394 (was #10 AC4/AC5): append-only JSONL run history under
-// .${slug}/drift/runs.jsonl (AD-04 — runs are events → JSONL substrate,
-// mirrors src/telemetry/). appendExternalViolations is the documented
-// rule_id-keyed API #19 writes into.
+// Append-only JSONL run history under .${slug}/drift/runs.jsonl
+// (AD-04 — runs are events → JSONL substrate, mirrors src/telemetry/).
+// appendExternalViolations is the documented rule_id-keyed API the
+// architecture boundary gate writes into.
 //
 // The on-disk path still says `drift`, deliberately. Renaming it would orphan
 // every adopter's accumulated history on upgrade — the dashboard would render
@@ -42,7 +42,7 @@ export async function readRuns(workspaceDir) {
     }
     return out;
 }
-// External violation source (#19 Architecture Boundary Enforcer) records
+// External violation source (the architecture boundary gate) records
 // into the SAME history, keyed by rule_id — no parallel store.
 export async function appendExternalViolations(workspaceDir, ruleId, items) {
     const byDirectory = {};

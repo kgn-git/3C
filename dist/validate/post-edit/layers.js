@@ -1,36 +1,18 @@
 import { posix } from "node:path";
 import { matchAny } from "../../rules/glob-match.js";
 import { clampLabel } from "../arch-config.js";
-// #384 AC8: the kernel used to be one line-anchored regex, which saw only
-// `import X from "…"` written on a single line. It therefore missed the shape
-// prettier produces by default (a wrapped clause), every `export … from`
-// re-export, and every bare side-effect import. #298 recorded that bound
-// honestly — but a bound is a note while the hook never fires and an
-// every-edit false all-clear once #384 registers it, so it is closed here.
-//
-// Deliberately NOT a single spanning regex: `[\s\S]*?from` runs past the end
-// of an unterminated clause and attributes the NEXT statement's specifier to
-// the wrong line. Instead this joins physical lines into one logical statement
-// and matches against a class that cannot cross a `;`.
+// Physical lines are joined into one logical statement so wrapped clauses,
+// `export … from` and bare imports are seen. Not one spanning regex:
+// `[\s\S]*?from` runs past an unterminated clause into the next statement.
 const STATEMENT_START = /^(?:import|export)\b/;
-// Board r1 (qa + code, both with repros): the clause class excludes QUOTES and
-// backticks, not just `;`. Without that, any statement beginning `export` whose
-// body quotes example code — `export const HELP = \`…import { x } from "./m"…\``,
-// the exact shape of this repo's own scaffold.ts — matched and invented an
-// import edge that no code performs. Verified fabricating `src/data/mod.js`
-// before this change and returning [] after.
+// Quotes and backticks are excluded too, so a string quoting an import
+// (`export const HELP = \`…from "./m"…\``) is not taken for an edge.
 const FROM_STATEMENT = /^(?:import|export)\b[^;'"`]*?\bfrom\s*["']([^"'\n]+)["']/;
 const BARE_IMPORT = /^import\s*["']([^"'\n]+)["']/;
-// CWE-400: this runs on every edit once the hook is armed. An unclosed clause
-// must terminate, not scan to end-of-file.
+// CWE-400: runs on every edit; an unclosed clause must not scan to EOF.
 const MAX_STATEMENT_LINES = 20;
-// Board r1 (security, measured): MAX_STATEMENT_LINES bounds ONE statement, not
-// the file — a non-resolving statement-start line left `i` unadvanced, so every
-// such line restarted a fresh join over the same text. Measured 628ms on 1MB
-// and 12.6s at 15MB, past the 12s timeout the hook registers. The
-// statement-start terminator below removes the quadratic term; this is the
-// backstop that makes the bound a property of the FILE rather than of the
-// shapes we happened to test.
+// The per-file backstop: unresolved statements restart a join, so a
+// per-statement cap alone does not bound the file (12.6s at 15MB).
 const MAX_JOINED_LINES_PER_FILE = 2000;
 /** The layer `relPath` belongs to under `map`, or null when no layer glob matches it. */
 export function layerOf(relPath, map) {
@@ -40,9 +22,8 @@ export function layerOf(relPath, map) {
     }
     return null;
 }
-// #298: the single import-resolution kernel — shared by the boundary check
-// below and by `arch-check discover`, so a draft and the gate can never
-// disagree about what counts as an import edge.
+// Shared with `arch-check discover`, so a draft and the gate agree on what
+// counts as an import edge.
 export function parseRelativeImports(filePath, content) {
     const fileDir = posix.dirname(filePath.replace(/\\/g, "/"));
     const out = [];
@@ -62,15 +43,8 @@ export function parseRelativeImports(filePath, content) {
             consumed < MAX_STATEMENT_LINES &&
             joined < MAX_JOINED_LINES_PER_FILE &&
             i + consumed + 1 < lines.length) {
-            // Board r1 (qa + code, both with repros): a line that itself STARTS a
-            // statement can never be the continuation of the previous one. Without
-            // this, `export { z }` (no `;`, the prettier `semi:false` default) joined
-            // the following lines and claimed the NEXT import's specifier at the
-            // wrong line — then `i += consumed` swallowed the real statement, so a
-            // bare side-effect import inside the span was lost entirely. That is the
-            // false all-clear this issue exists to close, reintroduced by its own
-            // fix. The `;` stop made the old guard pass for a fixture-specific
-            // reason; this makes the property structural.
+            // A statement start never continues the previous statement; otherwise
+            // `export { z }` without `;` would swallow the next import.
             const next = (lines[i + consumed + 1] ?? "").trim();
             if (STATEMENT_START.test(next))
                 break;

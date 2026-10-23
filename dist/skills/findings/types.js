@@ -1,9 +1,8 @@
-// #394 (was #10) — shared types for the findings store.
+// Shared types for the findings store.
 // A findings run is an append-only event (AD-04 events → JSONL substrate).
-// The store outlived the `drift` verb that used to write it: `arch-check`
-// appends layer-boundary runs here and the dashboard boundary panel renders
-// them. Records an adopter accumulated before #394 keep parsing unchanged —
-// the schema and the on-disk path are exactly what they were.
+// `arch-check` appends layer-boundary runs here and the dashboard boundary
+// panel renders them. The schema and the on-disk path stay fixed so records
+// an adopter already accumulated keep parsing.
 export function isFindingsRun(v) {
     return (!!v &&
         typeof v === "object" &&

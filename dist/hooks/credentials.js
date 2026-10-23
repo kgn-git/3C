@@ -1,5 +1,5 @@
 // Resolves a named credential from the OS credential store — and nowhere else
-// (#449, NFR-SEC-06, AD-08):
+// (NFR-SEC-06, AD-08):
 //   - macOS: Keychain, via `security find-generic-password`
 //   - Linux: Secret Service, via `secret-tool lookup`
 //   - Windows: Credential Manager, via powershell.exe and the Win32 CredReadW
@@ -9,9 +9,9 @@
 // caller refuses and tells the user to store the credential first.
 //
 // Its one consumer is `create-issue` to Jira / Linear / GitLab
-// (src/mcp/pm/registry.ts). Hook commands used to reference credentials as
-// `${OS_KEYCHAIN:NAME}`; that is retired (#449) — the value was substituted
-// into the hook's argv, where the process list exposes it.
+// (src/mcp/pm/registry.ts). Hook commands may not reference credentials as
+// `${OS_KEYCHAIN:NAME}` (the orchestrator refuses them): the value would be
+// substituted into the hook's argv, where the process list exposes it.
 import { execFile } from "node:child_process";
 import { userInfo } from "node:os";
 import { join } from "node:path";

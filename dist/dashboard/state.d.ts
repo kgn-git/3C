@@ -12,7 +12,6 @@ export interface DashboardState {
 }
 export interface StateEnv {
     readonly cwd: string;
-    readonly docsDir?: string;
     readonly since?: string;
     readonly now?: Date;
 }

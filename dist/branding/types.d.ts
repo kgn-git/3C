@@ -6,13 +6,9 @@ export interface FrameworkConfig {
     readonly FRAMEWORK_VERSION: string;
 }
 /**
- * The framework identity plus the `BRAND_*` names, which are ALIASES of the
- * `FRAMEWORK_*` values (#451). Custom branding is retired — the product is 3C —
- * but 56 template files still spell `${BRAND_*}` tokens, so the names stay
- * resolvable until #457 purges them from `templates/`.
- *
- * NOT an extension point: nothing may add a per-deployment override here. A
- * second source for these values is what made #451's split state possible.
+ * `BRAND_*` are aliases of `FRAMEWORK_*`, kept because templates still spell
+ * `${BRAND_*}` tokens (TODO(#457) purge them). Not an extension point: a
+ * second source for these values splits state.
  */
 export type ResolvedBrand = FrameworkConfig & {
     readonly BRAND_NAME: string;

@@ -1,4 +1,4 @@
-// #15 AC4 / NFR-SEC-01 — answer from LOCAL sources only (rule bodies +
+// NFR-SEC-01 — answer from LOCAL sources only (rule bodies +
 // CLAUDE.md + docs/*.md). Simple keyword match; no network, no model call.
 import { readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";

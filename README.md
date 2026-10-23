@@ -2,14 +2,14 @@
 
 > Public release repo. Source of truth: [`kgn-git/praise`](https://github.com/kgn-git/praise).
 
-This repo contains only the runtime-installable surface of 3C v2.0.0: built `dist/`, deployable `templates/`, and `framework.json`.
+This repo contains only the runtime-installable surface of 3C v2.1.0: built `dist/`, deployable `templates/`, and `framework.json`.
 
 3C installs by **copying** skills, agents, rules, and hooks into your project's `.claude/` (the copy path), so your team owns and evolves them in git. Commands are namespaced with a **hyphen prefix** — `/3c-<skill>`. (There is no plugin/colon install.)
 
 ## Install
 
 ```bash
-npm install git+https://github.com/kgn-git/3C.git#<release-sha>   # the v2.0.0 commit sha, from github.com/kgn-git/3C/releases
+npm install git+https://github.com/kgn-git/3C.git#<release-sha>   # the v2.1.0 commit sha, from github.com/kgn-git/3C/releases
 ```
 
 Then in your project root, provision everything in one shot:
@@ -36,7 +36,7 @@ Upgrading the package does **not** rewrite the skills, agents and rules already 
 
 ```bash
 git add -A .claude && git commit -m "checkpoint before upgrade"
-npm install git+https://github.com/kgn-git/3C.git#<release-sha>   # the v2.0.0 commit sha, from github.com/kgn-git/3C/releases
+npm install git+https://github.com/kgn-git/3C.git#<release-sha>   # the v2.1.0 commit sha, from github.com/kgn-git/3C/releases
 3c setup --replace       # refreshes CHANGED skills/agents, not just missing ones
 git diff HEAD -- .claude         # review; re-apply any local edits
 3c doctor                # confirms the installed artefacts match the upgraded CLI

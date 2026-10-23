@@ -43,7 +43,7 @@ If a file was deleted, you have only the pre-image — limit findings to facts v
 
 ## 4. Apply the checklist per file
 
-For each changed file, walk the four checklist anchors in order — **Code Quality**, **Security**, **Testing**, **Architecture** — and emit a finding for each issue you see. A finding MUST include:
+For each changed file, walk every `## ` section of the checklist in order and emit a finding for each issue you see. When the check that raised it carries a check id (`size-cap`, `comment-what`, …), start the description with that check id. A finding MUST include:
 
 - `file` (relative path)
 - `line` or `line range` (from the post-image you read in step 2)

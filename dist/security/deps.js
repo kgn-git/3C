@@ -25,7 +25,7 @@ export function checkDeps(deps, advisory) {
             continue;
         const adv = advisory[dep];
         out.push({
-            // #413 AC7: per package AND advisory, so suppressing one never hides another.
+            // Per package AND advisory, so suppressing one never hides another.
             id: findingId("dep-cve", "package.json", `${dep}|${adv.cve}`),
             severity: adv.severity,
             ruleId: "dep-cve",

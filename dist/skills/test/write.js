@@ -37,8 +37,8 @@ export async function writeTest(opts) {
     await writeFile(targetAbs, opts.content, "utf8");
     return { ok: true, written: targetAbs };
 }
-// #413: from the hit's own offset — `indexOf(match)` found the FIRST
-// occurrence, so a repeated secret reported its first line every time.
+// From the hit's own offset — `indexOf(match)` would find the FIRST
+// occurrence, so a repeated secret would report its first line every time.
 function lineOf(text, index) {
     return text.slice(0, index).split("\n").length;
 }

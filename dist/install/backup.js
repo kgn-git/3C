@@ -1,4 +1,4 @@
-// #452 (user request) — back up before `--replace` overwrites.
+// Back up before `--replace` overwrites.
 //
 // `--replace` refreshes the adopter's copies of skills, agents, rules and
 // CLAUDE.md from the package, and those copies are often edited. Each file it
@@ -10,7 +10,7 @@ import { randomBytes } from "node:crypto";
 import { copyFile, lstat, mkdir, realpath, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 /** Throws unless the deepest existing ancestor of `target` really lies inside `workspace`. */
-async function assertInside(workspace, target) {
+export async function assertInside(workspace, target) {
     let probe = resolve(target);
     for (;;) {
         try {

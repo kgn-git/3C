@@ -18,7 +18,13 @@ and accessibility — without modifying any code.
 3. Assess: usability (clarity, affordances, error states), accessibility (labels, contrast, keyboard
    navigation, ARIA, focus order), and UI copy. End-to-end journey reachability belongs to
    `${BRAND_SLUG}-journey-architect` — stay on the screen/component level so the two lenses stay sharp.
-4. Emit findings (see Output).
+4. Judge user-facing copy — error messages, refusals, confirmations, empty states and button labels —
+   against `.claude/rules/ux/tone-and-manner/tone-and-manner.md` when it is installed. Each rule it
+   breaks is a `copy` finding citing the rule: a broken MUST is a `warning`, a broken SHOULD a
+   `suggestion`, and a refusal or irreversible-action prompt that misleads the user is `blocking`. A
+   blank the project has not filled in is not a finding against the diff; `${BRAND_SLUG} doctor` reports
+   those. When the file is absent, emit one `suggestion` naming it and skip the rest of this step.
+5. Emit findings (see Output).
 
 ## Output — findings schema
 

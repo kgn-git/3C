@@ -20,8 +20,8 @@ export async function installAgents(opts) {
     const installed = [];
     const skipped = [];
     for (const file of files) {
-        // #258: install under a brand-slug-prefixed filename (e.g. 3c-architect.md),
-        // matching the skill dir-prefix convention (#240). Dispatch keys on the
+        // Install under a brand-slug-prefixed filename (e.g. 3c-architect.md),
+        // matching the skill dir-prefix convention. Dispatch keys on the
         // `name:` frontmatter, not the filename, so this is on-disk consistency only.
         const destName = `${opts.brand.BRAND_SLUG}-${file}`;
         const destPath = join(targetDir, destName);

@@ -26,7 +26,7 @@ export async function loadSuppress(workspaceDir) {
             continue;
         if (known.has(item))
             ruleIds.add(item);
-        // #464: a glob that would hang the match, or match only as literal text,
+        // A glob that would hang the match, or match only as literal text,
         // is dropped — the files it named stay checked, which is the closed side.
         else if (globProblem(item) === null)
             pathGlobs.push(item);

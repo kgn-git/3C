@@ -11,9 +11,9 @@ export interface DoctorReport {
 export declare function runDoctor(opts: {
     workspaceDir: string;
     packageRoot: string;
-    /** Commands the running CLI supports; defaults to this binary's CLI_COMMANDS (#278). */
+    /** Commands the running CLI supports; defaults to this binary's CLI_COMMANDS. */
     supportedCommands?: ReadonlySet<string>;
-    /** Subcommand pairs this framework has retired; defaults to RETIRED_COMMANDS (#406). */
+    /** Subcommand pairs this framework has retired; defaults to RETIRED_COMMANDS. */
     retiredCommands?: ReadonlySet<string>;
 }): Promise<DoctorReport>;
 //# sourceMappingURL=doctor.d.ts.map
