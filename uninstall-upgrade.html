@@ -790,8 +790,8 @@ avoid — are on <strong><a href="get-started.html">Get started</a></strong>.</p
 <h2 id="moving-to-a-later-release">Moving to a later release<a class="headerlink" href="#moving-to-a-later-release" title="Permanent link">&para;</a></h2>
 <p>There is no separate upgrade command. The dedicated verb that used to do this is <strong>retired</strong> (#396): it ran <code>git verify-tag</code> against the package directory npm installs <em>without</em> a <code>.git</code>, so for a project-local install git walked up and verified the adopter's own repository rather than the framework's. It refused for every adopter it was meant to serve.</p>
 <p>Re-install the release, then refresh the copied artefacts:</p>
-<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>--allow-git<span class="o">=</span>root<span class="w"> </span>git+https://github.com/kgn-git/3C.git#&lt;release-sha&gt;
-<span class="c1"># &lt;release-sha&gt;: the commit sha listed for that version at github.com/kgn-git/3C/releases</span>
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>--allow-git<span class="o">=</span>root<span class="w"> </span>git+https://github.com/kgn-git/3C.git#2c990f1393f60470a65019e1d96c84a0b2b3fb18
+<span class="c1"># the current release&#39;s commit sha; every release&#39;s sha is listed at github.com/kgn-git/3C/releases</span>
 npx<span class="w"> </span>3c<span class="w"> </span>setup<span class="w"> </span>--replace<span class="w">   </span><span class="c1"># backs up every file it overwrites to .3c/backups/</span>
 npx<span class="w"> </span>3c<span class="w"> </span>doctor<span class="w">            </span><span class="c1"># reports any skill still invoking a retired command</span>
 </code></pre></div>
