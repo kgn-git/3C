@@ -799,16 +799,26 @@
 the first time; <strong>update to latest</strong> for an existing deployment moving to the current release. Both sit
 at the current release — there is nothing older to pin.</p>
 <blockquote>
-<p><strong>Current release: v2.1.0.</strong> 3C ships as a private, git-installed package from
+<p><strong>Current release: v2.1.1.</strong> 3C ships as a private, git-installed package from
 <a href="https://github.com/kgn-git/3C"><code>kgn-git/3C</code></a> — there is no public npm package to install.</p>
 </blockquote>
 <hr />
 <h2 id="fresh-install">Fresh install<a class="headerlink" href="#fresh-install" title="Permanent link">&para;</a></h2>
 <p>A new project, adopting 3C for the first time. From the project root:</p>
-<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>git+https://github.com/kgn-git/3C.git#&lt;release-sha&gt;
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>--allow-git<span class="o">=</span>root<span class="w"> </span>git+https://github.com/kgn-git/3C.git#&lt;release-sha&gt;
 <span class="c1"># &lt;release-sha&gt;: the commit sha listed for that version at github.com/kgn-git/3C/releases</span>
 npx<span class="w"> </span>3c<span class="w"> </span>setup<span class="w">            </span><span class="c1"># one shot: CLAUDE.md + rules + hooks + skills + agents + arch-check, then doctor</span>
 </code></pre></div>
+<p><strong>If npm stops with <code>EALLOWGIT</code>.</strong> npm 12 refuses to fetch a git dependency unless you allow it,
+which is why the command above passes <code>--allow-git=root</code>. <code>root</code> allows every git dependency your
+own <code>package.json</code> names, and none further down the tree. npm 10 and 11 accept the flag without a
+warning.</p>
+<p>Every later <code>npm ci</code> or <code>npm install</code> in this project needs the same permission. To stop passing the
+flag, add this line to the project's <code>.npmrc</code> and commit it:</p>
+<div class="highlight"><pre><span></span><code><span class="na">allow-git</span><span class="o">=</span><span class="s">root</span>
+</code></pre></div>
+<p>The line covers every git dependency your <code>package.json</code> names, now and later. If you would rather
+not grant that standing permission, pass the flag on each command instead.</p>
 <p><code>3c setup</code> is a thin sequencer over the individual commands (<code>init</code>, <code>rules install</code>, <code>hook install</code>,
 <code>skills install</code>, <code>agents install</code>, <code>arch-check init</code>, <code>doctor</code>) — each still runs on its own if you
 would rather step through it. Everything lands <strong>in your repo under git</strong>; nothing is installed globally
@@ -823,7 +833,7 @@ you pass: <code>npx 3c setup --replace</code> refreshes skills, agents and rules
 and <code>npx 3c init --merge</code> rewrites CLAUDE.md with your new answers, keeping a backup of the old one —
 run it in a terminal to choose different answers. On Windows Git Bash, use PowerShell, cmd or <code>winpty</code>.</p>
 <p>Verify at any time:</p>
-<div class="highlight"><pre><span></span><code>3c<span class="w"> </span>--version<span class="w">            </span><span class="c1"># should report 2.1.0</span>
+<div class="highlight"><pre><span></span><code>3c<span class="w"> </span>--version<span class="w">            </span><span class="c1"># should report 2.1.1</span>
 3c<span class="w"> </span>doctor<span class="w">               </span><span class="c1"># confirms the install and flags anything missing</span>
 </code></pre></div>
 <hr />
@@ -834,7 +844,7 @@ project.</p>
 the most common cause</strong> of "command not found" or a crew skill silently degrading. Reinstall the global
 CLI at the current release:</p>
 <div class="highlight"><pre><span></span><code>npm<span class="w"> </span>uninstall<span class="w"> </span>-g<span class="w"> </span>@kgn-git/3c
-npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>git+https://github.com/kgn-git/3C.git#&lt;release-sha&gt;
+npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>--allow-git<span class="o">=</span>root<span class="w"> </span>git+https://github.com/kgn-git/3C.git#&lt;release-sha&gt;
 3c<span class="w"> </span>--version<span class="w">            </span><span class="c1"># should report the release you pinned</span>
 </code></pre></div>
 <p><strong>2. Refresh the project.</strong> Upgrading the CLI does not rewrite the skills, agents, and rules already
