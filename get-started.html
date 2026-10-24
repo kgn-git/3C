@@ -799,13 +799,13 @@
 the first time; <strong>update to latest</strong> for an existing deployment moving to the current release. Both sit
 at the current release — there is nothing older to pin.</p>
 <blockquote>
-<p><strong>Current release: v2.1.1.</strong> 3C ships as a private, git-installed package from
+<p><strong>Current release: v2.2.0.</strong> 3C ships as a private, git-installed package from
 <a href="https://github.com/kgn-git/3C"><code>kgn-git/3C</code></a> — there is no public npm package to install.</p>
 </blockquote>
 <hr />
 <h2 id="fresh-install">Fresh install<a class="headerlink" href="#fresh-install" title="Permanent link">&para;</a></h2>
 <p>A new project, adopting 3C for the first time. From the project root:</p>
-<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>--allow-git<span class="o">=</span>root<span class="w"> </span>git+https://github.com/kgn-git/3C.git#2c990f1393f60470a65019e1d96c84a0b2b3fb18
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>--allow-git<span class="o">=</span>root<span class="w"> </span>git+https://github.com/kgn-git/3C.git#a4fae20df098659b879e1e3d63463cf7b59fabb1
 <span class="c1"># the current release&#39;s commit sha; every release&#39;s sha is listed at github.com/kgn-git/3C/releases</span>
 npx<span class="w"> </span>3c<span class="w"> </span>setup<span class="w">            </span><span class="c1"># one shot: CLAUDE.md + rules + hooks + skills + agents + arch-check, then doctor</span>
 </code></pre></div>
@@ -833,7 +833,7 @@ you pass: <code>npx 3c setup --replace</code> refreshes skills, agents and rules
 and <code>npx 3c init --merge</code> rewrites CLAUDE.md with your new answers, keeping a backup of the old one —
 run it in a terminal to choose different answers. On Windows Git Bash, use PowerShell, cmd or <code>winpty</code>.</p>
 <p>Verify at any time:</p>
-<div class="highlight"><pre><span></span><code>3c<span class="w"> </span>--version<span class="w">            </span><span class="c1"># should report 2.1.1</span>
+<div class="highlight"><pre><span></span><code>3c<span class="w"> </span>--version<span class="w">            </span><span class="c1"># should report 2.2.0</span>
 3c<span class="w"> </span>doctor<span class="w">               </span><span class="c1"># confirms the install and flags anything missing</span>
 </code></pre></div>
 <hr />
@@ -844,7 +844,7 @@ project.</p>
 the most common cause</strong> of "command not found" or a crew skill silently degrading. Reinstall the global
 CLI at the current release:</p>
 <div class="highlight"><pre><span></span><code>npm<span class="w"> </span>uninstall<span class="w"> </span>-g<span class="w"> </span>@kgn-git/3c
-npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>--allow-git<span class="o">=</span>root<span class="w"> </span>git+https://github.com/kgn-git/3C.git#2c990f1393f60470a65019e1d96c84a0b2b3fb18
+npm<span class="w"> </span>install<span class="w"> </span>-g<span class="w"> </span>--allow-git<span class="o">=</span>root<span class="w"> </span>git+https://github.com/kgn-git/3C.git#a4fae20df098659b879e1e3d63463cf7b59fabb1
 3c<span class="w"> </span>--version<span class="w">            </span><span class="c1"># should report the release you pinned</span>
 </code></pre></div>
 <p><strong>2. Refresh the project.</strong> Upgrading the CLI does not rewrite the skills, agents, and rules already
@@ -872,7 +872,7 @@ still exist upstream; delete them by hand once you have checked nothing local de
 <ul>
 <li><strong><code>npm i -g 3c</code></strong> installs an <strong>unrelated public package</strong>, not this one — never use it.</li>
 <li><strong><code>npm i -g @kgn-git/3c</code></strong> fails with <strong>E404</strong>: the package is private and git-only. Install from the
-  <code>git+https://github.com/kgn-git/3C.git#2c990f1393f60470a65019e1d96c84a0b2b3fb18</code> URL above — by commit sha, because a tag can be moved and a sha cannot.</li>
+  <code>git+https://github.com/kgn-git/3C.git#a4fae20df098659b879e1e3d63463cf7b59fabb1</code> URL above — by commit sha, because a tag can be moved and a sha cannot.</li>
 <li>If a command still resolves to an old build, a <strong>project-local copy is shadowing the global</strong> — run
   <code>Get-Command 3c</code> (PowerShell) or <code>which 3c</code>. A <code>node_modules/.bin/3c</code> inside a project takes precedence
   over the global binary; upgrade or remove that local install too.</li>
