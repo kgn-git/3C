@@ -1,6 +1,6 @@
 import type { GitRunner } from "./git.js";
 import type { Finding, Scanner } from "./findings.js";
-import { type DepAdvisory } from "./deps.js";
+import type { DepAdvisory } from "./deps.js";
 export interface SecurityRunOptions {
     readonly scanner?: Scanner;
     readonly runner?: GitRunner;

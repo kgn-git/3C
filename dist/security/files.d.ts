@@ -1,4 +1,5 @@
 import { type GitRunner } from "./git.js";
+import type { ManifestPair } from "./manifest-diff.js";
 /**
  * The base ref could not be resolved, so the span to scan is unknown. Callers
  * MUST fail closed on this (a10-exception-handling): a pass over a tree the
@@ -19,9 +20,10 @@ export interface SecurityFileSet {
     readonly skipped: readonly string[];
     /** Resolved base commit, or null when the repository has no commits yet. */
     readonly base: string | null;
-    /** Diff over the same span, for the dependency half. */
-    readonly depDiff: string;
+    /** Each changed package.json, package-lock.json and npm-shrinkwrap.json, at the base and now, for the dependency half. */
+    readonly manifests: readonly ManifestPair[];
 }
+export declare const MAX_MANIFESTS = 50;
 /**
  * CWE-400. The untracked half is unbounded — a never-committed workspace lists
  * its whole tree — and every path becomes a file read. Both caps fail closed

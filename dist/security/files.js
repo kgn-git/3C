@@ -11,6 +11,7 @@
 import { stat } from "node:fs/promises";
 import { join } from "node:path";
 import { defaultGitRunner } from "./git.js";
+import { readWorkspaceFile } from "./advisories.js";
 /**
  * The base ref could not be resolved, so the span to scan is unknown. Callers
  * MUST fail closed on this (a10-exception-handling): a pass over a tree the
@@ -22,6 +23,9 @@ export class SecurityBaseError extends Error {
         this.name = "SecurityBaseError";
     }
 }
+const MANIFEST = /(?:^|\/)(?:package|package-lock|npm-shrinkwrap)\.json$/;
+export const MAX_MANIFESTS = 50;
+const MAX_MANIFEST_BYTES = 16 * 1024 * 1024;
 /**
  * Refs tried, in order, when no `--base` is given. An adopter whose default
  * branch is none of these gets an actionable refusal, not a zero-file pass.
@@ -137,13 +141,30 @@ export async function securityFileSet(workspaceDir, opts = {}) {
         else
             scannable.push(rel);
     }
-    const depDiff = base === null
-        ? [
-            await git(["diff", "--unified=0", "--no-color"]),
-            await git(["diff", "--cached", "--unified=0", "--no-color"]),
-        ].join("\n")
-        : await git(["diff", "--unified=0", "--no-color", base]);
-    return { files: scannable, skipped, base, depDiff };
+    // From `files`, not `scannable`: a lockfile over the scan's byte cap is still
+    // a set of dependencies the change installs.
+    const manifestPaths = files.filter((f) => MANIFEST.test(f));
+    if (manifestPaths.length > MAX_MANIFESTS) {
+        throw new SecurityBaseError(`${manifestPaths.length} package manifests are in scope, above the ${MAX_MANIFESTS}-manifest cap. ` +
+            (opts.base === undefined ? "Narrow the span with `--base=<ref>`." : `Choose a base nearer this change than ${opts.base}.`));
+    }
+    const manifests = await Promise.all(manifestPaths.map(async (path) => ({
+        path,
+        base: base === null ? null : await probe(["show", `${base}:${path}`]),
+        head: await readManifest(join(workspaceDir, path)),
+    })));
+    return { files: scannable, skipped, base, manifests };
+}
+/**
+ * A manifest's current content, or null when the change deletes it. One that
+ * is over the cap, a link, or unreadable reads as text that does not parse, so
+ * the gate fails closed rather than skipping the dependencies it holds.
+ */
+async function readManifest(path) {
+    const r = await readWorkspaceFile(path, MAX_MANIFEST_BYTES);
+    if (r.kind === "absent")
+        return null;
+    return r.kind === "read" ? r.text : "";
 }
 async function resolveBase(probe, explicit) {
     const head = await probe(["rev-parse", "--verify", "--quiet", "HEAD"]);

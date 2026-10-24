@@ -144,7 +144,14 @@ Commands:
   security scan [--base=<ref>]      Scan the change for leaked secrets and
                     added dependencies with known advisories. Reads unstaged,
                     staged, untracked and committed-since-merge-base files;
-                    fails closed if the tree cannot be read.
+                    fails closed if the tree cannot be read. Offline: added
+                    dependencies are checked against the list
+                    \`security refresh\` saved, and the scan names any it
+                    could not check.
+  security refresh                  Run \`npm audit --json\` and save a dated
+                    advisory list for the scan. The only security step that
+                    uses the network: npm sends your dependency names and
+                    versions to its registry, never your source.
   security suppress <id>            Record an accepted finding so it stops
                     blocking. Suppressions are local to this workspace.
 

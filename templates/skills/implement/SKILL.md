@@ -166,6 +166,17 @@ e. Implement the minimum source code to make the test pass — use the Write too
 
 f. Run the same selection again — confirm it PASSES (GREEN).
 
+   **Falsify each guard.** A test that guards a rule (a filter, a validator, a refusal, a
+   check that something is absent) is not trusted until you break the code it protects and
+   watch it go red. Run the selection on the unchanged tree first, so a red result means
+   something; then mutate the guarded path (delete the check, invert the condition, widen
+   the filter), confirm the test fails for that reason, restore the code and confirm it is
+   green again. A green mutation is a finding: the behaviour is unguarded. Where a test
+   asserts a filtered list is empty (`toEqual([])`, `not.toContain`), pair it with a positive
+   assertion that the same filter finds something known to be there; an empty result from a
+   filter that matches nothing proves nothing. Record each mutation and its red in the PR
+   description or the handover.
+
 g. Commit (the hook chain runs via Sprint-2 #2 orchestrator — let it):
 
 ```bash

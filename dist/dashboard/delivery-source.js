@@ -3,7 +3,8 @@
 // rather than shown as an empty table, so "no deliveries" and "GitHub
 // unreachable" can never look the same.
 import { execGh, originRepo } from "../github/gh.js";
-import { readCache, writeCache, writeCacheFile } from "./handover-cache.js";
+import { readCache, writeCache } from "./handover-cache.js";
+import { writeCacheFile } from "../validate/cache-file.js";
 import { fetchHandoverIssues } from "./handover-issues.js";
 export const TTL_MS = 15 * 60_000;
 // The server retries a failed fetch no sooner than this, so a rate limit is

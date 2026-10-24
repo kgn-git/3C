@@ -1,8 +1,10 @@
 import { loadDynamicContext } from "../../context/loader.js";
 import { runSecurityGate } from "../../security/index.js";
+import { refreshAdvisories } from "../security-refresh.js";
 import { addSuppression } from "../../security/suppress.js";
+import { resolveBrandSlugSync } from "../../branding/runtime.js";
 import { isSafeRef } from "../../skills/test/select.js";
-// Pre-commit security scan gate + recorded suppressions.
+// Pre-commit security scan gate, recorded suppressions, and the advisory refresh.
 export async function securityCommand(argv, env = { cwd: process.cwd() }) {
     const log = env.log ?? ((m) => console.log(m));
     const sub = argv[0];
@@ -54,7 +56,24 @@ export async function securityCommand(argv, env = { cwd: process.cwd() }) {
         log(`Suppressed ${id} — recorded: ${reason}`);
         return 0;
     }
-    log("Usage: security <scan|suppress>");
+    if (sub === "refresh") {
+        if (argv.length > 1) {
+            // JSON-quoted, so control characters in the argument print as escapes.
+            log(`Unrecognised argument: ${JSON.stringify(argv[1])}\nUsage: security refresh`);
+            return 1;
+        }
+        const slug = resolveBrandSlugSync();
+        const r = await refreshAdvisories(env.cwd, env.npm);
+        if (r.kind === "refused") {
+            log(`The saved advisory list was not updated: ${r.reason}.\n` +
+                `Any list saved before is unchanged. Then run \`${slug} security refresh\` again.`);
+            return 1;
+        }
+        log(`Advisory list saved: npm audit reports ${r.count} vulnerable ${r.count === 1 ? "package" : "packages"}.\n` +
+            `\`${slug} security scan\` reads it offline. Run \`${slug} security refresh\` again when your dependencies change; until then, added dependencies are reported as not checked, and that blocks nothing.`);
+        return 0;
+    }
+    log("Usage: security <scan|suppress|refresh>");
     return 1;
 }
 // Inspect the dynamically-loaded context for a file.

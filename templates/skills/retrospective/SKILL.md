@@ -63,6 +63,46 @@ Write a single-project retrospective with these five sections (and nothing heavi
 
 Keep it honest and specific. An action item that names a file, step, or rule beats a vague aspiration.
 
+## Phase 3.5 — Standing audit rows (required when you write a retro; reports absence, never blocks)
+
+A gate that stops being audited stops being run. So the retro MUST carry a standing audit row for every load-bearing gate, checked against **this delivery's local evidence only** (the handover record, PR comments, `git log`, `${BRAND_SLUG} doctor`). It is a **separate `## Standing audit rows` annex** below the five sections, NOT a sixth section. The rows audit one delivery: they never block, and they never accumulate into a trend view across deliveries.
+
+The eight load-bearing gates that MUST each get a row (canonical slugs — use them verbatim):
+
+| Slug | Gate |
+|------|------|
+| `scan-secrets` | Scan secrets at every write boundary |
+| `red-before-green` | RED before GREEN, with each guard seen to fail |
+| `verify-gate` | Project-level verify gate before the PR |
+| `no-auto-merge` | No auto-merge / no force-push / no hook bypass |
+| `reconcile-anti-improvisation` | Board verdict from `${BRAND_SLUG} reconcile`, never improvised |
+| `pretooluse-path-guard` | PreToolUse path-guard hook |
+| `sprint-readiness` | Sprint enrichment + coherence check before implementation |
+| `capability-tier` | User-facing capability evidenced through the shipped entry point |
+
+```markdown
+## Standing audit rows
+
+| Gate | Ran? | Evidence |
+|------|------|----------|
+| scan-secrets | yes | scan-secrets ran at each write boundary; PR-body preflight redacted N hits |
+| red-before-green | yes | failing test commit <sha> precedes impl commit <sha> on the branch; each guard's mutation recorded red |
+| verify-gate | yes | build + full test run output quoted before the PR |
+| no-auto-merge | yes | PR merged via squash; no --no-verify / force-push in `git log` |
+| reconcile-anti-improvisation | yes | `${BRAND_SLUG} reconcile` exit 0; verdict recorded in the handover |
+| pretooluse-path-guard | yes | PreToolUse hook in settings.json fired on the write boundary |
+| sprint-readiness | yes | enrichment + coherence pass recorded on the milestone before the first branch |
+| capability-tier | yes | AC exercised through the shipped entry point, not by importing the function |
+```
+
+**A gate that did NOT run on this delivery is surfaced, not hidden.** Mark its `Ran?` cell `no` and point the evidence at the gap (e.g. *"board was hand-run; `${BRAND_SLUG} reconcile` not invoked this delivery"*). A `no` row is a healthy annex: absence was reported. A gate with **no row at all** is a defect: it was silently omitted.
+
+No command checks the annex — you do. Before saving, confirm that every slug in the table above has exactly one row; the retro stays optional, so this check blocks nothing.
+
+If the delivery's handover records a `gates_fired` field, the audit rows are where that field is sourced from — but the rows stand on their own local evidence regardless; `gates_fired` is metadata-only capture, never the audit itself.
+
+**Secrets:** evidence pointers cite local artefacts (commit SHAs, handover numbers, hook names) — never echo command output, file contents, or env values that could carry secrets or PII. A pointer beats a paste.
+
 ## Phase 4 — Save
 
 Write the retrospective to `docs/retros/<scope-slug>.md` (create the folder if needed). Print the path and a one-line summary. Do not commit, push, or post comments — the human decides what to do with it.
@@ -73,3 +113,4 @@ Write the retrospective to `docs/retros/<scope-slug>.md` (create the folder if n
 2. **Single project, lightweight.** No cross-project rollup, no scored health rating, no standards/regulatory mapping — keep it to the five sections above.
 3. **Local-only + read-only.** Reads git/gh + the validated handover cache; writes one local file. No network calls beyond `gh`/`git`, no pushes.
 4. **Redact secrets** in every quoted excerpt.
+5. **Audit every load-bearing gate, every retro.** When you write a retro, its standing audit rows annex (Phase 3.5) MUST carry a row for each of the eight load-bearing gates. A gate that did not run is marked `no`; a gate with no row is a defect. The rows audit, they never block.

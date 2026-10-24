@@ -5,7 +5,8 @@ import { writeTelemetryEvent } from "../telemetry/writer.js";
 import { anonymiseId } from "../telemetry/anonymise.js";
 import { decideOutcome } from "./severity.js";
 import { defaultLocalScanner } from "./scanner.js";
-import { addedDependencies, checkDeps } from "./deps.js";
+import { changedDependencies } from "./manifest-diff.js";
+import { checkDependencies } from "./dependency-check.js";
 import { securityFileSet, SecurityBaseError, MAX_SCANNED_BYTES, } from "./files.js";
 import { loadSuppressions, isSuppressed } from "./suppress.js";
 export async function runSecurityGate(workspaceDir, opts = {}) {
@@ -73,11 +74,31 @@ async function evaluate(workspaceDir, opts) {
         };
     }
     const changedFiles = [...fileSet.files];
+    const change = changedDependencies(fileSet.manifests);
+    if (change.unparseable.length > 0) {
+        // The dependencies this change installs cannot be known, so there is no
+        // dependency result to report.
+        return {
+            blocked: true,
+            warnings: [],
+            message: `Security scan gate: ${change.unparseable.join(", ")} in this change is not a manifest or lockfile this scan can read, so the dependencies it adds cannot be checked. ` +
+                `A lockfile must be version 2 or 3 (npm 7 or later), at most 16 MiB, and not a link. Fix the file, then run the scan again.\nBlocked.\n`,
+        };
+    }
+    const dep = await checkDependencies(workspaceDir, change, opts.depAdvisory);
+    if (dep.kind === "unreadable") {
+        // The list may have been edited to hide a package, and this change adds
+        // dependencies it would have to speak for.
+        return {
+            blocked: true,
+            warnings: [],
+            message: `Security scan gate: the saved advisory list cannot be used, and this change adds dependencies. ` +
+                `It may have been edited, so no dependency result is reported. ` +
+                `Run \`${resolveBrandSlugSync()} security refresh\` to rebuild it.\nBlocked.\n`,
+        };
+    }
     const sast = await scanner.scan({ workspaceDir, changedFiles });
-    const added = addedDependencies(fileSet.depDiff);
-    // "no source" and "an empty source" are different statements; `?? {}`
-    // would erase the difference, and the gate would imply coverage it lacked.
-    const deps = opts.depAdvisory === undefined ? [] : checkDeps(added, opts.depAdvisory);
+    const deps = dep.findings;
     const supps = await loadSuppressions(workspaceDir);
     const all = [...sast, ...deps];
     const active = all.filter((f) => !isSuppressed(f.id, supps));
@@ -94,29 +115,28 @@ async function evaluate(workspaceDir, opts) {
     const skippedNote = fileSet.skipped.length > 0
         ? `, ${fileSet.skipped.length} skipped as larger than ${MAX_SCANNED_BYTES} bytes`
         : "";
-    const depsNote = opts.depAdvisory === undefined
-        ? "dependencies: no advisory source configured"
-        : `dependencies: ${added.length} added, checked against the advisory source`;
     const suppressedNote = suppressedCount > 0 ? `; ${suppressedCount} suppressed` : "";
-    const scanned = `SAST: ${changedFiles.length} file(s) scanned${skippedNote}; ${depsNote}${suppressedNote}`;
-    const message = lines.length === 0
-        ? `Security scan gate passed (${scanned}).\n`
-        : `Security scan gate (${scanned}):\n${lines.join("\n")}\n` +
-            (block
-                ? `Blocked. Fix, or record an accepted risk: \`${resolveBrandSlugSync()} security suppress <id> --reason="..."\`.\n` +
-                    // `suppress` records an accepted risk in the adopter's
-                    // OWN code. A scratch file that was never part of the change is a
-                    // different problem and needs a different route, or the only way
-                    // out of an incidental block is to file a false claim.
-                    //
-                    // Stated precisely, because an agent may quote this verbatim as an
-                    // adopter's route out of a block: .gitignore filters the
-                    // UNTRACKED half only, so it does nothing for a file git already
-                    // tracks, and an adopter who tried it there would see the block
-                    // persist with no explanation.
-                    `If a flagged file is untracked scratch that is not part of your change, add it to .gitignore ` +
-                    `(.gitignore does not exclude a file git already tracks).\n`
-                : "");
+    const scanned = `SAST: ${changedFiles.length} file(s) scanned${skippedNote}; ${dep.note}${suppressedNote}`;
+    const advice = dep.advice.map((l) => `${l}\n`).join("");
+    const message = advice +
+        (lines.length === 0
+            ? `Security scan gate passed (${scanned}).\n`
+            : `Security scan gate (${scanned}):\n${lines.join("\n")}\n` +
+                (block
+                    ? `Blocked. Fix, or record an accepted risk: \`${resolveBrandSlugSync()} security suppress <id> --reason="..."\`.\n` +
+                        // `suppress` records an accepted risk in the adopter's
+                        // OWN code. A scratch file that was never part of the change is a
+                        // different problem and needs a different route, or the only way
+                        // out of an incidental block is to file a false claim.
+                        //
+                        // Stated precisely, because an agent may quote this verbatim as an
+                        // adopter's route out of a block: .gitignore filters the
+                        // UNTRACKED half only, so it does nothing for a file git already
+                        // tracks, and an adopter who tried it there would see the block
+                        // persist with no explanation.
+                        `If a flagged file is untracked scratch that is not part of your change, add it to .gitignore ` +
+                        `(.gitignore does not exclude a file git already tracks).\n`
+                    : ""));
     return { blocked: block, warnings, message };
 }
 async function recordOutcome(workspaceDir, blocked) {

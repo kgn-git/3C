@@ -3,38 +3,16 @@
 // It holds records that passed the handover validator, never raw bodies, and
 // re-validates them on read: the file sits in the workspace and anything
 // with write access to it could have edited it.
-import { lstat, mkdir, open, rename, rm, writeFile } from "node:fs/promises";
+import { open } from "node:fs/promises";
 import { constants } from "node:fs";
-import { randomBytes } from "node:crypto";
 import { join } from "node:path";
-import { resolveBrandSlugSync } from "../branding/runtime.js";
+import { cacheDir, writeCacheFile } from "../validate/cache-file.js";
 import { HANDOVER_SCHEMA, validateHandoverObject } from "./handover.js";
 const VERSION = 1;
 const MAX_CACHE_BYTES = 16 * 1024 * 1024;
 const FAILURES = new Set(["offline", "unauthenticated", "rate-limited", "not-found", "gh-missing"]);
 const REPO = /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/;
-export const cacheDir = (ws) => join(ws, `.${resolveBrandSlugSync()}`, "cache");
 export const cachePath = (ws) => join(cacheDir(ws), "handovers.json");
-/**
- * Writes `name` in the cache directory through a fresh temporary file renamed
- * into place: a rename replaces a planted link rather than writing through
- * it (CWE-59), and a cache directory that is itself a link is refused.
- */
-export async function writeCacheFile(ws, name, text) {
-    const dir = cacheDir(ws);
-    await mkdir(dir, { recursive: true });
-    if (!(await lstat(dir)).isDirectory())
-        throw new Error(`${dir} is not a directory`);
-    const tmp = join(dir, `.${name}.${randomBytes(6).toString("hex")}.tmp`);
-    try {
-        await writeFile(tmp, text, { encoding: "utf8", flag: "wx", mode: 0o600 });
-        await rename(tmp, join(dir, name));
-    }
-    catch (e) {
-        await rm(tmp, { force: true });
-        throw e;
-    }
-}
 export async function writeCache(ws, cache) {
     // The directory ignores itself: `.3c/` is not gitignored by default.
     await writeCacheFile(ws, ".gitignore", "*\n");

@@ -20,14 +20,7 @@ export type CacheRead = {
     kind: "found";
     cache: DeliveryCache;
 };
-export declare const cacheDir: (ws: string) => string;
 export declare const cachePath: (ws: string) => string;
-/**
- * Writes `name` in the cache directory through a fresh temporary file renamed
- * into place: a rename replaces a planted link rather than writing through
- * it (CWE-59), and a cache directory that is itself a link is refused.
- */
-export declare function writeCacheFile(ws: string, name: string, text: string): Promise<void>;
 export declare function writeCache(ws: string, cache: DeliveryCache): Promise<void>;
 export declare function readCache(ws: string): Promise<CacheRead>;
 //# sourceMappingURL=handover-cache.d.ts.map

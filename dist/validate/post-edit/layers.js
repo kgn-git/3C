@@ -22,6 +22,30 @@ export function layerOf(relPath, map) {
     }
     return null;
 }
+// ESM TypeScript names a module by what it compiles to (`./cli.js`), while a
+// layer glob names the source (`src/cli.ts`). The specifier as written comes
+// first, so a JavaScript project's literal `.js` glob still matches.
+const SOURCE_EXTENSIONS = [
+    [".js", [".ts", ".tsx"]],
+    [".jsx", [".tsx"]],
+    [".mjs", [".mts"]],
+    [".cjs", [".cts"]],
+];
+// A bundler or CommonJS project may import with no extension at all, naming a
+// file or a directory's index.
+const EXTENSIONLESS = [".ts", ".tsx", ".js", "/index.ts", "/index.tsx", "/index.js"];
+/** The paths a resolved specifier can stand for: itself, then its TypeScript sources. */
+function importTargets(resolved) {
+    for (const [emitted, sources] of SOURCE_EXTENSIONS) {
+        if (resolved.endsWith(emitted)) {
+            const stem = resolved.slice(0, -emitted.length);
+            return [resolved, ...sources.map((s) => stem + s)];
+        }
+    }
+    if (posix.extname(resolved) === "")
+        return [resolved, ...EXTENSIONLESS.map((s) => resolved + s)];
+    return [resolved];
+}
 // Shared with `arch-check discover`, so a draft and the gate agree on what
 // counts as an import edge.
 export function parseRelativeImports(filePath, content) {
@@ -75,7 +99,12 @@ export function checkLayerImport(filePath, content, map) {
         return [];
     const out = [];
     for (const { line, resolved } of parseRelativeImports(normFile, content)) {
-        const targetLayer = layerOf(resolved, map);
+        let targetLayer = null;
+        for (const target of importTargets(resolved)) {
+            targetLayer = layerOf(target, map);
+            if (targetLayer !== null)
+                break;
+        }
         if (targetLayer !== null &&
             targetLayer !== fileLayer &&
             map.deny.some(([a, b]) => a === fileLayer && b === targetLayer)) {
