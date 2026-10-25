@@ -1,29 +1,32 @@
 // Registration-time PreToolUse policy for the L1 starter subagents.
 // Returns an allow/deny decision for a (agent, tool, path) triple.
 //
-// test-author Edit/Write restricted to **/*.test.* and tests/**
-// both agents denied Read on .env*, ~/.ssh/, ~/.aws/
+// Neither agent may Edit or Write: test-author returns a test body and
+// /3c-test writes it through `test write`. Both are denied Read on .env*,
+// ~/.ssh/, ~/.aws/.
+// Case-insensitive, and matched on the name NTFS would open: a component's
+// stream (`.env::$DATA`) and trailing dots and spaces are ignored there.
 const SECRET_PATTERNS = [
-    /(^|[\\/])\.env(\.[\w-]+)?$/,
-    /[\\/]\.ssh[\\/]/,
-    /[\\/]\.aws[\\/]/,
+    /(^|[\\/:])\.env(\.[\w-]+)?$/i,
+    /(^|[\\/:])\.ssh[\\/]/i,
+    /(^|[\\/:])\.aws[\\/]/i,
 ];
-const TEST_PATH_PATTERNS = [
-    /(^|[\\/])tests[\\/]/,
-    /\.test\.[a-zA-Z0-9]+$/,
-];
+const asWindowsOpens = (p) => p
+    .split(/[\\/]/)
+    .map((s, i) => {
+    const drive = i === 0 ? (/^[A-Za-z]:/.exec(s)?.[0] ?? "") : "";
+    return drive + s.slice(drive.length).replace(/:.*$/, "").replace(/[. ]+$/, "");
+})
+    .join("/");
 const AGENT_TOOL_ALLOWLIST = {
     "code-reviewer": new Set(["Read", "Grep", "Glob"]),
-    "test-author": new Set(["Read", "Grep", "Glob", "Edit", "Write"]),
+    "test-author": new Set(["Read", "Grep", "Glob"]),
 };
 function isSecretPath(path) {
-    return SECRET_PATTERNS.some((p) => p.test(path));
-}
-function isTestPath(path) {
-    return TEST_PATH_PATTERNS.some((p) => p.test(path));
+    return [path, asWindowsOpens(path)].some((c) => SECRET_PATTERNS.some((p) => p.test(c)));
 }
 export function enforceAgentPathPolicy(event) {
-    const allowed = AGENT_TOOL_ALLOWLIST[event.agent];
+    const allowed = Object.hasOwn(AGENT_TOOL_ALLOWLIST, event.agent) ? AGENT_TOOL_ALLOWLIST[event.agent] : undefined;
     if (!allowed) {
         return { allow: false, reason: `unknown/unregistered agent: ${event.agent}` };
     }
@@ -38,14 +41,6 @@ export function enforceAgentPathPolicy(event) {
             allow: false,
             reason: `Read denied on protected secret-path: ${event.path}`,
         };
-    }
-    if (event.agent === "test-author" && (event.tool === "Edit" || event.tool === "Write")) {
-        if (!isTestPath(event.path)) {
-            return {
-                allow: false,
-                reason: `test-author Edit/Write is scoped to tests/** and **/*.test.* — ${event.path} is out of scope`,
-            };
-        }
     }
     return { allow: true };
 }

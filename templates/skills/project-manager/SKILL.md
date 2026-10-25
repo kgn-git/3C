@@ -1,39 +1,39 @@
 ---
-name: ${BRAND_SLUG}-project-manager
-description: Single-project delivery pipeline for ${BRAND_NAME}. Sequences product-owner scope-check, TDD implementation, and the review board, with confirmation before every external step. Never auto-merges, force-pushes, or bypasses hooks.
+name: ${FRAMEWORK_SLUG}-project-manager
+description: Single-project delivery pipeline for ${FRAMEWORK_NAME}. Sequences product-owner scope-check, TDD implementation, and the review board, with confirmation before every external step. Never auto-merges, force-pushes, or bypasses hooks.
 version: 1.0.0
 compatibility: [claude-code]
 allowed-tools: [Bash, Read, Write]
 disable-model-invocation: true
 ---
 
-# /${BRAND_SLUG}-project-manager — checkpointed delivery pipeline
+# /${FRAMEWORK_SLUG}-project-manager — checkpointed delivery pipeline
 
-Drive one issue from scope to a reviewed, shippable change by coordinating the ${BRAND_NAME} crew. This skill
+Drive one issue from scope to a reviewed, shippable change by coordinating the ${FRAMEWORK_NAME} crew. This skill
 is **explicit-invocation only** (`disable-model-invocation: true`); never auto-run. The user invokes it as
-`/${BRAND_SLUG}-project-manager <issue-id>`, or with a milestone subcommand (see "Milestone operations"
-below): `/${BRAND_SLUG}-project-manager <plan|enrich|status|sprint-close|deliver> [target]`.
+`/${FRAMEWORK_SLUG}-project-manager <issue-id>`, or with a milestone subcommand (see "Milestone operations"
+below): `/${FRAMEWORK_SLUG}-project-manager <plan|enrich|status|sprint-close|deliver> [target]`.
 
 It composes the existing atomic skills and the specialist agents — it does **not** replace
-`/${BRAND_SLUG}-implement`, `/${BRAND_SLUG}-review`, or `/${BRAND_SLUG}-test`.
+`/${FRAMEWORK_SLUG}-implement`, `/${FRAMEWORK_SLUG}-review`, or `/${FRAMEWORK_SLUG}-test`.
 
 ## Stages
 
 ### 1. Plan + scope (auto)
 Fetch the issue and its acceptance criteria. Dispatch two subagents in parallel for the pre-check:
-the `${BRAND_SLUG}-product-owner` subagent for a scope / AC pre-check, and the
-`${BRAND_SLUG}-journey-architect` subagent for a **reachability** pre-check — whether the change keeps
+the `${FRAMEWORK_SLUG}-product-owner` subagent for a scope / AC pre-check, and the
+`${FRAMEWORK_SLUG}-journey-architect` subagent for a **reachability** pre-check — whether the change keeps
 every customer-facing capability reachable and recoverable, judged from the issue/AC before any code.
 Present a short plan (AC → tasks). If the product-owner flags the issue itself as out-of-scope or
 unclear — or the journey-architect flags a `blocking` reachability gap — stop and surface it; do not
 implement against an unclear or unreachable spec.
 
 ### 2. Implement — TDD (auto)
-Run the `/${BRAND_SLUG}-implement` workflow as the implementation stage (RED → GREEN, per its own rules).
+Run the `/${FRAMEWORK_SLUG}-implement` workflow as the implementation stage (RED → GREEN, per its own rules).
 Do not duplicate its logic; follow it.
 
 ### 3. Cross-check (auto)
-Run the `${BRAND_SLUG}-review-board` procedure on the resulting diff: dispatch the specialist agents in
+Run the `${FRAMEWORK_SLUG}-review-board` procedure on the resulting diff: dispatch the specialist agents in
 parallel and reconcile via `${FRAMEWORK_SLUG} reconcile` into one verdict. If `${FRAMEWORK_SLUG} reconcile` refuses its input, the CLI is fine and stderr says why: `exceeds the` byte limit
 (shorten each finding's message and suggestion, then re-run), `cannot read input` (fix the `--file` path or pipe), or
 `invalid findings JSON` (fix the assembled JSON). **If it fails with `Unknown command`, STOP** — the installed
@@ -51,9 +51,9 @@ framework's distribution, then verify with `${FRAMEWORK_SLUG} doctor`. On any ot
   hard-to-reverse steps.
 - **Never** auto-merge, **never** force-push, **never** bypass hooks (`--no-verify`) or the pre-commit gate.
 - File the handover as a **closed `handover`-labelled issue**, never a committed file. Render the body
-  from `.github/ISSUE_TEMPLATE/handover.md` (installed by `${BRAND_SLUG} setup`): it MUST open with a fenced
+  from `.github/ISSUE_TEMPLATE/handover.md` (installed by `${FRAMEWORK_SLUG} setup`): it MUST open with a fenced
   `yaml` block holding the `3c-handover/1` metadata, computed by the pipeline **at ship time**. That
-  block is what the `${BRAND_SLUG} dashboard` delivery view reads (from `handover`-labelled issues through
+  block is what the `${FRAMEWORK_SLUG} dashboard` delivery view reads (from `handover`-labelled issues through
   `gh`, cached locally for 15 minutes; only owners', members' and collaborators' issues count; a failed
   fetch is named, and anything missing here renders as a blank):
 
@@ -80,7 +80,7 @@ framework's distribution, then verify with `${FRAMEWORK_SLUG} doctor`. On any ot
   ```
   ````
 
-- File it with `${BRAND_SLUG} implement file-handover < handover.md`. It files nothing when the block
+- File it with `${FRAMEWORK_SLUG} implement file-handover < handover.md`. It files nothing when the block
   would not validate or the body matches a secret pattern, finds an already-filed handover for the same
   delivery instead of filing a second, and closes the issue it opens. When the `handover` label does not
   exist yet, create it first:
@@ -93,7 +93,7 @@ framework's distribution, then verify with `${FRAMEWORK_SLUG} doctor`. On any ot
   items, follow-ups.
 
 ### 6. Retrospective (optional)
-After shipping, **optionally** capture a retrospective: `/${BRAND_SLUG}-retrospective <scope>`. This is a
+After shipping, **optionally** capture a retrospective: `/${FRAMEWORK_SLUG}-retrospective <scope>`. This is a
 suggestion only — it is **not** a gate, has no pass condition, and never blocks the pipeline. Skip it freely;
 the single-issue flow is complete at stage 5 whether or not a retro is run.
 
@@ -119,7 +119,7 @@ the pipeline rather than defining a second one.
 3. **Deliver each issue** — run stages 1–5 for issue N to a merged PR, then move to N+1. Batch runs
    go **straight through** with no per-issue go/no-go checkpoint; the stage-5 confirmations
    (branch, PR) still apply to each issue individually and are never waived.
-   Iterate the stages **inline in this thread**. Never dispatch `/${BRAND_SLUG}-project-manager` per
+   Iterate the stages **inline in this thread**. Never dispatch `/${FRAMEWORK_SLUG}-project-manager` per
    issue, and never wrap it in a general-purpose subagent: that re-enters the orchestrator and stacks
    a second dispatch level under it, multiplying the board's parallel agents by the issue count. The
    flat-dispatch invariant binds skills here, not just agents.
@@ -137,10 +137,10 @@ reporting the milestone complete.
 1. **Fetch** — `gh issue list --milestone "<name>" --state open --json number,title,body,labels`
    (zero issues → verify the milestone name via the tracker API; an issue with no body → flag and skip).
 2. **Triage each issue to advisory lenses** — dispatch the crew agents, one level deep:
-   - Scope, priority, or maturity alignment → `${BRAND_SLUG}-product-owner` agent (**always first** — if it
+   - Scope, priority, or maturity alignment → `${FRAMEWORK_SLUG}-product-owner` agent (**always first** — if it
      flags the scope as unclear or the maturity level wrong, halt the remaining lenses for that issue).
-   - Architecture, component boundaries → `${BRAND_SLUG}-architect` agent.
-   - Trust boundaries, secrets, sandboxing → `${BRAND_SLUG}-security-reviewer` agent.
+   - Architecture, component boundaries → `${FRAMEWORK_SLUG}-architect` agent.
+   - Trust boundaries, secrets, sandboxing → `${FRAMEWORK_SLUG}-security-reviewer` agent.
 3. **Synthesize** the lens outputs into a structured issue body:
 
    ```markdown
@@ -215,7 +215,7 @@ needs clarification / needs split).
 
 ## Guardrails
 
-Inherit `/${BRAND_SLUG}-implement`'s controls verbatim — confirmation before external-state changes, no
+Inherit `/${FRAMEWORK_SLUG}-implement`'s controls verbatim — confirmation before external-state changes, no
 auto-merge, no force-push, no hook bypass. The pipeline only *adds* the product-owner pre-check, the
 multi-perspective board, and the bounded decide-loop on top. It is an orchestrator skill in the main thread;
 the agents it dispatches are one level deep and never spawn further subagents.

@@ -5,7 +5,7 @@
 // missing, repairs the timeout unit on its own entries, and leaves other
 // tools' entries alone (hook registration is distinct from hook
 // configuration).
-// AD-16: every registered command is `${BRAND_SLUG} …`, resolved at install
+// AD-16: every registered command is `${FRAMEWORK_SLUG} …`, resolved at install
 // time via resolveBrandSlugSync().
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";

@@ -216,12 +216,11 @@ const SLUG_OK = /^[a-z0-9][a-z0-9-]{1,31}$/;
  * repository. Anything that does not match the project's slug pattern is
  * discarded rather than sanitised.
  */
-export function testMapDir(_root) {
+export function testMapDir() {
     // The PACKAGE's slug only. A workspace has no legitimate identity
     // override, so reading the workspace's own
     // framework.json would leave one untrusted file able to steer the directory
-    // (within SLUG_OK, but still steering). `_root` stays in the signature for
-    // the callers that pass it.
+    // (within SLUG_OK, but still steering).
     try {
         const slug = resolveBrandSlugSync();
         if (SLUG_OK.test(slug))
@@ -240,7 +239,7 @@ const str = (v) => typeof v === "string" && v.length > 0 && v.length <= MAX_STRI
  * warning — dropped paths become unmapped, which escalates to the full suite.
  */
 export function loadTestMap(root) {
-    const configDir = testMapDir(root);
+    const configDir = testMapDir();
     const file = join(root, configDir, TEST_MAP_FILE);
     const where = `${configDir}/${TEST_MAP_FILE}`;
     if (!existsSync(file))

@@ -1,5 +1,5 @@
 ---
-name: ${BRAND_SLUG}-create-issue
+name: ${FRAMEWORK_SLUG}-create-issue
 description: Create structured GitHub issues with team-template population. User-only skill; not auto-invoked by the model.
 version: 1.0.0
 compatibility: [claude-code]
@@ -7,13 +7,13 @@ allowed-tools: [Bash]
 disable-model-invocation: true
 ---
 
-# /${BRAND_SLUG}-create-issue
+# /${FRAMEWORK_SLUG}-create-issue
 
 Guide the user through creating a well-structured GitHub issue. **This skill does not auto-attach code, environment, or system state. Issue content is exactly what you provide.**
 
 ## Workflow
 
-When the user invokes `/${BRAND_SLUG}-create-issue [<short summary>] [--template=<bug|feature|chore>]`, follow this flow:
+When the user invokes `/${FRAMEWORK_SLUG}-create-issue [<short summary>] [--template=<bug|feature|chore>]`, follow this flow:
 
 ### 1. Pick or confirm the template
 
@@ -24,7 +24,7 @@ If `--template=` is in the args, use that. Otherwise, ask:
 > - `feature` — new capability with user story + AC
 > - `chore` — refactor, dependency bump, docs
 
-Read the template body from `.claude/skills/${BRAND_SLUG}-create-issue/templates/<template>.md`.
+Read the template body from `.claude/skills/${FRAMEWORK_SLUG}-create-issue/templates/<template>.md`.
 
 ### 2. Prompt the user for the structured fields the template requires
 
@@ -51,7 +51,7 @@ Chore:
 
 ### 3. Check for team-mandated fields
 
-If `.${BRAND_SLUG}/skills/create-issue.yaml` exists in the workspace root, read it for mandatory fields:
+If `.${FRAMEWORK_SLUG}/skills/create-issue.yaml` exists in the workspace root, read it for mandatory fields:
 
 ```yaml
 mandatory:
@@ -99,6 +99,6 @@ On success, tell the user the URL and number. On failure, surface the error (esp
 
 ## What this skill does not do (continued)
 
-- Jira Cloud, Linear, and GitLab Issues route through the in-process PM adapter registry (`src/mcp/pm/*`) added by [#70 VP-02-F01-ext](https://github.com/kgn-git/praise/issues/70). The bundled MCP server that once wrapped that registry was retired by [#396](https://github.com/kgn-git/praise/issues/396). When `${FRAMEWORK_SLUG}` is configured with one of those PM tools, `/${BRAND_SLUG}-create-issue` routes there; otherwise it falls through to `gh`. The token is resolved per call through the AD-08 resolver from the OS credential store only — macOS Keychain, Linux Secret Service or Windows Credential Manager, never an environment variable — and is never cached in process, never returned in tool output. If it is missing, `create-issue` stops and names the entry to store there first.
+- Jira Cloud, Linear, and GitLab Issues route through the in-process PM adapter registry (`src/mcp/pm/*`) added by [#70 VP-02-F01-ext](https://github.com/kgn-git/praise/issues/70). The bundled MCP server that once wrapped that registry was retired by [#396](https://github.com/kgn-git/praise/issues/396). When `${FRAMEWORK_SLUG}` is configured with one of those PM tools, `/${FRAMEWORK_SLUG}-create-issue` routes there; otherwise it falls through to `gh`. The token is resolved per call through the AD-08 resolver from the OS credential store only — macOS Keychain, Linux Secret Service or Windows Credential Manager, never an environment variable — and is never cached in process, never returned in tool output. If it is missing, `create-issue` stops and names the entry to store there first.
 - OAuth flows for non-`gh` tools — not in scope for this skill; the CLI resolves the credential per call and hands it straight to the adapter.
 - Auto-redaction sanitiser pipeline (`--scrub-secrets`) — not currently in scope and not on the active backlog. If you need pre-create redaction, run secret-scanning over your draft text before invoking the skill.

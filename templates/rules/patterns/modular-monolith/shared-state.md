@@ -8,7 +8,7 @@ pattern: "modular-monolith"
 concern: "shared-state"
 ---
 
-<!-- Generated from ${BRAND_NAME} Architecture Patterns pack (modular-monolith) — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} Architecture Patterns pack (modular-monolith) — see ${FRAMEWORK_DOMAIN}. -->
 
 Shared-state avoidance — modules stay independently reasonable.
 

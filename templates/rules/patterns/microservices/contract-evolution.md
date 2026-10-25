@@ -8,7 +8,7 @@ pattern: "microservices"
 concern: "contract-evolution"
 ---
 
-<!-- Generated from ${BRAND_NAME} Architecture Patterns pack (microservices) — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} Architecture Patterns pack (microservices) — see ${FRAMEWORK_DOMAIN}. -->
 
 Contract evolution — independent deployability.
 

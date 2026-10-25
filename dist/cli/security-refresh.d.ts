@@ -2,8 +2,8 @@ export interface NpmResult {
     readonly code: number;
     readonly stdout: string;
 }
-/** The two npm runs refresh makes; nothing else can be asked of the runner. */
-export type NpmCommand = "version" | "audit";
+/** The npm runs refresh makes; nothing else can be asked of the runner. */
+export type NpmCommand = "version" | "registry" | "audit";
 export type NpmRunner = (command: NpmCommand, cwd: string) => Promise<NpmResult>;
 export interface Invocation {
     readonly file: string;
@@ -41,5 +41,9 @@ export type RefreshResult = {
  * lockfile edited while the audit runs cannot be recorded as audited. When
  * npm-shrinkwrap.json exists it is the lockfile, as npm itself prefers it.
  */
-export declare function refreshAdvisories(ws: string, run?: NpmRunner, now?: Date): Promise<RefreshResult>;
+export interface RefreshOptions {
+    readonly remove?: (dir: string) => Promise<void>;
+    readonly warn?: (message: string) => void;
+}
+export declare function refreshAdvisories(ws: string, run?: NpmRunner, now?: Date, opts?: RefreshOptions): Promise<RefreshResult>;
 //# sourceMappingURL=security-refresh.d.ts.map

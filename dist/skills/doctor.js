@@ -251,9 +251,9 @@ export async function runDoctor(opts) {
     // it is reported, because an exemption nobody can see is how a check rots.
     const TOKEN_RE = /\$\{(BRAND|FRAMEWORK)_[A-Z_]+\}/g;
     // The marker must NAME the tokens it excuses:
-    //   <!-- 3c-doctor: allow-brand-tokens FRAMEWORK_NAME BRAND_NAME — why -->
+    //   <!-- 3c-doctor: allow-brand-tokens FRAMEWORK_NAME FRAMEWORK_SLUG — why -->
     // A blanket per-file opt-out would also silence a typo'd token
-    // (`${BRAND_SLUGG}`, which substitute() leaves behind untouched) in exactly
+    // (`${FRAMEWORK_SLUGG}`, which substitute() leaves behind untouched) in exactly
     // the files most likely to write tokens by hand. Declaring the set keeps that
     // detection alive. The rationale rides in the same comment so it cannot drift
     // away from what it explains.

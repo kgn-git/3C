@@ -8,7 +8,7 @@ pattern: "microservices"
 concern: "service-boundaries"
 ---
 
-<!-- Generated from ${BRAND_NAME} Architecture Patterns pack (microservices) — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} Architecture Patterns pack (microservices) — see ${FRAMEWORK_DOMAIN}. -->
 
 Service boundaries — see "Building Microservices" (Sam Newman).
 

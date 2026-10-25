@@ -1,5 +1,5 @@
 ---
-name: ${BRAND_SLUG}-implement
+name: ${FRAMEWORK_SLUG}-implement
 description: Standardised feature-implementation workflow — fetch issue, plan, branch, TDD-loop, review, PR. Asks for confirmation before each external-state-changing step (branch create, PR open). Never auto-merges, never force-pushes, never bypasses hooks.
 version: 1.0.0
 compatibility: [claude-code]
@@ -7,9 +7,9 @@ allowed-tools: [Bash, Read, Write]
 disable-model-invocation: true
 ---
 
-# /${BRAND_SLUG}-implement — Standardised feature implementation for ${BRAND_NAME}
+# /${FRAMEWORK_SLUG}-implement — Standardised feature implementation for ${FRAMEWORK_NAME}
 
-When the user invokes `/${BRAND_SLUG}-implement <issue-id>`, follow this exact workflow. The skill is **explicit-invocation only** (`disable-model-invocation: true`); never auto-run.
+When the user invokes `/${FRAMEWORK_SLUG}-implement <issue-id>`, follow this exact workflow. The skill is **explicit-invocation only** (`disable-model-invocation: true`); never auto-run.
 
 ## Mandatory destructive-operation interlock (AC9)
 
@@ -115,7 +115,9 @@ If the rules suggest the workspace lacks security or pattern coverage, you MAY s
 
 For each target file in your plan:
 
-a. Write the test FIRST, via the `/${BRAND_SLUG}-test` sub-skill. Resolve the runner once:
+a. Write the test FIRST, via the `/${FRAMEWORK_SLUG}-test` sub-skill. It drafts the body with the
+   test-author agent, writes it with `test write` and runs its RED, so when you use it, steps b–d
+   below are what to check in its result rather than steps to repeat. Resolve the runner once:
 
 ```bash
 ${FRAMEWORK_SLUG} test detect-framework
@@ -140,7 +142,7 @@ TEST_CONTENT_EOF
 
 The single-quoted heredoc delimiter (`'TEST_CONTENT_EOF'`) suppresses shell expansion — the same pattern as Step 2 — so multi-line content, or content containing single quotes, backticks or `$`, is passed through unchanged. Do **not** pipe it in with `echo '<content>'`: a single apostrophe in a test name closes the quote and the rest of the body is interpreted by the shell (`.claude/rules/security/owasp-top-10/a05-injection-shell.md`).
 
-The write helper applies path-traversal + scanSecrets + no-overwrite guards. If it refuses, surface the error and stop. Do **NOT** re-attempt a secret-scan or path-traversal refusal with the Write tool — that reaches the same result with the guard removed. `/${BRAND_SLUG}-test` carries the full refusal → recovery table.
+The write helper applies path-traversal + scanSecrets + no-overwrite guards. If it refuses, surface the error and stop. Do **NOT** re-attempt a secret-scan or path-traversal refusal with the Write tool — that reaches the same result with the guard removed. `/${FRAMEWORK_SLUG}-test` carries the full refusal → recovery table.
 
 d. Run the test — confirm it FAILS **on its assertion**, for the reason you expect (RED). A
    test that dies on a missing import or a syntax error is a broken test, not an unwritten
@@ -154,7 +156,7 @@ ${FRAMEWORK_SLUG} test select
 
 It prints the command(s) to run and the reason it chose them. Run exactly what it prints, and **read the reason line** — that is the point of printing it.
 
-Selection is deliberately conservative. Source files go to the test runner's own related-mode; a changed file that tests READ rather than import is resolved through `.${BRAND_SLUG}/test-map.json`, because a module graph cannot see that edge. Anything with repo-wide reach, and anything unmapped, escalates to the full suite. A run that covers nothing must never be able to look like a run that passed.
+Selection is deliberately conservative. Source files go to the test runner's own related-mode; a changed file that tests READ rather than import is resolved through `.${FRAMEWORK_SLUG}/test-map.json`, because a module graph cannot see that edge. Anything with repo-wide reach, and anything unmapped, escalates to the full suite. A run that covers nothing must never be able to look like a run that passed.
 
 If the team has no `test-map.json`, only source changes narrow and everything else runs in full. That is the correct default, not a gap to work around.
 
@@ -191,15 +193,15 @@ STOP and write the test first. The interlock is the failing test, not any partic
 
 ## 6. Review pre-PR (AC6)
 
-Verify the `/${BRAND_SLUG}-review` sub-skill (Sprint-4 sibling #8) is installed in the workspace:
+Verify the `/${FRAMEWORK_SLUG}-review` sub-skill (Sprint-4 sibling #8) is installed in the workspace:
 
 ```bash
-ls .claude/skills/${BRAND_SLUG}-review/SKILL.md
+ls .claude/skills/${FRAMEWORK_SLUG}-review/SKILL.md
 ```
 
-If that fails, STOP and surface: "`/${BRAND_SLUG}-review` is not installed. Run `${FRAMEWORK_SLUG} skills install` to install the bundled skills, then re-run `/${BRAND_SLUG}-implement`."
+If that fails, STOP and surface: "`/${FRAMEWORK_SLUG}-review` is not installed. Run `${FRAMEWORK_SLUG} skills install` to install the bundled skills, then re-run `/${FRAMEWORK_SLUG}-implement`."
 
-Otherwise invoke `/${BRAND_SLUG}-review` as a skill — Claude Code's auto-discovery picks it up. The skill emits structured findings.
+Otherwise invoke `/${FRAMEWORK_SLUG}-review` as a skill — Claude Code's auto-discovery picks it up. The skill emits structured findings.
 
 Inspect the findings. If ANY finding has severity `critical` or `major`, STOP. Surface the findings to the user — including their exact count per severity. They must either:
 
@@ -235,7 +237,7 @@ layer below the defect reports green forever.
 
 ## 7. Open the PR (AC7)
 
-Prepare the PR title (use the issue title or a refined version). Prepare the PR body using the bundled template (`.claude/skills/${BRAND_SLUG}-implement/pr-template.md`):
+Prepare the PR title (use the issue title or a refined version). Prepare the PR body using the bundled template (`.claude/skills/${FRAMEWORK_SLUG}-implement/pr-template.md`):
 
 - Fill in the **Summary** section with 1-3 bullets
 - Fill in the **Test plan** section with the verifications a reviewer should run
@@ -273,17 +275,17 @@ the `3c-handover/1` metadata computed at ship time: `issue` (or `issues: [..]`),
 `gates_fired` (an array of load-bearing gate-name strings: `scan-secrets`, `red-before-green`,
 `verify-gate`, `no-auto-merge`, `reconcile-anti-improvisation`, `pretooluse-path-guard`,
 `sprint-readiness`, `capability-tier`; metadata-only — never raw command output, file contents, or env
-values), and `follow_ups` (issue numbers filed during the delivery). The `${BRAND_SLUG} dashboard`
+values), and `follow_ups` (issue numbers filed during the delivery). The `${FRAMEWORK_SLUG} dashboard`
 delivery view reads exactly this block from `handover`-labelled issues through `gh`, cached locally for
 15 minutes; a failed fetch is named, never shown as an empty view, and omitted fields render as blanks.
 
-File it with `${BRAND_SLUG} implement file-handover < handover.md`: it files nothing when the block would
+File it with `${FRAMEWORK_SLUG} implement file-handover < handover.md`: it files nothing when the block would
 not validate or the body matches a secret pattern, never files a second handover for the same delivery,
 and closes the issue it opens. When the `handover` label is missing, create it first with
 `gh label create handover --description "3C delivery handover" --color 0E8A16`. If filing fails, run the
 `gh` commands it prints; never drop the handover. The block carries delivery metadata only — no
 credentials, tokens, command output, environment values or diff content. The narrative below the block
-stays human-first. The full block shape is specified in the `/${BRAND_SLUG}-project-manager` skill's ship
+stays human-first. The full block shape is specified in the `/${FRAMEWORK_SLUG}-project-manager` skill's ship
 stage; keep the two in sync.
 
 ## What this skill does NOT do

@@ -8,7 +8,7 @@ cwe_version: "4.15"
 cwe_category: "CWE-502,CWE-400,CWE-770"
 ---
 
-<!-- Generated from ${BRAND_NAME} CWE Top 25 pack — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} CWE Top 25 pack — see ${FRAMEWORK_DOMAIN}. -->
 
 CWE-502 / CWE-400 / CWE-770 — Deserialization & resource exhaustion.
 

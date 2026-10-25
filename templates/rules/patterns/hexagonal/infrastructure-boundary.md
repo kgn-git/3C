@@ -8,7 +8,7 @@ pattern: "hexagonal"
 concern: "infrastructure-boundary"
 ---
 
-<!-- Generated from ${BRAND_NAME} Architecture Patterns pack (hexagonal) — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} Architecture Patterns pack (hexagonal) — see ${FRAMEWORK_DOMAIN}. -->
 
 Hexagonal infrastructure-boundary rules.
 

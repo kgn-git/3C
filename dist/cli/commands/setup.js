@@ -7,7 +7,7 @@ import { PACKAGE_ROOT } from "../shared.js";
 import { SETUP_RULE_PACKS } from "../../rules/setup-packs.js";
 import { setSharedBackup, sharedBackup } from "../backup-scope.js";
 import { runSetup } from "../setup.js";
-import { archCommand } from "./arch.js";
+import { setupArchStep } from "../setup-arch.js";
 import { doctorCommand } from "./doctor.js";
 import { hookInstallCommand } from "./hook.js";
 import { initCommand, parseInitArgs } from "./init.js";
@@ -109,7 +109,7 @@ export async function setupCommand(argv) {
                 return 0;
             },
         },
-        { name: "arch-check (inert gate)", run: () => archCommand(["init"], { cwd }) },
+        { name: "arch-check (drafted from your code)", run: () => setupArchStep(cwd, log) },
         {
             // Final verify. Advisory — its findings are printed, but a non-blocking
             // doctor result never fails the provisioning.

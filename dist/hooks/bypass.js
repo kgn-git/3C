@@ -1,9 +1,9 @@
 // Single-use emergency bypass token.
 // `recordBypass` writes both:
-//   - .${BRAND_SLUG}/state/bypass.next  (consumed by orchestrator on next hook run)
-//   - .${BRAND_SLUG}/logs/hooks/bypasses-<date>.jsonl  (audit trail; never deleted)
+//   - .${FRAMEWORK_SLUG}/state/bypass.next  (consumed by orchestrator on next hook run)
+//   - .${FRAMEWORK_SLUG}/logs/hooks/bypasses-<date>.jsonl  (audit trail; never deleted)
 // `consumeBypassToken` reads and deletes the token (single-use, AC7).
-// AD-16: ${BRAND_SLUG} is resolved at runtime via resolveBrandSlugSync().
+// AD-16: ${FRAMEWORK_SLUG} is resolved at runtime via resolveBrandSlugSync().
 import { mkdir, readFile, rm, writeFile, appendFile } from "node:fs/promises";
 import { join } from "node:path";
 import { resolveBrandSlugSync } from "../branding/runtime.js";

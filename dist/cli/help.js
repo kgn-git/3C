@@ -1,5 +1,5 @@
 export const HELP_TEMPLATE = `
-\${BRAND_NAME} — \${BRAND_LONG}
+\${FRAMEWORK_NAME} — \${FRAMEWORK_LONG}
 
 Usage:
   \${FRAMEWORK_SLUG} <command> [options]
@@ -7,20 +7,21 @@ Usage:
 Commands:
   setup [--yes] [--replace]
                     One-shot install: CLAUDE.md + the rule packs listed under
-                    \`rules install\` + hook + skills + agents + inert
-                    arch-check, then a doctor verify.
+                    \`rules install\` + hook + skills + agents + an
+                    architecture map drafted from your committed JS/TS code
+                    (inert when there is none to read), then a doctor verify.
                     A thin sequencer over the individual commands below. Re-runs
                     ADD what is missing and skip what exists; pass \`--replace\`
                     to refresh skills/agents that CHANGED upstream (it overwrites
                     your edits). \`--yes\` is non-interactive. (Alias: \`init --all\`.)
                     Every \`--replace\` (here and below) first backs up each
-                    file it overwrites to .\${BRAND_SLUG}/backups/<timestamp>/.
+                    file it overwrites to .\${FRAMEWORK_SLUG}/backups/<timestamp>/.
 
   init [options]    Initialize CLAUDE.md for this project
                       --yes              Use defaults; no prompts
                       --at-root          Write to ./CLAUDE.md (default is ./.claude/CLAUDE.md)
                       --replace          Overwrite if file exists
-                      --merge            Backup-and-overwrite (writes .pre-\${BRAND_SLUG}.bak)
+                      --merge            Backup-and-overwrite (writes .pre-\${FRAMEWORK_SLUG}.bak)
                       --no-companion     Skip CLAUDE.local.md.example + .gitignore update
 
   rules apply       Validate .claude/rules/**/*.md and inject the rules marked
@@ -44,7 +45,7 @@ Commands:
                     security/owasp-top-10, ux/tone-and-manner.
                     Run \`rules apply\` afterwards.
 
-  hook install      Register the \${BRAND_NAME} hooks in .claude/settings.json:
+  hook install      Register the \${FRAMEWORK_NAME} hooks in .claude/settings.json:
                     the PreToolUse commit gate and path-guard, and the
                     PostToolUse post-edit check. Safe to re-run — it adds what
                     is missing and leaves other tools' entries alone.
@@ -52,12 +53,12 @@ Commands:
   hook run [--event=<event>]
                     Internal — invoked by Claude Code via the registered
                     hook. Reads the event payload from stdin. On PreToolUse it
-                    runs the configured chain from .\${BRAND_SLUG}/hooks.yaml;
+                    runs the configured chain from .\${FRAMEWORK_SLUG}/hooks.yaml;
                     on PostToolUse it runs the post-edit boundary check, which
                     is advisory and never blocks the edit.
 
   hook confirm      Interactive — review the unified diff of recent
-                    .\${BRAND_SLUG}/hooks.yaml changes and accept (or reject) it.
+                    .\${FRAMEWORK_SLUG}/hooks.yaml changes and accept (or reject) it.
                     Run this after editing hooks.yaml; \`hook run\` refuses
                     to proceed on unconfirmed changes.
 
@@ -66,11 +67,11 @@ Commands:
 
   skills install [--replace]
                     Copy bundled skill artefacts (SKILL.md, templates)
-                    into ./.claude/skills/. Honours \${BRAND_*} substitution.
+                    into ./.claude/skills/. Substitutes the \${FRAMEWORK_*} tokens.
 
   agents install [--replace]
                     Copy bundled subagent artefacts (templates/agents/*.md)
-                    into ./.claude/agents/. Honours \${BRAND_*} substitution.
+                    into ./.claude/agents/. Substitutes the \${FRAMEWORK_*} tokens.
                     Installs the 3C crew: architect, code-reviewer,
                     journey-architect, product-owner, qa-reviewer,
                     security-reviewer, test-author, ux-expert.
@@ -88,7 +89,7 @@ Commands:
                     Print the command(s) the TDD loop should run for the
                     current changeset, and why. Sources go to the runner's
                     related-mode; inputs that tests READ rather than import
-                    are resolved via .\${BRAND_SLUG}/test-map.json. Anything
+                    are resolved via .\${FRAMEWORK_SLUG}/test-map.json. Anything
                     unmapped, or any failure to read the changeset from git,
                     widens the run to the full suite: a narrowed run never
                     reports green on tests it did not run. Inner loop only —
@@ -100,8 +101,8 @@ Commands:
 
   test detect-framework [<workspace>]
                     Internal — the runner resolution \`test select\` performs
-                    in-process, exposed as a verb for the /\${BRAND_SLUG}-test
-                    and /\${BRAND_SLUG}-implement skills. Prints the detected
+                    in-process, exposed as a verb for the /\${FRAMEWORK_SLUG}-test
+                    and /\${FRAMEWORK_SLUG}-implement skills. Prints the detected
                     framework (vitest|jest|mocha|playwright|pytest|junit|unknown)
                     as JSON. Exit 0 on known, 1 on unknown.
 
@@ -113,7 +114,7 @@ Commands:
   implement fetch-issue <id> [--repo=<owner/name>]
                     Internal — fetch an issue via \`gh issue view --json\`
                     and emit FetchedIssue JSON on stdout. Used by
-                    /\${BRAND_SLUG}-implement for AC1.
+                    /\${FRAMEWORK_SLUG}-implement for AC1.
 
   implement file-handover
                     Internal — read a handover body from stdin and file it as
@@ -131,13 +132,13 @@ Commands:
   implement branch-name
                     Internal — read {"id":N,"title":"..."} JSON from
                     stdin, apply formatBranchName with optional
-                    .\${BRAND_SLUG}/skills/implement.yaml override, print the
+                    .\${FRAMEWORK_SLUG}/skills/implement.yaml override, print the
                     branch name to stdout.
 
   scan-secrets      Internal — read text from stdin and emit
                     {"hits":[{"type","match","redacted"}, ...]} JSON
-                    to stdout. Exits 0 even on a hit, so /\${BRAND_SLUG}-review
-                    and /\${BRAND_SLUG}-implement can redact and continue;
+                    to stdout. Exits 0 even on a hit, so /\${FRAMEWORK_SLUG}-review
+                    and /\${FRAMEWORK_SLUG}-implement can redact and continue;
                     pass --fail-on-hit to exit 1 instead, for hooks and
                     scripts that gate on the exit status.
 
@@ -151,14 +152,17 @@ Commands:
   security refresh                  Run \`npm audit --json\` and save a dated
                     advisory list for the scan. The only security step that
                     uses the network: npm sends your dependency names and
-                    versions to its registry, never your source.
+                    versions to its registry, never your source. The list
+                    records that registry's address and nothing else. The
+                    scan names a dependency fetched from anywhere else as not
+                    checked; run refresh again after you change registry.
   security suppress <id>            Record an accepted finding so it stops
                     blocking. Suppressions are local to this workspace.
 
   dashboard [--serve] [--port <n>] [--since <date>]
                     Delivery view built from handover frontmatter: issues
                     shipped, cycle time, board verdicts. Writes a static
-                    .\${BRAND_SLUG}/dashboard.html, or serves it on loopback
+                    .\${FRAMEWORK_SLUG}/dashboard.html, or serves it on loopback
                     with --serve.
 
   debug context [file]              Print what the assistant reads for a
@@ -171,23 +175,23 @@ Commands:
                     Secrets are redacted from every field before it is sent.
 
   arch-check check [--files a,b]   Block cross-boundary import violations
-                    per .\${BRAND_SLUG}/architecture.yaml (monorepo-aware).
+                    per .\${FRAMEWORK_SLUG}/architecture.yaml (monorepo-aware).
                     Exit 0 clean or not configured, 1 could not evaluate
                     (config or file list), 2 violations.
-  arch-check init   Scaffold a starter .\${BRAND_SLUG}/architecture.yaml
+  arch-check init   Scaffold a starter .\${FRAMEWORK_SLUG}/architecture.yaml
                     (inert until you define layers/deny).
-  arch-check discover   Draft .\${BRAND_SLUG}/architecture.yaml from the
+  arch-check discover   Draft .\${FRAMEWORK_SLUG}/architecture.yaml from the
                     repository's actual import graph (proposal-only when an
                     active config exists).
   arch-check except "<from>-><to>" --reason="..." --expires=<date>
                     Record a time-boxed boundary exception (expiry mandatory).
 
   reconcile [--file <path>]         Internal — invoked by the
-                    /\${BRAND_SLUG}-review-board skill. Reads multi-agent review
+                    /\${FRAMEWORK_SLUG}-review-board skill. Reads multi-agent review
                     findings JSON from stdin (or --file) and emits the
                     deterministic de-duped, ranked board verdict.
   deps order [--file <path>]        Internal — dependency-ordered issue
-                    sequence, used by /\${BRAND_SLUG}-programme-manager.
+                    sequence, used by /\${FRAMEWORK_SLUG}-programme-manager.
 
   onboard [--user <n>] [--level <l>] [--role <frontend|backend|devops>]
           [--advance|--ask "<q>"|--starter]

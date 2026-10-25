@@ -8,7 +8,7 @@ pattern: "modular-monolith"
 concern: "module-isolation"
 ---
 
-<!-- Generated from ${BRAND_NAME} Architecture Patterns pack (modular-monolith) — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} Architecture Patterns pack (modular-monolith) — see ${FRAMEWORK_DOMAIN}. -->
 
 Module isolation — see "Modular Monolith" (Kamil Grzybek).
 

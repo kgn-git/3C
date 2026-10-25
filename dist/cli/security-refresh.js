@@ -7,8 +7,10 @@ import { existsSync } from "node:fs";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import { lockVersions, parseNpmAudit, readWorkspaceFile, SEMVER, writeAdvisorySnapshot } from "../security/advisories.js";
-const ARGS = { version: ["--version"], audit: ["audit", "--json"] };
+import { bindRegistry, lockVersions, MAX_ENTRIES, MAX_SNAPSHOT_BYTES, parseNpmAudit, readWorkspaceFile, registryBase, SEMVER, writeAdvisorySnapshot } from "../security/advisories.js";
+// `config get registry` prints that one setting. A token sits under its own
+// key, so it is never asked for and never printed.
+const ARGS = { version: ["--version"], registry: ["config", "get", "registry"], audit: ["audit", "--json"] };
 const NPM_TIMEOUT_MS = 120_000;
 const NPM_MAX_BUFFER = 32 * 1024 * 1024;
 /**
@@ -46,19 +48,13 @@ function unusable(name, r, missing) {
     if (r.kind === "absent")
         return missing;
     if (r.kind === "too-large")
-        return `${name} is larger than 16 MiB, so it cannot be audited`;
+        return `${name} is larger than ${MAX_SNAPSHOT_BYTES / 1024 / 1024} MiB, so it cannot be audited`;
     return `${name} cannot be read (it may be a link or a folder), so check the file and try again`;
 }
-/**
- * npm audits copies of package.json and its lockfile in a fresh temporary
- * folder, never the workspace. A workspace `.npmrc` could otherwise point the
- * audit at a registry that answers "clean", or expand a token into a request
- * to a host it names; in the copy, only the developer's own npm settings apply.
- * The versions recorded as audited come from the same bytes npm read, so a
- * lockfile edited while the audit runs cannot be recorded as audited. When
- * npm-shrinkwrap.json exists it is the lockfile, as npm itself prefers it.
- */
-export async function refreshAdvisories(ws, run = defaultNpmRunner, now = new Date()) {
+export async function refreshAdvisories(ws, run = defaultNpmRunner, now = new Date(), opts = {}) {
+    const remove = opts.remove ?? ((dir) => rm(dir, { recursive: true, force: true }));
+    const warn = opts.warn ?? ((m) => void process.stderr.write(`${m}
+`));
     const manifest = await readWorkspaceFile(join(ws, "package.json"));
     if (manifest.kind !== "read") {
         return { kind: "refused", reason: unusable("package.json", manifest, "there is no package.json here, so run the command from your project's root folder") };
@@ -69,9 +65,8 @@ export async function refreshAdvisories(ws, run = defaultNpmRunner, now = new Da
     if (lock.kind !== "read") {
         return { kind: "refused", reason: unusable(lockName, lock, "npm audit needs a package-lock.json, so run `npm install` first") };
     }
-    const audited = lockVersions(lock.text);
-    if (audited === null) {
-        return { kind: "refused", reason: `${lockName} is not a version 2 or 3 lockfile, or lists more than 20,000 packages, so update it with npm 7 or later` };
+    if (lockVersions(lock.text) === null) {
+        return { kind: "refused", reason: `${lockName} is not a version 2 or 3 lockfile, or lists more than ${MAX_ENTRIES.toLocaleString("en-GB")} packages, so update it with npm 7 or later` };
     }
     const dir = await mkdtemp(join(tmpdir(), "3c-audit-"));
     try {
@@ -82,17 +77,25 @@ export async function refreshAdvisories(ws, run = defaultNpmRunner, now = new Da
         if (version.code !== 0 || !SEMVER.test(npmVersion)) {
             return { kind: "refused", reason: "npm could not be started, so check that Node.js and npm are installed" };
         }
+        const reg = await run("registry", dir);
+        const base = reg.code === 0 ? registryBase(reg.stdout) : null;
+        const registry = base === null ? null : bindRegistry(base);
+        if (registry === null) {
+            return { kind: "refused", reason: "npm did not report the registry it installs from, so run `npm config get registry` to see why" };
+        }
+        // The audited versions come from the same bytes npm read, from that registry only.
+        const audited = lockVersions(lock.text, registry) ?? {};
         // npm audit exits 1 when it finds a vulnerability, so the exit code says
         // nothing about whether the report is usable; the report itself does.
         const parsed = parseNpmAudit((await run("audit", dir)).stdout);
         if (parsed.kind === "refused")
             return parsed;
-        await writeAdvisorySnapshot(ws, { schema: 1, source: "npm audit", npmVersion, generatedAt: now.toISOString(), audited, advisories: parsed.advisories });
+        await writeAdvisorySnapshot(ws, { schema: 2, source: "npm audit", npmVersion, registry, generatedAt: now.toISOString(), audited, advisories: parsed.advisories });
         return { kind: "written", count: Object.keys(parsed.advisories).length };
     }
     finally {
-        // A folder Windows still holds open must not replace the result.
-        await rm(dir, { recursive: true, force: true }).catch(() => { });
+        // A folder Windows still holds open must not replace the result, but it is named.
+        await remove(dir).catch(() => warn(`The temporary folder ${dir} could not be removed. Delete it when nothing is using it. This blocks nothing.`));
     }
 }
 //# sourceMappingURL=security-refresh.js.map

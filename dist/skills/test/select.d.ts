@@ -67,7 +67,7 @@ export declare function isSafeRef(ref: string): boolean;
  * repository. Anything that does not match the project's slug pattern is
  * discarded rather than sanitised.
  */
-export declare function testMapDir(_root: string): string;
+export declare function testMapDir(): string;
 /**
  * Load `<config-dir>/test-map.json` from `root`. A missing file is the normal
  * adopter case and loads as empty. Anything malformed is rejected wholesale,

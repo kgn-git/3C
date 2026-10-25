@@ -9,7 +9,7 @@ import { GIT_INIT_REMEDIATION, PACKAGE_ROOT } from "../shared.js";
 export async function rulesApplyCommand() {
     const framework = await loadFramework(PACKAGE_ROOT);
     const brand = resolveBrand(framework);
-    console.log(`${brand.BRAND_NAME} rules apply — resolving \`.claude/rules/*.md\` (framework ${brand.FRAMEWORK_NAME} v${brand.FRAMEWORK_VERSION})`);
+    console.log(`${brand.FRAMEWORK_NAME} rules apply — resolving \`.claude/rules/*.md\` (v${brand.FRAMEWORK_VERSION})`);
     const discovered = await discoverWorkspaceFiles(process.cwd());
     if (!discovered.ok) {
         console.error(`\n✗ Workspace must be a git repository to discover files. ${GIT_INIT_REMEDIATION}`);

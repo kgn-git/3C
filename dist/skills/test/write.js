@@ -1,4 +1,4 @@
-import { mkdir, stat, writeFile } from "node:fs/promises";
+import { mkdir, realpath, stat, writeFile } from "node:fs/promises";
 import { dirname, resolve, sep } from "node:path";
 import { scanSecrets } from "../../validate/secrets.js";
 export async function writeTest(opts) {
@@ -10,6 +10,26 @@ export async function writeTest(opts) {
     const wsRoot = resolve(opts.workspaceDir);
     const targetAbs = resolve(wsRoot, normalisedTarget);
     if (!targetAbs.startsWith(wsRoot + sep) && targetAbs !== wsRoot) {
+        return { ok: false, error: `path escapes workspace: ${opts.targetPath}` };
+    }
+    // The string check above cannot see a link: a folder inside the workspace
+    // that is a junction or symlink to elsewhere would carry the write out.
+    // The nearest folder that exists is resolved and must stay inside.
+    let existing = dirname(targetAbs);
+    for (;;) {
+        try {
+            await stat(existing);
+            break;
+        }
+        catch {
+            const up = dirname(existing);
+            if (up === existing)
+                break;
+            existing = up;
+        }
+    }
+    const [realWs, realDir] = await Promise.all([realpath(wsRoot), realpath(existing)]);
+    if (realDir !== realWs && !realDir.startsWith(realWs + sep)) {
         return { ok: false, error: `path escapes workspace: ${opts.targetPath}` };
     }
     // No-overwrite guarantee.
@@ -34,7 +54,15 @@ export async function writeTest(opts) {
         };
     }
     await mkdir(dirname(targetAbs), { recursive: true });
-    await writeFile(targetAbs, opts.content, "utf8");
+    // `wx` so a file created after the check above is still not overwritten.
+    try {
+        await writeFile(targetAbs, opts.content, { encoding: "utf8", flag: "wx" });
+    }
+    catch (e) {
+        if (e.code === "EEXIST")
+            return { ok: false, error: `target file already exists: ${opts.targetPath}` };
+        throw e;
+    }
     return { ok: true, written: targetAbs };
 }
 // From the hit's own offset — `indexOf(match)` would find the FIRST

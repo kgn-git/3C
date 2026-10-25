@@ -7,6 +7,7 @@ const FRAMEWORK_FIELDS = [
     "FRAMEWORK_DOMAIN",
     "FRAMEWORK_VERSION",
 ];
+const SLUG = /^[a-z0-9][a-z0-9-]*$/;
 export async function loadFramework(rootDir) {
     const path = join(rootDir, "framework.json");
     const text = await readFile(path, "utf8");
@@ -17,11 +18,15 @@ export async function loadFramework(rootDir) {
             throw new Error(`framework.json: required field "${field}" is missing or empty`);
         }
     }
+    // The slug becomes installed file names and the state directory.
+    if (!SLUG.test(parsed.FRAMEWORK_SLUG)) {
+        throw new Error('framework.json: "FRAMEWORK_SLUG" must be lowercase letters, digits and hyphens, starting with a letter or digit');
+    }
     return parsed;
 }
 /**
- * The identity every substitution uses: the framework's, with `BRAND_*` as
- * aliases of `FRAMEWORK_*`.
+ * The identity every substitution uses: the framework's. The `resolveBrand` /
+ * `ResolvedBrand` names are kept as historical (AD-16).
  *
  * Custom branding is not supported — the product is 3C. There is no
  * per-deployment override, so nothing here reads `branding.json`; a stray one
@@ -31,13 +36,7 @@ export async function loadFramework(rootDir) {
  * to `.3c/`.
  */
 export function resolveBrand(framework) {
-    return {
-        ...framework,
-        BRAND_NAME: framework.FRAMEWORK_NAME,
-        BRAND_SLUG: framework.FRAMEWORK_SLUG,
-        BRAND_LONG: framework.FRAMEWORK_LONG,
-        BRAND_VERSION: framework.FRAMEWORK_VERSION,
-    };
+    return { ...framework };
 }
 export async function load(rootDir) {
     return resolveBrand(await loadFramework(rootDir));

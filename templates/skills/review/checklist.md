@@ -1,8 +1,8 @@
-<!-- Generated from ${BRAND_NAME} default review checklist — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} default review checklist — see ${FRAMEWORK_DOMAIN}. -->
 
-# ${BRAND_NAME} default review checklist
+# ${FRAMEWORK_NAME} default review checklist
 
-Apply every section below to every changed file. Each section's anchor name is stable; future ${BRAND_NAME} extensions add new sections rather than restructure these.
+Apply every section below to every changed file. Each section's anchor name is stable; future ${FRAMEWORK_NAME} extensions add new sections rather than restructure these.
 
 ## Code Quality
 

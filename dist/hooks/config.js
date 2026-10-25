@@ -1,5 +1,5 @@
-// Loads and validates `.${BRAND_SLUG}/hooks.yaml` with js-yaml.
-// AD-16: ${BRAND_SLUG} is resolved at runtime via resolveBrandSlugSync().
+// Loads and validates `.${FRAMEWORK_SLUG}/hooks.yaml` with js-yaml.
+// AD-16: ${FRAMEWORK_SLUG} is resolved at runtime via resolveBrandSlugSync().
 // Schema (L1):
 //   schema_version: 1                      (required, integer 1)
 //   hooks:                                 (required, array; may be empty)

@@ -8,7 +8,7 @@ cwe_version: "4.15"
 cwe_category: "CWE-362,CWE-367"
 ---
 
-<!-- Generated from ${BRAND_NAME} CWE Top 25 pack — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} CWE Top 25 pack — see ${FRAMEWORK_DOMAIN}. -->
 
 CWE-362 / CWE-367 — Race conditions & TOCTOU.
 

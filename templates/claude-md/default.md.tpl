@@ -1,6 +1,6 @@
 <!-- ${FRAMEWORK_SLUG}-generated framework_version=${FRAMEWORK_VERSION} generated_at=${GENERATED_AT} input_hash=${INPUT_HASH} -->
 
-# ${BRAND_NAME} — Coding Standards
+# ${FRAMEWORK_NAME} — Coding Standards
 
 This file is loaded by Claude Code at session start. Keep it under **200 lines** and within **150 RFC-2119 directives** (counted by `\b(MUST|SHALL|SHOULD|MAY)(\s+NOT)?\b`). Move detail into `.claude/rules/` files when this file grows.
 

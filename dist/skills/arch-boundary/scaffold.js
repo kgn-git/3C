@@ -64,6 +64,14 @@ const STARTER = `# Architecture boundary rules (VP-03-F05) — STARTER.
 ${USAGE_EXPLAINER}#
 ${EXAMPLE_BLOCK}#
 ${PACKAGES_HINT}`;
+// Line endings, a BOM and trailing whitespace are what an editor or a Windows
+// checkout changes without the adopter writing anything.
+const asWritten = (s) => s.replace(/^﻿/, "").replace(/\r\n/g, "\n").split("\n").map((l) => l.trimEnd()).join("\n").trimEnd();
+/** True when the text is the starter as shipped, or holds nothing, so replacing it loses nothing. */
+export function isUnmodifiedStarter(text) {
+    const t = asWritten(text);
+    return t === "" || t === asWritten(STARTER);
+}
 /**
  * Write the commented starter to `.<slug>/architecture.yaml`. Never clobbers an
  * existing file — returns `{ created: false }` if one is already present.

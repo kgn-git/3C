@@ -8,7 +8,7 @@ pattern: "layered-mvc"
 concern: "layer-shape"
 ---
 
-<!-- Generated from ${BRAND_NAME} Architecture Patterns pack (layered-mvc) — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} Architecture Patterns pack (layered-mvc) — see ${FRAMEWORK_DOMAIN}. -->
 
 Layered architecture (Presentation → Application/Service → Persistence).
 

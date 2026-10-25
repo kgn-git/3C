@@ -38,7 +38,7 @@ export function renderTemplate(input) {
     output = output
         .replaceAll("${GENERATED_AT}", input.provenance.generatedAt)
         .replaceAll("${INPUT_HASH}", input.provenance.inputHash);
-    // 3. Substitute brand tokens (FRAMEWORK_* and BRAND_*).
+    // 3. Substitute the FRAMEWORK_* identity tokens.
     output = substitute(output, input.brand);
     return output;
 }

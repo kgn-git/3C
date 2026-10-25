@@ -8,7 +8,7 @@ pattern: "modular-monolith"
 concern: "extraction-readiness"
 ---
 
-<!-- Generated from ${BRAND_NAME} Architecture Patterns pack (modular-monolith) — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} Architecture Patterns pack (modular-monolith) — see ${FRAMEWORK_DOMAIN}. -->
 
 Future extraction readiness — the seam stays visible.
 

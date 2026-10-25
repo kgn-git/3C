@@ -8,7 +8,7 @@ owasp_version: "2025"
 owasp_category: "A10:2025"
 ---
 
-<!-- Generated from ${BRAND_NAME} OWASP Top 10:2025 pack — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} OWASP Top 10:2025 pack — see ${FRAMEWORK_DOMAIN}. -->
 
 A10:2025 Mishandling of Exceptional Conditions — see https://owasp.org/Top10/.
 

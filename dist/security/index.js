@@ -6,7 +6,7 @@ import { anonymiseId } from "../telemetry/anonymise.js";
 import { decideOutcome } from "./severity.js";
 import { defaultLocalScanner } from "./scanner.js";
 import { changedDependencies } from "./manifest-diff.js";
-import { checkDependencies } from "./dependency-check.js";
+import { checkDependencies, unreadableManifests } from "./dependency-check.js";
 import { securityFileSet, SecurityBaseError, MAX_SCANNED_BYTES, } from "./files.js";
 import { loadSuppressions, isSuppressed } from "./suppress.js";
 export async function runSecurityGate(workspaceDir, opts = {}) {
@@ -81,11 +81,18 @@ async function evaluate(workspaceDir, opts) {
         return {
             blocked: true,
             warnings: [],
-            message: `Security scan gate: ${change.unparseable.join(", ")} in this change is not a manifest or lockfile this scan can read, so the dependencies it adds cannot be checked. ` +
-                `A lockfile must be version 2 or 3 (npm 7 or later), at most 16 MiB, and not a link. Fix the file, then run the scan again.\nBlocked.\n`,
+            message: `Security scan gate: ${unreadableManifests(change.unparseable)}\nBlocked.\n`,
         };
     }
     const dep = await checkDependencies(workspaceDir, change, opts.depAdvisory);
+    if (dep.kind === "outdated") {
+        return {
+            blocked: true,
+            warnings: [],
+            message: `Security scan gate: the saved advisory list was made by an earlier version of ${resolveBrandSlugSync()}, and this change adds dependencies. ` +
+                `Run \`${resolveBrandSlugSync()} security refresh\` to rebuild it.\nBlocked.\n`,
+        };
+    }
     if (dep.kind === "unreadable") {
         // The list may have been edited to hide a package, and this change adds
         // dependencies it would have to speak for.

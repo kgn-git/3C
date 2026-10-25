@@ -8,7 +8,7 @@ cwe_version: "4.15"
 cwe_category: "CWE-89,CWE-78,CWE-79,CWE-94"
 ---
 
-<!-- Generated from ${BRAND_NAME} CWE Top 25 pack — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} CWE Top 25 pack — see ${FRAMEWORK_DOMAIN}. -->
 
 CWE-89 / CWE-78 / CWE-79 / CWE-94 — Injection weaknesses.
 

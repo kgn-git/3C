@@ -1,5 +1,5 @@
 ---
-name: ${BRAND_SLUG}-test
+name: ${FRAMEWORK_SLUG}-test
 description: Write unit or integration tests test-first, following team conventions, for whatever framework the project uses. Detects the framework from package configuration, reads conventions from .claude/rules/, and writes a test that FAILS before the implementation exists. Never overwrites existing tests; first write per session requires user confirmation.
 version: 2.0.0
 compatibility: [claude-code]
@@ -7,7 +7,7 @@ allowed-tools: [Bash, Read, Write]
 disable-model-invocation: false
 ---
 
-# /${BRAND_SLUG}-test — Write tests test-first for ${BRAND_NAME}
+# /${FRAMEWORK_SLUG}-test — Write tests test-first for ${FRAMEWORK_NAME}
 
 When the user asks for tests for a source file, follow this exact workflow.
 
@@ -76,7 +76,20 @@ vitest/jest, `test_x.py` for pytest, `XTest.java` for junit — unless `.claude/
 Before any Write, use the Read tool against that path. **If the file exists, STOP and inform the
 user. Do NOT overwrite.**
 
-## 5. Confirm with the user on the first write per session
+## 5. Draft the test with the test-author agent
+
+Dispatch the `${FRAMEWORK_SLUG}-test-author` agent with the source file, the target path from step 4, the
+framework from step 1, and the test rules that apply: step 3's assertion rule, step 7's layering rule,
+and any matching `.claude/rules/` text. The agent loads no rules itself. It returns the test body in
+one fenced block and writes no file, so the preview, the confirmation and the guarded write below
+stay with you.
+
+Check the body against step 3 before you use it: it must fail on its assertion, and no assertion may
+be one that cannot fail. If agent dispatch is not available here — for example when this skill runs
+inside a subagent — write the body yourself, following step 3. Either way the body only becomes a
+file through `test write` in step 8, never through the Write tool.
+
+## 6. Confirm with the user on the first write per session
 
 On the FIRST file write of a session, you MUST:
 
@@ -87,7 +100,7 @@ On the FIRST file write of a session, you MUST:
 
 Only proceed if the user says yes.
 
-## 6. Apply the team's conventions
+## 7. Apply the team's conventions
 
 Consult `.claude/CLAUDE.md` for team-specific test-file location, fixture-naming, or mock-style
 conventions. The rules pipeline has already loaded matching rules from `.claude/rules/` into your
@@ -99,7 +112,7 @@ rule in the parser test, an access rule in the server-boundary test. A test at a
 only that it is wired to the layer below, by one path; it does not repeat the rule's cases. A defect
 fix gets its test where the defect lived, not where it was seen.
 
-## 7. Write the test file
+## 8. Write the test file
 
 Run:
 
@@ -133,6 +146,20 @@ result with the guard removed, which is the only outcome the guard exists to pre
 authoring the test body freehand, which is exactly where a fabricated fixture credential gets
 invented — the guard is not optional just because the transport changed.
 
+## 9. Run the test and report the RED
+
+Running the test runs code you or the agent wrote, so the user sees it first: put the full body in
+your reply before the run, since step 6 previews only its first lines. Wait for the user's go before
+running a body that starts a process, uses the network, or reads files outside its own fixtures.
+
+Run only the new test file, with the project's test command for the detected framework. Put the
+target path in quotes; if it holds anything other than letters, digits, `.`, `_`, `-` and `/`,
+stop and ask the user rather than pass it to a shell.
+
+Report what you observed. It must fail on its assertion: that observed failure is the evidence the
+test is worth keeping. If it passes, or fails on a missing import or a syntax error, report that and
+stop. A re-run needs the user's go; do not re-dispatch the agent in a loop.
+
 ## Fixture credentials — placeholders only
 
 Test fixtures that need credentials MUST use obviously-fake placeholders:
@@ -151,7 +178,8 @@ something like `AKIA...` or `ghp_...` the write will fail.
   wrote the report it read — so it was removed rather than wired up (#396). The capability
   re-enters only as one whole design under #432, which is parked, not promised. This skill stays
   narrow: it writes tests.
-- It does NOT execute the tests after writing. Run them yourself with the team's standard command.
+- It runs the test once after writing, to observe the RED, and reports what it saw. It does not
+  run the rest of the suite.
 - It no longer generates test bodies. `${FRAMEWORK_SLUG} test scaffold` was retired: a
   cross-language code generator can only emit boilerplate and a placeholder, and every defect its
   review found sat in the code that tried to guess at your source rather than in the instruction

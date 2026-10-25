@@ -8,7 +8,7 @@ cwe_version: "4.15"
 cwe_category: "CWE-787,CWE-125,CWE-416,CWE-476,CWE-190"
 ---
 
-<!-- Generated from ${BRAND_NAME} CWE Top 25 pack — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} CWE Top 25 pack — see ${FRAMEWORK_DOMAIN}. -->
 
 CWE-787 / CWE-125 / CWE-416 / CWE-476 / CWE-190 — Memory-safety weaknesses.
 

@@ -6,14 +6,8 @@ export interface FrameworkConfig {
     readonly FRAMEWORK_VERSION: string;
 }
 /**
- * `BRAND_*` are aliases of `FRAMEWORK_*`, kept because templates still spell
- * `${BRAND_*}` tokens (TODO(#457) purge them). Not an extension point: a
- * second source for these values splits state.
+ * The identity every substitution uses. Not an extension point: a second
+ * source for these values splits state.
  */
-export type ResolvedBrand = FrameworkConfig & {
-    readonly BRAND_NAME: string;
-    readonly BRAND_SLUG: string;
-    readonly BRAND_LONG: string;
-    readonly BRAND_VERSION: string;
-};
+export type ResolvedBrand = FrameworkConfig;
 //# sourceMappingURL=types.d.ts.map

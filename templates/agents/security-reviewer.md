@@ -1,6 +1,6 @@
 ---
-name: ${BRAND_SLUG}-security-reviewer
-description: Read-only security critic for ${BRAND_NAME}. Runs the shipped local security-scan gate and an OWASP/CWE-aligned review; reports findings without editing.
+name: ${FRAMEWORK_SLUG}-security-reviewer
+description: Read-only security critic for ${FRAMEWORK_NAME}. Runs the shipped local security-scan gate and an OWASP/CWE-aligned review; reports findings without editing.
 tools: [Read, Grep, Glob, Bash]
 model: opus
 ---

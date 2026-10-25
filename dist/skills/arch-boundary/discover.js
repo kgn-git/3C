@@ -4,12 +4,12 @@
 // same import-resolution kernel as the gate (parseRelativeImports), so the
 // draft can never propose a deny pair the gate would flag.
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { resolveBrandSlugSync } from "../../branding/runtime.js";
 import { discoverWorkspaceFiles } from "../../rules/discover.js";
 import { parseRelativeImports } from "../../validate/post-edit/layers.js";
 import { archConfigPath, hasAuthoredContent, loadArchConfig, } from "../../validate/arch-config.js";
-import { EXAMPLE_BLOCK, PACKAGES_HINT, USAGE_EXPLAINER } from "./scaffold.js";
+import { EXAMPLE_BLOCK, isUnmodifiedStarter, PACKAGES_HINT, USAGE_EXPLAINER } from "./scaffold.js";
 const SRC_RE = /\.(ts|tsx|js|jsx|mts|cts)$/;
 const TEST_RE = /(^|\/)tests?\/|\.(test|spec)\.[^/]+$/;
 // Cluster rule: node = first path segment; roots with ≥2 source-bearing child
@@ -268,12 +268,13 @@ export function draftFromFiles(files, opts = {}) {
     return lines.join("\n");
 }
 /**
- * Run discovery against a workspace. Destination matrix: no config or
- * an inert one (file parses to nothing) → write `.<slug>/architecture.yaml`;
- * a populated config → write `.<slug>/architecture.proposed.yaml`, never
- * clobbering the active rules.
+ * Plan discovery against a workspace without writing. Destination matrix: no
+ * config or an inert one (file parses to nothing) → `.<slug>/architecture.yaml`;
+ * a populated or malformed config → `.<slug>/architecture.proposed.yaml`,
+ * never clobbering the active rules. Throws when the workspace's tracked
+ * files cannot be listed (not a git repository, or git failed).
  */
-export async function runArchDiscover(ws) {
+export async function planArchDiscover(ws) {
     const disc = await discoverWorkspaceFiles(ws);
     if (!disc.ok)
         throw new Error(disc.error);
@@ -305,22 +306,37 @@ export async function runArchDiscover(ws) {
     // cannot read). Both must be preserved; only an absent file and an unedited
     // comment-only starter are safe to replace.
     const loaded = await loadArchConfig(ws);
-    const proposed = hasAuthoredContent(loaded);
+    // A comment-only file that is not the shipped starter holds the adopter's
+    // own notes: replacing it would lose them.
+    const notes = loaded.kind === "inert" && !hasAuthoredContent(loaded) &&
+        !isUnmodifiedStarter(await readFile(activePath, "utf8").catch(() => ""));
+    const proposed = hasAuthoredContent(loaded) || notes;
     const reason = loaded.kind === "malformed"
         ? "malformed"
-        : proposed
-            ? "populated"
-            : loaded.kind === "absent"
-                ? "absent"
-                : "inert";
+        : notes
+            ? "notes"
+            : proposed
+                ? "populated"
+                : loaded.kind === "absent"
+                    ? "absent"
+                    : "inert";
     const draft = draftFromFiles(files, {
         proposed,
         activeBroken: reason === "malformed",
     });
     const path = proposed ? join(dir, "architecture.proposed.yaml") : activePath;
-    await mkdir(dir, { recursive: true });
-    await writeFile(path, draft, "utf8");
     const tierCount = (draft.match(/^ {2}tier-\d+:/gm) ?? []).length;
-    return { path, proposed, tiers: tierCount, reason };
+    return { path, proposed, tiers: tierCount, reason, draft };
+}
+/** Write a planned draft to its destination. */
+export async function writeDiscoverPlan(plan) {
+    await mkdir(dirname(plan.path), { recursive: true });
+    await writeFile(plan.path, plan.draft, "utf8");
+    const { path, proposed, tiers, reason } = plan;
+    return { path, proposed, tiers, reason };
+}
+/** Run discovery against a workspace: plan, then write (see `planArchDiscover`). */
+export async function runArchDiscover(ws) {
+    return writeDiscoverPlan(await planArchDiscover(ws));
 }
 //# sourceMappingURL=discover.js.map

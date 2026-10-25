@@ -1,5 +1,5 @@
 ---
-name: ${BRAND_SLUG}-onboard
+name: ${FRAMEWORK_SLUG}-onboard
 description: Guided codebase onboarding for new team members. Presents an architecture/key-files/workflows roadmap, tracks per-developer progress with pause/resume, answers from local standards and docs, and recommends a level-appropriate starter task. All state is local to the workstation.
 version: 1.0.0
 compatibility: [claude-code]
@@ -7,7 +7,7 @@ allowed-tools: [Bash, Read]
 disable-model-invocation: false
 ---
 
-# /${BRAND_SLUG}-onboard — guided onboarding for ${BRAND_NAME}
+# /${FRAMEWORK_SLUG}-onboard — guided onboarding for ${FRAMEWORK_NAME}
 
 When a new team member asks to be onboarded, drive the `onboard` CLI:
 
@@ -18,7 +18,7 @@ Run `${FRAMEWORK_SLUG} onboard --user <name>` (defaults to the OS user). `<name>
 Every run ends with a `Done:` line and a `Next:` line naming the exact command to run next — relay that line to the developer rather than composing your own. After the last module the next step is `${FRAMEWORK_SLUG} onboard --starter` (a first task), and `${FRAMEWORK_SLUG} dashboard` shows everyone's onboarding progress. `--starter` lists issues through an authenticated GitHub CLI (`gh`); if it reports that `gh` is unavailable or finds nothing, the developer should ask their lead. Confirm with the developer before running `--advance` — it marks a module done and cannot be undone from the CLI.
 Present the returned roadmap (architecture → key-files → workflows) and
 highlight the developer's current module. Progress persists in
-`.${BRAND_SLUG}/onboarding/<user>.yaml` and survives workspace resets.
+`.${FRAMEWORK_SLUG}/onboarding/<user>.yaml` and survives workspace resets.
 
 ## 2. Answer questions from team sources
 
@@ -48,7 +48,7 @@ Run `${FRAMEWORK_SLUG} onboard --user <name> --level <label> --starter`
 to recommend an appropriate open backlog issue.
 
 Finishing the last module writes a local completion record to
-`.${BRAND_SLUG}/onboarding/completions/<user>.yaml` — user and timestamp only, never
+`.${FRAMEWORK_SLUG}/onboarding/completions/<user>.yaml` — user and timestamp only, never
 onboarding activity, and nothing leaves the workstation.
 
 This skill is the whole of onboarding. The role-tailored guide that used to

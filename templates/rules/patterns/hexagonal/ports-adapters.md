@@ -8,7 +8,7 @@ pattern: "hexagonal"
 concern: "ports-adapters"
 ---
 
-<!-- Generated from ${BRAND_NAME} Architecture Patterns pack (hexagonal) — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} Architecture Patterns pack (hexagonal) — see ${FRAMEWORK_DOMAIN}. -->
 
 Hexagonal (Ports & Adapters) — see Alistair Cockburn, "Hexagonal Architecture" (2005).
 

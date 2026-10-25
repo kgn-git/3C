@@ -8,7 +8,7 @@ pattern: "clean-architecture"
 concern: "layers"
 ---
 
-<!-- Generated from ${BRAND_NAME} Architecture Patterns pack (clean-architecture) — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} Architecture Patterns pack (clean-architecture) — see ${FRAMEWORK_DOMAIN}. -->
 
 Clean Architecture — see "Clean Architecture" (Robert C. Martin, 2017).
 

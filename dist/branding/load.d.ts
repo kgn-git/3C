@@ -1,8 +1,8 @@
 import type { FrameworkConfig, ResolvedBrand } from "./types.js";
 export declare function loadFramework(rootDir: string): Promise<FrameworkConfig>;
 /**
- * The identity every substitution uses: the framework's, with `BRAND_*` as
- * aliases of `FRAMEWORK_*`.
+ * The identity every substitution uses: the framework's. The `resolveBrand` /
+ * `ResolvedBrand` names are kept as historical (AD-16).
  *
  * Custom branding is not supported — the product is 3C. There is no
  * per-deployment override, so nothing here reads `branding.json`; a stray one

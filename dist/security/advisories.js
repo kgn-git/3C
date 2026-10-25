@@ -3,11 +3,13 @@
 // reads only the snapshot and the lockfile, so it never touches the network
 // (NFR-SEC-01). Both sit in the workspace and anything with write access could
 // have edited them, so both are re-validated on every read.
+import { createHash } from "node:crypto";
 import { constants } from "node:fs";
 import { lstat, open } from "node:fs/promises";
 import { join } from "node:path";
 import { cacheDir, writeCacheFile } from "../validate/cache-file.js";
 export const STALE_AFTER_DAYS = 7;
+const SCHEMA = 2;
 const FILE = "advisories.json";
 export const MAX_SNAPSHOT_BYTES = 16 * 1024 * 1024;
 export const MAX_ENTRIES = 20_000;
@@ -29,6 +31,42 @@ const SEVERITY = {
     info: null,
 };
 const SEVERITIES = new Set(["critical", "high", "medium", "low"]);
+const sha256 = (s) => createHash("sha256").update(s, "utf8").digest("hex");
+const MAX_PATH = 2048;
+/**
+ * The registry address `npm config get registry` printed, as origin and path
+ * ending in "/", or null when it is not http(s). Credentials, query and
+ * fragment are dropped. The result can still hold a token in its path, so it
+ * is only ever bound (`bindRegistry`), never saved.
+ */
+export function registryBase(text) {
+    try {
+        const url = new URL(text.trim());
+        if (url.protocol !== "https:" && url.protocol !== "http:")
+            return null;
+        return `${url.origin}${url.pathname.endsWith("/") ? url.pathname : `${url.pathname}/`}`;
+    }
+    catch {
+        return null;
+    }
+}
+/** The binding a registry base is checked against; null when it is not one. */
+export function bindRegistry(base) {
+    if (registryBase(base) !== base)
+        return null;
+    const url = new URL(base);
+    if (url.pathname.length > MAX_PATH)
+        return null;
+    return { origin: url.origin, pathLength: url.pathname.length, pathSha256: sha256(url.pathname) };
+}
+function isBinding(v) {
+    if (!isRecord(v))
+        return false;
+    const { origin, pathLength, pathSha256 } = v;
+    return (typeof origin === "string" && registryBase(origin) === `${origin}/` && new URL(origin).origin === origin &&
+        typeof pathLength === "number" && Number.isInteger(pathLength) && pathLength >= 1 && pathLength <= MAX_PATH &&
+        typeof pathSha256 === "string" && /^[0-9a-f]{64}$/.test(pathSha256));
+}
 export const isPackageName = (s) => typeof s === "string" && s.length <= 214 && NPM_NAME.test(s);
 const isRecord = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
 // Only npm's error code decides the wording; neither the code nor npm's
@@ -98,12 +136,18 @@ export function parseNpmAudit(stdout) {
 }
 /**
  * Reads a workspace file through one handle within the cap (CWE-367). A link
- * is refused: by lstat on every platform, and by O_NOFOLLOW at the open where
- * the platform has it, so a link swapped in between is refused too (CWE-59).
+ * is refused by lstat (CWE-59), and the handle must be the file lstat saw, so a
+ * link swapped in before the open is refused too: by O_NOFOLLOW where the
+ * platform has it, and by comparing the two identities everywhere.
  */
 export async function readWorkspaceFile(path, max = MAX_SNAPSHOT_BYTES) {
+    // BigInt, because NTFS file ids exceed 2^53 and two would round to one.
+    // A filesystem that reports no file id (0) gives the comparison nothing to
+    // tell apart; O_NOFOLLOW, where the platform has it, still applies there.
+    let checked;
     try {
-        if ((await lstat(path)).isSymbolicLink())
+        checked = await lstat(path, { bigint: true });
+        if (checked.isSymbolicLink())
             return { kind: "unreadable" };
     }
     catch (e) {
@@ -117,13 +161,14 @@ export async function readWorkspaceFile(path, max = MAX_SNAPSHOT_BYTES) {
         return e.code === "ENOENT" ? { kind: "absent" } : { kind: "unreadable" };
     }
     try {
-        const st = await fh.stat();
-        if (!st.isFile())
+        const st = await fh.stat({ bigint: true });
+        if (!st.isFile() || st.dev !== checked.dev || st.ino !== checked.ino)
             return { kind: "unreadable" };
-        if (st.size > max)
+        if (st.size > BigInt(max))
             return { kind: "too-large" };
-        const buf = Buffer.alloc(st.size);
-        const { bytesRead } = await fh.read(buf, 0, st.size, 0);
+        const size = Number(st.size);
+        const buf = Buffer.alloc(size);
+        const { bytesRead } = await fh.read(buf, 0, size, 0);
         return { kind: "read", text: buf.subarray(0, bytesRead).toString("utf8") };
     }
     catch {
@@ -139,11 +184,10 @@ const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
  * an integrity hash whose `resolved` URL has a registry's tarball layout for
  * this name and version (`…/<name>/-/<file>-<version>.tgz`) counts. A git,
  * file or other source, a tarball elsewhere, or a missing `resolved` does
- * not. The registry's host is not compared: the scan does not read npm's
- * configuration, so a lockfile edited to imitate the layout on another host
- * is outside what this check can see.
+ * not. Given the registry `security refresh` recorded, the tarball must sit
+ * under that registry's address, so the layout imitated elsewhere does not count.
  */
-function fromRegistry(name, entry) {
+function fromRegistry(name, entry, registry, strict) {
     const { resolved, version, integrity } = entry;
     if (typeof resolved !== "string" || typeof version !== "string" || typeof integrity !== "string" || integrity === "")
         return false;
@@ -158,11 +202,24 @@ function fromRegistry(name, entry) {
     }
     if (url.protocol !== "https:" && url.protocol !== "http:")
         return false;
+    // An encoded separator or dot would let the decoded path leave the
+    // registry's own; a server may decode it where this check did not. Only
+    // checking needs that: npm audits by name and version, so the audited list
+    // keeps such an entry, and a package it flags is still reported.
+    if (strict && /%2f|%5c|%2e|\\/i.test(url.pathname))
+        return false;
+    if (registry !== undefined) {
+        const { pathname } = url;
+        if (url.origin !== registry.origin || pathname.length <= registry.pathLength)
+            return false;
+        if (sha256(pathname.slice(0, registry.pathLength)) !== registry.pathSha256)
+            return false;
+    }
     const base = name.slice(name.lastIndexOf("/") + 1);
     return new RegExp(`/${escapeRe(name)}/-/${escapeRe(base)}-${escapeRe(version)}\\.tgz$`).test(path);
 }
 /** The version of each top-level registry package a lockfile text holds, or null when it is not a lockfile. */
-export function lockVersions(text) {
+export function lockVersions(text, registry) {
     let raw;
     try {
         raw = JSON.parse(text);
@@ -179,7 +236,7 @@ export function lockVersions(text) {
         if (++n > MAX_ENTRIES)
             return null;
         const name = key.startsWith("node_modules/") ? key.slice("node_modules/".length) : "";
-        if (!isPackageName(name) || !isRecord(entry) || !fromRegistry(name, entry))
+        if (!isPackageName(name) || !isRecord(entry) || !fromRegistry(name, entry, registry, false))
             continue;
         if (typeof entry["name"] === "string" && entry["name"] !== name)
             continue;
@@ -194,7 +251,7 @@ export function lockVersions(text) {
  * and versions are kept as written, valid or not, so a caller can name what it
  * cannot check instead of dropping it. Null when it is not a lockfile.
  */
-export function lockInstalls(raw) {
+export function lockInstalls(raw, registry) {
     if (!isRecord(raw) || !isRecord(raw["packages"]))
         return null;
     const found = new Map();
@@ -209,13 +266,17 @@ export function lockInstalls(raw) {
             continue;
         const name = key.slice(at + "node_modules/".length);
         const version = typeof entry["version"] === "string" ? entry["version"] : "";
-        const cur = found.get(name) ?? { versions: new Set(), verifiable: true };
+        const cur = found.get(name) ?? { versions: new Set(), sources: new Set(), own: new Set(), verifiable: true };
         cur.versions.add(version);
-        if ((typeof entry["name"] === "string" && entry["name"] !== name) || !fromRegistry(name, entry))
+        cur.sources.add(typeof entry["resolved"] === "string" ? entry["resolved"] : "");
+        const aliased = typeof entry["name"] === "string" && entry["name"] !== name;
+        if (!aliased)
+            cur.own.add(version);
+        if (aliased || !fromRegistry(name, entry, registry, true))
             cur.verifiable = false;
         found.set(name, cur);
     }
-    return new Map([...found].map(([name, v]) => [name, { versions: [...v.versions].sort(), verifiable: v.verifiable }]));
+    return new Map([...found].map(([name, v]) => [name, { versions: [...v.versions].sort(), sources: [...v.sources].sort(), ownVersions: [...v.own].sort(), verifiable: v.verifiable }]));
 }
 /** A workspace file read through one handle within the cap, or null. */
 export async function readWorkspaceText(path) {
@@ -240,10 +301,10 @@ function toVersions(raw) {
     return Object.fromEntries(entries);
 }
 function toSnapshot(raw, now) {
-    if (!isRecord(raw) || raw["schema"] !== 1 || raw["source"] !== "npm audit")
+    if (!isRecord(raw) || raw["schema"] !== SCHEMA || raw["source"] !== "npm audit")
         return null;
-    const { npmVersion, generatedAt, advisories } = raw;
-    if (typeof npmVersion !== "string" || !SEMVER.test(npmVersion))
+    const { npmVersion, registry, generatedAt, advisories } = raw;
+    if (typeof npmVersion !== "string" || !SEMVER.test(npmVersion) || !isBinding(registry))
         return null;
     if (typeof generatedAt !== "string" || generatedAt.length > 64)
         return null;
@@ -262,7 +323,8 @@ function toSnapshot(raw, now) {
             return null;
         out[name] = { severity: severity, id };
     }
-    return { schema: 1, source: "npm audit", npmVersion, generatedAt, audited, advisories: out };
+    const { origin, pathLength, pathSha256 } = registry;
+    return { schema: 2, source: "npm audit", npmVersion, registry: { origin, pathLength, pathSha256 }, generatedAt, audited, advisories: out };
 }
 export async function readAdvisorySnapshot(ws, now = new Date()) {
     const r = await readWorkspaceFile(snapshotPath(ws));
@@ -271,8 +333,13 @@ export async function readAdvisorySnapshot(ws, now = new Date()) {
     if (r.kind !== "read")
         return { kind: "invalid" };
     try {
-        const snapshot = toSnapshot(JSON.parse(r.text), now);
-        return snapshot === null ? { kind: "invalid" } : { kind: "found", snapshot };
+        const raw = JSON.parse(r.text);
+        const snapshot = toSnapshot(raw, now);
+        if (snapshot !== null)
+            return { kind: "found", snapshot };
+        // Schema 1 holds no registry, so it cannot be used, but it is not a
+        // sign of tampering: it is named apart from an invalid list.
+        return isRecord(raw) && raw["schema"] === 1 ? { kind: "outdated" } : { kind: "invalid" };
     }
     catch {
         return { kind: "invalid" };

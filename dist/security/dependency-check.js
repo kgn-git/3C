@@ -5,18 +5,35 @@ import { resolveBrandSlugSync } from "../branding/runtime.js";
 import { join } from "node:path";
 import { ageInDays, isPackageName, lockInstalls, readAdvisorySnapshot, readWorkspaceFile, readWorkspaceText, STALE_AFTER_DAYS, toDepAdvisory, } from "./advisories.js";
 import { checkDeps } from "./deps.js";
+import { MAX_MANIFEST_BYTES } from "./files.js";
+import { isLockfile } from "./manifest-diff.js";
 const NAMES_SHOWN = 10;
 const SHOWN_CHARS = 60;
-// A name npm would not accept is quoted with every character outside printable
-// ASCII written as \uXXXX, so no control, C1 or bidirectional character reaches
-// the terminal; it is shortened before escaping so no escape is cut in half.
+// Every character outside printable ASCII is written as \uXXXX, or \u{…} above
+// U+FFFF, so no control, C1 or bidirectional character reaches the terminal.
+const printable = (s) => s.replace(/[^\x20-\x7e]|["\\]/gu, (c) => {
+    if (c === '"' || c === "\\")
+        return `\\${c}`;
+    const cp = c.codePointAt(0);
+    return cp > 0xffff ? `\\u{${cp.toString(16)}}` : `\\u${cp.toString(16).padStart(4, "0")}`;
+});
+// A name npm would not accept is quoted, and shortened before escaping so no
+// escape is cut in half.
 const shown = (n) => {
     if (isPackageName(n))
         return n;
     const head = [...n].slice(0, SHOWN_CHARS).join("");
-    const escaped = head.replace(/[^\x20-\x7e]|["\\]/gu, (c) => (c === '"' || c === "\\" ? `\\${c}` : [...c].map((u) => `\\u${u.codePointAt(0).toString(16).padStart(4, "0")}`).join("")));
-    return `"${escaped}${[...n].length > SHOWN_CHARS ? "…" : ""}"`;
+    return `"${printable(head)}${[...n].length > SHOWN_CHARS ? "…" : ""}"`;
 };
+const MIB = `${MAX_MANIFEST_BYTES / 1024 / 1024} MiB`;
+/** What the gate says about manifests in a change that it cannot read, each kind in its own terms. */
+export function unreadableManifests(paths) {
+    const rules = [
+        ...(paths.some(isLockfile) ? [`A lockfile must be version 2 or 3 (npm 7 or later), at most ${MIB}, and not a link.`] : []),
+        ...(paths.some((p) => !isLockfile(p)) ? [`A package.json must be a JSON object, at most ${MIB}, and not a link.`] : []),
+    ];
+    return `${paths.map(printable).join(", ")} in this change cannot be read, so the dependencies it adds cannot be checked. ${rules.join(" ")} Fix the file, then run the scan again.`;
+}
 const list = (names) => {
     const s = names.map(shown);
     return s.length <= NAMES_SHOWN ? s.join(", ") : `${s.slice(0, NAMES_SHOWN).join(", ")} and ${s.length - NAMES_SHOWN} more`;
@@ -26,13 +43,13 @@ const list = (names) => {
  * cannot be read. npm-shrinkwrap.json wins whenever it exists, so an unreadable
  * one is not replaced by package-lock.json, which npm would not use.
  */
-async function currentInstalls(ws) {
+async function currentInstalls(ws, registry) {
     const shrinkwrap = await readWorkspaceFile(join(ws, "npm-shrinkwrap.json"));
     const text = shrinkwrap.kind === "absent" ? await readWorkspaceText(join(ws, "package-lock.json")) : shrinkwrap.kind === "read" ? shrinkwrap.text : null;
     if (text === null)
         return null;
     try {
-        return lockInstalls(JSON.parse(text));
+        return lockInstalls(JSON.parse(text), registry);
     }
     catch {
         return null;
@@ -62,14 +79,29 @@ export async function checkDependencies(workspaceDir, change, injected, now = ne
     if (read.kind === "absent") {
         return { kind: "checked", findings: [], note: `dependencies: not checked, no saved advisory list (run ${refresh}; this blocks nothing)`, advice: [] };
     }
+    if (read.kind === "outdated") {
+        // Like an unusable list, it fails closed only when it has something to speak for.
+        if (added.length > 0)
+            return { kind: "outdated" };
+        return { kind: "checked", findings: [], note: `dependencies: none added (the saved advisory list was made by an earlier version; run ${refresh})`, advice: [] };
+    }
     const snap = read.snapshot;
-    const lock = await currentInstalls(workspaceDir);
+    const lock = await currentInstalls(workspaceDir, snap.registry);
     const covered = added.filter((n) => {
         const i = lock?.get(n);
         return (isPackageName(n) && !change.unverifiable.includes(n) && i !== undefined && i.verifiable &&
             i.versions.length === 1 && Object.hasOwn(snap.audited, n) && i.versions[0] === snap.audited[n]);
     });
-    const uncovered = added.filter((n) => !covered.includes(n));
+    // A package the list flags, with any copy of itself at the version npm
+    // audited, is reported whatever that copy's source: another source must not
+    // turn a known advisory into a pass. An alias is another package.
+    const flagged = added.filter((n) => {
+        const i = lock?.get(n);
+        return (!covered.includes(n) && isPackageName(n) && i !== undefined &&
+            Object.hasOwn(snap.advisories, n) && Object.hasOwn(snap.audited, n) && i.ownVersions.includes(snap.audited[n]));
+    });
+    const reported = [...covered, ...flagged];
+    const uncovered = added.filter((n) => !reported.includes(n));
     const age = ageInDays(snap, now);
     const taken = new Date(snap.generatedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
     const advice = [];
@@ -77,14 +109,14 @@ export async function checkDependencies(workspaceDir, change, injected, now = ne
         advice.push(`Not checked: ${list(uncovered)}. The lockfile npm installs from cannot be read, so their installed versions are unknown. Run \`npm install\`, then ${refresh}. This blocks nothing.`);
     }
     else if (uncovered.length > 0) {
-        advice.push(`Not in the saved advisory list, so not checked: ${list(uncovered)}. Their locked versions are not the ones npm audited. Run ${refresh} to check them. This blocks nothing.`);
+        advice.push(`Not in the saved advisory list, so not checked: ${list(uncovered)}. Their locked version or source is not the one npm audited. Run ${refresh} to check them. This blocks nothing.`);
     }
     if (age > STALE_AFTER_DAYS)
         advice.push(`The saved advisory list is ${age} days old. Run ${refresh} to update it. This blocks nothing.`);
     return {
         kind: "checked",
-        findings: checkDeps(covered, toDepAdvisory(snap)),
-        note: `dependencies: ${added.length} added, ${covered.length} checked against the npm audit list of ${taken} (${age} ${age === 1 ? "day" : "days"} old)`,
+        findings: checkDeps(reported, toDepAdvisory(snap)),
+        note: `dependencies: ${added.length} added, ${reported.length} checked against the npm audit list of ${taken} (${age} ${age === 1 ? "day" : "days"} old)`,
         advice,
     };
 }

@@ -24,6 +24,7 @@ export interface SecurityFileSet {
     readonly manifests: readonly ManifestPair[];
 }
 export declare const MAX_MANIFESTS = 50;
+export declare const MAX_MANIFEST_BYTES: number;
 /**
  * CWE-400. The untracked half is unbounded — a never-committed workspace lists
  * its whole tree — and every path becomes a file read. Both caps fail closed

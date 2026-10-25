@@ -8,7 +8,7 @@ cwe_version: "4.15"
 cwe_category: "CWE-352"
 ---
 
-<!-- Generated from ${BRAND_NAME} CWE Top 25 pack — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} CWE Top 25 pack — see ${FRAMEWORK_DOMAIN}. -->
 
 CWE-352 — Cross-site request forgery.
 

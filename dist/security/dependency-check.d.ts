@@ -3,11 +3,15 @@ import type { Finding } from "./findings.js";
 export type DependencyCheck = {
     kind: "unreadable";
 } | {
+    kind: "outdated";
+} | {
     kind: "checked";
     findings: Finding[];
     note: string;
     advice: string[];
 };
+/** What the gate says about manifests in a change that it cannot read, each kind in its own terms. */
+export declare function unreadableManifests(paths: readonly string[]): string;
 /**
  * An added or changed dependency is checked only when every copy the lockfile
  * installs is the one registry version npm audited, under its own name. npm's

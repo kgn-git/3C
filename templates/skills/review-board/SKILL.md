@@ -1,37 +1,37 @@
 ---
-name: ${BRAND_SLUG}-review-board
-description: Convene the ${BRAND_NAME} specialist agents (architecture, security, UX, code, QA) on the current diff in parallel and synthesise one reconciled, cross-checked verdict. Read-only and local-only.
+name: ${FRAMEWORK_SLUG}-review-board
+description: Convene the ${FRAMEWORK_NAME} specialist agents (architecture, security, UX, code, QA) on the current diff in parallel and synthesise one reconciled, cross-checked verdict. Read-only and local-only.
 version: 1.0.0
 compatibility: [claude-code]
 allowed-tools: [Bash, Read]
 disable-model-invocation: false
 ---
 
-# /${BRAND_SLUG}-review-board — multi-perspective cross-check
+# /${FRAMEWORK_SLUG}-review-board — multi-perspective cross-check
 
-Convene the ${BRAND_NAME} specialist subagents on a change, in **parallel**, and reconcile their findings
+Convene the ${FRAMEWORK_NAME} specialist subagents on a change, in **parallel**, and reconcile their findings
 into one verdict. This skill is **read-only**: it MUST NOT modify any file, open a PR, push, or call any
 network primitive. It runs entirely locally.
 
-The user invokes it as `/${BRAND_SLUG}-review-board [--base=<ref>] [--agents=<list>]`. Parse `--base` (default
+The user invokes it as `/${FRAMEWORK_SLUG}-review-board [--base=<ref>] [--agents=<list>]`. Parse `--base` (default
 `main`, 3-dot branch-relative) and an optional comma-separated `--agents` override from the arguments.
 
 ## 1. Resolve the diff
 
-Determine the changed files and diff against `--base` (reuse the same logic as `/${BRAND_SLUG}-review`):
+Determine the changed files and diff against `--base` (reuse the same logic as `/${FRAMEWORK_SLUG}-review`):
 `git diff --name-only <base>...HEAD` for the file list, and the unified diff for content.
 
 ## 2. Select the board
 
 Default members (each a shipped subagent, dispatched by `name`):
 
-- `${BRAND_SLUG}-code-reviewer` — quality / correctness
-- `${BRAND_SLUG}-architect` — dependency-direction / boundaries
-- `${BRAND_SLUG}-security-reviewer` — OWASP / CWE
-- `${BRAND_SLUG}-qa-reviewer` — coverage / edge cases / test quality
+- `${FRAMEWORK_SLUG}-code-reviewer` — quality / correctness
+- `${FRAMEWORK_SLUG}-architect` — dependency-direction / boundaries
+- `${FRAMEWORK_SLUG}-security-reviewer` — OWASP / CWE
+- `${FRAMEWORK_SLUG}-qa-reviewer` — coverage / edge cases / test quality
 
-Auto-add `${BRAND_SLUG}-ux-expert` when the diff touches UI files (`*.tsx`, `*.jsx`, `*.vue`, `*.svelte`,
-`*.astro`, `*.css`, `*.html`, or anything under `components/` / `pages/`). Add `${BRAND_SLUG}-product-owner`
+Auto-add `${FRAMEWORK_SLUG}-ux-expert` when the diff touches UI files (`*.tsx`, `*.jsx`, `*.vue`, `*.svelte`,
+`*.astro`, `*.css`, `*.html`, or anything under `components/` / `pages/`). Add `${FRAMEWORK_SLUG}-product-owner`
 when an issue/AC context is supplied. An explicit `--agents` list overrides the defaults.
 
 ## 3. Dispatch in parallel
@@ -75,7 +75,7 @@ the CLI from your framework's distribution and re-run, then verify with
 
 Print the reconciler's board report verbatim, prefixed with the board membership and `--base`. **Redact
 secrets** in anything you echo from the diff or findings — never emit raw `AKIA…` keys, GitHub PATs, database
-URIs with credentials, or production hosts (mirror `/${BRAND_SLUG}-review`'s redaction). The skill does not
+URIs with credentials, or production hosts (mirror `/${FRAMEWORK_SLUG}-review`'s redaction). The skill does not
 write files, post comments, push, or call the network; if the user wants the report on a PR, they paste it.
 
 ## Notes

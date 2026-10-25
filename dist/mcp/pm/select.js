@@ -1,5 +1,5 @@
 // Resolve which PM tool create-issue routes to: the `--tool` flag
-// overrides `.${BRAND_SLUG}/skills/create-issue.yaml`. Returns null when the
+// overrides `.${FRAMEWORK_SLUG}/skills/create-issue.yaml`. Returns null when the
 // effective tool is github/absent (the unchanged gh path).
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";

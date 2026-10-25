@@ -8,7 +8,7 @@ pattern: "layered-mvc"
 concern: "controller-rules"
 ---
 
-<!-- Generated from ${BRAND_NAME} Architecture Patterns pack (layered-mvc) — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} Architecture Patterns pack (layered-mvc) — see ${FRAMEWORK_DOMAIN}. -->
 
 Layered/MVC controller responsibility rules.
 

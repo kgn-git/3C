@@ -5,7 +5,7 @@ globs: ["**/*.{ts,tsx,js,jsx,mjs,cjs,py,go,rb,java,kt,cs,php,rs,swift,c,cpp,h}"]
 load: disk
 ---
 
-<!-- Generated from ${BRAND_NAME} quality pack — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} quality pack — see ${FRAMEWORK_DOMAIN}. -->
 
 File size and comments.
 

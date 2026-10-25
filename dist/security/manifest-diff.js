@@ -38,7 +38,7 @@ function locked(lock) {
     const values = new Map();
     const unverifiable = new Set();
     for (const [name, i] of installs) {
-        values.set(name, i.versions.join(","));
+        values.set(name, `${i.versions.join(",")} ${i.sources.join(",")}`);
         if (!i.verifiable)
             unverifiable.add(name);
     }

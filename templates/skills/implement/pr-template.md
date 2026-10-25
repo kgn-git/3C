@@ -1,4 +1,4 @@
-<!-- Generated from ${BRAND_NAME} PR template — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} PR template — see ${FRAMEWORK_DOMAIN}. -->
 
 ## Summary
 

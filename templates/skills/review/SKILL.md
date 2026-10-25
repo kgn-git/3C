@@ -1,5 +1,5 @@
 ---
-name: ${BRAND_SLUG}-review
+name: ${FRAMEWORK_SLUG}-review
 description: Apply a team-specific static review checklist to the current branch's diff against main. Read-only, local-only — produces structured findings with file/line, severity, and suggested-fix text. Never modifies files; never sends data externally.
 version: 1.0.0
 compatibility: [claude-code]
@@ -7,13 +7,13 @@ allowed-tools: [Bash, Read]
 disable-model-invocation: false
 ---
 
-# /${BRAND_SLUG}-review — Pre-PR review against ${BRAND_NAME} standards
+# /${FRAMEWORK_SLUG}-review — Pre-PR review against ${FRAMEWORK_NAME} standards
 
 When the user asks for a code review (or invokes this skill directly), follow this exact workflow. This skill is **read-only**: it MUST NOT modify any file, MUST NOT invoke `gh pr comment` / `gh api` / `git push` / any network primitive, and MUST NOT echo real-looking credentials.
 
 ## 1. Resolve the diff
 
-The user invokes this skill as `/${BRAND_SLUG}-review [--base=<ref>]`. Parse `--base` from the invocation arguments if present; otherwise default to `main` (3-dot, branch-relative).
+The user invokes this skill as `/${FRAMEWORK_SLUG}-review [--base=<ref>]`. Parse `--base` from the invocation arguments if present; otherwise default to `main` (3-dot, branch-relative).
 
 Run:
 
@@ -37,7 +37,7 @@ If a file was deleted, you have only the pre-image — limit findings to facts v
 
 ## 3. Load the team's checklist + rules
 
-- Use the **Read tool** to load `.claude/skills/${BRAND_SLUG}-review/checklist.md` now. (It is NOT pre-loaded into context — you must Read it at runtime.)
+- Use the **Read tool** to load `.claude/skills/${FRAMEWORK_SLUG}-review/checklist.md` now. (It is NOT pre-loaded into context — you must Read it at runtime.)
 - Rules from `.claude/rules/**/*.md` are already in your session context: Claude Code loads `.claude/rules/` on its own, and `${FRAMEWORK_SLUG} rules apply` injects the `load: inject` ones into CLAUDE.md. You do NOT need to re-load them — consult them from memory.
 - If the team has installed the OWASP pack (`.claude/rules/security/owasp-top-10/*.md`) or pattern packs (`.claude/rules/patterns/<name>/*.md`), they are in your context the same way. Cite the source rule file path when a finding maps to one (AC8).
 
@@ -76,7 +76,7 @@ Structure as Markdown, grouped by file. Within each file, sort findings by sever
 Resolve `<branch>` via `git rev-parse --abbrev-ref HEAD` and `<base>` from Step 1 before rendering. Substitute them inline into the header.
 
 ```markdown
-# ${BRAND_NAME} review — <branch> vs <base>
+# ${FRAMEWORK_NAME} review — <branch> vs <base>
 
 ## src/auth/login.ts
 
@@ -116,11 +116,11 @@ The review ends with the rendered Markdown. The skill does NOT modify any file, 
 - `--post` to GitHub / GitLab as PR comments — not currently in scope. (Multi-PM adapter registry — [#70](https://github.com/kgn-git/praise/issues/70) — shipped at L2 for issue creation, not for review-comment posting; the seam would be a separate ext-ticket if/when needed.)
 - `--ignore <finding-id>` persistent suppression — not currently in scope; bypass per-invocation if you need to ship past a finding.
 - Performance / N+1 / runtime analysis in the default checklist — not currently in scope. The L2 Security Scan Gate ([#18](https://github.com/kgn-git/praise/issues/18)) ships SAST + dependency-vulnerability scanning, but performance / N+1 analysis remains outside this skill's and that gate's scope.
-- Trend analysis across reviews — not in scope. The standalone audit verb that once covered this was retired in [#394](https://github.com/kgn-git/praise/issues/394); boundary violations recorded by `${BRAND_SLUG} arch-check check` render on the local dashboard (`${BRAND_SLUG} dashboard`).
+- Trend analysis across reviews — not in scope. The standalone audit verb that once covered this was retired in [#394](https://github.com/kgn-git/praise/issues/394); boundary violations recorded by `${FRAMEWORK_SLUG} arch-check check` render on the local dashboard (`${FRAMEWORK_SLUG} dashboard`).
 
 ## Subagent dispatch (since #51)
 
-When this skill dispatches the `${BRAND_SLUG}-code-reviewer` subagent for a long-context diff scan, the invocation transcript is written by Claude Code to:
+When this skill dispatches the `${FRAMEWORK_SLUG}-code-reviewer` subagent for a long-context diff scan, the invocation transcript is written by Claude Code to:
 
 ```
 ~/.claude/projects/<project>/<sessionId>/subagents/agent-<id>.jsonl

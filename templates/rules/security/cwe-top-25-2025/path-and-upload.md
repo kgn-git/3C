@@ -8,7 +8,7 @@ cwe_version: "4.15"
 cwe_category: "CWE-22,CWE-434"
 ---
 
-<!-- Generated from ${BRAND_NAME} CWE Top 25 pack — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} CWE Top 25 pack — see ${FRAMEWORK_DOMAIN}. -->
 
 CWE-22 / CWE-434 — Path traversal & unrestricted upload.
 

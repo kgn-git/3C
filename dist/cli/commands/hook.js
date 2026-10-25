@@ -22,8 +22,8 @@ export async function hookRunCommand(rest) {
         stderr: process.stderr,
         user: userInfo().username,
         // Non-interactive: stdin is owned by the Claude Code event payload.
-        // The prompter is invoked when .${BRAND_SLUG}/hooks.yaml has changed; we
-        // refuse and direct the user to `${BRAND_SLUG} hook confirm` for the
+        // The prompter is invoked when .${FRAMEWORK_SLUG}/hooks.yaml has changed; we
+        // refuse and direct the user to `${FRAMEWORK_SLUG} hook confirm` for the
         // interactive review.
         prompter: async () => {
             process.stderr.write(`\n${slug}: .${slug}/hooks.yaml has changed since your last \`${slug} hook confirm\`.\n` +

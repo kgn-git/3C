@@ -82,7 +82,7 @@ export async function initCommand(args) {
     // No namespace question: there is no custom branding, so every install is
     // `/3c-*` and there is nothing to ask.
     const brand = resolveBrand(await loadFramework(PACKAGE_ROOT));
-    console.log(`${brand.BRAND_NAME} init — generating CLAUDE.md (framework ${brand.FRAMEWORK_NAME} v${brand.FRAMEWORK_VERSION})`);
+    console.log(`${brand.FRAMEWORK_NAME} init — generating CLAUDE.md (v${brand.FRAMEWORK_VERSION})`);
     // With no terminal there is nobody to answer — a container, a CI job, a
     // script onboarding many repos — and the wizard would die at its first
     // prompt. A missing terminal means the defaults, SAID OUT LOUD (stderr, so a

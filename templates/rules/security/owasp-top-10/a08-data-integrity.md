@@ -8,7 +8,7 @@ owasp_version: "2025"
 owasp_category: "A08:2025"
 ---
 
-<!-- Generated from ${BRAND_NAME} OWASP Top 10:2025 pack — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} OWASP Top 10:2025 pack — see ${FRAMEWORK_DOMAIN}. -->
 
 A08:2025 Data Integrity Failures — see https://owasp.org/Top10/.
 

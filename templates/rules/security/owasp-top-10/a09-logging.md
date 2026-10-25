@@ -8,7 +8,7 @@ owasp_version: "2025"
 owasp_category: "A09:2025"
 ---
 
-<!-- Generated from ${BRAND_NAME} OWASP Top 10:2025 pack — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} OWASP Top 10:2025 pack — see ${FRAMEWORK_DOMAIN}. -->
 
 A09:2025 Logging and Monitoring Failures — see https://owasp.org/Top10/.
 

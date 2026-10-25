@@ -29,9 +29,9 @@ export async function installSkills(opts) {
             // Installed skills are namespaced by a hyphen brand prefix, since
             // copy-installed project skills cannot carry a colon namespace. The source
             // dir `create-issue` installs to `.claude/skills/<slug>-create-issue/`,
-            // matching the `name: ${BRAND_SLUG}-<skill>` frontmatter so the slash
+            // matching the `name: ${FRAMEWORK_SLUG}-<skill>` frontmatter so the slash
             // command resolves as `/<slug>-create-issue`.
-            const prefixedName = `${opts.brand.BRAND_SLUG}-${skillName}`;
+            const prefixedName = `${opts.brand.FRAMEWORK_SLUG}-${skillName}`;
             const skillDest = join(opts.destDir, ".claude", "skills", prefixedName);
             await copyTreeWithSubstitution(skillSource, skillDest, opts.brand, opts.onExisting, installed, skipped, opts.backup);
         }

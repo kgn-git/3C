@@ -5,12 +5,12 @@ globs: ["**/*.{tsx,jsx,vue,svelte,astro,html}", "**/{locales,locale,i18n,message
 load: disk
 ---
 
-<!-- Generated from ${BRAND_NAME} ux pack — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} ux pack — see ${FRAMEWORK_DOMAIN}. -->
 
 Tone and manner for user-facing copy.
 
 This pack ships with blanks. Replace every double-braced token below with this project's value;
-`${BRAND_SLUG} doctor` warns until none is left.
+`${FRAMEWORK_SLUG} doctor` warns until none is left.
 
 | Blank | What to put there |
 | --- | --- |

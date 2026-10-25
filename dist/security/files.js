@@ -25,7 +25,7 @@ export class SecurityBaseError extends Error {
 }
 const MANIFEST = /(?:^|\/)(?:package|package-lock|npm-shrinkwrap)\.json$/;
 export const MAX_MANIFESTS = 50;
-const MAX_MANIFEST_BYTES = 16 * 1024 * 1024;
+export const MAX_MANIFEST_BYTES = 16 * 1024 * 1024;
 /**
  * Refs tried, in order, when no `--base` is given. An adopter whose default
  * branch is none of these gets an actionable refusal, not a zero-file pass.

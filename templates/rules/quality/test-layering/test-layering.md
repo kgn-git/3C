@@ -5,7 +5,7 @@ globs: ["**/*.{test,spec}.*", "**/{test,tests,__tests__,spec}/**"]
 load: disk
 ---
 
-<!-- Generated from ${BRAND_NAME} quality pack — see ${FRAMEWORK_DOMAIN}. -->
+<!-- Generated from ${FRAMEWORK_NAME} quality pack — see ${FRAMEWORK_DOMAIN}. -->
 
 Test layering: where a rule is pinned.
 

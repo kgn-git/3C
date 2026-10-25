@@ -1,9 +1,9 @@
 // AC8 (security): the SeA-mandatory mitigation for the hooks.yaml-trust gap.
-// When .${BRAND_SLUG}/hooks.yaml content changes since the developer's last session,
+// When .${FRAMEWORK_SLUG}/hooks.yaml content changes since the developer's last session,
 // this prompts the developer with a unified diff and requires explicit `Y`
 // confirmation before any hook from the new chain runs. Confirmations and
 // rejections are appended to the JSONL audit log.
-// AD-16: ${BRAND_SLUG} is resolved at runtime via resolveBrandSlugSync().
+// AD-16: ${FRAMEWORK_SLUG} is resolved at runtime via resolveBrandSlugSync().
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile, appendFile } from "node:fs/promises";
 import { join } from "node:path";
