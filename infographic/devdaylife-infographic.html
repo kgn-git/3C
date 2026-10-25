@@ -3,9 +3,11 @@
 <head>
 <meta charset="utf-8">
 <title>A day in the life of a developer using 3C — 10-page Infographic</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  /* Self-hosted beside the page: no third-party request carries a reader's address. */
+  @font-face{font-family:"Inter";src:url("fonts/inter.woff2") format("woff2");font-weight:300 900;font-display:swap}
+  @font-face{font-family:"JetBrains Mono";src:url("fonts/jetbrainsmono.woff2") format("woff2");font-weight:400 700;font-display:swap}
+</style>
 <style>
   :root {
     --indigo-50: #EEF2FF;
@@ -426,11 +428,11 @@
       </div>
       <div class="hl">
         <div class="hl-num">Quality</div>
-        <div class="hl-text">Post-Edit Validation (~300ms) &rarr; Pre-Commit Hook (&lt;10s) &rarr; Security Scan Gate (&lt;60s). Every gate fired, every event logged.</div>
+        <div class="hl-text">Pre-Commit Hook (&lt;10s) &rarr; Security Scan Gate (&lt;60s), with an advisory post-edit check (~300ms) that blocks nothing. Every gate fired, every event logged.</div>
       </div>
     </div>
 
-    <p class="cover-sub" style="font-size: 11pt; margin-top: 6mm; line-height: 1.5;"><strong>Specialists on call:</strong> an eight-agent crew &mdash; <code>architect</code>, <code>code-reviewer</code>, <code>journey-architect</code>, <code>product-owner</code>, <code>qa-reviewer</code>, <code>security-reviewer</code>, <code>test-author</code> and <code>ux-expert</code> &mdash; dispatched when one perspective isn't enough; <code>/3c-review-board</code> runs them in parallel and reconciles one verdict. <strong>The why travels with the rule:</strong> every team rule is plain markdown in <code>.claude/rules/</code>, versioned with the repo &mdash; the OWASP pack cites its source on the rule itself, and the team's own rules accumulate their <em>why</em> through the PRs that change them. <strong>Honesty discipline:</strong> one <code>git revert</code> removes 3C entirely; no source code leaves the workstation; the framework under-claims by design.</p>
+    <p class="cover-sub" style="font-size: 11pt; margin-top: 6mm; line-height: 1.5;"><strong>Specialists on call:</strong> an eight-agent crew &mdash; <code>architect</code>, <code>code-reviewer</code>, <code>journey-architect</code>, <code>product-owner</code>, <code>qa-reviewer</code>, <code>security-reviewer</code>, <code>test-author</code> and <code>ux-expert</code> &mdash; dispatched when one perspective isn't enough; <code>/3c-review-board</code> runs four of them by default &mdash; plus <code>ux-expert</code> on UI diffs and <code>product-owner</code> when acceptance criteria are supplied &mdash; in parallel, and reconciles one verdict. <strong>The why travels with the rule:</strong> every team rule is plain markdown in <code>.claude/rules/</code>, versioned with the repo &mdash; the OWASP pack cites its source on the rule itself, and the team's own rules accumulate their <em>why</em> through the PRs that change them. <strong>Honesty discipline:</strong> one <code>git revert</code> removes 3C entirely; no source code leaves the workstation; the framework under-claims by design.</p>
 
     <div class="advisory-callout">
       <span class="advisory-callout-label">Post-edit advisory &mdash; what Maya sees when a write crosses a layer</span>
@@ -582,7 +584,7 @@ Testing: unit on pagination + integration on empty state</div>
   <p class="diagram-subtitle">Maya picks issue #1284 and runs <code>/3c-implement 1284</code>. From branch creation through merge, every keystroke that changes code, tests, or the PR description is typed by Claude Code or by a <code>/3c-*</code> skill. Maya prompts, judges, and approves.</p>
 
   <div class="diagram-wrap xl">
-    <img src="diagrams/j-implement.svg" alt="Phase 4 implement loop: state machine from issue selection through /3c-implement, branch, /3c-test writes a failing test, Claude Code implements, Post-Edit Validator, Pre-Commit, Security Scan Gate, optional security-reviewer, code-reviewer findings, merge" class="diagram-svg">
+    <img src="diagrams/j-implement.svg" alt="Phase 4 implement loop: issue selected, /3c-implement plans and creates the branch, test-author drafts the failing test and /3c-test writes and runs it, Claude Code implements, the post-edit check advises and blocks nothing, the pre-commit gate (under 10 s) and the security scan (under 60 s) either pass or send the change back, code-reviewer findings, merge" class="diagram-svg">
   </div>
 
   <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">Claude Code reaches straight into the infra client from the orders panel. The post-edit hook checks that write against the layers her team declared in <code>.3c/architecture.yaml</code> and names the direction it crossed; the <code>arch-check</code> gate records the same finding into the run history her dashboard reads:</p>
@@ -750,8 +752,8 @@ Expected: empty-state copy. Actual: orders panel renders [object Object].</div>
         <strong>Pinnable checklist</strong> &middot; pin next to your laptop<br><br>
         <strong>Slash commands by phase:</strong> <code>/3c-create-issue</code> &middot; <code>/3c-project-manager</code> &middot; <code>/3c-implement</code> &middot; <code>/3c-test</code> &middot; <code>/3c-review</code> before the PR<br><br>
         <strong>Terminal commands</strong> (run in your shell, not as slash commands): <code>npx 3c bug --summary "…" --repro "…" --expected "…" --actual "…"</code> &middot; <code>npx 3c bypass --reason="..."</code> &middot; <code>npx 3c dashboard</code> (after <code>npm install</code> + <code>npx 3c setup</code>)<br><br>
-        <strong>Subagents &mdash; when to dispatch:</strong> <code>architect</code> for design calls &middot; <code>security-reviewer</code> for auth/crypto/input-handling &middot; <code>code-reviewer</code> pre-PR &middot; <code>test-author</code> to write the failing test <code>/3c-test</code> specifies<br><br>
-        <strong>Gate chain (firing order):</strong> Post-Edit Validation (~300ms) &rarr; Pre-Commit (&lt;10s) &rarr; Security Scan (&lt;60s)<br><br>
+        <strong>Subagents &mdash; when to dispatch:</strong> <code>architect</code> for design calls &middot; <code>security-reviewer</code> for auth/crypto/input-handling &middot; <code>code-reviewer</code> pre-PR &middot; <code>test-author</code> to draft the failing test that <code>/3c-test</code> writes and runs<br><br>
+        <strong>Gate chain (firing order):</strong> Pre-Commit (&lt;10s) &rarr; Security Scan (&lt;60s); the post-edit check (~300ms) is advisory and blocks nothing<br><br>
         <strong>Bypass syntax (terminal):</strong> <code>npx 3c bypass --reason="&lt;one-line&gt;"</code> &mdash; logged, never silent<br><br>
         <strong>File paths to remember:</strong> <code>.claude/CLAUDE.md</code> (&le;150 instructions) &middot; <code>.claude/rules/&lt;rule&gt;.md</code> &middot; <code>.3c/architecture.yaml</code> &middot; <code>.3c/telemetry/hooks/*.jsonl</code> &middot; <code>.3c/dashboard.html</code><br><br>
         <strong>The one rule that summarises the rest: the assistant types, you instruct.</strong>

@@ -820,8 +820,8 @@ that did the typing.</p>
   agents <code>architect</code>, <code>code-reviewer</code>, <code>security-reviewer</code>,
   <code>test-author</code>, <code>product-owner</code>, <code>ux-expert</code>, <code>qa-reviewer</code>,
   <code>journey-architect</code>; gate
-  chain Post-Edit Validation (&lt; 300 ms) → Pre-Commit (&lt; 10 s) →
-  Security Scan Gate (&lt; 60 s).</li>
+  chain Pre-Commit (&lt; 10 s) → Security Scan Gate (&lt; 60 s), with the
+  post-edit check (&lt; 300 ms) advising at write time and blocking nothing.</li>
 <li><strong>Boundary enforcement</strong> — the post-edit hook checks every file the
   assistant writes for dependency-direction violations against the team's
   declared <code>.3c/architecture.yaml</code> and advises at write time;
@@ -898,7 +898,8 @@ do not invent a new design language. The writer should re-use:</p>
   <code>page-break-after: always</code>; cover and closing get <code>padding: 18mm 16mm</code>.</li>
 <li><strong>Fonts</strong>: <code>Inter</code> (300/400/500/600/700/800/900) for everything,
   <code>JetBrains Mono</code> for tags, badges, page numbers, and prompt/event
-  snippets. Both from <code>fonts.googleapis.com</code>.</li>
+  snippets. Both self-hosted in <code>fonts/</code> beside the page, so no third
+  party sees a reader.</li>
 <li><strong>Colour tokens</strong> — re-use the existing CSS custom properties exactly:
   <code>--indigo-{50,100,500,600,700,900}</code>, <code>--slate-{50,100,200,500,700,900}</code>,
   <code>--amber-{100,600}</code>, <code>--emerald-{50,500,700}</code>. Indigo for orchestration
@@ -933,8 +934,8 @@ file per diagram into <code>docs/infographic/diagrams/</code> following the
 existing naming pattern (<code>f-intake.mmd</code>, <code>g-enrichment.mmd</code>,
 <code>i-sprint-assembly.mmd</code>, <code>j-implement.mmd</code>,
 <code>k-sprint-throughput.mmd</code>, <code>l-uat.mmd</code>, <code>m-dashboard.mmd</code>), pre-render
-each to SVG with the same toolchain (<code>puppeteer.config.json</code> is already
-in the folder), and inline the SVGs into the HTML at the
+each to SVG with <code>npm run render:diagrams</code> (set <code>PUPPETEER_EXECUTABLE_PATH</code>
+to reuse a Chromium already installed), and inline the SVGs into the HTML at the
 <code>&lt;!--SVG_F--&gt;</code> style placeholders.</p>
 <p>Every mermaid source must begin with the same <code>%%{init: ...}%%</code> theme
 block the existing five diagrams use, so the typography and palette
@@ -971,15 +972,14 @@ never had; it reviews a branch diff.)</p>
 <p>The most detailed diagram — give it the <code>.xl</code> diagram-wrap class.
 States, in order: <code>Issue selected</code> → <code>/3c-implement plan</code> →
 <code>branch created</code> → <code>/3c-test writes a failing test</code> →
-<code>Claude Code implements</code> → <code>Post-Edit Validator (~300ms)</code> →
-<em>loop back to Claude Code on failure, with the <code>layer-boundary</code>
-advisory naming the two layers</em> → <code>git stage + commit</code> →
+<code>Claude Code implements</code> → <code>Post-Edit check (~300ms, advisory)</code> →
+<em>its <code>layer-boundary</code> advisory names the two layers and blocks nothing;
+Claude Code revises when Maya asks</em> → <code>git stage + commit</code> →
 <code>Pre-Commit Hook (&lt;10s)</code> (lint / types / unit / secret) → <em>loop back
 on failure with the failing check named</em> → <code>Security Scan Gate
 (&lt;60s)</code> → <code>/3c-implement PR description</code> →
-<code>/3c-review-board</code> → <em>eight-agent panel (architect, code-reviewer,
-security-reviewer, test-author, product-owner, ux-expert,
-qa-reviewer, journey-architect)</em> → <code>reconciled verdict (blocking / advisory / clean)</code> →
+<code>/3c-review-board</code> → <em>the default board of four (code-reviewer, architect, security-reviewer, qa-reviewer), plus ux-expert on UI diffs and product-owner when acceptance criteria are supplied; <code>--agents</code> overrides it; the security scan runs in the main
+session and its output goes to the security reviewer</em> → <code>reconciled verdict (blocking / advisory / clean)</code> →
 <em>Maya prompts Claude Code to apply the applicable findings</em> →
 <code>merge to main</code>. Show the verdict as <strong>advisory</strong> — Maya still
 decides. Every edge that changes code is labelled with <strong>who typed
@@ -1107,10 +1107,11 @@ Required content, in this order:</p>
   (pre-PR findings), <code>test-author</code> (drafts the failing test that <code>/3c-test</code> writes and runs),
   <code>product-owner</code> (scope/priority), <code>ux-expert</code> (screen-level UX),
   <code>qa-reviewer</code> (AC traceability), <code>journey-architect</code> (journey
-  reachability) — or convene all eight at once with
+  reachability) — or convene the default board of four (plus ux-expert
+  on UI diffs and product-owner with acceptance criteria) with
   <code>/3c-review-board</code>, which reconciles their findings into one verdict.</li>
-<li>Gate chain in firing order: Post-Edit Validation (&lt; 300 ms) →
-  Pre-Commit (&lt; 10 s) → Security Scan (&lt; 60 s).</li>
+<li>Gate chain in firing order: Pre-Commit (&lt; 10 s) → Security Scan
+  (&lt; 60 s). The post-edit check (&lt; 300 ms) is advisory and blocks nothing.</li>
 <li>Bypass syntax: <code>3c bypass --reason="&lt;one-line&gt;"</code> — logged, never
   silent.</li>
 <li>File paths to remember: <code>CLAUDE.md</code> (root, ≤ 150 instructions),

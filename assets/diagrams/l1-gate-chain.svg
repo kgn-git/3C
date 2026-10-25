@@ -15,7 +15,7 @@
 
   <rect x="40" y="98" width="160" height="60" rx="12" fill="#EEF2FF" stroke="#C7D2FE"/>
   <text x="120" y="124" text-anchor="middle" class="s" font-size="13">PreToolUse hook</text>
-  <text x="120" y="144" text-anchor="middle" class="m" font-size="10.5">matcher: Read|Edit|Write</text>
+  <text x="120" y="144" text-anchor="middle" class="m" font-size="10.5">matcher: Bash (git commit)</text>
 
   <path d="M200 128 L246 128" stroke="#64748B" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
 

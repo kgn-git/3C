@@ -5,7 +5,7 @@ flowchart TB
 
   subgraph EDIT["While editing"]
     direction LR
-    PG["<b>Path guard</b><br/>inside an agent: no .env, ~/.ssh or ~/.aws reads;<br/>Edit and Write held to test paths<br/><i>hook · blocks</i>"]
+    PG["<b>Path guard</b><br/>inside an agent: Read, Grep and Glob only;<br/>no .env, ~/.ssh or ~/.aws reads<br/><i>hook · blocks</i>"]
     PE["<b>Post-edit boundary check</b><br/>imports against architecture.yaml<br/><i>hook · advisory, never blocks the edit</i>"]
   end
 

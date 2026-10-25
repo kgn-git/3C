@@ -1,5 +1,7 @@
 %%{init: {'theme':'base','themeVariables':{'primaryColor':'#EEF2FF','primaryTextColor':'#1E1B4B','primaryBorderColor':'#4F46E5','lineColor':'#6366F1','fontFamily':'Inter, sans-serif','fontSize':'16px'}}}%%
 stateDiagram-v2
+    accTitle: Phase 4 implement loop
+    accDescr: An issue is selected; /3c-implement plans it and creates the branch; test-author drafts the failing test and /3c-test writes and runs it; Claude Code implements; the post-edit check advises and blocks nothing; the pre-commit gate and the security scan pass or send the change back; code-reviewer findings are applied; the change merges.
     direction TB
     [*] --> IssueSelected
     IssueSelected --> ImplementPlan: Maya invokes /3c-implement
@@ -7,11 +9,8 @@ stateDiagram-v2
     BranchCreated --> FailingTest: test-author drafts the failing test, /3c-test writes and runs it
     FailingTest --> ClaudeImpl: Claude Code implements
 
-    ClaudeImpl --> PostEdit
-
-    state PostEdit <<choice>>
-    PostEdit --> ClaudeImpl: fail — Claude Code revises
-    PostEdit --> StageCommit: pass in ~300ms
+    ClaudeImpl --> PostEdit: post-edit check, ~300ms
+    PostEdit --> StageCommit: advisory only — blocks nothing
 
     StageCommit --> PreCommit: Maya runs git commit
     state PreCommit <<choice>>
