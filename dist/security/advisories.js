@@ -9,7 +9,7 @@ import { lstat, open } from "node:fs/promises";
 import { join } from "node:path";
 import { cacheDir, writeCacheFile } from "../validate/cache-file.js";
 export const STALE_AFTER_DAYS = 7;
-const SCHEMA = 2;
+const SCHEMA = 3;
 const FILE = "advisories.json";
 export const MAX_SNAPSHOT_BYTES = 16 * 1024 * 1024;
 export const MAX_ENTRIES = 20_000;
@@ -69,6 +69,12 @@ function isBinding(v) {
 }
 export const isPackageName = (s) => typeof s === "string" && s.length <= 214 && NPM_NAME.test(s);
 const isRecord = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
+/**
+ * True when a top-level lockfile entry is the alias the root manifest declared
+ * for its folder. A lockfile `name` alone is not evidence of an alias, because
+ * anything with write access can set it.
+ */
+const declaredAlias = (name, entry, aliases) => typeof entry["name"] === "string" && entry["name"] !== name && aliases?.get(name) === entry["name"];
 // Only npm's error code decides the wording; neither the code nor npm's
 // summary is repeated, since the summary can carry a registry URL with
 // credentials in it.
@@ -218,7 +224,13 @@ function fromRegistry(name, entry, registry, strict) {
     const base = name.slice(name.lastIndexOf("/") + 1);
     return new RegExp(`/${escapeRe(name)}/-/${escapeRe(base)}-${escapeRe(version)}\\.tgz$`).test(path);
 }
-/** The version of each top-level registry package a lockfile text holds, or null when it is not a lockfile. */
+/**
+ * The version of each top-level registry package a lockfile text holds, or
+ * null when it is not a lockfile. A copy whose lockfile name differs from its
+ * folder is left out, declared alias or not: npm audits a copy under its
+ * lockfile name, so recording it under the folder would claim an audit npm
+ * never made.
+ */
 export function lockVersions(text, registry) {
     let raw;
     try {
@@ -247,11 +259,44 @@ export function lockVersions(text, registry) {
     return out;
 }
 /**
+ * Each declared alias a lockfile text installs from the registry, with its
+ * target's version. The registry test is the strict one the check applies, so
+ * every record saved here is one the check can match.
+ */
+export function lockAliases(text, registry, aliases) {
+    let raw;
+    try {
+        raw = JSON.parse(text);
+    }
+    catch {
+        return {};
+    }
+    const packages = isRecord(raw) ? raw["packages"] : undefined;
+    const out = {};
+    if (!isRecord(packages))
+        return out;
+    let n = 0;
+    for (const [folder, target] of aliases) {
+        if (n >= MAX_ENTRIES)
+            break;
+        const key = `node_modules/${folder}`;
+        const entry = Object.hasOwn(packages, key) ? packages[key] : undefined;
+        if (!isRecord(entry) || entry["link"] === true || entry["name"] !== target || !fromRegistry(target, entry, registry, true))
+            continue;
+        const version = entry["version"];
+        if (typeof version === "string" && SEMVER.test(version)) {
+            out[folder] = { target, version };
+            n++;
+        }
+    }
+    return out;
+}
+/**
  * Every package a lockfile installs, by the folder name a manifest uses. Names
  * and versions are kept as written, valid or not, so a caller can name what it
  * cannot check instead of dropping it. Null when it is not a lockfile.
  */
-export function lockInstalls(raw, registry) {
+export function lockInstalls(raw, registry, aliases) {
     if (!isRecord(raw) || !isRecord(raw["packages"]))
         return null;
     const found = new Map();
@@ -266,17 +311,26 @@ export function lockInstalls(raw, registry) {
             continue;
         const name = key.slice(at + "node_modules/".length);
         const version = typeof entry["version"] === "string" ? entry["version"] : "";
-        const cur = found.get(name) ?? { versions: new Set(), sources: new Set(), own: new Set(), verifiable: true };
+        const cur = found.get(name) ?? { versions: new Set(), sources: new Set(), own: new Set(), verifiable: true, copies: 0 };
+        cur.copies++;
         cur.versions.add(version);
         cur.sources.add(typeof entry["resolved"] === "string" ? entry["resolved"] : "");
-        const aliased = typeof entry["name"] === "string" && entry["name"] !== name;
+        const mismatch = typeof entry["name"] === "string" && entry["name"] !== name;
+        const topLevel = at === 0;
+        const aliased = mismatch && (!topLevel || declaredAlias(name, entry, aliases));
         if (!aliased)
             cur.own.add(version);
-        if (aliased || !fromRegistry(name, entry, registry, true))
+        if (mismatch || entry["inBundle"] === true || !fromRegistry(name, entry, registry, true))
             cur.verifiable = false;
+        if (topLevel && aliased && fromRegistry(entry["name"], entry, registry, true) && SEMVER.test(version)) {
+            cur.aliasOf = { target: entry["name"], version };
+        }
         found.set(name, cur);
     }
-    return new Map([...found].map(([name, v]) => [name, { versions: [...v.versions].sort(), sources: [...v.sources].sort(), ownVersions: [...v.own].sort(), verifiable: v.verifiable }]));
+    return new Map([...found].map(([name, v]) => [name, {
+            versions: [...v.versions].sort(), sources: [...v.sources].sort(), ownVersions: [...v.own].sort(), verifiable: v.verifiable,
+            ...(v.aliasOf ? { aliasOf: { ...v.aliasOf, sole: v.copies === 1 } } : {}),
+        }]));
 }
 /** A workspace file read through one handle within the cap, or null. */
 export async function readWorkspaceText(path) {
@@ -288,6 +342,23 @@ export async function writeAdvisorySnapshot(ws, snapshot) {
     // The directory ignores itself: `.3c/` is not gitignored by default.
     await writeCacheFile(ws, ".gitignore", "*\n");
     await writeCacheFile(ws, FILE, JSON.stringify(snapshot));
+}
+function toAliases(raw) {
+    if (!isRecord(raw))
+        return null;
+    const entries = Object.entries(raw);
+    if (entries.length > MAX_ENTRIES)
+        return null;
+    const out = {};
+    for (const [folder, a] of entries) {
+        if (!isPackageName(folder) || !isRecord(a))
+            return null;
+        const { target, version } = a;
+        if (!isPackageName(target) || typeof version !== "string" || !SEMVER.test(version))
+            return null;
+        out[folder] = { target, version };
+    }
+    return out;
 }
 function toVersions(raw) {
     if (!isRecord(raw))
@@ -312,7 +383,8 @@ function toSnapshot(raw, now) {
     if (Number.isNaN(at) || at > now.getTime() + MAX_FUTURE_MS)
         return null;
     const audited = toVersions(raw["audited"]);
-    if (audited === null || !isRecord(advisories) || Object.keys(advisories).length > MAX_ENTRIES)
+    const aliases = toAliases(raw["aliases"]);
+    if (audited === null || aliases === null || !isRecord(advisories) || Object.keys(advisories).length > MAX_ENTRIES)
         return null;
     const out = {};
     for (const [name, a] of Object.entries(advisories)) {
@@ -324,7 +396,7 @@ function toSnapshot(raw, now) {
         out[name] = { severity: severity, id };
     }
     const { origin, pathLength, pathSha256 } = registry;
-    return { schema: 2, source: "npm audit", npmVersion, registry: { origin, pathLength, pathSha256 }, generatedAt, audited, advisories: out };
+    return { schema: SCHEMA, source: "npm audit", npmVersion, registry: { origin, pathLength, pathSha256 }, generatedAt, audited, aliases, advisories: out };
 }
 export async function readAdvisorySnapshot(ws, now = new Date()) {
     const r = await readWorkspaceFile(snapshotPath(ws));
@@ -337,9 +409,9 @@ export async function readAdvisorySnapshot(ws, now = new Date()) {
         const snapshot = toSnapshot(raw, now);
         if (snapshot !== null)
             return { kind: "found", snapshot };
-        // Schema 1 holds no registry, so it cannot be used, but it is not a
-        // sign of tampering: it is named apart from an invalid list.
-        return isRecord(raw) && raw["schema"] === 1 ? { kind: "outdated" } : { kind: "invalid" };
+        // An earlier version's list is named apart from an invalid one, so the
+        // owner is told to refresh rather than to suspect the file.
+        return isRecord(raw) && (raw["schema"] === 1 || raw["schema"] === 2) ? { kind: "outdated" } : { kind: "invalid" };
     }
     catch {
         return { kind: "invalid" };

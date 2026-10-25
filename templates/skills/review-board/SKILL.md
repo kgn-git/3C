@@ -42,6 +42,13 @@ list) and instruct it to return its findings as the shared schema (a fenced `jso
 `{ severity, category, message, file?, line?, suggestion? }`). Agents are read-only — they cannot nest
 further subagents.
 
+Subagents have no shell, so the security scan runs here, in the main session, before the dispatch: run
+`${FRAMEWORK_SLUG} security scan --base=<base>` and give the security reviewer its full output alongside the diff. If the
+scan cannot run, say so in the reviewer's prompt; the reviewer then reports the tree as unscanned, never as
+clean. Add each block the scan printed to the assembled findings yourself, under its own `"security-scan"` key
+and as `blocking`, whatever the reviewer returns: a blocked scan then reaches the verdict even when the reviewer
+is unavailable.
+
 If an agent fails or returns nothing parseable, note it ("`<agent>` unavailable") and continue with the rest
 — a degraded board is better than a blocked one.
 

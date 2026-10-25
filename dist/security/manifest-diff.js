@@ -4,12 +4,56 @@
 // compact line holding several dependencies is one line; parsed manifests
 // have neither problem. Names are kept as written, valid or not: the gate
 // names what it cannot check rather than dropping it.
-import { lockInstalls } from "./advisories.js";
+import { isPackageName, lockInstalls } from "./advisories.js";
 const BLOCKS = ["dependencies", "devDependencies", "optionalDependencies", "peerDependencies"];
 const isRecord = (v) => typeof v === "object" && v !== null && !Array.isArray(v);
 // A registry range or tag has neither; `npm:`, `git+…`, `file:`, a URL and
 // the `user/repo` shorthand all have one.
 const notRegistry = (spec) => /[:/]/.test(spec);
+/** The npm aliases a manifest declares (`"foo": "npm:other@1"`), folder name to target. */
+export function npmAliases(manifest) {
+    const out = new Map();
+    if (!isRecord(manifest))
+        return out;
+    for (const block of BLOCKS) {
+        const entries = manifest[block];
+        if (!isRecord(entries))
+            continue;
+        for (const [folder, spec] of Object.entries(entries)) {
+            if (typeof spec !== "string" || !spec.startsWith("npm:"))
+                continue;
+            const rest = spec.slice("npm:".length);
+            const at = rest.lastIndexOf("@");
+            const target = at > 0 ? rest.slice(0, at) : rest;
+            // `"foo": "npm:foo@1"` installs foo under its own name: no alias.
+            if (isPackageName(folder) && isPackageName(target) && target !== folder)
+                out.set(folder, target);
+        }
+    }
+    return out;
+}
+/** True when every block of a manifest that declares `name` declares it with an `npm:` spec. */
+function onlyNpmAliased(manifest, name) {
+    if (!isRecord(manifest))
+        return false;
+    const specs = BLOCKS.map((b) => manifest[b]).filter(isRecord).filter((e) => Object.hasOwn(e, name)).map((e) => e[name]);
+    return specs.length > 0 && specs.every((s) => typeof s === "string" && s.startsWith("npm:"));
+}
+/**
+ * The aliases a package.json text declares. A text that does not parse
+ * declares none, so a lockfile name mismatch counts as the package itself:
+ * the direction that reports a flagged version rather than hiding it.
+ */
+export function declaredAliasesOf(text) {
+    if (text === null)
+        return new Map();
+    try {
+        return npmAliases(JSON.parse(text));
+    }
+    catch {
+        return new Map();
+    }
+}
 /** True for the two lockfile names npm reads; it prefers npm-shrinkwrap.json. */
 export const isLockfile = (path) => /(?:^|\/)(?:package-lock|npm-shrinkwrap)\.json$/.test(path);
 /** name → range across every dependency block; a manifest that is not an object yields null. */
@@ -58,6 +102,7 @@ export function changedDependencies(manifests) {
     const names = [];
     const unverifiable = [];
     const unparseable = [];
+    const aliasBlocked = new Set();
     for (const m of manifests) {
         if (m.head === null)
             continue;
@@ -76,7 +121,15 @@ export function changedDependencies(manifests) {
             if (head.unverifiable.has(name) && !unverifiable.includes(name))
                 unverifiable.push(name);
         }
+        // The root lockfile is re-read by the check itself. Any other manifest
+        // installs its names in a tree the check never reads, whatever the source.
+        const root = !m.path.includes("/");
+        if (root && isLockfile(m.path))
+            continue;
+        const blocked = root ? [...head.unverifiable].filter((n) => !onlyNpmAliased(parse(m.head), n)) : [...head.values.keys()];
+        for (const name of blocked)
+            aliasBlocked.add(name);
     }
-    return { names, unverifiable, unparseable };
+    return { names, unverifiable, unparseable, aliasBlocked: [...aliasBlocked] };
 }
 //# sourceMappingURL=manifest-diff.js.map

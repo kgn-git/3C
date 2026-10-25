@@ -22,5 +22,6 @@ export declare function unreadableManifests(paths: readonly string[]): string;
 export declare function checkDependencies(workspaceDir: string, change: {
     readonly names: readonly string[];
     readonly unverifiable: readonly string[];
+    readonly aliasBlocked: readonly string[];
 }, injected: DepAdvisory | undefined, now?: Date): Promise<DependencyCheck>;
 //# sourceMappingURL=dependency-check.d.ts.map

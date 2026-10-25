@@ -3,6 +3,9 @@ export interface HookEvent {
     readonly tool_name: string;
     readonly tool_input: Record<string, unknown>;
     readonly session_id?: string;
+    /** Where Claude Code writes this session's transcript; a subagent's sits under `subagents/`. */
+    readonly transcript_path?: string;
+    readonly cwd?: string;
 }
 export type ParseEventResult = {
     readonly ok: true;

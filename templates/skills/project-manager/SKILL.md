@@ -140,7 +140,8 @@ reporting the milestone complete.
    - Scope, priority, or maturity alignment → `${FRAMEWORK_SLUG}-product-owner` agent (**always first** — if it
      flags the scope as unclear or the maturity level wrong, halt the remaining lenses for that issue).
    - Architecture, component boundaries → `${FRAMEWORK_SLUG}-architect` agent.
-   - Trust boundaries, secrets, sandboxing → `${FRAMEWORK_SLUG}-security-reviewer` agent.
+   - Trust boundaries, secrets, sandboxing → `${FRAMEWORK_SLUG}-security-reviewer` agent. At planning time there
+     is no scan to hand it, so it works from the installed rule packs and says so.
 3. **Synthesize** the lens outputs into a structured issue body:
 
    ```markdown

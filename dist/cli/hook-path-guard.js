@@ -1,163 +1,107 @@
-// PreToolUse hook that enforces the subagent path-guard policy at runtime.
+// PreToolUse hook that keeps subagents read-only at runtime.
 //
-// Claude Code passes the PreToolUse event payload on stdin; the hook
-// returns exit 0 to allow the tool call or exit 2 to block it (with a
-// reason on stderr). At L1 this hook only acts when invoked from a
-// subagent context — main-thread tool calls always allow.
+// Claude Code passes the PreToolUse event payload on stdin; the hook returns
+// exit 0 to allow the tool call or exit 2 to block it (with a reason on
+// stderr). It acts only in a subagent context — main-session tool calls are
+// the developer's own, seen and approved there.
 //
-// Subagent context is detected via the transcript_path field: Claude
-// Code writes subagent transcripts to `<...>/subagents/agent-<id>.jsonl`.
-// Per AC8, no starter agent's own grant includes Edit/Write: their
-// frontmatter `tools` allowlists exclude them, and Claude Code's tool
-// sandbox blocks the call before the hook fires. An Edit/Write that reaches
-// this hook from a subagent context comes from an agent a team added, or a
-// skill run inside one; the hook holds it to the AC8 test-path rule.
+// Subagent context is detected via the transcript_path field: Claude Code
+// writes subagent transcripts to `<...>/subagents/agent-<id>.jsonl`. A
+// subagent may Read, Grep and Glob, and nothing else: no Edit, Write or
+// shell, whatever the path or command. Judging which paths a subagent may
+// write depends on how a path is spelled; refusing every write holds whatever
+// the spelling. No shipped agent writes, and none needs the shell: the main
+// session runs the security scan and hands its output to the security
+// reviewer.
 //
-// AC9: both starter subagents are denied Read on `.env*`, `~/.ssh/`,
-// `~/.aws/` regardless of which agent is active.
-import { lstat, realpath } from "node:fs/promises";
-import { posix } from "node:path";
+// In a subagent, Read is denied on `.env*`, `~/.ssh/` and `~/.aws/`; Grep and
+// Glob search inside the project folder only, and never with a glob that
+// could select an `.env*` file's content.
+import { homedir } from "node:os";
+import { isAbsolute, relative, resolve } from "node:path";
+import { contentGlobReachesSecret, isSecretPath, namesSecretGlob, namesSecretRoot } from "../agents/path-guard.js";
 import { resolveBrandSlugSync } from "../branding/runtime.js";
-import { hookLimitText, MAX_HOOK_EVENT_BYTES, readErrorCode, readStdinBounded, retryRoute, StdinTooLargeError, } from "../validate/_stdin.js";
-const SECRET_PATTERNS = [
-    /(^|[\\/:])\.env(\.[\w-]+)?$/i,
-    /(^|[\\/:])\.ssh[\\/]/i,
-    /(^|[\\/:])\.aws[\\/]/i,
-];
-const TEST_PATH_PATTERNS = [
-    /(^|[\\/])tests[\\/]/,
-    /\.test\.[a-zA-Z0-9]+$/,
-];
+import { parseHookEvent } from "../hooks/event.js";
+import { hookLimitText, MAX_HOOK_EVENT_BYTES, readErrorCode, readStdinBounded, retryRoute, StdinTooLargeError, unreadableEvent, } from "../validate/_stdin.js";
 const SUBAGENT_CONTEXT = /[\\/]subagents[\\/]agent-/;
-const SUBAGENT_ALLOWED_TOOLS = new Set([
-    "Read",
-    "Grep",
-    "Glob",
-    "Edit",
-    "Write",
-]);
-function isSecretPath(p) {
-    return SECRET_PATTERNS.some((r) => r.test(p));
-}
-function isTestPath(p) {
-    return TEST_PATH_PATTERNS.some((r) => r.test(p));
-}
-/** Forward slashes, dot segments resolved; `//` (UNC) collapses to one root. */
-const normal = (p) => posix.normalize(p.replace(/\\/g, "/"));
-const isAbsolute = (p) => p.startsWith("/") || /^[A-Za-z]:\//.test(p);
-const DRIVE = /^[A-Za-z]:/;
-// Windows ignores a component's NTFS stream (`.env::$DATA`) and its
-// trailing dots and spaces (`.env.`), so each opens `.env`; secret matching
-// sees the name Windows would open.
-const asWindowsOpens = (p) => p
-    .split("/")
-    .map((s, i) => {
-    if (s === "." || s === "..")
-        return s;
-    // A leading drive (`C:`, or drive-relative `C:.env`) is kept; the rest is cleaned.
-    const drive = i === 0 ? (/^[A-Za-z]:/.exec(s)?.[0] ?? "") : "";
-    return drive + s.slice(drive.length).replace(/:.*$/, "").replace(/[. ]+$/, "");
-})
-    .join("/");
-const foldFor = (base) => (s) => (DRIVE.test(base) ? s.toLowerCase() : s);
-const within = (p, base, fold) => fold(p) === fold(base) || fold(p).startsWith(`${fold(base)}/`);
+const SUBAGENT_ALLOWED_TOOLS = new Set(["Read", "Grep", "Glob"]);
+const TARGET_FIELDS = {
+    Read: [["file_path", "file"]],
+    Grep: [["path", "root"], ["glob", "contentGlob"]],
+    Glob: [["path", "root"], ["pattern", "glob"]],
+};
 /**
- * The path, absolute and relative to the working folder, or null when it lies
- * outside it. A drive-relative path (`C:..\x`) resolves against that
- * drive's own current folder, and a stream name (`a.test.ts:x`) writes a hidden
- * stream, so neither is judged.
+ * True when a search rooted at `root` stays inside the session's working
+ * folder. A subagent searches the project, nothing else: deciding which
+ * outside folders are safe depends on how a path is spelled, while
+ * containment is decided by the platform's own resolver. A network or device
+ * path (two leading separators), a drive-relative one (`C:x`), `~`, and a
+ * session with no working folder cannot be placed, so they are refused.
  */
-function insideWorkingFolder(file, cwd) {
-    const n = normal(file);
-    if (DRIVE.test(n) && !/^[A-Za-z]:\//.test(n))
-        return null;
-    if (n.replace(DRIVE, "").includes(":"))
-        return null;
-    const base = normal(cwd).replace(/\/+$/, "");
-    const abs = normal(isAbsolute(n) ? file : `${base}/${file}`);
-    const fold = foldFor(base);
-    if (!fold(abs).startsWith(`${fold(base)}/`))
-        return null;
-    return { abs, rel: abs.slice(base.length + 1) };
-}
-/**
- * False when the nearest existing folder above the target is a link out of
- * the working folder (a junction under `tests/` would carry a write elsewhere).
- * Nothing under the working folder existing means there is no link to follow.
- */
-async function followsNoLinkOut(abs, cwd) {
-    const base = normal(cwd).replace(/\/+$/, "");
-    const fold = foldFor(base);
-    // The target itself first: a test file that is a link would carry the write
-    // to wherever it points. Any error but "not there" refuses.
-    try {
-        if ((await lstat(abs)).isSymbolicLink())
-            return false;
-        const [real, realBase] = await Promise.all([realpath(abs), realpath(base)]);
-        return within(normal(real), normal(realBase), foldFor(normal(realBase)));
-    }
-    catch (e) {
-        if (e.code !== "ENOENT")
-            return false;
-    }
-    for (let dir = posix.dirname(abs); within(dir, base, fold); dir = posix.dirname(dir)) {
-        try {
-            const [real, realBase] = await Promise.all([realpath(dir), realpath(base)]);
-            return within(normal(real), normal(realBase), foldFor(normal(realBase)));
-        }
-        catch {
-            if (posix.dirname(dir) === dir)
-                break;
-        }
-    }
-    return true;
-}
-function isSubagentContext(transcriptPath) {
-    if (!transcriptPath)
+function insideProject(root, cwd) {
+    if (cwd === undefined || root.startsWith("~") || /^[\\/]{2}/.test(root) || /^[A-Za-z]:(?![\\/])/.test(root))
         return false;
-    return SUBAGENT_CONTEXT.test(transcriptPath);
+    return within(resolve(cwd, root), resolve(cwd));
+}
+/** True when `inner` is `outer` or lies beneath it, by the platform's own path rules. */
+function within(inner, outer) {
+    const rel = relative(outer, inner);
+    return rel === "" || (!rel.startsWith("..") && !isAbsolute(rel));
+}
+/**
+ * Why a reading tool's call is refused, or null. A field that is not text
+ * cannot be judged, so it is refused rather than read as absent.
+ */
+function readRefusal(tool, input, cwd) {
+    // A session started in the home folder makes it the project; a search there,
+    // with or without a path, would cover ~/.ssh and ~/.aws.
+    if ((tool === "Grep" || tool === "Glob") && cwd !== undefined) {
+        const root = typeof input["path"] === "string" ? input["path"] : ".";
+        if (insideProject(root, cwd) && within(resolve(homedir()), resolve(cwd, root))) {
+            return `a search over the home folder (${root}), where ~/.ssh and ~/.aws sit`;
+        }
+    }
+    for (const [field, kind] of TARGET_FIELDS[tool] ?? []) {
+        const v = input[field];
+        if (v === undefined)
+            continue;
+        if (typeof v !== "string")
+            return `its ${field} is not text`;
+        if (kind === "root" && !insideProject(v, cwd))
+            return `a search outside the project folder (${v}); a subagent searches the project only`;
+        const judge = { file: isSecretPath, root: namesSecretRoot, glob: namesSecretGlob, contentGlob: contentGlobReachesSecret }[kind];
+        const secret = judge(v);
+        if (secret)
+            return `a protected secret path (${v})`;
+    }
+    return null;
 }
 export async function runHookPathGuard(stdin) {
     const slug = resolveBrandSlugSync();
-    let event;
-    try {
-        event = JSON.parse(stdin);
-    }
-    catch (err) {
-        return {
-            exitCode: 0,
-            stderr: `${slug} hook path-guard: could not parse event JSON (${err.message}); allowing\n`,
-        };
-    }
-    if (!isSubagentContext(event.transcript_path)) {
+    const parsed = parseHookEvent(stdin);
+    // An event it cannot read gives no way to tell main session from subagent,
+    // so the refusal reaches every call this hook guards.
+    if (!parsed.ok)
+        return unreadableEvent(slug, "hook path-guard", "PreToolUse", parsed.error);
+    const event = parsed.event;
+    // Claude Code sends transcript_path with every event; without it the hook
+    // cannot tell a subagent from the main session, which is the same blindness.
+    if (event.transcript_path === undefined)
+        return unreadableEvent(slug, "hook path-guard", "PreToolUse", "no transcript_path");
+    if (!SUBAGENT_CONTEXT.test(event.transcript_path)) {
         return { exitCode: 0, stderr: "" };
     }
-    const tool = event.tool_name ?? "";
-    const raw = event.tool_input?.file_path ?? "";
-    // Judged after dot segments resolve: `tests/../.claude/settings.json`
-    // names no test folder.
-    const path = normal(raw);
+    const tool = event.tool_name;
     if (!SUBAGENT_ALLOWED_TOOLS.has(tool)) {
         return {
             exitCode: 2,
-            stderr: `${slug} hook path-guard: tool ${tool} not permitted in subagent context (allowlist: Read, Grep, Glob, Edit, Write)\n`,
+            stderr: `${slug} hook path-guard: ${tool} is not permitted in a subagent: subagents read and search only (Read, Grep, Glob). ` +
+                `Make the change in the main session, where you see and approve it.\n`,
         };
     }
-    if (tool === "Read" && [raw, path, asWindowsOpens(path)].some(isSecretPath)) {
-        return {
-            exitCode: 2,
-            stderr: `${slug} hook path-guard: Read denied on protected secret-path ${path}\n`,
-        };
-    }
-    // A path outside the working folder is no test path, whatever its folder
-    // names; with no working folder to compare against, nothing is written.
-    const cwd = typeof event.cwd === "string" && event.cwd !== "" ? event.cwd : null;
-    const at = cwd === null ? null : insideWorkingFolder(raw, cwd);
-    if ((tool === "Edit" || tool === "Write") && (at === null || !isTestPath(at.rel) || !(await followsNoLinkOut(at.abs, cwd)))) {
-        return {
-            exitCode: 2,
-            stderr: `${slug} hook path-guard: ${tool} scoped to tests/** and **/*.test.* in subagent context — ${path} is out of scope\n`,
-        };
+    const refusal = readRefusal(tool, event.tool_input, event.cwd);
+    if (refusal !== null) {
+        return { exitCode: 2, stderr: `${slug} hook path-guard: ${tool} denied: ${refusal}.\n` };
     }
     return { exitCode: 0, stderr: "" };
 }
@@ -169,13 +113,13 @@ export async function hookPathGuardCli(io = { stdin: process.stdin, stderr: proc
     catch (err) {
         // DENY, explicitly exit 2 — Claude Code treats any other non-zero
         // exit as "proceed", so an escaping throw is an allow. Over the cap, an
-        // allow would let a subagent pad a Write past this guard; on any other
+        // allow would let a subagent pad a call past this guard; on any other
         // read failure the guard simply does not know what it is judging. The
         // event is unread, so the main thread is denied too: the accepted cost of
         // a 16 MiB bound, with the route stated.
         const slug = resolveBrandSlugSync();
         io.stderr.write(err instanceof StdinTooLargeError
-            ? `${slug} hook path-guard: ${hookLimitText(err)}; denied. Write the content in parts under the limit: ` +
+            ? `${slug} hook path-guard: ${hookLimitText(err)}; denied. From the main session, write the content in parts under the limit: ` +
                 `one Write, then an Edit per further part, each anchored on the last line already written.\n`
             : `${slug} hook path-guard: could not read the event (${readErrorCode(err)}); denied. ${retryRoute(slug)}\n`);
         return 2;

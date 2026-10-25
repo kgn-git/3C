@@ -85,9 +85,9 @@ one fenced block and writes no file, so the preview, the confirmation and the gu
 stay with you.
 
 Check the body against step 3 before you use it: it must fail on its assertion, and no assertion may
-be one that cannot fail. If agent dispatch is not available here — for example when this skill runs
-inside a subagent — write the body yourself, following step 3. Either way the body only becomes a
-file through `test write` in step 8, never through the Write tool.
+be one that cannot fail. If agent dispatch is not available here, write the body yourself, following
+step 3. Either way the body only becomes a file through `test write` in step 8, never through the Write
+tool. That is a shell command and a subagent has no shell, so run this skill in the main session.
 
 ## 6. Confirm with the user on the first write per session
 

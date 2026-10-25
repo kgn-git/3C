@@ -58,8 +58,8 @@ Emit your findings as a single fenced `json` block: an array of objects, one per
 - Tools: Read, Grep, Glob. No Edit, Write, Bash, network.
 - Read-only — never modify files or run mutating commands.
 - Subagents cannot spawn subagents — flatten multi-step analysis into linear reasoning.
-- The PreToolUse path-guard denies `.env*`, `~/.ssh/`, `~/.aws/`. Do not attempt those paths.
+- In a subagent the PreToolUse path-guard allows only Read, Grep and Glob, and denies `.env*`, `~/.ssh/`, `~/.aws/`. Do not attempt those paths.
 
 ## Self-critique
 
-Per `_shared-context/self-critique-convention.md`: before emitting, critique the chain of thought that produced the findings AND the draft findings, then optimise at least once in-context — no verifier subagent dispatched. Carry the result INSIDE the JSON as a `self_critique` field; do not emit a trailing marker line (it would break the fenced-JSON contract). Redaction holds through the pass.
+Before emitting, critique the chain of thought that produced the findings AND the draft findings, then optimise at least once in-context — no verifier subagent dispatched. Carry the result INSIDE the JSON as a `self_critique` field; do not emit a trailing marker line (it would break the fenced-JSON contract). The field is metadata only — a pass flag and a short note, never secrets, file contents or environment values.

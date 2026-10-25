@@ -12,6 +12,10 @@ const MAX_CONFIG_BYTES = 256 * 1024;
 export function archConfigPath(ws) {
     return join(ws, `.${resolveBrandSlugSync()}`, "architecture.yaml");
 }
+/** Where discover sends a draft it must not write over the active config. */
+export function archProposedPath(ws) {
+    return join(ws, `.${resolveBrandSlugSync()}`, "architecture.proposed.yaml");
+}
 /** Pure over the loaded result: re-reading the file would open a
  *  check-then-use gap (CWE-367). `malformed` is not inert: that would fail open. */
 export function isGateInert(r) {

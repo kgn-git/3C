@@ -7,7 +7,8 @@ import { existsSync } from "node:fs";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import { bindRegistry, lockVersions, MAX_ENTRIES, MAX_SNAPSHOT_BYTES, parseNpmAudit, readWorkspaceFile, registryBase, SEMVER, writeAdvisorySnapshot } from "../security/advisories.js";
+import { bindRegistry, lockAliases, lockVersions, MAX_ENTRIES, MAX_SNAPSHOT_BYTES, parseNpmAudit, readWorkspaceFile, registryBase, SEMVER, writeAdvisorySnapshot } from "../security/advisories.js";
+import { declaredAliasesOf } from "../security/manifest-diff.js";
 // `config get registry` prints that one setting. A token sits under its own
 // key, so it is never asked for and never printed.
 const ARGS = { version: ["--version"], registry: ["config", "get", "registry"], audit: ["audit", "--json"] };
@@ -90,7 +91,10 @@ export async function refreshAdvisories(ws, run = defaultNpmRunner, now = new Da
         const parsed = parseNpmAudit((await run("audit", dir)).stdout);
         if (parsed.kind === "refused")
             return parsed;
-        await writeAdvisorySnapshot(ws, { schema: 2, source: "npm audit", npmVersion, registry, generatedAt: now.toISOString(), audited, advisories: parsed.advisories });
+        await writeAdvisorySnapshot(ws, {
+            schema: 3, source: "npm audit", npmVersion, registry, generatedAt: now.toISOString(), audited,
+            aliases: lockAliases(lock.text, registry, declaredAliasesOf(manifest.text)), advisories: parsed.advisories,
+        });
         return { kind: "written", count: Object.keys(parsed.advisories).length };
     }
     finally {

@@ -10,6 +10,11 @@ export interface DiscoverResult {
     readonly reason: DiscoverReason;
 }
 /**
+ * Whether discover would draft any layer from these tracked paths. Clusters
+ * depend on paths alone, so no file is read.
+ */
+export declare function hasClusterableSource(paths: ReadonlyArray<string>): boolean;
+/**
  * Render a draft architecture.yaml from (path, content) pairs — the pure core
  * of `arch-check discover`, exported for tests and reuse. `opts.proposed`
  * names the DESTINATION: the zero-tier text differs by it, because a header

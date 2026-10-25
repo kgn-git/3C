@@ -48,7 +48,9 @@ Commands:
   hook install      Register the \${FRAMEWORK_NAME} hooks in .claude/settings.json:
                     the PreToolUse commit gate and path-guard, and the
                     PostToolUse post-edit check. Safe to re-run — it adds what
-                    is missing and leaves other tools' entries alone.
+                    is missing, moves an older path-guard entry onto every
+                    tool, and leaves other tools' entries alone. Run it after
+                    every update.
 
   hook run [--event=<event>]
                     Internal — invoked by Claude Code via the registered

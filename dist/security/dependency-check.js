@@ -6,7 +6,8 @@ import { join } from "node:path";
 import { ageInDays, isPackageName, lockInstalls, readAdvisorySnapshot, readWorkspaceFile, readWorkspaceText, STALE_AFTER_DAYS, toDepAdvisory, } from "./advisories.js";
 import { checkDeps } from "./deps.js";
 import { MAX_MANIFEST_BYTES } from "./files.js";
-import { isLockfile } from "./manifest-diff.js";
+import { SEVERITY_ORDER } from "./severity.js";
+import { declaredAliasesOf, isLockfile } from "./manifest-diff.js";
 const NAMES_SHOWN = 10;
 const SHOWN_CHARS = 60;
 // Every character outside printable ASCII is written as \uXXXX, or \u{…} above
@@ -34,6 +35,21 @@ export function unreadableManifests(paths) {
     ];
     return `${paths.map(printable).join(", ")} in this change cannot be read, so the dependencies it adds cannot be checked. ${rules.join(" ")} Fix the file, then run the scan again.`;
 }
+/**
+ * One finding per id, at the most severe level any route gave it. A name can
+ * reach the same id by its own advisory and by its alias target's, and a
+ * transitive id (`via <package>`) is shared by packages npm rates differently;
+ * keeping the first or last would let the lower rating decide whether it blocks.
+ */
+function mostSevereById(findings) {
+    const byId = new Map();
+    for (const f of findings) {
+        const seen = byId.get(f.id);
+        if (seen === undefined || SEVERITY_ORDER.indexOf(f.severity) < SEVERITY_ORDER.indexOf(seen.severity))
+            byId.set(f.id, f);
+    }
+    return [...byId.values()];
+}
 const list = (names) => {
     const s = names.map(shown);
     return s.length <= NAMES_SHOWN ? s.join(", ") : `${s.slice(0, NAMES_SHOWN).join(", ")} and ${s.length - NAMES_SHOWN} more`;
@@ -49,7 +65,7 @@ async function currentInstalls(ws, registry) {
     if (text === null)
         return null;
     try {
-        return lockInstalls(JSON.parse(text), registry);
+        return lockInstalls(JSON.parse(text), registry, declaredAliasesOf(await readWorkspaceText(join(ws, "package.json"))));
     }
     catch {
         return null;
@@ -92,15 +108,38 @@ export async function checkDependencies(workspaceDir, change, injected, now = ne
         return (isPackageName(n) && !change.unverifiable.includes(n) && i !== undefined && i.verifiable &&
             i.versions.length === 1 && Object.hasOwn(snap.audited, n) && i.versions[0] === snap.audited[n]);
     });
-    // A package the list flags, with any copy of itself at the version npm
-    // audited, is reported whatever that copy's source: another source must not
-    // turn a known advisory into a pass. An alias is another package.
+    // A package the list flags, with a copy under its own lockfile name at the
+    // version npm audited, is reported whatever that copy's source: another
+    // source must not turn a known advisory into a pass. An alias is another
+    // package.
     const flagged = added.filter((n) => {
         const i = lock?.get(n);
         return (!covered.includes(n) && isPackageName(n) && i !== undefined &&
             Object.hasOwn(snap.advisories, n) && Object.hasOwn(snap.audited, n) && i.ownVersions.includes(snap.audited[n]));
     });
-    const reported = [...covered, ...flagged];
+    // npm audit reports a declared alias under its target's name, so a record
+    // refresh made for the same target at the version locked now lets the
+    // target's advisory speak for the alias. Every advisory is read from `base`,
+    // never from a map being edited, so the order aliases are declared in
+    // cannot decide what is reported.
+    const base = toDepAdvisory(snap);
+    const aliasTargets = new Map();
+    for (const n of added) {
+        const a = lock?.get(n)?.aliasOf;
+        const rec = Object.hasOwn(snap.aliases, n) ? snap.aliases[n] : undefined;
+        if (a !== undefined && rec !== undefined && rec.target === a.target && rec.version === a.version) {
+            aliasTargets.set(n, { target: a.target, sole: a.sole });
+        }
+    }
+    // Only an alias that is the only copy under its name is checked through its
+    // target, and only it drops the advisory listed under the name: any other
+    // copy there still needs an audit of its own, and so does a name another
+    // manifest in the change declares from a non-registry source. A sole alias
+    // has no copy of the name itself, so it is never also covered or flagged.
+    const viaAlias = new Set(added.filter((n) => aliasTargets.get(n)?.sole === true && !change.aliasBlocked.includes(n)));
+    const unaliased = Object.fromEntries(Object.entries(base).filter(([name]) => !viaAlias.has(name)));
+    const targetFindings = [...aliasTargets].flatMap(([n, { target }]) => Object.hasOwn(base, target) ? checkDeps([n], { [n]: base[target] }) : []);
+    const reported = [...covered, ...flagged, ...viaAlias];
     const uncovered = added.filter((n) => !reported.includes(n));
     const age = ageInDays(snap, now);
     const taken = new Date(snap.generatedAt).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
@@ -115,7 +154,7 @@ export async function checkDependencies(workspaceDir, change, injected, now = ne
         advice.push(`The saved advisory list is ${age} days old. Run ${refresh} to update it. This blocks nothing.`);
     return {
         kind: "checked",
-        findings: checkDeps(reported, toDepAdvisory(snap)),
+        findings: mostSevereById([...checkDeps(reported, unaliased), ...targetFindings]),
         note: `dependencies: ${added.length} added, ${reported.length} checked against the npm audit list of ${taken} (${age} ${age === 1 ? "day" : "days"} old)`,
         advice,
     };

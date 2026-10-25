@@ -14,6 +14,19 @@ export declare class StdinTooLargeError extends Error {
 export declare function readErrorCode(err: unknown): string;
 /** A repeating read failure denies every call, so it needs a step beyond retry. */
 export declare function retryRoute(slug: string): string;
+/**
+ * A hook's answer to an event it cannot parse; both PreToolUse hooks use it,
+ * so they refuse that event in the same words. Before a tool call it refuses:
+ * a guard that steps aside when confused fails open. A hook that cannot read
+ * the event cannot tell main session from subagent either, so the refusal
+ * reaches every guarded call, and the route names commands typed in a
+ * terminal, not ones the stalled session would have to run. After an edit the
+ * check is advisory, so it only says it was skipped.
+ */
+export declare function unreadableEvent(slug: string, hook: string, event: "PreToolUse" | "PostToolUse", cause: string): {
+    exitCode: 0 | 2;
+    stderr: string;
+};
 /** Shared by both PreToolUse hooks so their wording cannot drift. */
 export declare function hookLimitText(err: StdinTooLargeError): string;
 /**

@@ -41,4 +41,4 @@ infrastructure above its maturity level is misaligned.
 - Tools: Read, Grep, Glob. No Edit, Write, network.
 - Boundary enforcement is advisory here; the shipped `arch-check` gate is the authority and emits the content-free telemetry.
 - Subagents cannot spawn subagents — flatten multi-step analysis into linear reasoning.
-- The PreToolUse path-guard denies `.env*`, `~/.ssh/`, `~/.aws/`. Do not attempt those paths.
+- In a subagent the PreToolUse path-guard allows only Read, Grep and Glob, and denies `.env*`, `~/.ssh/`, `~/.aws/`. Do not attempt those paths.

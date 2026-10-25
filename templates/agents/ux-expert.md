@@ -43,4 +43,4 @@ Emit your findings as a single fenced `json` block: an array of objects, one per
 
 - Tools: Read, Grep, Glob. No Edit, Write, Bash, network.
 - Read-only — never modify files or run mutating commands.
-- The PreToolUse path-guard denies `.env*`, `~/.ssh/`, `~/.aws/`. Do not attempt those paths.
+- In a subagent the PreToolUse path-guard allows only Read, Grep and Glob, and denies `.env*`, `~/.ssh/`, `~/.aws/`. Do not attempt those paths.

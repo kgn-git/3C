@@ -9,7 +9,7 @@ import { consumeBypassToken } from "./bypass.js";
 import { loadHooksConfig } from "./config.js";
 import { checkAndConfirmHooksConfig } from "./diff-confirm.js";
 import { readHookEventFromStdin } from "./event.js";
-import { hookLimitText, readErrorCode, retryRoute, StdinTooLargeError } from "../validate/_stdin.js";
+import { hookLimitText, readErrorCode, retryRoute, StdinTooLargeError, unreadableEvent } from "../validate/_stdin.js";
 import { buildIsolatedCommand } from "./network-isolate.js";
 import { loadTelemetryConfig } from "../telemetry/config.js";
 import { writeTelemetryEvent } from "../telemetry/writer.js";
@@ -21,7 +21,8 @@ const COMMIT_PATTERN = /^\s*git\s+commit\b/;
 export async function runHookOrchestrator(opts) {
     const spawn = opts.spawn ?? defaultSpawn;
     const slug = resolveBrandSlugSync();
-    // 1. Read event payload (must succeed; otherwise fail-open with warn).
+    // 1. Read event payload. One that cannot be read or parsed is refused before
+    //    a tool call (unreadableEvent) and only skips the check after an edit.
     let eventResult;
     try {
         eventResult = await readHookEventFromStdin(opts.stdin);
@@ -34,7 +35,7 @@ export async function runHookOrchestrator(opts) {
         // never blocks, so it only says so.
         const cause = err instanceof StdinTooLargeError ? hookLimitText(err) : `could not read the event (${readErrorCode(err)})`;
         if (opts.event === "PostToolUse") {
-            opts.stderr.write(`${slug} hook run: ${cause}; post-edit validation skipped for this edit\n`);
+            opts.stderr.write(`${slug} hook run: ${cause}; post-edit validation skipped for this edit.\n`);
             return { exitCode: 0 };
         }
         opts.stderr.write(err instanceof StdinTooLargeError
@@ -44,8 +45,9 @@ export async function runHookOrchestrator(opts) {
         return { exitCode: 2 };
     }
     if (!eventResult.ok) {
-        opts.stderr.write(`${slug} hook run: could not parse Claude Code event payload (${eventResult.error}); allowing tool call to proceed\n`);
-        return { exitCode: 0 };
+        const r = unreadableEvent(slug, "hook run", opts.event === "PostToolUse" ? "PostToolUse" : "PreToolUse", eventResult.error);
+        opts.stderr.write(r.stderr);
+        return { exitCode: r.exitCode };
     }
     const event = eventResult.event;
     // 1a. PostToolUse edit validation — advisory only, self-contained, never

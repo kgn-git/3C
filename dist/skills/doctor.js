@@ -8,7 +8,10 @@ import { loadFramework } from "../branding/load.js";
 import { scanSecrets } from "../validate/secrets.js";
 import { countInstructions } from "../validate/instruction-count.js";
 import { stripFencedBlocks, exceedsSizeCap, MAX_DOC_BYTES, } from "../validate/_markdown.js";
-import { archConfigPath, loadArchConfig } from "../validate/arch-config.js";
+import { archConfigPath, archProposedPath, loadArchConfig } from "../validate/arch-config.js";
+import { discoverWorkspaceFiles } from "../rules/discover.js";
+import { hasClusterableSource } from "./arch-boundary/discover.js";
+import { PATH_GUARD_MATCHER } from "../hooks/install.js";
 import { CLI_COMMANDS, RETIRED_COMMANDS, checkCliSkillCompat, referencedRetiredCommands, retiredVerbs, } from "./cli-compat.js";
 async function pathExists(p) {
     try {
@@ -312,11 +315,13 @@ export async function runDoctor(opts) {
     const hasCmd = (matcher, needle) => pre.some((e) => e.matcher === matcher &&
         (e.hooks ?? []).some((h) => typeof h.command === "string" && h.command.includes(needle)));
     const hasOrchestrator = hasCmd("Bash", "hook run");
-    const hasPathGuard = hasCmd("Read|Edit|Write", "hook path-guard");
+    // On every tool: a path guard left on an older, narrower matcher never sees
+    // the tools it was meant to refuse.
+    const hasPathGuard = hasCmd(PATH_GUARD_MATCHER, "hook path-guard");
     // Keyed on OUR command, not on the event key. An adopter may run other
     // people's PostToolUse hooks; the presence of one says nothing about whether
-    // post-edit validation is registered. Doctor is the only route by which an
-    // existing install learns it must re-register.
+    // post-edit validation is registered. A missing registration is reported
+    // here with `hook install` as the repair.
     // Matcher AND command, like the PreToolUse probes above: an entry carrying
     // our command under a matcher that never fires on an edit is a registration
     // that does nothing, and must not be reported as health.
@@ -331,7 +336,7 @@ export async function runDoctor(opts) {
     else {
         const missing = [
             hasOrchestrator ? null : "Bash orchestrator",
-            hasPathGuard ? null : "Read|Edit|Write path-guard",
+            hasPathGuard ? null : "path-guard on every tool",
             hasPostEdit ? null : "PostToolUse post-edit validation",
         ].filter(Boolean);
         add("fail", "hooks", `missing hook(s): ${missing.join(", ")} — run \`${slug} hook install\`.`);
@@ -372,28 +377,48 @@ export async function runDoctor(opts) {
         // remains right for the COMMAND names in the message.
         const loaded = await loadArchConfig(workspaceDir);
         const cfgPath = archConfigPath(workspaceDir);
+        const proposedPath = archProposedPath(workspaceDir);
+        // The gate never reads the proposal, so an adopter who does not know it
+        // is there never acts on it. Over a broken active map there is nothing to
+        // compare it with yet.
+        const proposalNote = !(await pathExists(proposedPath))
+            ? ""
+            : loaded.kind === "malformed"
+                ? ` A discover draft is waiting at ${proposedPath}: fix the active file first, then compare the draft with it and delete the draft.`
+                : ` A discover draft is waiting at ${proposedPath}: compare it with the active map, copy what you want by hand, then delete it.`;
+        // Where discover would draft nothing, advertising it sends the adopter to
+        // a no-op. Outside a git repository the tree cannot be listed, so the
+        // advice stays as it was. Listed only on the two paths that read it.
+        const discoverable = async () => {
+            const listed = await discoverWorkspaceFiles(workspaceDir);
+            return !listed.ok || hasClusterableSource(listed.files);
+        };
         if (loaded.kind === "malformed") {
             // `fail`, not `warn`: this state blocks the adopter's very next commit.
             // A warning would undersell a gate that is already refusing to run.
-            add("fail", "arch-gate", `${cfgPath} exists but does not parse or validate (${loaded.detail}) — the boundary gate fails closed, so \`${slug} arch-check check\` will block. Open that file and fix it. Do NOT run \`${slug} arch-check discover\` expecting a repair: it now leaves a broken active config untouched and writes to architecture.proposed.yaml instead, so your rules are still there.`);
+            add("fail", "arch-gate", `${cfgPath} exists but does not parse or validate (${loaded.detail}) — the boundary gate fails closed, so \`${slug} arch-check check\` will block. Open that file and fix it. Do NOT run \`${slug} arch-check discover\` expecting a repair: it now leaves a broken active config untouched and writes to architecture.proposed.yaml instead, so your rules are still there.${proposalNote}`);
         }
         else if (loaded.kind === "inert" && loaded.declared) {
             // Parses, layers named, no deny pair — one command after `discover` can
             // have said the same file blocks nothing. "Configured" was a false
             // all-clear here.
-            add("warn", "arch-gate", `${cfgPath} declares layers but no \`deny\` pair, so the boundary gate enforces nothing. Add the pairs you want blocked — the file carries a worked example — then check with \`${slug} arch-check check\`.`);
+            add("warn", "arch-gate", `${cfgPath} declares layers but no \`deny\` pair, so the boundary gate enforces nothing. Add the pairs you want blocked — the file carries a worked example — then check with \`${slug} arch-check check\`.${proposalNote}`);
         }
         else if (loaded.kind === "inert") {
             // After `setup` the file EXISTS as the inert starter, and
             // `arch-check init` would answer "already exists — left unchanged" — a
             // no-op must not be the advertised repair, so the routes differ by state.
-            add("warn", "arch-gate", `${cfgPath} declares no layers the gate can read — it is inert. Normal for the scaffolded starter, which parses to nothing. Run \`${slug} arch-check discover\` to draft layers/deny from the import graph (it replaces this starter), or define them by hand there — the starter and drafted files include a worked example.`);
+            add("warn", "arch-gate", (await discoverable())
+                ? `${cfgPath} declares no layers the gate can read — it is inert. Normal for the scaffolded starter, which parses to nothing. Run \`${slug} arch-check discover\` to draft layers/deny from the import graph (it replaces this starter), or define them by hand there — the starter and drafted files include a worked example.${proposalNote}`
+                : `${cfgPath} declares no layers the gate can read — it is inert. Normal for the scaffolded starter, which parses to nothing. No tracked non-test JS/TS source sits in sub-directories for discover to draft from, so define layers/deny by hand there — the starter includes a worked example.${proposalNote}`);
         }
         else if (loaded.kind === "absent") {
-            add("warn", "arch-gate", `the boundary gate has no architecture.yaml — it is inert. Run \`${slug} arch-check init\` and define layers/deny, or \`${slug} arch-check discover\` to draft them from the import graph.`);
+            add("warn", "arch-gate", (await discoverable())
+                ? `the boundary gate has no architecture.yaml — it is inert. Run \`${slug} arch-check init\` and define layers/deny, or \`${slug} arch-check discover\` to draft them from the import graph.${proposalNote}`
+                : `the boundary gate has no architecture.yaml — it is inert. Run \`${slug} arch-check init\` and define layers/deny by hand; no tracked non-test JS/TS source sits in sub-directories for discover to draft from.${proposalNote}`);
         }
         else {
-            add("ok", "arch-gate", "architecture boundary gate is configured.");
+            add("ok", "arch-gate", `architecture boundary gate is configured.${proposalNote}`);
         }
     }
     // Crew presence + agent naming.

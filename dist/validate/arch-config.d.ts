@@ -27,6 +27,8 @@ export type ArchConfigResult = {
 };
 /** Single owner of the path, so a probe cannot disagree with the loader. */
 export declare function archConfigPath(ws: string): string;
+/** Where discover sends a draft it must not write over the active config. */
+export declare function archProposedPath(ws: string): string;
 /** Pure over the loaded result: re-reading the file would open a
  *  check-then-use gap (CWE-367). `malformed` is not inert: that would fail open. */
 export declare function isGateInert(r: ArchConfigResult): r is Extract<ArchConfigResult, {

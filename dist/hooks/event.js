@@ -7,8 +7,10 @@ export function parseHookEvent(json) {
     try {
         parsed = JSON.parse(json);
     }
-    catch (err) {
-        return { ok: false, error: `invalid JSON: ${err.message}` };
+    catch {
+        // Never the parser's own message: it can quote part of the payload, and
+        // this text reaches stderr the model reads.
+        return { ok: false, error: "invalid JSON" };
     }
     if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
         return { ok: false, error: "hook event payload must be a JSON object" };
@@ -35,6 +37,8 @@ export function parseHookEvent(json) {
         ...(typeof obj.session_id === "string"
             ? { session_id: obj.session_id }
             : {}),
+        ...(typeof obj.transcript_path === "string" ? { transcript_path: obj.transcript_path } : {}),
+        ...(typeof obj.cwd === "string" ? { cwd: obj.cwd } : {}),
     };
     return { ok: true, event };
 }

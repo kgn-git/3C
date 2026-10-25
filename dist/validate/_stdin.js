@@ -28,6 +28,26 @@ export function readErrorCode(err) {
 export function retryRoute(slug) {
     return `Retry the tool call; if it repeats, run \`${slug} doctor\` and restart the session.`;
 }
+/**
+ * A hook's answer to an event it cannot parse; both PreToolUse hooks use it,
+ * so they refuse that event in the same words. Before a tool call it refuses:
+ * a guard that steps aside when confused fails open. A hook that cannot read
+ * the event cannot tell main session from subagent either, so the refusal
+ * reaches every guarded call, and the route names commands typed in a
+ * terminal, not ones the stalled session would have to run. After an edit the
+ * check is advisory, so it only says it was skipped.
+ */
+export function unreadableEvent(slug, hook, event, cause) {
+    if (event === "PostToolUse") {
+        return { exitCode: 0, stderr: `${slug} ${hook}: could not read the Claude Code event (${cause}); post-edit validation skipped for this edit.\n` };
+    }
+    return {
+        exitCode: 2,
+        stderr: `${slug} ${hook}: could not read the Claude Code event (${cause}); denied. ` +
+            `In a terminal, run \`${slug} hook install\`. If Claude Code was updated, install the latest ${slug.toUpperCase()} release and run \`${slug} hook install\` again. ` +
+            `If it still repeats, run \`${slug} bug\`.\n`,
+    };
+}
 /** Shared by both PreToolUse hooks so their wording cannot drift. */
 export function hookLimitText(err) {
     return `event payload exceeds the ${err.maxBytes}-byte hook limit`;

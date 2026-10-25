@@ -8,7 +8,7 @@ import { dirname, join } from "node:path";
 import { resolveBrandSlugSync } from "../../branding/runtime.js";
 import { discoverWorkspaceFiles } from "../../rules/discover.js";
 import { parseRelativeImports } from "../../validate/post-edit/layers.js";
-import { archConfigPath, hasAuthoredContent, loadArchConfig, } from "../../validate/arch-config.js";
+import { archConfigPath, archProposedPath, hasAuthoredContent, loadArchConfig, } from "../../validate/arch-config.js";
 import { EXAMPLE_BLOCK, isUnmodifiedStarter, PACKAGES_HINT, USAGE_EXPLAINER } from "./scaffold.js";
 const SRC_RE = /\.(ts|tsx|js|jsx|mts|cts)$/;
 const TEST_RE = /(^|\/)tests?\/|\.(test|spec)\.[^/]+$/;
@@ -64,6 +64,13 @@ function buildGraph(files) {
         edges,
         unassigned: unassigned.sort(),
     };
+}
+/**
+ * Whether discover would draft any layer from these tracked paths. Clusters
+ * depend on paths alone, so no file is read.
+ */
+export function hasClusterableSource(paths) {
+    return buildGraph(paths.map((p) => [p, ""])).nodes.length > 0;
 }
 // Recursive Tarjan — nodes are directory clusters, so the recursion depth is
 // bounded by the cluster count (dozens, not files). Deterministic order.
@@ -290,8 +297,6 @@ export async function planArchDiscover(ws) {
             /* deleted-but-tracked — skip */
         }
     }
-    const slug = resolveBrandSlugSync();
-    const dir = join(ws, `.${slug}`);
     const activePath = archConfigPath(ws);
     // The destination comes from the loader's KIND, never from a parse here —
     // `tests/validate/arch-config-consolidation.test.ts` pins exactly one parser
@@ -324,7 +329,7 @@ export async function planArchDiscover(ws) {
         proposed,
         activeBroken: reason === "malformed",
     });
-    const path = proposed ? join(dir, "architecture.proposed.yaml") : activePath;
+    const path = proposed ? archProposedPath(ws) : activePath;
     const tierCount = (draft.match(/^ {2}tier-\d+:/gm) ?? []).length;
     return { path, proposed, tiers: tierCount, reason, draft };
 }
