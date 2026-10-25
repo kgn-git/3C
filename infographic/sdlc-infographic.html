@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<title>3C — How a skills library ships software</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --indigo-50: #EEF2FF;
+    --indigo-100: #E0E7FF;
+    --indigo-500: #6366F1;
+    --indigo-600: #4F46E5;
+    --indigo-700: #4338CA;
+    --indigo-900: #312E81;
+    --slate-900: #0F172A;
+    --slate-700: #334155;
+    --slate-500: #64748B;
+    --slate-200: #E2E8F0;
+    --slate-100: #F1F5F9;
+    --slate-50: #F8FAFC;
+    --amber-100: #FEF3C7;
+    --amber-600: #D97706;
+    --emerald-50: #ECFDF5;
+    --emerald-500: #10B981;
+    --emerald-700: #047857;
+  }
+
+  * { box-sizing: border-box; }
+
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    color: var(--slate-900);
+    background: #fff;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "ss01", "cv01", "cv02";
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 14mm 14mm;
+    page-break-after: always;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  /* #231 fix: prevent flex-shrink trap. Only .diagram-wrap is allowed to
+     shrink; print pages at 297mm via @page + page-break-after. */
+  .page > * { flex-shrink: 0; }
+  .diagram-wrap { flex-shrink: 1; }
+
+  .page.cover, .page.closing { padding: 18mm 16mm; }
+  .page:last-child { page-break-after: auto; }
+
+  /* Cover page */
+  .cover {
+    background:
+      radial-gradient(circle at 85% 15%, rgba(99,102,241,0.20), transparent 55%),
+      radial-gradient(circle at 10% 90%, rgba(16,185,129,0.14), transparent 50%),
+      linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+    justify-content: space-between;
+  }
+  .cover-eyebrow {
+    font-size: 11pt;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--indigo-600);
+  }
+  .cover-title {
+    font-size: 48pt;
+    line-height: 1.02;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--slate-900);
+    margin: 12mm 0 8mm 0;
+    max-width: 170mm;
+  }
+  .cover-title span { color: var(--indigo-600); }
+  .cover-sub {
+    font-size: 17pt;
+    line-height: 1.35;
+    font-weight: 400;
+    color: var(--slate-700);
+    max-width: 160mm;
+  }
+  .cover-meta {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-top: 14mm;
+    border-top: 1.5px solid var(--slate-200);
+  }
+  .cover-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5pt;
+    color: var(--slate-500);
+    letter-spacing: 0.04em;
+  }
+  .cover-brand {
+    text-align: right;
+    font-size: 10pt;
+    color: var(--slate-500);
+  }
+  .cover-brand strong { color: var(--slate-900); font-weight: 700; }
+
+  .cover-highlights {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6mm;
+    margin-top: 16mm;
+  }
+  .hl {
+    padding: 5mm;
+    border-radius: 3mm;
+    background: #fff;
+    border: 1.5px solid var(--slate-200);
+    box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+  }
+  .hl-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11pt;
+    color: var(--indigo-600);
+    font-weight: 600;
+    margin-bottom: 2mm;
+  }
+  .hl-text {
+    font-size: 10.5pt;
+    line-height: 1.4;
+    color: var(--slate-700);
+  }
+
+  /* Diagram pages */
+  .diagram-page { background: #fff; }
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6mm;
+  }
+  .badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10pt;
+    letter-spacing: 0.08em;
+    color: var(--indigo-600);
+    font-weight: 600;
+    padding: 2mm 4mm;
+    background: var(--indigo-50);
+    border-radius: 20mm;
+    text-transform: uppercase;
+  }
+  .page-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9pt;
+    color: var(--slate-500);
+    letter-spacing: 0.1em;
+  }
+
+  .diagram-title {
+    font-size: 26pt;
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--slate-900);
+    margin: 0 0 3mm 0;
+  }
+  .diagram-subtitle {
+    font-size: 12pt;
+    line-height: 1.4;
+    color: var(--slate-700);
+    font-weight: 400;
+    margin: 0 0 4mm 0;
+    max-width: 180mm;
+  }
+
+  .diagram-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2mm 0;
+    min-height: 130mm;
+  }
+  .diagram-wrap svg,
+  .diagram-wrap img.diagram-svg {
+    max-width: 100%;
+    max-height: 150mm;
+    height: auto;
+    width: auto;
+  }
+
+  /* Tall sequence/flow diagrams (E) get extra vertical room */
+  .diagram-wrap.tall svg,
+  .diagram-wrap.tall img.diagram-svg {
+    max-height: 165mm;
+  }
+
+  /* Extra-large: diagram B is a 14-state vertical state machine — needs the most room */
+  .diagram-wrap.xl svg,
+  .diagram-wrap.xl img.diagram-svg {
+    max-height: 195mm;
+  }
+
+  .key-message {
+    margin-top: 4mm;
+    padding: 5mm 6mm 5mm 7mm;
+    border-left: 4px solid var(--indigo-600);
+    background: var(--indigo-50);
+    border-radius: 0 3mm 3mm 0;
+  }
+  .key-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9pt;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--indigo-700);
+    text-transform: uppercase;
+    margin-bottom: 2.5mm;
+  }
+  .key-text {
+    font-size: 13.5pt;
+    line-height: 1.45;
+    color: var(--slate-900);
+    font-weight: 500;
+    letter-spacing: -0.005em;
+  }
+
+  .page-footer {
+    margin-top: 5mm;
+    padding-top: 3mm;
+    border-top: 1px solid var(--slate-200);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8pt;
+    color: var(--slate-500);
+    letter-spacing: 0.04em;
+  }
+
+  /* Closing page */
+  .closing {
+    background:
+      radial-gradient(circle at 15% 20%, rgba(99,102,241,0.18), transparent 55%),
+      radial-gradient(circle at 90% 85%, rgba(16,185,129,0.12), transparent 55%),
+      linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+    justify-content: space-between;
+  }
+  .closing-head {
+    font-size: 12pt;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--indigo-600);
+  }
+  .closing-title {
+    font-size: 40pt;
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--slate-900);
+    margin: 10mm 0 6mm 0;
+    max-width: 170mm;
+  }
+  .closing-body {
+    font-size: 14pt;
+    line-height: 1.5;
+    color: var(--slate-700);
+    max-width: 170mm;
+  }
+  .closing-body p { margin: 0 0 4mm 0; }
+
+  .takeaway-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4mm;
+    margin-top: 10mm;
+  }
+  .takeaway {
+    padding: 5mm 6mm;
+    background: #fff;
+    border: 1.5px solid var(--slate-200);
+    border-radius: 3mm;
+  }
+  .takeaway-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9pt;
+    color: var(--indigo-600);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5mm;
+  }
+  .takeaway-text {
+    font-size: 11pt;
+    line-height: 1.4;
+    color: var(--slate-900);
+    font-weight: 500;
+  }
+
+  .closing-cta {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 14mm;
+    padding-top: 8mm;
+    border-top: 1.5px solid var(--slate-200);
+  }
+  .cta-main {
+    font-size: 14pt;
+    font-weight: 700;
+    color: var(--slate-900);
+    line-height: 1.3;
+  }
+  .cta-sub {
+    font-size: 10.5pt;
+    color: var(--slate-500);
+    margin-top: 2mm;
+  }
+  .cta-tags {
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9pt;
+    color: var(--indigo-600);
+    letter-spacing: 0.04em;
+    line-height: 1.7;
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<section class="page cover">
+  <div>
+    <div class="cover-eyebrow">3C &middot; AI coding at team scale</div>
+    <h1 class="cover-title">How a skills library<br>ships <span>software</span>.</h1>
+    <p class="cover-sub">Five diagrams of the workflow behind <strong>3C</strong> (Claude Code Coach): which skill dispatches which agent, the path every issue takes, the gates it passes, the context each step reads, and how work stays on one branch at a time.</p>
+
+    <div class="cover-highlights">
+      <div class="hl">
+        <div class="hl-num">01 &rarr; 05</div>
+        <div class="hl-text">Five diagrams. One workflow. Every agent and skill drawn here is one you can install.</div>
+      </div>
+      <div class="hl">
+        <div class="hl-num">Read-only agents</div>
+        <div class="hl-text">The agents read the change and report. Skills write, in your session, and a person confirms the branch and the PR.</div>
+      </div>
+      <div class="hl">
+        <div class="hl-num">MIT</div>
+        <div class="hl-text">Open source. The skills and agents install into <code>.claude/</code> and run in Claude Code.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-meta">
+    <div class="cover-tag">kgn-git/3C &middot; 25 October 2026 &middot; <a href="./3C-SDLC-Infographic.pdf" style="color: var(--indigo-600); text-decoration: none; font-weight: 600;">Download PDF <span aria-hidden="true">↓</span></a></div>
+    <div class="cover-brand"><strong>3C</strong><br>Claude Code Coach</div>
+  </div>
+</section>
+
+<!-- DIAGRAM A -->
+<section class="page diagram-page">
+  <div class="page-header">
+    <div class="badge">01 &middot; Orchestration</div>
+    <div class="page-num">A / 5</div>
+  </div>
+
+  <h2 class="diagram-title">Skills dispatch agents. Agents never dispatch.</h2>
+  <p class="diagram-subtitle">Who calls whom. A person invokes a skill; the skills orchestrate in your session; the agents are dispatched one level deep, read the change, and report.</p>
+
+  <div class="diagram-wrap">
+    <img src="diagrams/a-orchestration.svg" alt="Diagram A: a person invokes a skill. /3c-programme-manager runs /3c-project-manager per project. /3c-project-manager dispatches 3c-product-owner and 3c-journey-architect for a scope pre-check, runs /3c-implement (which uses /3c-test with 3c-test-author, then /3c-review), and convenes /3c-review-board, whose agents (3c-code-reviewer, 3c-architect, 3c-security-reviewer, 3c-qa-reviewer, and 3c-ux-expert when UI files change) report to 3c reconcile. /3c-retrospective is optional." class="diagram-svg">
+  </div>
+
+  <div class="key-message">
+    <div class="key-label">Key message</div>
+    <div class="key-text">Orchestration lives in skills, not agents. <strong>/3c-project-manager</strong> checks scope first, implements test-first through <strong>/3c-implement</strong>, then convenes <strong>/3c-review-board</strong>. Its agents report in parallel to <strong>3c reconcile</strong>, so the verdict is computed, not written.</div>
+  </div>
+
+  <div class="page-footer">
+    <span>A &middot; Orchestration</span>
+    <span>templates/skills &middot; templates/agents</span>
+  </div>
+</section>
+
+<!-- DIAGRAM B -->
+<section class="page diagram-page">
+  <div class="page-header">
+    <div class="badge">02 &middot; Lifecycle</div>
+    <div class="page-num">B / 5</div>
+  </div>
+
+  <h2 class="diagram-title">Every issue travels the same path.</h2>
+  <p class="diagram-subtitle">One issue through <code>/3c-project-manager</code>, as a state machine: from the scope pre-check to the handover issue.</p>
+
+  <div class="diagram-wrap">
+    <img src="diagrams/b-lifecycle.svg" alt="Diagram B: an issue passes a scope and reachability pre-check, a plan, a confirmed branch, a failing test, the minimum code, a commit, /3c-review, the verify gate and the review board. A clean or advisory verdict opens a confirmed PR that a person merges, and a handover issue is filed. A blocking verdict gets one fix cycle, then goes back to a person." class="diagram-svg">
+  </div>
+
+  <div class="key-message">
+    <div class="key-label">Key message</div>
+    <div class="key-text">A person confirms the branch and the PR, and a person merges. Everything between is test-first and gated. A blocking verdict gets <strong>one</strong> fix cycle; if the board still blocks, the issue goes back to a person instead of round the loop again.</div>
+  </div>
+
+  <div class="page-footer">
+    <span>B &middot; Issue lifecycle</span>
+    <span>/3c-project-manager stages 1&ndash;5</span>
+  </div>
+</section>
+
+<!-- DIAGRAM C -->
+<section class="page diagram-page">
+  <div class="page-header">
+    <div class="badge">03 &middot; Quality gates</div>
+    <div class="page-num">C / 5</div>
+  </div>
+
+  <h2 class="diagram-title">Gates over guidelines.</h2>
+  <p class="diagram-subtitle">Each gate, grouped by when it fires, and marked for who enforces it: a hook, the CLI, or a rule the skill follows.</p>
+
+  <div class="diagram-wrap">
+    <img src="diagrams/c-quality-gates.svg" alt="Diagram C: while editing, the path guard hook blocks and the post-edit boundary check hook advises. While writing, the skill redacts secrets from the plan, the CLI refuses a test file, PR body or handover that carries one, and the skill writes a failing test before the code. At commit, the commit gate hook blocks by default; 3c bypass skips one commit with a reason and is logged. Before the PR, the skill stops on critical or major /3c-review findings, a failing verify gate, and a blocking review board after one fix cycle. At ship, a person confirms the branch and the PR." class="diagram-svg">
+  </div>
+
+  <div class="key-message">
+    <div class="key-label">Key message</div>
+    <div class="key-text">Every gate names who enforces it. Hooks block on their own: the path guard inside an agent, and the commit gate. The CLI refuses a test file, PR body or handover that carries a secret. The skills stop at their own rules: a failing test first, a clean review, a passing verify gate, a board that does not block. The post-edit boundary check only advises. <strong>3c bypass</strong> skips one commit, with a reason, and is logged.</div>
+  </div>
+
+  <div class="page-footer">
+    <span>C &middot; Quality gates</span>
+    <span>hooks &middot; /3c-implement &middot; /3c-review-board</span>
+  </div>
+</section>
+
+<!-- DIAGRAM D -->
+<section class="page diagram-page">
+  <div class="page-header">
+    <div class="badge">04 &middot; Context</div>
+    <div class="page-num">D / 5</div>
+  </div>
+
+  <h2 class="diagram-title">Context, loaded where it matters.</h2>
+  <p class="diagram-subtitle">What each context file holds, and the step that reads it.</p>
+
+  <div class="diagram-wrap">
+    <img src="diagrams/d-principles-map.svg" alt="Diagram D: Claude Code loads CLAUDE.md and the rule packs in .claude/rules into every session; the rule packs are consulted by /3c-implement, /3c-test and /3c-review. The /3c-review checklist is read only by /3c-review. .3c/architecture.yaml is read by the post-edit boundary check, 3c-architect and 3c arch-check. .3c/hooks.yaml is read by the commit gate and 3c hook confirm. .3c/test-map.json is read by 3c test select in the inner loop only." class="diagram-svg">
+  </div>
+
+  <div class="key-message">
+    <div class="key-label">Key message</div>
+    <div class="key-text"><strong>CLAUDE.md has a budget.</strong> Rule packs stay in <code>.claude/rules/</code> by default, where Claude Code loads them itself. Only rules marked <code>load: inject</code> are written into CLAUDE.md, and <strong>3c rules apply</strong> refuses at 150 or more directives. The checklist, the architecture map, the commit chain and the test map are each read by the step that needs them.</div>
+  </div>
+
+  <div class="page-footer">
+    <span>D &middot; Context map</span>
+    <span>CLAUDE.md &middot; .claude/rules &middot; .3c</span>
+  </div>
+</section>
+
+<!-- DIAGRAM E -->
+<section class="page diagram-page">
+  <div class="page-header">
+    <div class="badge">05 &middot; Serialisation</div>
+    <div class="page-num">E / 5</div>
+  </div>
+
+  <h2 class="diagram-title">One branch at a time.</h2>
+  <p class="diagram-subtitle">Serialisation at two levels: issues within a milestone, and projects across a workspace.</p>
+
+  <div class="diagram-wrap">
+    <img src="diagrams/e-serialisation.svg" alt="Diagram E: within a milestone, /3c-project-manager deliver resolves the milestone name exactly, states the dependency order and issue count, runs sprint readiness, and opens the next issue's branch only after the previous PR has merged. Across projects, /3c-programme-manager deliver orders the projects, asks a person before each next project, and stops before the dependents of a blocked one." class="diagram-svg">
+  </div>
+
+  <div class="key-message">
+    <div class="key-label">Key message</div>
+    <div class="key-text">Parallel branches over a shared surface produce conflicting edits to the same files. So <strong>/3c-project-manager deliver</strong> opens issue N+1's branch only after issue N's PR has merged, and <strong>/3c-programme-manager deliver</strong> asks before each next project and stops before the dependents of a blocked one.</div>
+  </div>
+
+  <div class="page-footer">
+    <span>E &middot; Serialisation</span>
+    <span>/3c-project-manager deliver &middot; /3c-programme-manager deliver</span>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="page closing">
+  <div>
+    <div class="closing-head">The one-line summary</div>
+    <h2 class="closing-title">Governed AI coding is a workflow,<br>not a <span style="color:var(--indigo-600)">hope</span>.</h2>
+    <div class="closing-body">
+      <p>Skills orchestrate. Agents read and report. Every gate names who enforces it. A person confirms the branch and the PR.</p>
+      <p>The retrospective is optional and never a gate. It records what worked, what didn't, and the action items to take next.</p>
+    </div>
+
+    <div class="takeaway-grid">
+      <div class="takeaway">
+        <div class="takeaway-num">01</div>
+        <div class="takeaway-text">Name every role. Every agent and skill drawn here is one you can install.</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-num">02</div>
+        <div class="takeaway-text">Draw the lifecycle. If you can't draw it, you can't audit it.</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-num">03</div>
+        <div class="takeaway-text">Gates over guidelines. Every gate names who enforces it.</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-num">04</div>
+        <div class="takeaway-text">Give CLAUDE.md a budget. Read the rest where it is needed.</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-num">05</div>
+        <div class="takeaway-text">One branch at a time. The next branch waits for the last merge.</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-num">06</div>
+        <div class="takeaway-text">Bound the board. One fix cycle, then a person.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="closing-cta">
+    <div>
+      <div class="cta-main">Open source, MIT licensed.<br>Borrow, fork, improve.</div>
+      <div class="cta-sub"><a href="https://github.com/kgn-git/3C" style="color: inherit;">github.com/kgn-git/3C</a> &middot; skills and agents for Claude Code</div>
+    </div>
+    <div class="cta-tags">#AIEngineering<br>#DeveloperExperience<br>#ClaudeCode<br>#SoftwareProcess<br>#Governance</div>
+  </div>
+</section>
+
+</body>
+</html>

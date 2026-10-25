@@ -4,7 +4,7 @@ stateDiagram-v2
     [*] --> IssueSelected
     IssueSelected --> ImplementPlan: Maya invokes /3c-implement
     ImplementPlan --> BranchCreated: /3c-implement creates branch
-    BranchCreated --> FailingTest: /3c-test specifies it, test-author writes the failing test
+    BranchCreated --> FailingTest: test-author drafts the failing test, /3c-test writes and runs it
     FailingTest --> ClaudeImpl: Claude Code implements
 
     ClaudeImpl --> PostEdit
@@ -32,5 +32,5 @@ stateDiagram-v2
         transition labelled
         with who typed it —
         Claude Code, /3c-implement,
-        test-author. Never Maya.
+        /3c-test. Never Maya.
     end note

@@ -1,0 +1,40 @@
+%%{init: {'theme':'base','fontFamily':'arial, sans-serif','themeVariables':{'primaryColor':'#EEF2FF','primaryTextColor':'#1E1B4B','primaryBorderColor':'#4F46E5','lineColor':'#6366F1','fontFamily':'arial, sans-serif','fontSize':'20px'}}}%%
+stateDiagram-v2
+  direction TB
+  accTitle: 3C lifecycle: one issue through /3c-project-manager
+  accDescr: An issue passes a scope and reachability pre-check, a plan and a confirmed branch, a failing test, the minimum code, a commit through the hook chain, /3c-review, the verify gate and the review board. A clean or advisory verdict opens a PR that a person confirms and merges, then a handover issue is filed. A blocking verdict gets one fix cycle; if it is still blocking, the issue goes back to a person.
+
+  state "Issue" as Issue
+  state "Scope and reachability pre-check" as PreCheck
+  state "Branch" as Branch
+  state "RED: a failing test" as Red
+  state "GREEN: the minimum code" as Green
+  state "Commit" as Commit
+  state "/3c-review" as Review
+  state "Verify gate" as Verify
+  state "Review board" as Board
+  state "One fix cycle, then the board again" as Fix
+  state "PR, confirmed by a person" as PR
+  state "Handover issue filed" as Handover
+  state "Back to a person" as Stopped
+
+  [*] --> Issue: /3c-create-issue
+  Issue --> PreCheck: /3c-project-manager
+  PreCheck --> Stopped: unclear or unreachable
+  PreCheck --> Branch: plan shown, a person confirms
+  Branch --> Red: /3c-test
+  Red --> Green
+  Green --> Commit: guards falsified
+  Commit --> Green: the hook chain fails
+  Commit --> Review
+  Review --> Red: critical or major
+  Review --> Verify: clean, or override and continue: draft PR
+  Verify --> Red: a non-zero exit
+  Verify --> Board: passes, output quoted
+  Board --> PR: clean or advisory
+  Board --> Fix: blocking
+  Fix --> PR: clean or advisory
+  Fix --> Stopped: still blocking
+  PR --> Handover: merged by a person
+  Handover --> [*]: optional /3c-retrospective
+  Stopped --> [*]

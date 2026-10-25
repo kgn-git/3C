@@ -652,10 +652,10 @@ deny:
     <div class="page-num">6 / 6</div>
   </div>
   <h2 class="diagram-title">Walk the path. File the gap.</h2>
-  <p class="diagram-subtitle">For #1287 (a UI change), <code>/3c-test</code> sets out what the integration test must assert, and the <code>test-author</code> subagent writes it, test-first. Maya deploys to staging with the team's own deploy script, walks the acceptance criteria by hand, and uses <code>3c bug</code> to file the one regression she found as a structured issue, with the environment captured and secrets scrubbed.</p>
+  <p class="diagram-subtitle">For #1287 (a UI change), <code>/3c-test</code> sets out what the integration test must assert; the <code>test-author</code> subagent drafts it, and the skill writes and runs it, test-first. Maya deploys to staging with the team's own deploy script, walks the acceptance criteria by hand, and uses <code>3c bug</code> to file the one regression she found as a structured issue, with the environment captured and secrets scrubbed.</p>
 
   <div class="diagram-wrap tall">
-    <img src="diagrams/l-uat.svg" alt="Phase 6 UAT sequence: /3c-test sets out the integration test and test-author writes it, Maya runs the team's deploy script against staging, walks the acceptance criteria manually, 3c bug captures environment and files a structured bug issue" class="diagram-svg">
+    <img src="diagrams/l-uat.svg" alt="Phase 6 UAT sequence: /3c-test sets out the integration test, test-author drafts it and the skill writes and runs it, Maya runs the team's deploy script against staging, walks the acceptance criteria manually, 3c bug captures environment and files a structured bug issue" class="diagram-svg">
   </div>
 
   <p style="font-size: 10pt; line-height: 1.5; color: var(--slate-700); margin: 3mm 0 0 0;">The header of the issue <code>3c bug</code> files for the #1287 regression (env values scrubbed):</p>
@@ -690,10 +690,10 @@ Expected: empty-state copy. Actual: orders panel renders [object Object].</div>
     <div class="page-num">&nbsp;</div>
   </div>
   <h2 class="diagram-title">Your data. Your machine. Your reflection.</h2>
-  <p class="diagram-subtitle">Maya runs <code>npx 3c dashboard</code> in her terminal, then opens <code>.3c/dashboard.html</code> in her browser. Three panels: which gates fired most today, what proportion of her commits passed the gate on first try, and the trend of post-edit findings across the sprint. <strong>Local-only. Gitignored. Never egressed at L2. Her manager cannot see this.</strong></p>
+  <p class="diagram-subtitle">Maya runs <code>npx 3c dashboard</code> in her terminal, then opens <code>.3c/dashboard.html</code> in her browser. Three panels: which gates fired most today, what proportion of her commits passed the gate on first try, and the trend of post-edit findings across the sprint. <strong>Her telemetry is local-only. Gitignored. Never egressed at L2. Her manager cannot see it.</strong> A delivery view beside the panels reads the repository's handover issues through <code>gh</code> from GitHub, cached locally; it uploads nothing.</p>
 
   <div class="diagram-wrap">
-    <img src="diagrams/m-dashboard.svg" alt="End-of-day dashboard mockup: .3c/telemetry/hooks/*.jsonl feeds .3c/dashboard.html with three panels (gates fired today, first-try pass rate, post-edit deltas trend); local-only, gitignored, never egressed at L2" class="diagram-svg">
+    <img src="diagrams/m-dashboard.svg" alt="End-of-day dashboard mockup: .3c/telemetry/hooks/*.jsonl feeds .3c/dashboard.html with three panels (gates fired today, first-try pass rate, post-edit deltas trend), telemetry local-only, gitignored, never egressed at L2; a delivery view reads the repository's handover issues through gh" class="diagram-svg">
   </div>
 
   <p style="font-size: 10pt; line-height: 1.55; color: var(--slate-700); margin: 3mm 0 0 0;">

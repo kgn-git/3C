@@ -48,14 +48,14 @@
 
   <rect x="34" y="280" width="240" height="76" rx="12" fill="#EEF2FF" stroke="#C7D2FE"/>
   <text x="154" y="305" text-anchor="middle" class="s" font-size="13">Hook Telemetry</text>
-  <text x="154" y="326" text-anchor="middle" class="m" font-size="10.5">.${BRAND_SLUG}/events/*.jsonl</text>
+  <text x="154" y="326" text-anchor="middle" class="m" font-size="10.5">.${FRAMEWORK_SLUG}/events/*.jsonl</text>
   <text x="154" y="344" text-anchor="middle" class="m" font-size="10.5">append-only · local-only · no egress</text>
 
   <path d="M274 318 L340 318" stroke="#4F46E5" stroke-width="2" fill="none" marker-end="url(#arrow-acc)"/>
 
   <rect x="340" y="280" width="240" height="76" rx="12" fill="#EEF2FF" stroke="#C7D2FE"/>
   <text x="460" y="305" text-anchor="middle" class="s" font-size="13">Personal Local Insights Dashboard</text>
-  <text x="460" y="326" text-anchor="middle" class="m" font-size="10.5">.${BRAND_SLUG}/dashboard.html</text>
+  <text x="460" y="326" text-anchor="middle" class="m" font-size="10.5">.${FRAMEWORK_SLUG}/dashboard.html</text>
   <text x="460" y="344" text-anchor="middle" class="m" font-size="10.5">your data, never your team's view</text>
 
   <path d="M280 264 L280 280" stroke="#64748B" stroke-width="2" fill="none" marker-end="url(#arrow)"/>

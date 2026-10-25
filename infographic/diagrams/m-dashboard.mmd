@@ -10,13 +10,16 @@ flowchart LR
 
     P3["Panel 3 — Post-edit deltas<br/>▁▂▃▅▆▇█ ↘ ▅▃▂▁<br/><i>trend down across the sprint</i>"]
 
-    PRIVACY["🔒 local-only · gitignored<br/>never egressed at L2<br/>your manager cannot see this"]
+    PRIVACY["🔒 your telemetry: local-only · gitignored<br/>never egressed at L2<br/>your manager cannot see it"]
+
+    DELIVERY["📦 Delivery view<br/>reads this repo's handover issues through gh<br/><i>read from GitHub · cached locally · uploads nothing</i>"]
 
     SOURCE --> DASH
     DASH --> P1
     DASH --> P2
     DASH --> P3
     DASH --> PRIVACY
+    DASH --> DELIVERY
 
     classDef source fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:1.5px
     classDef panel fill:#EEF2FF,stroke:#4F46E5,color:#1E1B4B,stroke-width:1.5px
@@ -26,3 +29,4 @@ flowchart LR
     class DASH host
     class P1,P2,P3 panel
     class PRIVACY privacy
+    class DELIVERY panel

@@ -1,0 +1,43 @@
+%%{init: {'theme':'base','fontFamily':'arial, sans-serif','themeVariables':{'primaryColor':'#EEF2FF','primaryTextColor':'#1E1B4B','primaryBorderColor':'#4F46E5','lineColor':'#6366F1','actorBkg':'#4F46E5','actorTextColor':'#fff','actorLineColor':'#312E81','loopTextColor':'#1E1B4B','labelBoxBorderColor':'#4F46E5','fontFamily':'arial, sans-serif','fontSize':'15px'}}}%%
+sequenceDiagram
+  accTitle: 3C serialisation: one branch at a time, at two levels
+  accDescr: Within a milestone, /3c-project-manager deliver resolves the milestone name exactly, fetches the open issues, states their dependency order and count, runs sprint readiness, then delivers each issue through stages 1 to 5 and opens the next branch only after the previous PR has merged. Across projects, /3c-programme-manager deliver orders the projects with 3c deps order, runs /3c-project-manager for each one, asks a person before the next project, and stops before the dependents of a project whose verdict is blocking.
+  autonumber
+  participant P as Person
+  participant PGM as /3c-programme-manager
+  participant PM as /3c-project-manager
+  participant GH as GitHub
+
+  rect rgb(238, 242, 255)
+  Note over P,GH: Within a milestone: /3c-project-manager deliver
+  P->>PM: deliver a milestone
+  PM->>GH: resolve the milestone name
+  alt no exact match
+    PM-->>P: refuse, never run the name as typed
+  else exact match
+    PM->>GH: fetch the open issues
+    PM-->>P: dependency order and issue count
+    PM->>PM: sprint readiness: enrichment and coherence
+    loop each issue, in dependency order
+      PM->>PM: stages 1 to 5, a person confirms branch and PR
+      GH-->>PM: PR merged, only then the next branch
+    end
+  end
+  Note right of PM: blocking after one fix cycle stops the batch.<br/>An unclear AC skips that issue only.
+  end
+
+  rect rgb(254, 243, 199)
+  Note over P,GH: Across projects: /3c-programme-manager deliver
+  P->>PGM: deliver
+  PGM->>PGM: 3c deps order
+  loop each project, in dependency order
+    PGM->>PM: run the pipeline for the project's issue
+    alt blocking verdict
+      PM-->>PGM: blocking
+      PGM-->>P: stop before its dependents
+    else delivered
+      PM-->>PGM: delivered
+      PGM-->>P: confirm before the next project
+    end
+  end
+  end

@@ -24,7 +24,7 @@
   <text x="100" y="182" class="d" font-size="11.5">architect — boundary direction, coupling, ADR adherence</text>
   <text x="100" y="206" class="d" font-size="11.5">code-reviewer — correctness, readability, team conventions</text>
   <text x="100" y="230" class="d" font-size="11.5">security-reviewer — OWASP / CWE lenses, secrets, trust boundaries</text>
-  <text x="100" y="254" class="d" font-size="11.5">test-author — coverage + conventions  (the one writer — writes tests)</text>
+  <text x="100" y="254" class="d" font-size="11.5">test-author — coverage + conventions  (drafts tests for /3c-test)</text>
   <text x="100" y="278" class="d" font-size="11.5">product-owner — scope, priority, maturity-level fit</text>
   <text x="100" y="302" class="d" font-size="11.5">ux-expert — user-journey &amp; interaction review</text>
   <text x="100" y="326" class="d" font-size="11.5">qa-reviewer — acceptance-criteria traceability, edge cases</text>

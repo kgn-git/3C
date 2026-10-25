@@ -1,0 +1,38 @@
+%%{init: {'theme':'base','fontFamily':'arial, sans-serif','themeVariables':{'primaryColor':'#FEF3C7','primaryTextColor':'#78350F','primaryBorderColor':'#D97706','lineColor':'#92400E','fontFamily':'arial, sans-serif','fontSize':'15px'}}}%%
+flowchart LR
+  accTitle: 3C context map: what each context file holds and which step reads it
+  accDescr: CLAUDE.md is read in every session and carries the rules marked load inject, which 3c rules apply refuses to write at 150 or more directives. Rule packs in .claude/rules are loaded by Claude Code itself and consulted by /3c-implement, /3c-test and /3c-review. The /3c-review checklist is read only by /3c-review. .3c/architecture.yaml is read by the post-edit boundary check, 3c-architect and 3c arch-check. .3c/hooks.yaml is read by the commit gate and 3c hook confirm. .3c/test-map.json is read only by 3c test select in the inner loop.
+
+  subgraph CTX["What the workspace holds"]
+    direction TB
+    CM["<b>CLAUDE.md</b><br/>the rules marked load: inject<br/><i>3c rules apply refuses at 150+ directives</i>"]
+    RL["<b>.claude/rules/</b><br/>rule packs, load: disk by default"]
+    CL["<b>/3c-review checklist</b><br/>read at run time"]
+    AY["<b>.3c/architecture.yaml</b><br/>layers, drafted by 3c setup"]
+    HY["<b>.3c/hooks.yaml</b><br/>the team's commit chain"]
+    TM["<b>.3c/test-map.json</b><br/>edges a module graph cannot see"]
+  end
+
+  subgraph USE["Where it is read"]
+    direction TB
+    SESS["Every session<br/><i>Claude Code loads both itself</i>"]
+    STEPS["/3c-implement step 4 · /3c-test step 7"]
+    REVIEW["/3c-review step 3"]
+    BOUND["Post-edit boundary check · 3c-architect · 3c arch-check"]
+    COMMIT["Commit gate · 3c hook confirm"]
+    LOOP["3c test select<br/><i>the inner loop only, never the verify gate</i>"]
+  end
+
+  CM --> SESS
+  RL --> SESS
+  RL --> STEPS
+  RL --> REVIEW
+  CL --> REVIEW
+  AY --> BOUND
+  HY --> COMMIT
+  TM --> LOOP
+
+  classDef ctx fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:1.5px
+  classDef use fill:#EEF2FF,stroke:#4F46E5,color:#1E1B4B,stroke-width:1.5px
+  class CM,RL,CL,AY,HY,TM ctx
+  class SESS,STEPS,REVIEW,BOUND,COMMIT,LOOP use

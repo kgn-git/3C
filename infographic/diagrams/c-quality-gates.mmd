@@ -1,0 +1,53 @@
+%%{init: {'theme':'base','fontFamily':'arial, sans-serif','themeVariables':{'primaryColor':'#ECFDF5','primaryTextColor':'#064E3B','primaryBorderColor':'#10B981','lineColor':'#059669','fontFamily':'arial, sans-serif','fontSize':'16px'}}}%%
+flowchart TB
+  accTitle: 3C quality gates, grouped by when they fire and by who enforces them
+  accDescr: While editing, the path guard hook blocks and the post-edit boundary check hook advises without blocking. While writing, the skill redacts secrets from the plan and the CLI refuses a test file, PR body or handover that carries one, and the skill writes a failing test before the code. At commit, the commit gate hook blocks by default; 3c bypass skips one commit with a reason and is logged. Before the PR, the skill stops on critical or major /3c-review findings, on a failing verify gate, and on a blocking review board verdict after one fix cycle. At ship, the skill asks a person to confirm the branch and the PR and never merges on its own.
+
+  subgraph EDIT["While editing"]
+    direction LR
+    PG["<b>Path guard</b><br/>inside an agent: no .env, ~/.ssh or ~/.aws reads;<br/>Edit and Write held to test paths<br/><i>hook · blocks</i>"]
+    PE["<b>Post-edit boundary check</b><br/>imports against architecture.yaml<br/><i>hook · advisory, never blocks the edit</i>"]
+  end
+
+  subgraph WRITE["While writing"]
+    direction LR
+    SS["<b>Secret scan</b><br/>plan · test file · PR body · handover<br/><i>skill redacts the plan · CLI refuses a test file, PR body or handover</i>"]
+    RG["<b>RED before GREEN</b><br/>a failing test before the code<br/><i>skill rule · the skill stops</i>"]
+  end
+
+  subgraph COMMIT["At commit"]
+    direction LR
+    CG["<b>Commit gate</b><br/>the team's .3c/hooks.yaml chain<br/><i>hook · blocks by default</i>"]
+    BY["<b>3c bypass</b><br/>one commit, with a reason, logged<br/><i>a person's choice · the skills are barred from it</i>"]
+  end
+
+  subgraph PRE["Before the PR"]
+    direction LR
+    RV["<b>/3c-review</b><br/>critical or major findings<br/><i>skill rule · an override opens a draft</i>"]
+    VG["<b>Verify gate</b><br/>build and full check, output quoted<br/><i>skill rule · stops on a non-zero exit</i>"]
+    RB["<b>Review board</b><br/>the 3c reconcile verdict<br/><i>skill rule · blocking gets one fix cycle</i>"]
+    PERSON["Back to a person"]
+    RB -->|still blocking| PERSON
+  end
+
+  subgraph SHIP["At ship"]
+    direction LR
+    HU["<b>A person confirms</b><br/>the branch and the PR<br/><i>skill rule · no auto-merge, no force-push</i>"]
+  end
+
+  EDIT --> WRITE --> COMMIT --> PRE --> SHIP
+  CG -.- BY
+  PG ~~~ PE
+  SS ~~~ RG
+  RV ~~~ VG ~~~ RB
+
+  classDef enforced fill:#ECFDF5,stroke:#047857,color:#064E3B,stroke-width:2px
+  classDef rule fill:#EEF2FF,stroke:#4F46E5,color:#1E1B4B,stroke-width:1.5px
+  classDef advisory fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:1.5px
+  classDef human fill:#047857,stroke:#064E3B,color:#fff,stroke-width:2px
+  classDef stop fill:#FEE2E2,stroke:#DC2626,color:#7F1D1D,stroke-width:1.5px
+  class PG,SS,CG enforced
+  class RG,RV,VG,RB rule
+  class PE,BY advisory
+  class HU human
+  class PERSON stop

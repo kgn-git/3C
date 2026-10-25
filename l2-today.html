@@ -343,7 +343,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="infographic/devdaylife-infographic.html" class="md-tabs__link">
+        <a href="infographic/sdlc-infographic.html" class="md-tabs__link">
           
   
   Infographics
@@ -745,6 +745,27 @@
   
   
     <li class="md-nav__item">
+      <a href="infographic/sdlc-infographic.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SDLC pipeline
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="infographic/devdaylife-infographic.html" class="md-nav__link">
         
   
@@ -828,12 +849,12 @@
 <p>L2 is the Automate level: every L1 standard your team agreed to is now enforced by a hook before code review, every time. L1 made conventions explicit. L2 makes them stop being aspirational.</p>
 <p>This is the honest scope page for L2 — what you get when you upgrade from L1, and what L2 still deliberately does not do.</p>
 <h2 id="install">Install<a class="headerlink" href="#install" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>--allow-git<span class="o">=</span>root<span class="w"> </span>git+https://github.com/kgn-git/3C.git#a4fae20df098659b879e1e3d63463cf7b59fabb1
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>--allow-git<span class="o">=</span>root<span class="w"> </span>git+https://github.com/kgn-git/3C.git#c0fd331028dec80ae1dd7d0c4ae35b35ec11ebbe
 <span class="c1"># the current release&#39;s commit sha; every release&#39;s sha is listed at github.com/kgn-git/3C/releases</span>
-npx<span class="w"> </span>3c<span class="w"> </span>setup<span class="w">            </span><span class="c1"># one shot: CLAUDE.md + rules + hooks + skills + agents + arch-check, then doctor</span>
+npx<span class="w"> </span>3c<span class="w"> </span>setup<span class="w">            </span><span class="c1"># one shot: CLAUDE.md + rules + hooks + skills + agents + an architecture map from your code, then doctor</span>
 </code></pre></div>
-<p><code>3c setup</code> is a thin sequencer over the individual commands (<code>init</code>, <code>rules install</code>, <code>hook install</code>, <code>skills install</code>, <code>agents install</code>, <code>arch-check init</code>, <code>doctor</code>) — each still runs on its own if you'd rather step through it. Everything lands in your repo under git. The current release is <strong>v2.2.0</strong> on the same <code>kgn-git/3C</code> repo as L1; existing L1/L2 deployments upgrade in place — re-run <code>3c setup --replace</code>. Plain <code>3c setup</code> adds only what is missing and skips every file that already exists, so a skill whose contents changed upstream would stay stale; <code>--replace</code> overwrites them, so commit <code>.claude/</code> first and review the diff afterwards:</p>
-<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>--allow-git<span class="o">=</span>root<span class="w"> </span>git+https://github.com/kgn-git/3C.git#a4fae20df098659b879e1e3d63463cf7b59fabb1
+<p><code>3c setup</code> is a thin sequencer over the individual commands (<code>init</code>, <code>rules install</code>, <code>hook install</code>, <code>skills install</code>, <code>agents install</code>, an architecture map drafted from your committed JS/TS code, <code>doctor</code>) — each still runs on its own if you'd rather step through it. Everything lands in your repo under git. The current release is <strong>v2.3.0</strong> on the same <code>kgn-git/3C</code> repo as L1; existing L1/L2 deployments upgrade in place — re-run <code>3c setup --replace</code>. Plain <code>3c setup</code> adds only what is missing and skips every file that already exists, so a skill whose contents changed upstream would stay stale; <code>--replace</code> overwrites them, so commit <code>.claude/</code> first and review the diff afterwards:</p>
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>install<span class="w"> </span>--allow-git<span class="o">=</span>root<span class="w"> </span>git+https://github.com/kgn-git/3C.git#c0fd331028dec80ae1dd7d0c4ae35b35ec11ebbe
 npx<span class="w"> </span>3c<span class="w"> </span>setup<span class="w"> </span>--replace<span class="w">  </span><span class="c1"># refreshes CHANGED skills/agents; without --replace they are skipped</span>
 </code></pre></div>
 <p>Installing for the first time, or moving an existing project to the current release? Both routes —
@@ -900,7 +921,7 @@ with the traps to avoid — are on <strong><a href="get-started.html">Get starte
 <li><code>architect</code> — boundary direction, coupling, ADR adherence.</li>
 <li><code>code-reviewer</code> — correctness, readability, team conventions.</li>
 <li><code>security-reviewer</code> — the OWASP / CWE lenses, secret and trust-boundary checks.</li>
-<li><code>test-author</code> — test coverage and convention adherence (the one writer on the panel).</li>
+<li><code>test-author</code> — test coverage and convention adherence; it drafts the failing test, and <code>/3c-test</code> writes and runs it.</li>
 <li><code>product-owner</code> — scope, priority, and maturity-level fit.</li>
 <li><code>ux-expert</code> — screen-level usability, accessibility, and UI copy.</li>
 <li><code>qa-reviewer</code> — acceptance-criteria traceability and edge cases.</li>
@@ -927,7 +948,7 @@ with the traps to avoid — are on <strong><a href="get-started.html">Get starte
 <h2 id="how-to-adopt-l2">How to adopt L2<a class="headerlink" href="#how-to-adopt-l2" title="Permanent link">&para;</a></h2>
 <p>If you're already at L1, the upgrade is a focused half-day:</p>
 <ol>
-<li><code>npm install --allow-git=root git+https://github.com/kgn-git/3C.git#a4fae20df098659b879e1e3d63463cf7b59fabb1</code> — pin the new release by its commit sha (listed at github.com/kgn-git/3C/releases).</li>
+<li><code>npm install --allow-git=root git+https://github.com/kgn-git/3C.git#c0fd331028dec80ae1dd7d0c4ae35b35ec11ebbe</code> — pin the new release by its commit sha (listed at github.com/kgn-git/3C/releases).</li>
 <li><code>npx 3c init</code> — idempotent; re-runs against your existing <code>.claude/</code> tree, refreshing CLAUDE.md.</li>
 <li><code>npx 3c skills install --replace &amp;&amp; npx 3c agents install --replace</code> — re-copy the workflow skills and the crew agents under your slug (picks up the new crew orchestrators and the <code>product-owner</code> / <code>ux-expert</code> / <code>qa-reviewer</code> agents). <code>--replace</code> is what refreshes a skill that <em>changed</em>; without it both commands skip every file you already have. Commit <code>.claude/</code> first — it overwrites your local edits.</li>
 <li><code>npx 3c hook install</code> — re-registers the PreToolUse + PostToolUse hooks (you may need to confirm the diff once).</li>

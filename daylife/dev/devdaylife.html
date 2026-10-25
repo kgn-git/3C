@@ -337,7 +337,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../infographic/devdaylife-infographic.html" class="md-tabs__link">
+        <a href="../../infographic/sdlc-infographic.html" class="md-tabs__link">
           
   
   Infographics
@@ -636,6 +636,27 @@
   
   
     <li class="md-nav__item">
+      <a href="../../infographic/sdlc-infographic.html" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SDLC pipeline
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../infographic/devdaylife-infographic.html" class="md-nav__link">
         
   
@@ -721,9 +742,8 @@
 <code>site/index.html</code>, <code>site/why-now.html</code>, <code>site/maturity-model.html</code>,
 <code>site/l1-today.html</code>, <code>site/l2-today.html</code>, <code>site/for-developers.html</code>,
 <code>site/branding.html</code>,
-<code>docs/infographic/sdlc-infographic.html</code> (the visual template — in-repo only;
-it is unpublished as of #354 and is being re-authored under #365),
-<code>site/infographic/diagrams/*.mmd</code> (existing mermaid sources),
+<code>docs/infographic/sdlc-infographic.html</code> (the visual template),
+<code>docs/infographic/diagrams/*.mmd</code> (existing mermaid sources),
 <code>site/diagrams/{day-with-3c,journey,pillars}.svg</code>.</p>
 </blockquote>
 <hr />
@@ -736,7 +756,7 @@ it makes the workflow legible at a glance: one phase per page, one
 diagram per phase, one key message per phase.</p>
 <p>The deliverable is a <strong>standalone <code>.html</code> file</strong> that mirrors the
 structure, design system, and print posture of
-<code>docs/infographic/sdlc-infographic.html</code> (in-repo; unpublished per #354) — same A4 portrait pages, same
+<code>docs/infographic/sdlc-infographic.html</code> — same A4 portrait pages, same
 typography, same colour tokens, same badge / title / diagram / key-
 message / footer rhythm — so the new infographic sits next to the
 existing one as a sibling deliverable, not a one-off.</p>
@@ -909,7 +929,7 @@ requires (e.g. adding a small "post-edit advisory" callout style and a
 prompt/snippet style).</p>
 <h2 id="diagram-requirements-one-per-phase">Diagram requirements — one per phase<a class="headerlink" href="#diagram-requirements-one-per-phase" title="Permanent link">&para;</a></h2>
 <p>All diagrams are <strong>mermaid sources</strong>. The writer should commit a <code>.mmd</code>
-file per diagram into <code>site/infographic/diagrams/</code> following the
+file per diagram into <code>docs/infographic/diagrams/</code> following the
 existing naming pattern (<code>f-intake.mmd</code>, <code>g-enrichment.mmd</code>,
 <code>i-sprint-assembly.mmd</code>, <code>j-implement.mmd</code>,
 <code>k-sprint-throughput.mmd</code>, <code>l-uat.mmd</code>, <code>m-dashboard.mmd</code>), pre-render
@@ -994,8 +1014,8 @@ authority routes the fix through the assistant, not around it.</p>
 <p>Actors: <strong>Maya</strong>, <strong><code>/3c-test</code></strong>, <strong>the team's deploy script</strong>,
 <strong>Staging environment</strong>, <strong><code>3c bug</code></strong>, <strong>GitHub Issue</strong>. Sequence:
 Maya invokes <code>/3c-test</code> for the UI
-change → the skill writes the integration test test-first (test-author
-subagent assists) → Maya runs the team's own deploy script against
+change → the test-author subagent drafts the integration test and the
+skill writes and runs it, test-first → Maya runs the team's own deploy script against
 staging → its pre-flight checks run → health check passes → Maya walks the
 acceptance criteria manually in staging → finds a regression → Maya runs
 <code>3c bug</code> in her terminal → it captures OS, runtime, project state, recent
@@ -1008,8 +1028,10 @@ production-deploy arrow with <code>the team's own approval</code>.</p>
 - <em>Gates that fired most for me today</em> (top 5 list)
 - <em>First-try gate pass-rate</em> (one big number, e.g. "78%")
 - <em>Post-edit validation deltas trend</em> (sparkline placeholder)</p>
-<p>Annotate plainly: <strong>local-only · gitignored · never egressed at L2 ·
-your manager cannot see this</strong>.</p>
+<p>Annotate plainly that the telemetry is <strong>local-only · gitignored · never
+egressed at L2 · your manager cannot see it</strong>, and that a delivery view beside
+the panels reads the repository's handover issues from GitHub through <code>gh</code>,
+cached locally, and uploads nothing.</p>
 <h2 id="phase-narratives-body-copy-under-each-diagram">Phase narratives — body copy under each diagram<a class="headerlink" href="#phase-narratives-body-copy-under-each-diagram" title="Permanent link">&para;</a></h2>
 <p>The diagram carries the structure; the <strong>body copy</strong> (placed inside
 the <code>.diagram-subtitle</code> slot and, for richer phases, an additional
@@ -1082,7 +1104,7 @@ Required content, in this order:</p>
   <code>3c bug</code> · <code>3c bypass --reason="..."</code>.</li>
 <li>Subagents and when to dispatch each: <code>architect</code> (design call),
   <code>security-reviewer</code> (auth/crypto/input-handling), <code>code-reviewer</code>
-  (pre-PR findings), <code>test-author</code> (writes the failing test inside <code>/3c-test</code>),
+  (pre-PR findings), <code>test-author</code> (drafts the failing test that <code>/3c-test</code> writes and runs),
   <code>product-owner</code> (scope/priority), <code>ux-expert</code> (screen-level UX),
   <code>qa-reviewer</code> (AC traceability), <code>journey-architect</code> (journey
   reachability) — or convene all eight at once with
@@ -1103,8 +1125,8 @@ Required content, in this order:</p>
 <li>Match the 3C house voice — calm, honest, mildly understated, names
   what it does NOT do at every step. Read <code>site/why-now.html</code> and
   <code>site/for-developers.html</code> and lift the cadence directly.</li>
-<li>Match the existing infographic's punchy diagram titles ("Skills talk
-  to skills — on purpose."). Each of the six phase titles should
+<li>Match the existing infographic's punchy diagram titles ("Skills
+  dispatch agents. Agents never dispatch."). Each of the six phase titles should
   read as a single, opinionated sentence with a full stop. Examples
   the writer can refine but should not copy verbatim:</li>
 <li>Phase 1: <em>"Raw inputs in. Reviewable issue out."</em></li>

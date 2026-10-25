@@ -1,0 +1,57 @@
+%%{init: {'theme':'base','fontFamily':'arial, sans-serif','themeVariables':{'primaryColor':'#EEF2FF','primaryTextColor':'#1E1B4B','primaryBorderColor':'#4F46E5','lineColor':'#6366F1','fontFamily':'arial, sans-serif','fontSize':'16px'}}}%%
+flowchart LR
+    accTitle: 3C orchestration: skills dispatch agents, agents never dispatch
+    accDescr: A person invokes a skill. /3c-programme-manager runs /3c-project-manager per project in dependency order. /3c-project-manager runs a scope pre-check with 3c-product-owner and 3c-journey-architect, implements with /3c-implement, which drafts tests through /3c-test and 3c-test-author and reviews with /3c-review, then cross-checks with /3c-review-board, whose agents report to 3c reconcile for one verdict. /3c-retrospective is optional after shipping.
+
+    YOU(["A person invokes a skill"])
+    PGM["/3c-programme-manager<br/><i>across projects, in dependency order</i>"]
+    PM["/3c-project-manager<br/><i>one issue, or a milestone</i>"]
+
+    subgraph S1["Stage 1 · scope pre-check"]
+        PO["3c-product-owner<br/><i>scope and ACs</i>"]
+        JA["3c-journey-architect<br/><i>reachability</i>"]
+    end
+
+    IMPL["/3c-implement<br/><i>Stage 2 · test-first</i>"]
+    TEST["/3c-test<br/><i>writes the test, runs the RED</i>"]
+    TA["3c-test-author<br/><i>returns a test body</i>"]
+    REV["/3c-review<br/><i>the team's checklist</i>"]
+    BOARD["/3c-review-board<br/><i>Stage 3 · cross-check</i>"]
+
+    subgraph B["Board · in parallel, plus 3c-product-owner with AC context"]
+        CR["3c-code-reviewer"]
+        AR["3c-architect"]
+        SR["3c-security-reviewer"]
+        QA["3c-qa-reviewer"]
+        UX["3c-ux-expert<br/><i>when UI files change</i>"]
+    end
+
+    REC["3c reconcile<br/><i>one deterministic verdict</i>"]
+    RETRO["/3c-retrospective<br/><i>optional, never a gate</i>"]
+
+    YOU ==> PGM
+    YOU ==> PM
+    PGM ==> PM
+    PM --> PO
+    PM --> JA
+    PM -. after shipping .-> RETRO
+    PM ==> IMPL
+    IMPL --> TEST
+    TEST --> TA
+    IMPL --> REV
+    PM ==> BOARD
+    BOARD --> CR & AR & SR & QA & UX
+    CR & AR & SR & QA & UX --> REC
+
+    classDef person fill:#0F172A,stroke:#0F172A,color:#fff,stroke-width:1.5px
+    classDef orch fill:#4F46E5,stroke:#312E81,color:#fff,stroke-width:2px
+    classDef skill fill:#EEF2FF,stroke:#4F46E5,color:#1E1B4B,stroke-width:1.5px
+    classDef agent fill:#ECFDF5,stroke:#10B981,color:#064E3B,stroke-width:1.5px
+    classDef cli fill:#F1F5F9,stroke:#64748B,color:#0F172A,stroke-width:1.5px
+    classDef loop fill:#FEF3C7,stroke:#D97706,color:#78350F,stroke-width:1.5px
+    class YOU person
+    class PGM,PM orch
+    class IMPL,TEST,REV,BOARD skill
+    class PO,JA,TA,CR,AR,SR,QA,UX agent
+    class REC cli
+    class RETRO loop
