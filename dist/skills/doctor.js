@@ -12,6 +12,7 @@ import { archConfigPath, archProposedPath, loadArchConfig } from "../validate/ar
 import { discoverWorkspaceFiles } from "../rules/discover.js";
 import { hasClusterableSource } from "./arch-boundary/discover.js";
 import { PATH_GUARD_MATCHER } from "../hooks/install.js";
+import { lacksMemoryLines, memoryFinding, outdatedTemplateMessage } from "./doctor-memory.js";
 import { CLI_COMMANDS, RETIRED_COMMANDS, checkCliSkillCompat, referencedRetiredCommands, retiredVerbs, } from "./cli-compat.js";
 async function pathExists(p) {
     try {
@@ -451,17 +452,21 @@ export async function runDoctor(opts) {
         const template = join(workspaceDir, ".github", "ISSUE_TEMPLATE", "handover.md");
         if (await pathExists(template)) {
             // The label is what the dashboard queries; a template without it files issues nothing reads.
-            const line = /^labels:(.*)$/m.exec(await readFile(template, "utf8").catch(() => ""))?.[1] ?? "";
+            const installed = await readFile(template, "utf8").catch(() => "");
+            const line = /^labels:(.*)$/m.exec(installed)?.[1] ?? "";
             const labelled = line.split(/[\s,[\]"']+/).includes("handover");
-            if (labelled)
-                add("ok", "handover-template", ".github/ISSUE_TEMPLATE/handover.md present.");
-            else
+            if (!labelled)
                 add("warn", "handover-template", `.github/ISSUE_TEMPLATE/handover.md lacks \`labels: handover\`, so issues filed from it are not read — run \`${slug} setup --replace\`.`);
+            else if (lacksMemoryLines(installed))
+                add("warn", "handover-template", outdatedTemplateMessage(slug));
+            else
+                add("ok", "handover-template", ".github/ISSUE_TEMPLATE/handover.md present.");
         }
         else {
             add("warn", "handover-template", `.github/ISSUE_TEMPLATE/handover.md is missing, so the ship step has no handover form — run \`${slug} setup\`.`);
         }
     }
+    findings.push(await memoryFinding(workspaceDir, slug));
     // Fill-in rule packs ship `{{NAME}}` blanks the adopter replaces. A warning,
     // never a failure: an unfilled blank weakens a rule, it does not break one.
     const ruleFiles = (await walkFiles(join(workspaceDir, ".claude", "rules"))).filter((f) => f.endsWith(".md"));

@@ -1,15 +1,9 @@
-import { ISSUE_CAP } from "./handover-unreadable.js";
+import { failureRoute } from "../handovers/failure-routes.js";
+import { ISSUE_CAP } from "../handovers/handover-unreadable.js";
 /** How many unreadable handovers the console, page and panel print before counting the rest. */
 export const UNREADABLE_SHOWN = 50;
-const FETCH = "3c dashboard   # fetches the handover issues";
-const ROUTE = {
-    "never-fetched": FETCH,
-    offline: "Check the network connection, then run 3c dashboard   # details: .3c/cache/handover-fetch.log",
-    unauthenticated: "gh auth login",
-    "rate-limited": "Wait for the GitHub rate limit to reset, then run 3c dashboard",
-    "not-found": "git remote get-url origin   # must name a github.com repository you can read (gh repo view)",
-    "gh-missing": "Install the GitHub CLI from https://cli.github.com, then run gh auth login",
-};
+const RETRY = "3c dashboard";
+const FETCH = failureRoute("never-fetched", RETRY);
 const count = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 // The fix for each kind lives here so the three surfaces cannot word it differently.
 function unreadableLine(u) {
@@ -59,7 +53,7 @@ export function describeDelivery(src) {
     else {
         stale = s.fetchedAt !== null;
         status = stale ? `STALE: ${s.state}, cache from ${s.fetchedAt}` : `No handover data: ${s.state}`;
-        nextSteps.push(ROUTE[s.state]);
+        nextSteps.push(failureRoute(s.state, RETRY));
     }
     const { excluded, capped, conflicts, legacy, malformed, unreadable } = src.scan;
     const notes = [

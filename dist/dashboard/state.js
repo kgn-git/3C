@@ -11,7 +11,7 @@
 import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { resolveBrandSlugSync } from "../branding/runtime.js";
-import { readDelivery } from "./delivery-source.js";
+import { readDelivery } from "../handovers/delivery-source.js";
 import { describeDelivery } from "./delivery-status.js";
 import { CYCLE_LABEL, CYCLE_NOTE, deliveryMetrics } from "./delivery.js";
 import { dashboardMetrics } from "./metrics.js";

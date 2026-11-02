@@ -1,4 +1,4 @@
-import { type HandoverRecord } from "../../dashboard/handover.js";
+import { type HandoverRecord } from "../../handovers/handover.js";
 import type { SpawnFn } from "../create-issue.js";
 export declare const HANDOVER_LABEL_COMMAND = "gh label create handover --description \"3C delivery handover\" --color 0E8A16";
 export type FileHandoverResult = {

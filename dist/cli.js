@@ -8,6 +8,7 @@ import { substitute } from "./branding/substitute.js";
 import { archCommand } from "./cli/commands/arch.js";
 import { bugCommand } from "./cli/commands/bug.js";
 import { dashboardCommand } from "./cli/commands/dashboard.js";
+import { memoryCommand } from "./cli/commands/memory.js";
 import { doctorCommand } from "./cli/commands/doctor.js";
 import { bypassCommand, hookConfirmCommand, hookInstallCommand, hookRunCommand } from "./cli/commands/hook.js";
 import { createIssueCommand, implementCommand, scanSecretsCommand } from "./cli/commands/implement.js";
@@ -162,6 +163,9 @@ export async function main(argv) {
     }
     if (command === "onboard") {
         return onboardCommand(argv.slice(1), { cwd: process.cwd() });
+    }
+    if (command === "memory") {
+        return memoryCommand(argv.slice(1), { cwd: process.cwd() });
     }
     if (command === "dashboard") {
         const realOpen = async (p) => {

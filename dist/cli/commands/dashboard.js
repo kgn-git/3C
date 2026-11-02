@@ -2,7 +2,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { resolveBrandSlugSync } from "../../branding/runtime.js";
 import { deliveryMetrics } from "../../dashboard/delivery.js";
-import { defaultSourceDeps, loadDelivery } from "../../dashboard/delivery-source.js";
+import { defaultSourceDeps, loadDelivery } from "../../handovers/delivery-source.js";
 import { describeDelivery } from "../../dashboard/delivery-status.js";
 import { dashboardMetrics } from "../../dashboard/metrics.js";
 import { renderDashboardHtml } from "../../dashboard/render.js";

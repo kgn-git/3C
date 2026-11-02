@@ -1,5 +1,5 @@
 import { type DashboardState } from "./state.js";
-import { type SourceDeps } from "./delivery-source.js";
+import { type SourceDeps } from "../handovers/delivery-source.js";
 /** The only host this server ever binds. */
 export declare const LOOPBACK = "127.0.0.1";
 /**

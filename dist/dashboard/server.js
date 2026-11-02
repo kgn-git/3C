@@ -12,7 +12,8 @@ import { pipeline } from "node:stream";
 import { resolve, sep, extname, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildDashboardState } from "./state.js";
-import { defaultSourceDeps, DeliveryRefresher } from "./delivery-source.js";
+import { defaultSourceDeps } from "../handovers/delivery-source.js";
+import { DeliveryRefresher } from "./delivery-refresher.js";
 /** The only host this server ever binds. */
 export const LOOPBACK = "127.0.0.1";
 /**

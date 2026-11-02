@@ -167,6 +167,17 @@ Commands:
                     .\${FRAMEWORK_SLUG}/dashboard.html, or serves it on loopback
                     with --serve.
 
+  memory sync       Build the delivery memory from this repository's trusted
+                    handover issues into .\${FRAMEWORK_SLUG}/memory. The memory
+                    is derived and ignored by git. To remove it, run
+                    rm -r .\${FRAMEWORK_SLUG}/memory: nothing is lost, and sync
+                    builds it again.
+
+  memory brief <issue>
+                    Print what is decided and to do for an issue, which earlier
+                    notes bear on it, and whether it is still current. It reads
+                    the memory (run memory sync first) and the issue on GitHub.
+
   debug context [file]              Print what the assistant reads for a
                     file — the rules, standards and architecture in scope —
                     so an unexpected suggestion can be traced to its source.

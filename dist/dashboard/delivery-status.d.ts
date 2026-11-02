@@ -1,4 +1,4 @@
-import type { DeliverySource } from "./delivery-source.js";
+import type { DeliverySource } from "../handovers/delivery-source.js";
 export interface DeliveryDescription {
     readonly header: string;
     readonly status: string;

@@ -4,7 +4,8 @@ import { resolveBrandSlugSync } from "../../branding/runtime.js";
 import { createIssue } from "../../skills/create-issue.js";
 import { formatBranchName } from "../../skills/implement/branch-name.js";
 import { createPr } from "../../skills/implement/create-pr.js";
-import { fileHandover, ghSpawn } from "../../skills/implement/file-handover.js";
+import { ghSpawn } from "../../skills/implement/file-handover.js";
+import { fileHandoverCommand } from "./file-handover.js";
 import { fetchIssue } from "../../skills/implement/fetch-issue.js";
 import { scanSecretsCli } from "../scan-secrets.js";
 import { readBoundedStdin } from "../read-input.js";
@@ -140,19 +141,7 @@ export async function implementCommand(argv) {
         const buffer = await readBoundedStdin("implement file-handover", bodyRoute("handover"));
         if (buffer === null)
             return 1;
-        const r = await fileHandover(buffer, ghSpawn);
-        if (r.ok) {
-            console.log(`\n✓ ${r.url}`);
-            console.log(r.created ? `  Handover #${r.number} filed and closed` : `  Handover #${r.number} was already filed — nothing created`);
-            return 0;
-        }
-        console.error(`\n✗ ${r.message}`);
-        if (r.manual.length > 0) {
-            console.error("  Finish by hand (save the body as handover.md first):");
-            for (const m of r.manual)
-                console.error(`    ${m}`);
-        }
-        return 1;
+        return fileHandoverCommand(buffer, { spawn: ghSpawn, log: (m) => console.log(m), error: (m) => console.error(m) });
     }
     if (sub === "create-pr") {
         const force = rest.includes("--force");

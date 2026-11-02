@@ -1,4 +1,4 @@
-import { type SourceDeps } from "../../dashboard/delivery-source.js";
+import { type SourceDeps } from "../../handovers/delivery-source.js";
 export interface DashboardEnv {
     readonly cwd: string;
     readonly now?: Date;

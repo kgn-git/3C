@@ -7,7 +7,7 @@ import { execFile } from "node:child_process";
 import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { parseHandoverBody } from "../../dashboard/handover.js";
+import { parseHandoverBody } from "../../handovers/handover.js";
 import { scanSecrets } from "../../validate/secrets.js";
 export const HANDOVER_LABEL_COMMAND = 'gh label create handover --description "3C delivery handover" --color 0E8A16';
 const LIST_LIMIT = 1000;
@@ -87,8 +87,12 @@ export async function fileHandover(body, spawn) {
             manual: [`gh issue close ${same.number} --reason completed`],
         };
     }
-    if (same !== undefined)
+    if (same !== undefined) {
+        // The number is printed and handed to the memory sync, so anything but a whole number stops here and never files a second handover.
+        if (!Number.isSafeInteger(same.number) || same.number < 1)
+            return failed("Not filed: the duplicate check returned a handover without a usable number.", false);
         return { ok: true, created: false, number: same.number, url: same.url };
+    }
     const dir = await mkdtemp(join(tmpdir(), "3c-handover-"));
     let made;
     try {

@@ -6,7 +6,7 @@ import { fenceCharOf } from "../validate/_markdown.js";
 export const CLI_COMMANDS = new Set([
     "init", "setup", "rules", "hook", "bypass", "skills", "agents", "test",
     "create-issue", "doctor", "arch-check", "deps", "reconcile",
-    "dashboard", "scan-secrets",
+    "dashboard", "scan-secrets", "memory",
     "security", "debug", "bug", "onboard", "implement",
 ]);
 function escapeRegExp(s) {
