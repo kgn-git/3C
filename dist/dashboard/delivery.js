@@ -1,3 +1,7 @@
+// One name and one caveat for the merged − started figure, so the page and the
+// panel cannot call it two things. It measures elapsed time, not effort.
+export const CYCLE_LABEL = "Branch open to merge";
+export const CYCLE_NOTE = "Time from branch opened to merged. It is not effort.";
 // Cycle time = merged − started; absent (never zero) when either is missing
 // or the timestamps are out of order — a negative duration must not reach
 // the rows or the median.

@@ -1,5 +1,6 @@
 import { parseHandoverBody } from "./handover.js";
-export const ISSUE_CAP = 500;
+import { ISSUE_CAP, LEGACY_REASON, NO_NUMBER_REASON, countUnreadable, } from "./handover-unreadable.js";
+export { ISSUE_CAP };
 const PAGE = 100;
 const TRUSTED = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
 // A body is at most 64 KiB; JSON can escape each byte to six, and the rest of
@@ -67,13 +68,15 @@ export async function fetchHandoverIssues(repo, gh) {
             return { ok: false, failure: "offline", detail: "gh returned something other than an issue list" };
         issues.push(...got.items.filter((i) => !i.isPull));
         bad += got.bad;
+        // Items with no number never reach the cap above, so a feed made only of them would page until the deadline.
+        if (bad > ISSUE_CAP)
+            return { ok: false, failure: "offline", detail: "gh returned too many items without an issue number" };
         if (got.items.length + got.bad < PAGE)
             break;
     }
     const capped = issues.length > ISSUE_CAP;
     const parsed = [];
-    let legacy = 0;
-    let malformed = bad;
+    const unreadable = [];
     let excluded = 0;
     for (const item of issues.slice(0, ISSUE_CAP)) {
         if (!TRUSTED.has(item.association)) {
@@ -84,25 +87,27 @@ export async function fetchHandoverIssues(repo, gh) {
         if (p.kind === "record")
             parsed.push(p.record);
         else if (p.kind === "legacy")
-            legacy++;
+            unreadable.push({ issue: item.number, kind: "legacy", reason: LEGACY_REASON });
         else
-            malformed++;
+            unreadable.push({ issue: item.number, kind: "malformed", reason: p.reason });
     }
-    // Newest first, each delivered issue goes to the first record that claims
-    // it; an older record keeps whatever issues are still unclaimed.
-    const claimed = new Set();
+    for (let i = 0; i < bad; i++)
+        unreadable.push({ issue: null, kind: "malformed", reason: NO_NUMBER_REASON });
+    // A delivery is its pull request, or its handover number when none is named.
+    // The two spaces are tagged so handover 145 never reads as pull request 145.
+    // Two handovers for one pull request are one delivery; the newest is kept.
+    const seen = new Set();
     const records = [];
     let conflicts = 0;
     for (const r of parsed.sort(newestFirst)) {
-        const free = r.issues.filter((i) => !claimed.has(i));
-        if (free.length < r.issues.length)
+        const key = r.pr === undefined ? `handover:${r.handover}` : `pr:${r.pr}`;
+        if (seen.has(key)) {
             conflicts++;
-        if (free.length === 0)
             continue;
-        for (const i of free)
-            claimed.add(i);
-        records.push(free.length === r.issues.length ? r : { ...r, issues: free });
+        }
+        seen.add(key);
+        records.push(r);
     }
-    return { ok: true, scan: { records, legacy, malformed, excluded, conflicts, capped } };
+    return { ok: true, scan: { records, ...countUnreadable(unreadable), unreadable, excluded, conflicts, capped } };
 }
 //# sourceMappingURL=handover-issues.js.map

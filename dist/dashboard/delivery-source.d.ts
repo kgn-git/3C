@@ -14,6 +14,10 @@ export type DeliveryStatus = {
 /** The cache file failed validation and was not used. */
  | {
     readonly kind: "discarded";
+}
+/** The cache was written by an earlier release and is fetched again. */
+ | {
+    readonly kind: "outdated";
 } | {
     readonly kind: "failed";
     readonly state: GhFailure | "never-fetched";

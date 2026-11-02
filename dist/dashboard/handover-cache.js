@@ -8,7 +8,14 @@ import { constants } from "node:fs";
 import { join } from "node:path";
 import { cacheDir, writeCacheFile } from "../validate/cache-file.js";
 import { HANDOVER_SCHEMA, validateHandoverObject } from "./handover.js";
-const VERSION = 1;
+import { ISSUE_CAP, countUnreadable } from "./handover-unreadable.js";
+const VERSION = 2;
+const MAX_REASON = 200;
+// Trusted non-deliveries and number-less items are each capped at ISSUE_CAP.
+const MAX_UNREADABLE = 2 * ISSUE_CAP;
+// A reason reaches the terminal, so besides C0 and C1 controls this refuses
+// the line separators and the bidirectional overrides that can reorder a line.
+const CONTROL = /[\u0000-\u001f\u007f-\u009f\u2028\u2029\u202a-\u202e\u2066-\u2069]/;
 const MAX_CACHE_BYTES = 16 * 1024 * 1024;
 const FAILURES = new Set(["offline", "unauthenticated", "rate-limited", "not-found", "gh-missing"]);
 const REPO = /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/;
@@ -16,7 +23,8 @@ export const cachePath = (ws) => join(cacheDir(ws), "handovers.json");
 export async function writeCache(ws, cache) {
     // The directory ignores itself: `.3c/` is not gitignored by default.
     await writeCacheFile(ws, ".gitignore", "*\n");
-    const { records, ...counts } = cache.scan;
+    // The counts are derived from the list on read, so only the list is stored.
+    const { records, legacy: _legacy, malformed: _malformed, ...counts } = cache.scan;
     const file = {
         version: VERSION,
         repo: cache.repo,
@@ -29,6 +37,22 @@ export async function writeCache(ws, cache) {
 }
 const isCount = (v) => typeof v === "number" && Number.isInteger(v) && v >= 0;
 const isDate = (v) => typeof v === "string" && v.length <= 64 && !Number.isNaN(Date.parse(v));
+function toUnreadable(raw) {
+    if (!Array.isArray(raw) || raw.length > MAX_UNREADABLE)
+        return null;
+    const out = [];
+    for (const entry of raw) {
+        const { issue, kind, reason } = (entry ?? {});
+        if (issue !== null && (typeof issue !== "number" || !Number.isInteger(issue) || issue <= 0))
+            return null;
+        if (kind !== "legacy" && kind !== "malformed")
+            return null;
+        if (typeof reason !== "string" || reason.length > MAX_REASON || CONTROL.test(reason))
+            return null;
+        out.push({ issue, kind, reason });
+    }
+    return out;
+}
 function toCache(raw) {
     if (typeof raw !== "object" || raw === null || Array.isArray(raw))
         return null;
@@ -51,11 +75,14 @@ function toCache(raw) {
             return null;
         failure = { state: state, at };
     }
-    const { legacy, malformed, excluded, conflicts, capped } = o;
-    if (![legacy, malformed, excluded, conflicts].every(isCount) || typeof capped !== "boolean")
+    const { excluded, conflicts, capped } = o;
+    if (![excluded, conflicts].every(isCount) || typeof capped !== "boolean")
+        return null;
+    const unreadable = toUnreadable(o["unreadable"]);
+    if (unreadable === null)
         return null;
     const list = o["records"];
-    if (!Array.isArray(list))
+    if (!Array.isArray(list) || list.length > ISSUE_CAP)
         return null;
     const records = [];
     for (const entry of list) {
@@ -71,7 +98,7 @@ function toCache(raw) {
         repo,
         fetchedAt,
         failure,
-        scan: { records, legacy, malformed, excluded, conflicts, capped },
+        scan: { records, ...countUnreadable(unreadable), unreadable, excluded, conflicts, capped },
     };
 }
 export async function readCache(ws) {
@@ -90,7 +117,11 @@ export async function readCache(ws) {
             return { kind: "invalid" };
         const buf = Buffer.alloc(st.size);
         const { bytesRead } = await fh.read(buf, 0, st.size, 0);
-        const cache = toCache(JSON.parse(buf.subarray(0, bytesRead).toString("utf8")));
+        const raw = JSON.parse(buf.subarray(0, bytesRead).toString("utf8"));
+        const version = raw?.version;
+        if (typeof version === "number" && Number.isInteger(version) && version >= 1 && version < VERSION)
+            return { kind: "outdated" };
+        const cache = toCache(raw);
         return cache === null ? { kind: "invalid" } : { kind: "found", cache };
     }
     catch {

@@ -16,6 +16,10 @@ export type CacheRead = {
     kind: "absent";
 } | {
     kind: "invalid";
+}
+/** Written by an earlier release; expected after an upgrade, so not reported as damage. */
+ | {
+    kind: "outdated";
 } | {
     kind: "found";
     cache: DeliveryCache;

@@ -10,6 +10,9 @@ disable-model-invocation: true
 # /${FRAMEWORK_SLUG}-implement — Standardised feature implementation for ${FRAMEWORK_NAME}
 
 When the user invokes `/${FRAMEWORK_SLUG}-implement <issue-id>`, follow this exact workflow. The skill is **explicit-invocation only** (`disable-model-invocation: true`); never auto-run.
+A pipeline the user invoked may also read this file and follow it inline (Stage 2 of
+`.claude/skills/${FRAMEWORK_SLUG}-project-manager/SKILL.md`): that is not an auto-run, and every confirmation and
+interlock below still applies there.
 
 ## Mandatory destructive-operation interlock (AC9)
 
@@ -285,8 +288,8 @@ and closes the issue it opens. When the `handover` label is missing, create it f
 `gh label create handover --description "3C delivery handover" --color 0E8A16`. If filing fails, run the
 `gh` commands it prints; never drop the handover. The block carries delivery metadata only — no
 credentials, tokens, command output, environment values or diff content. The narrative below the block
-stays human-first. The full block shape is specified in the `/${FRAMEWORK_SLUG}-project-manager` skill's ship
-stage; keep the two in sync.
+stays human-first. The full block shape is specified in the ship stage of
+`.claude/skills/${FRAMEWORK_SLUG}-project-manager/SKILL.md`; keep the two in sync.
 
 ## What this skill does NOT do
 

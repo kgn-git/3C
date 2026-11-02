@@ -37,8 +37,10 @@ with a per-project breakdown. Read-only.
 
 For each project **in dependency order** (`${FRAMEWORK_SLUG} deps order --target=<ids>`):
 
-1. Run `/${FRAMEWORK_SLUG}-project-manager <issue>` for that project (itself checkpointed — confirm before
-   branch/PR; never auto-merge, force-push, or bypass hooks).
+1. Read `.claude/skills/${FRAMEWORK_SLUG}-project-manager/SKILL.md` and follow its Stages 1–5 inline for that
+   project's issue, not its milestone operations. Do not call it through the Skill tool: it is explicit-invocation only, so the Skill tool refuses a
+   model-side call. The pipeline is itself checkpointed — confirm before branch/PR; never auto-merge,
+   force-push, or bypass hooks.
 2. **Checkpoint between projects:** after a project's pipeline completes, **confirm with the user before
    starting the next project** in the chain.
 3. If a project's pipeline ends with a blocking verdict, **stop before its dependents** and surface it — never

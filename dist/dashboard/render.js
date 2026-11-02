@@ -1,3 +1,4 @@
+import { CYCLE_LABEL, CYCLE_NOTE } from "./delivery.js";
 const pct = (n) => `${Math.round(n * 100)}%`;
 const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const fmtCycle = (ms) => {
@@ -21,6 +22,20 @@ const verdictCell = (r) => {
         ? esc(level)
         : `${esc(level)} <small>(${counts.join(" · ")})</small>`;
 };
+// The handovers left out of the numbers, shared by the full section and by the
+// source-only one a workspace gets when no handover could be read as a delivery.
+function unreadableBlock(source) {
+    if (source.unreadable.length === 0 && source.completeness === null)
+        return "";
+    return `<h3>Handovers not in these numbers</h3>
+${source.completeness === null ? "" : `<p>${esc(source.completeness)}</p>`}
+<ul>${source.unreadable.map((l) => `<li>${esc(l)}</li>`).join("")}</ul>`;
+}
+function unreadableOnlySection(source) {
+    return `<h2>Delivery</h2>
+<p><small>${[source.header, source.status, ...source.notes].map(esc).join(" · ")}</small></p>
+${unreadableBlock(source)}`;
+}
 // The issue-centric delivery view — one row per issue, plain
 // #N references (no links: the document must stay free of external refs).
 function deliverySection(d, source) {
@@ -38,26 +53,32 @@ function deliverySection(d, source) {
         .sort(([, a], [, b]) => b - a)
         .map(([k, v]) => `${esc(k)}: ${v}`)
         .join(" · ");
-    const notes = [
-        d.legacy > 0 ? `${d.legacy} earlier handovers without delivery data` : null,
-        d.malformed > 0
-            ? `${d.malformed} handover${d.malformed === 1 ? "" : "s"} with malformed frontmatter (warning)`
-            : null,
-    ].filter((n) => n !== null);
+    // With a source, its notes and unreadable list already say this once.
+    const notes = source !== null
+        ? []
+        : [
+            d.legacy > 0 ? `${d.legacy} earlier handovers without delivery data` : null,
+            d.malformed > 0
+                ? `${d.malformed} handover${d.malformed === 1 ? "" : "s"} with malformed frontmatter (warning)`
+                : null,
+        ].filter((n) => n !== null);
+    const unreadable = source === null ? "" : unreadableBlock(source);
     const origin = source === null ? "all deliveries on record" : [source.header, source.status, ...source.notes].map(esc).join(" · ");
     return `<h2>Delivery</h2>
 <p><small>${origin}</small></p>
 <div class="kpi">
 <div><small>Issues shipped</small><b>${d.rows.length}</b></div>
-<div><small>Median cycle</small><b>${d.medianCycleMs !== null ? fmtCycle(d.medianCycleMs) : "—"}</b></div>
+<div><small>${CYCLE_LABEL}</small><b>${d.medianCycleMs !== null ? fmtCycle(d.medianCycleMs) : "—"}</b></div>
 <div><small>Follow-ups per delivery</small><b>${d.followUpRatio !== null ? d.followUpRatio.toFixed(1) : "—"}</b></div>
 <div><small>Verdicts</small><b class="small">${verdicts || "—"}</b></div>
 </div>
-<table><thead><tr><th>Issue</th><th>Title</th><th>Board verdict</th><th>Cycle</th><th>LOC ±</th><th>Follow-ups</th></tr></thead>
+<table><thead><tr><th>Issue</th><th>Title</th><th>Board verdict</th><th>${CYCLE_LABEL}</th><th>LOC ±</th><th>Follow-ups</th></tr></thead>
 <tbody>${rows}</tbody></table>
+<p><small>${CYCLE_NOTE}</small></p>
 <h3>Shipped per week</h3>
 <table><tbody>${weeks || "<tr><td>no dated deliveries</td></tr>"}</tbody></table>
-${notes.length > 0 ? `<p><small>${notes.join(" · ")}</small></p>` : ""}`;
+${notes.length > 0 ? `<p><small>${notes.join(" · ")}</small></p>` : ""}
+${unreadable}`;
 }
 // Telemetry gate metrics — a secondary section.
 function gateSection(m, windowLabel) {
@@ -86,7 +107,11 @@ function gateSection(m, windowLabel) {
 // Inline CSS only; no network refs, no scripts; personal/local wording only.
 export function renderDashboardHtml(delivery, gates, windowLabel, source = null) {
     const sections = [
-        delivery !== null ? deliverySection(delivery, source) : null,
+        delivery !== null
+            ? deliverySection(delivery, source)
+            : source !== null && unreadableBlock(source) !== ""
+                ? unreadableOnlySection(source)
+                : null,
         gates !== null ? gateSection(gates, windowLabel) : null,
     ].filter((s) => s !== null);
     return `<!doctype html>

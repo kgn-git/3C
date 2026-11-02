@@ -1,4 +1,6 @@
 import type { HandoverLoc, HandoverScan, HandoverVerdict } from "./handover.js";
+export declare const CYCLE_LABEL = "Branch open to merge";
+export declare const CYCLE_NOTE = "Time from branch opened to merged. It is not effort.";
 export interface DeliveryRow {
     readonly issue: number;
     readonly handover: number;

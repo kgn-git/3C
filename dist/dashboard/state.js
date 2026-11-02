@@ -13,7 +13,7 @@ import { join } from "node:path";
 import { resolveBrandSlugSync } from "../branding/runtime.js";
 import { readDelivery } from "./delivery-source.js";
 import { describeDelivery } from "./delivery-status.js";
-import { deliveryMetrics } from "./delivery.js";
+import { CYCLE_LABEL, CYCLE_NOTE, deliveryMetrics } from "./delivery.js";
 import { dashboardMetrics } from "./metrics.js";
 import { loadTelemetryConfig } from "../telemetry/config.js";
 import { parseWindow } from "../telemetry/window.js";
@@ -54,7 +54,8 @@ async function deliveryPanel(env) {
         ? ["No issues shipped on record."]
         : [
             `${plural(n, "issue")} shipped across ${plural(src.scan.records.length, "delivery", "deliveries")}`,
-            `Median cycle: ${d.medianCycleMs !== null ? fmtCycle(d.medianCycleMs) : "—"}`,
+            `${CYCLE_LABEL}: ${d.medianCycleMs !== null ? fmtCycle(d.medianCycleMs) : "—"}`,
+            CYCLE_NOTE,
             `Follow-ups per delivery: ${d.followUpRatio !== null ? d.followUpRatio.toFixed(1) : "—"}`,
         ];
     const verdicts = Object.entries(d.verdictDistribution)
@@ -63,13 +64,13 @@ async function deliveryPanel(env) {
         .join(" · ");
     if (verdicts !== "")
         summary.push(`Verdicts: ${verdicts}`);
-    const results = [said.header, said.status, ...summary, ...said.notes].join("\n");
+    const results = [said.header, said.status, ...summary, ...said.notes, ...said.unreadable].join("\n");
     const meaning = said.stale
         ? "These rows are from an earlier fetch; the latest one failed."
         : said.unread
             ? "The handover issues could not be read, so an empty view here is not a true zero."
-            : d.malformed > 0
-                ? `${plural(d.malformed, "handover")} ${d.malformed === 1 ? "has" : "have"} a malformed delivery block, so the numbers above are incomplete.`
+            : said.completeness !== null
+                ? said.completeness
                 : n === 0
                     ? "No handover issue carries a delivery block yet — this view fills in as work ships."
                     : `Delivery data is complete for all ${plural(src.scan.records.length, "recorded delivery", "recorded deliveries")}.`;

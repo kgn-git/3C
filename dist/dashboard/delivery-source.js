@@ -11,7 +11,7 @@ export const TTL_MS = 15 * 60_000;
 // not answered with a request per page view.
 export const RETRY_MS = 60_000;
 export const defaultSourceDeps = { gh: execGh, repo: originRepo, now: () => new Date() };
-const EMPTY = { records: [], legacy: 0, malformed: 0, excluded: 0, conflicts: 0, capped: false };
+const EMPTY = { records: [], legacy: 0, malformed: 0, unreadable: [], excluded: 0, conflicts: 0, capped: false };
 function sourceOf(cache, now) {
     const { repo, scan, fetchedAt, failure } = cache;
     if (failure !== null && (fetchedAt === null || Date.parse(failure.at) >= Date.parse(fetchedAt))) {
@@ -31,6 +31,8 @@ export async function readDelivery(ws, now) {
         return sourceOf(read.cache, now);
     if (read.kind === "invalid")
         return { repo: null, scan: EMPTY, status: { kind: "discarded" } };
+    if (read.kind === "outdated")
+        return { repo: null, scan: EMPTY, status: { kind: "outdated" } };
     return { repo: null, scan: EMPTY, status: { kind: "failed", state: "never-fetched", at: null, fetchedAt: null } };
 }
 /** Fetches once and records the outcome in the cache: new rows, or the failure beside the old ones. */

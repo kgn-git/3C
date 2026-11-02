@@ -139,6 +139,7 @@ export async function dashboardCommand(argv, env = { cwd: process.cwd() }) {
                 said.header,
                 said.status,
                 ...said.notes,
+                ...said.unreadable,
             ].join("\n"),
             meaning: said.unread
                 ? "The delivery view is empty because the handover issues could not be read, not because nothing shipped."
@@ -156,22 +157,20 @@ export async function dashboardCommand(argv, env = { cwd: process.cwd() }) {
     await mkdir(dirname(out), { recursive: true });
     await writeFile(out, html, "utf8");
     const shipped = delivery?.rows.length ?? 0;
-    const malformed = delivery?.malformed ?? 0;
     log(renderConsole({
         results: [
             said.header,
             said.status,
             `${shipped} ${shipped === 1 ? "issue" : "issues"} shipped on record`,
             ...said.notes,
+            ...said.unreadable,
             gates !== null ? `${gates.totalRuns} gate runs in the ${win.label}` : null,
         ]
             .filter((s) => s !== null)
             .join("\n"),
         meaning: said.stale
             ? "The delivery rows are from an earlier fetch; the latest one failed."
-            : malformed > 0
-                ? `${malformed} ${malformed === 1 ? "handover has" : "handovers have"} malformed frontmatter, so these numbers are incomplete.`
-                : "This is a static snapshot — open it to read the delivery and gate views.",
+            : (said.completeness ?? "This is a static snapshot — open it to read the delivery and gate views."),
         nextSteps: [...said.nextSteps, "3c dashboard --serve   # the interactive app"],
         artifact: out,
     }));

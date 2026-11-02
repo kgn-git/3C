@@ -29,7 +29,9 @@ unclear — or the journey-architect flags a `blocking` reachability gap — sto
 implement against an unclear or unreachable spec.
 
 ### 2. Implement — TDD (auto)
-Run the `/${FRAMEWORK_SLUG}-implement` workflow as the implementation stage (RED → GREEN, per its own rules).
+Read `.claude/skills/${FRAMEWORK_SLUG}-implement/SKILL.md` and follow it inline as the implementation stage (RED → GREEN,
+per its own rules). Do not call it through the Skill tool: it is explicit-invocation only, so the Skill tool
+refuses a model-side call, and the user's invocation of this pipeline is the invocation it runs under.
 Do not duplicate its logic; follow it.
 
 ### 3. Cross-check (auto)
