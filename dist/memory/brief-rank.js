@@ -11,7 +11,12 @@ const MAX_REFS = 200;
 const MAX_QUERY_TERMS = 500;
 const K1 = 1.2;
 const B = 0.75;
-const terms = (text) => (text.toLowerCase().match(/[a-z0-9][a-z0-9-]{3,}/g) ?? []).filter((t) => !STOPWORDS.has(t));
+const TOKEN = "[a-z0-9][a-z0-9-]{3,}";
+const WHOLE_TOKEN = new RegExp(`^${TOKEN}$`);
+/** The words a note is matched on: lowercase, four or more characters, common words left out. */
+export const terms = (text) => (text.toLowerCase().match(new RegExp(TOKEN, "g")) ?? []).filter((t) => !STOPWORDS.has(t));
+/** Whether a word is one `terms` can return, so a rule built on it can match. */
+export const isSearchTerm = (word) => WHOLE_TOKEN.test(word) && !STOPWORDS.has(word);
 /** The notes that bear on `issue`, best first, at most MAX_NOTES. `query` and `files` are what the issue says and names. */
 export function rankNotes(notes, issue, query, files, refs) {
     const docs = notes.map((n) => terms(n.text));

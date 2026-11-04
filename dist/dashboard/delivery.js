@@ -2,10 +2,24 @@
 // panel cannot call it two things. It measures elapsed time, not effort.
 export const CYCLE_LABEL = "Branch open to merge";
 export const CYCLE_NOTE = "Time from branch opened to merged. It is not effort.";
+// The count of rows, named for what a row is: one issue in one delivery, so an issue delivered twice is two.
+export const ISSUE_DELIVERIES_LABEL = "Issue deliveries";
+export const ISSUE_DELIVERIES_PER_WEEK = "Issue deliveries per week";
+export const ISSUE_DELIVERIES_NOTE = "One for each issue a delivery closed. An issue delivered twice counts twice, and a delivery that closed three issues counts three.";
+export const NO_ISSUE_DELIVERIES = "No issue deliveries on record.";
+export const issueDeliveries = (n) => n + (n === 1 ? " issue delivery" : " issue deliveries");
+/** A span of time as minutes, hours or days, whichever reads best. */
+export const fmtCycle = (ms) => {
+    if (ms < 3_600_000)
+        return `${Math.round(ms / 60_000)}m`;
+    if (ms < 48 * 3_600_000)
+        return `${(ms / 3_600_000).toFixed(1)}h`;
+    return `${(ms / 86_400_000).toFixed(1)}d`;
+};
 // Cycle time = merged − started; absent (never zero) when either is missing
 // or the timestamps are out of order — a negative duration must not reach
 // the rows or the median.
-function cycleMs(r) {
+export function cycleMs(r) {
     if (r.started === undefined || r.merged === undefined)
         return undefined;
     const ms = Date.parse(r.merged) - Date.parse(r.started);
@@ -22,15 +36,15 @@ function isoWeek(iso) {
     const week = Math.ceil(((t.getTime() - yearStart) / 86_400_000 + 1) / 7);
     return `${t.getUTCFullYear()}-W${String(week).padStart(2, "0")}`;
 }
-function median(values) {
+export function median(values) {
     if (values.length === 0)
         return null;
     const s = [...values].sort((a, b) => a - b);
     const mid = s.length / 2;
     return s.length % 2 === 1 ? s[Math.floor(mid)] : (s[mid - 1] + s[mid]) / 2;
 }
-// Grain: rows and shipped-per-week are issue-grained (a multi-issue delivery
-// ships N issues that week); median cycle, verdict distribution, and the
+// Grain: rows and issue-deliveries-per-week are issue-grained (a multi-issue
+// delivery counts once per issue that week); median cycle, verdict distribution, and the
 // follow-up ratio are delivery(record)-grained — one cycle, one verdict, one
 // set of follow-ups per delivery regardless of how many issues it closed.
 export function deliveryMetrics(scan) {
@@ -64,7 +78,7 @@ export function deliveryMetrics(scan) {
         const week = isoWeek(row.merged);
         byWeek.set(week, (byWeek.get(week) ?? 0) + 1);
     }
-    const shippedPerWeek = [...byWeek.entries()]
+    const issueDeliveriesPerWeek = [...byWeek.entries()]
         .sort(([a], [b]) => a.localeCompare(b))
         .map(([week, count]) => ({ week, count }));
     // No prototype, for callers that build records without the validator's
@@ -82,7 +96,7 @@ export function deliveryMetrics(scan) {
     const followUps = scan.records.reduce((s, r) => s + r.follow_ups.length, 0);
     return {
         rows,
-        shippedPerWeek,
+        issueDeliveriesPerWeek,
         medianCycleMs: median(cycles),
         verdictDistribution,
         followUpRatio: scan.records.length === 0 ? null : followUps / scan.records.length,

@@ -58,7 +58,7 @@ framework's distribution, then verify with `${FRAMEWORK_SLUG} doctor`. On any ot
   from `.github/ISSUE_TEMPLATE/handover.md` (installed by `${FRAMEWORK_SLUG} setup`): it MUST open with a fenced
   `yaml` block holding the `3c-handover/1` metadata, computed by the pipeline **at ship time**. That
   block is what the `${FRAMEWORK_SLUG} dashboard` delivery view reads (from `handover`-labelled issues through
-  `gh`, cached locally for 15 minutes; only owners', members' and collaborators' issues count; a failed
+  `gh`, cached locally for 15 minutes; only owners' and members' issues count; a failed
   fetch is named, and anything missing here renders as a blank):
 
   ````markdown

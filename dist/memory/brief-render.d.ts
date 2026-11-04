@@ -5,7 +5,7 @@ export declare const SEAM_LINE = "The brief does not guess which code to change.
 export declare const DISCLAIMER = "This check decides only what it can prove: whether a commit did the work is left to you.";
 export declare const ADVICE_LINE = "This is advice and blocks nothing.";
 export declare const NO_DECISION = "No decision recorded in the issue body.";
-export declare const UNTRUSTED_LINE = "This issue was written by someone who is not an owner, member or collaborator, so no Decided and no Do are read from it.";
+export declare const UNTRUSTED_LINE = "This issue was written by someone who is not an owner or member, so no Decided and no Do are read from it.";
 export declare const LEFT_OUT = "[left out: it matches a secret pattern or holds an unusual character]";
 export declare const unreadLine: (cause: string | null) => string;
 export declare const VERDICT_TEXT: Readonly<Record<Verdict, string>>;

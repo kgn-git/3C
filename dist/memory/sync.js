@@ -7,10 +7,9 @@ import { splitNotes } from "./notes.js";
 import { secretTypesIn } from "./screen.js";
 import { STORE_LIMITS, writeStore } from "./store.js";
 export const RETRY_VERB = "3c memory sync";
-// A secret screen costs time with the characters it scans, and the internal-hostname detector in scanSecrets is
-// quadratic in a long run of hyphenated letters (measured at 136 microseconds for 600 characters, against 5 for
-// ordinary text; the other detectors were not measured). The characters one sync will screen, a note's own text
-// and every run of its wrapped lines, are capped, and a note past the cap is refused and counted.
+// The time of a secret screen grows with the characters it scans, and a sync screens every note and every run of
+// its wrapped lines. The budget caps those characters, and a note past it is left out and counted. It leaves room for
+// the text of every note a full store holds.
 export const RUN_CHAR_BUDGET = 20_000_000;
 // GitHub's list can trail a create, so a sync run for a handover that was just filed reads again, once, when the
 // list does not show it.

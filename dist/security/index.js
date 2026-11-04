@@ -3,8 +3,11 @@ import { resolveBrandSlugSync } from "../branding/runtime.js";
 import { loadTelemetryConfig } from "../telemetry/config.js";
 import { writeTelemetryEvent } from "../telemetry/writer.js";
 import { anonymiseId } from "../telemetry/anonymise.js";
+import { defaultGitRunner } from "./git.js";
+import { readStagedAdditions } from "./staged.js";
 import { decideOutcome } from "./severity.js";
-import { defaultLocalScanner } from "./scanner.js";
+import { defaultLocalScanner, MISSING_RULE, UNREADABLE_RULE } from "./scanner.js";
+import { findingId } from "./findings.js";
 import { changedDependencies } from "./manifest-diff.js";
 import { checkDependencies, unreadableManifests } from "./dependency-check.js";
 import { securityFileSet, SecurityBaseError, MAX_SCANNED_BYTES, } from "./files.js";
@@ -104,7 +107,30 @@ async function evaluate(workspaceDir, opts) {
                 `Run \`${resolveBrandSlugSync()} security refresh\` to rebuild it.\nBlocked.\n`,
         };
     }
-    const sast = await scanner.scan({ workspaceDir, changedFiles });
+    // Staged content the working tree no longer shows would be committed unread, so each such file blocks.
+    const stagedGone = fileSet.stagedGone.map((file) => ({
+        id: findingId(UNREADABLE_RULE, file, "staged-gone"),
+        severity: "high",
+        ruleId: UNREADABLE_RULE,
+        file,
+        line: 0,
+        detail: "its staged content was not scanned, because the file is gone from disk; restore it or unstage it with git restore --staged, then run the scan again",
+    }));
+    const stagedRead = await readStagedAdditions(workspaceDir, opts.runner ?? defaultGitRunner);
+    // A patch too large to read whole is not read in part and called clean.
+    const stagedTooBig = stagedRead.oversize
+        ? [
+            {
+                id: findingId(UNREADABLE_RULE, "(staged changes)", `oversize-${stagedRead.digest}`),
+                severity: "high",
+                ruleId: UNREADABLE_RULE,
+                file: "(staged changes)",
+                line: 0,
+                detail: "the staged change is too large to read whole; commit it in smaller parts, then run the scan again",
+            },
+        ]
+        : [];
+    const sast = [...(await scanner.scan({ workspaceDir, changedFiles, staged: stagedRead.additions })), ...stagedGone, ...stagedTooBig];
     const deps = dep.findings;
     const supps = await loadSuppressions(workspaceDir);
     const all = [...sast, ...deps];
@@ -123,7 +149,12 @@ async function evaluate(workspaceDir, opts) {
         ? `, ${fileSet.skipped.length} skipped as larger than ${MAX_SCANNED_BYTES} bytes`
         : "";
     const suppressedNote = suppressedCount > 0 ? `; ${suppressedCount} suppressed` : "";
-    const scanned = `SAST: ${changedFiles.length} file(s) scanned${skippedNote}; ${dep.note}${suppressedNote}`;
+    // A file the scan could not read, or that was gone, is not a file it scanned; the unreadable ones also block above.
+    const filesWith = (rule) => new Set(sast.filter((f) => f.ruleId === rule && changedFiles.includes(f.file)).map((f) => f.file));
+    const gone = filesWith(MISSING_RULE);
+    const unread = new Set([...filesWith(UNREADABLE_RULE), ...gone]);
+    const goneNote = gone.size > 0 ? `, ${gone.size} no longer on disk` : "";
+    const scanned = `SAST: ${changedFiles.length - unread.size} file(s) scanned${skippedNote}${goneNote}; ${dep.note}${suppressedNote}`;
     const advice = dep.advice.map((l) => `${l}\n`).join("");
     const message = advice +
         (lines.length === 0

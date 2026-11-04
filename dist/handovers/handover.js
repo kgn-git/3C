@@ -5,6 +5,7 @@
 // record is rebuilt from known fields only.
 import * as yaml from "js-yaml";
 import { isCount, isCountUpTo } from "./counts.js";
+import { MAX_NOTED_KEYS, MORE_KEYS, notedKey } from "./handover-noted.js";
 import { readByCategory, REVIEW_LIMITS } from "./review-data.js";
 // CWE-400: a handover is a small text document; anything larger is refused
 // before it is parsed.
@@ -48,15 +49,24 @@ function pick(v, keys, ok) {
     }
     return out;
 }
+const VERDICT_PICKED = ["level", "blocking", "warnings", "suggestions", "fixed_in_branch"];
+const VERDICT_KEYS = [...VERDICT_PICKED, "by_category"];
+const LOC_KEYS = ["added", "removed", "files"];
+/** The keys a block holds beyond `known`, named for the view; a block that is not a mapping holds none. */
+function unknownKeys(block, v, known) {
+    if (typeof v !== "object" || v === null || Array.isArray(v))
+        return [];
+    return Object.keys(v).filter((k) => !known.includes(k)).map((k) => notedKey(block, k));
+}
 function readVerdict(v) {
-    const base = pick(v, ["level", "blocking", "warnings", "suggestions", "fixed_in_branch"], (k, x) => k === "level" ? typeof x === "string" && VERDICT_LEVELS.has(x) : isCount(x));
+    const base = pick(v, VERDICT_PICKED, (k, x) => k === "level" ? typeof x === "string" && VERDICT_LEVELS.has(x) : isCount(x));
     // `pick` copies only the keys it was given, so a category map it was never asked for would vanish unrefused.
     if (base === null || base === undefined || !Object.hasOwn(v, "by_category"))
         return base;
     const byCategory = readByCategory(v["by_category"]);
     return byCategory === null ? null : { ...base, by_category: byCategory };
 }
-const readLoc = (v) => pick(v, ["added", "removed", "files"], (_k, x) => isCount(x));
+const readLoc = (v) => pick(v, LOC_KEYS, (_k, x) => isCount(x));
 /** String fields whose unquoted values YAML can retype as numbers. */
 const TEXT_FIELDS = ["merge_sha", "branch"];
 /**
@@ -178,6 +188,8 @@ export function validateHandoverObject(fm, handover) {
     const loc = readLoc(o["loc"]);
     if (loc === null)
         return { kind: "malformed", reason: "invalid field: loc" };
+    const all = [...unknownKeys("verdict", o["verdict"], VERDICT_KEYS), ...unknownKeys("loc", o["loc"], LOC_KEYS)];
+    const extra = all.length > MAX_NOTED_KEYS ? [...all.slice(0, MAX_NOTED_KEYS - 1), MORE_KEYS] : all;
     const own = (k) => (Object.hasOwn(o, k) ? o[k] : undefined);
     const gates = own("gates_fired");
     return {
@@ -198,6 +210,7 @@ export function validateHandoverObject(fm, handover) {
             gates_fired: gates === undefined ? undefined : [...gates],
             board_rounds: own("board_rounds"),
         },
+        ...(extra.length > 0 ? { unknownKeys: extra } : {}),
     };
 }
 //# sourceMappingURL=handover.js.map

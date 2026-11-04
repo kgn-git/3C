@@ -15,5 +15,7 @@ export interface DeliveryDescription {
 }
 /** How many unreadable handovers the console, page and panel print before counting the rest. */
 export declare const UNREADABLE_SHOWN = 50;
+/** How many handovers with an undefined key the one note line names; each can name up to MAX_NOTED_KEYS keys. */
+export declare const NOTED_SHOWN = 10;
 export declare function describeDelivery(src: DeliverySource): DeliveryDescription;
 //# sourceMappingURL=delivery-status.d.ts.map

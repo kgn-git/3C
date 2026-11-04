@@ -1,4 +1,4 @@
-/** Also bounds the unreadable list the cache will accept. */
+/** Also bounds the delivery records, and the blocks with an undefined key, that the cache will accept. */
 export declare const ISSUE_CAP = 500;
 export interface Unreadable {
     /** Null for a gh item that carried no issue number. */

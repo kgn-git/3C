@@ -7,9 +7,19 @@ export interface Finding {
     readonly line: number;
     readonly detail: string;
 }
+/** The lines a commit adds to one file, each with its line number in the new file. */
+export interface StagedAddition {
+    readonly file: string;
+    readonly lines: ReadonlyArray<{
+        readonly no: number;
+        readonly text: string;
+    }>;
+}
 export interface ScanInput {
     readonly workspaceDir: string;
     readonly changedFiles: ReadonlyArray<string>;
+    /** What the commit adds, read from the index; a scanner that reads files may ignore it. */
+    readonly staged?: ReadonlyArray<StagedAddition>;
 }
 export interface Scanner {
     scan(input: ScanInput): Promise<Finding[]>;

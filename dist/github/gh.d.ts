@@ -1,4 +1,5 @@
-export type GhFailure = "offline" | "unauthenticated" | "rate-limited" | "not-found" | "gh-missing";
+import type { GhFailure } from "./failures.js";
+export { GH_FAILURES, isGhFailure, type GhFailure } from "./failures.js";
 export interface GhCall {
     readonly timeoutMs: number;
     readonly maxBuffer: number;

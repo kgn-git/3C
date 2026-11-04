@@ -18,8 +18,10 @@ export interface MemoryEnv {
     readonly log?: (msg: string) => void;
     readonly error?: (msg: string) => void;
 }
-/** The first line of a sync that stopped before it finished; the filing command prints the same words. */
+/** The first line of a sync that stopped before it finished. */
 export declare const SYNC_STOPPED = "Memory not synced: the sync stopped before it finished.";
+/** The lines printed when a sync stops: what happened, which error, what to do next. It never throws, because it runs inside a catch. */
+export declare function stoppedLines(thrown: unknown, kept?: string): string[];
 /** `3c memory sync`: rebuilds the memory; exits 1 with the cause and what to do next when it cannot. */
 export declare function memoryCommand(argv: readonly string[], env: MemoryEnv): Promise<number>;
 //# sourceMappingURL=memory.d.ts.map

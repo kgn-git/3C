@@ -162,8 +162,8 @@ Commands:
                     blocking. Suppressions are local to this workspace.
 
   dashboard [--serve] [--port <n>] [--since <date>]
-                    Delivery view built from handover frontmatter: issues
-                    shipped, cycle time, board verdicts. Writes a static
+                    Delivery view built from handover frontmatter: issue
+                    deliveries, cycle time, board verdicts. Writes a static
                     .\${FRAMEWORK_SLUG}/dashboard.html, or serves it on loopback
                     with --serve.
 
@@ -177,6 +177,17 @@ Commands:
                     Print what is decided and to do for an issue, which earlier
                     notes bear on it, and whether it is still current. It reads
                     the memory (run memory sync first) and the issue on GitHub.
+
+  memory brief <issue> --prompt
+                    Print the prompt that starts the work on an issue in a
+                    Claude Code session. It reads the memory and the issue
+                    number only, and fetches nothing from GitHub.
+
+  memory lessons    Count the lessons in .\${FRAMEWORK_SLUG}/lessons.yaml across
+                    the memory: matches, first and last merge dates, the
+                    exclusions beside each figure, and the matches of the last
+                    7 days. The file is changed by pull request; without it the
+                    command says what to add and blocks nothing.
 
   debug context [file]              Print what the assistant reads for a
                     file — the rules, standards and architecture in scope —

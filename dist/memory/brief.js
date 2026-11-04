@@ -2,6 +2,7 @@
 // still current. The issue's own text feeds the brief only when GitHub says a trusted author wrote it.
 import { isTrustedAuthor } from "../handovers/handover-issues.js";
 import { extractCriteria, extractDecided, extractFiles, issueRefs, rulingDate } from "./brief-text.js";
+import { deliveryIndexOf, labelsFor } from "./brief-labels.js";
 import { rankNotes } from "./brief-rank.js";
 const MAX_EVIDENCE = 3;
 const NO_FILES = "The issue names no files, so only merged changes that name it were checked.";
@@ -33,7 +34,8 @@ export async function buildBrief(input) {
     const issueFiles = extractFiles(body);
     const query = source === "trusted" ? `${live.title} ${body}` : "";
     const refs = source === "trusted" ? issueRefs(body).filter((r) => r !== issue) : [];
-    const notes = rankNotes(store.notes, issue, query, issueFiles, refs);
+    const deliveries = deliveryIndexOf(store.notes);
+    const notes = rankNotes(store.notes, issue, query, issueFiles, refs).map((ranked) => ({ ...ranked, labels: labelsFor(ranked.note, deliveries) }));
     const touch = extractFiles(body, ...notes.map((n) => n.note.text));
     const fresh = await checkFreshness(live, decided, issueFiles, git, issue);
     return {

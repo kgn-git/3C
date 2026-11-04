@@ -8,7 +8,7 @@ export const SEAM_LINE = "The brief does not guess which code to change.";
 export const DISCLAIMER = "This check decides only what it can prove: whether a commit did the work is left to you.";
 export const ADVICE_LINE = "This is advice and blocks nothing.";
 export const NO_DECISION = "No decision recorded in the issue body.";
-export const UNTRUSTED_LINE = "This issue was written by someone who is not an owner, member or collaborator, so no Decided and no Do are read from it.";
+export const UNTRUSTED_LINE = "This issue was written by someone who is not an owner or member, so no Decided and no Do are read from it.";
 export const LEFT_OUT = "[left out: it matches a secret pattern or holds an unusual character]";
 export const unreadLine = (cause) => `The issue could not be read${cause === null ? "" : ` (${cause})`}, so no Decided and no Do are shown. Run the brief again when that is fixed.`;
 export const VERDICT_TEXT = {
@@ -68,10 +68,10 @@ export function renderBrief(brief) {
     out.push(...list(brief.touch.map((t) => `${plain(t)} (source: the issue body or a note)`), "No files named."));
     out.push(`  ${SEAM_LINE}`);
     out.push("Notes:");
-    out.push(...list(brief.notes.map(({ note, why }) => {
+    out.push(...list(brief.notes.map(({ note, why, labels = [] }) => {
         const delivered = note.issues.length > 0 ? `, delivered ${note.issues.map((i) => `#${i}`).join(" and ")}` : "";
         const lead = note.kind === "decision" ? `Recorded in handover #${note.handover}, not a ruling` : KIND[note.kind];
-        return `${lead}: ${plain(note.text)} (source: handover #${note.handover}${delivered}; ${WHY[why]})`;
+        return `${lead}: ${plain(note.text)} (source: handover #${note.handover}${delivered}; ${WHY[why]})${labels.map((label) => ` ${label}`).join("")}`;
     }), "No earlier note bears on this issue."));
     out.push(COMMENTS_LINE);
     return out.join("\n");

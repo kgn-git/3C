@@ -30,14 +30,17 @@ export interface HandoverRecord {
     /** How many rounds the review board took. */
     readonly board_rounds?: number;
 }
-export type HandoverParse = {
+/** A record also names the keys it was read past: ones its verdict or loc block does not define. */
+export type HandoverValidated = {
     kind: "record";
     record: HandoverRecord;
-} | {
-    kind: "legacy";
+    unknownKeys?: ReadonlyArray<string>;
 } | {
     kind: "malformed";
     reason: string;
+};
+export type HandoverParse = HandoverValidated | {
+    kind: "legacy";
 };
 export interface HandoverScan {
     readonly records: ReadonlyArray<HandoverRecord>;
@@ -47,19 +50,7 @@ export interface HandoverScan {
 /** Parses a handover body whose metadata block opens it. */
 export declare function parseHandoverBody(handover: number, body: string): HandoverParse;
 /** Validates the YAML between the fences, numbering the record `handover`. */
-export declare function validateHandoverFrontmatter(fmText: string, handover: number): {
-    kind: "record";
-    record: HandoverRecord;
-} | {
-    kind: "malformed";
-    reason: string;
-};
+export declare function validateHandoverFrontmatter(fmText: string, handover: number): HandoverValidated;
 /** Validates a parsed handover mapping; the delivery cache re-checks its records with it. */
-export declare function validateHandoverObject(fm: unknown, handover: number): {
-    kind: "record";
-    record: HandoverRecord;
-} | {
-    kind: "malformed";
-    reason: string;
-};
+export declare function validateHandoverObject(fm: unknown, handover: number): HandoverValidated;
 //# sourceMappingURL=handover.d.ts.map

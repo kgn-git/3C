@@ -8,10 +8,17 @@ const BRANCHES = ["origin/main", "origin/master", "main", "master"];
 const LIMIT = "20";
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const LITERAL = "--literal-pathspecs";
+// A brief must not hang on a git that does not answer, or read an unbounded log.
+export const GIT_TIMEOUT_MS = 10_000;
+export const GIT_MAX_BUFFER = 1024 * 1024;
 /** Runs git in `cwd` with a deadline and an output cap; null when it fails or does not answer. */
-export function gitIn(cwd) {
+export function gitIn(cwd, call = { timeoutMs: GIT_TIMEOUT_MS, maxBuffer: GIT_MAX_BUFFER }, start = execFile) {
+    // Node reads a timeout of 0 as no deadline, and a cap that is not a positive whole number as none either.
+    if (!Number.isSafeInteger(call.timeoutMs) || call.timeoutMs < 1 || !Number.isSafeInteger(call.maxBuffer) || call.maxBuffer < 1) {
+        throw new RangeError("git needs a deadline and an output cap of at least 1");
+    }
     return (args) => new Promise((resolve) => {
-        execFile("git", [...args], { cwd, timeout: 10_000, maxBuffer: 1024 * 1024, windowsHide: true, encoding: "utf8" }, (err, stdout) => resolve(err === null ? stdout : null));
+        start("git", [...args], { cwd, timeout: call.timeoutMs, maxBuffer: call.maxBuffer, windowsHide: true, encoding: "utf8" }, (err, stdout) => resolve(err === null ? stdout : null));
     });
 }
 const lines = (out) => (out === null ? null : out.split("\n").map((l) => l.trim()).filter((l) => l !== ""));

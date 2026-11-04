@@ -1,5 +1,5 @@
 import { fileHandover } from "../../skills/implement/file-handover.js";
-import { memoryCommand, SYNC_STOPPED } from "./memory.js";
+import { memoryCommand, stoppedLines } from "./memory.js";
 const realSync = (log, error, filed) => memoryCommand(["sync"], { cwd: process.cwd(), filed, log, error });
 /**
  * Files a handover, then brings the memory up to date so the next brief can read it. The sync runs here, in the
@@ -24,9 +24,9 @@ export async function fileHandoverCommand(body, env) {
     try {
         status = await (env.sync ?? realSync)(env.log, (m) => failure.push(m), r.number);
     }
-    catch {
+    catch (thrown) {
         status = 1;
-        failure.push(SYNC_STOPPED, "Next step: run 3c memory sync again. If it fails again, report it with `3c bug`.");
+        failure.push(...stoppedLines(thrown));
     }
     if (status !== 0) {
         env.error("The handover is filed; only the memory update failed.");

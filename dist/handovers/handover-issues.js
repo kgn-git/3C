@@ -1,17 +1,19 @@
 import { parseHandoverBody } from "./handover.js";
 import { ISSUE_CAP, LEGACY_REASON, NO_NUMBER_REASON, countUnreadable, } from "./handover-unreadable.js";
 export { ISSUE_CAP };
+/** Every item the feed returns, whatever it is, counts toward this; room is left for pull requests among the issues. */
+export const FEED_CAP = 2 * ISSUE_CAP;
 const PAGE = 100;
-const TRUSTED = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
-/** Whether GitHub's author_association names an owner, an organisation member or an invited collaborator. */
+const TRUSTED = new Set(["OWNER", "MEMBER"]);
+/** Whether GitHub's author_association names an owner or a member of the owning organisation. An invited collaborator is not trusted: the label and the template are open to anyone who can open an issue. */
 export const isTrustedAuthor = (association) => TRUSTED.has(association);
 // A body is at most 64 KiB; JSON can escape each byte to six, and the rest of
 // an issue object adds a few KiB.
 const MAX_BUFFER = PAGE * (6 * 65_536 + 16_384);
-const CALL_MS = 30_000;
+export const CALL_MS = 30_000;
 // The whole refresh, every page included, so one refresh cannot hold the
 // server's single refresh slot for minutes.
-const DEADLINE_MS = 90_000;
+export const DEADLINE_MS = 90_000;
 /** A page's issues, with items that are not issue-shaped counted rather than trusted; null when the page is not a list. */
 function toItems(stdout) {
     let page;
@@ -34,10 +36,13 @@ function toItems(stdout) {
         }
         const body = o["body"];
         const association = o["author_association"];
+        const user = o["user"];
+        const login = typeof user === "object" && user !== null ? user["login"] : undefined;
         items.push({
             number: n,
             body: typeof body === "string" ? body : "",
             association: typeof association === "string" ? association : "",
+            login: typeof login === "string" ? login : "",
             isPull: o["pull_request"] !== undefined && o["pull_request"] !== null,
         });
     }
@@ -49,12 +54,12 @@ export const newestFirst = (a, b) => {
     return tb - ta || b.handover - a.handover;
 };
 /** Whole pages of handover issues until the count passes the cap, pull requests removed; the scan and the memory read the same pages. */
-export async function fetchHandoverItems(repo, gh) {
+export async function fetchHandoverItems(repo, gh, deadline = Date.now() + DEADLINE_MS) {
     const issues = [];
     let bad = 0;
-    const deadline = Date.now() + DEADLINE_MS;
+    let fetched = 0;
     // One page past the cap answers "do more exist" without a count request.
-    // Pull requests come back from this endpoint too and take no cap slot.
+    // Pull requests come back from this endpoint too and take no cap slot, but they count toward FEED_CAP.
     for (let page = 1; issues.length <= ISSUE_CAP; page++) {
         const left = deadline - Date.now();
         if (left <= 0)
@@ -71,7 +76,10 @@ export async function fetchHandoverItems(repo, gh) {
             return { ok: false, failure: "offline", detail: "gh returned something other than an issue list" };
         issues.push(...got.items.filter((i) => !i.isPull));
         bad += got.bad;
-        // Items with no number never reach the cap above, so a feed made only of them would page until the deadline.
+        fetched += got.items.length + got.bad;
+        // Pull requests and items with no number never reach the cap above, so a feed made only of them would page until the deadline.
+        if (fetched > FEED_CAP)
+            return { ok: false, failure: "offline", detail: `gh returned more than ${FEED_CAP} items for the handover label` };
         if (bad > ISSUE_CAP)
             return { ok: false, failure: "offline", detail: "gh returned too many items without an issue number" };
         if (got.items.length + got.bad < PAGE)
@@ -79,23 +87,33 @@ export async function fetchHandoverItems(repo, gh) {
     }
     return { ok: true, issues, bad };
 }
-export async function fetchHandoverIssues(repo, gh) {
-    const fetched = await fetchHandoverItems(repo, gh);
+export async function fetchHandoverIssues(repo, gh, deadline) {
+    const fetched = await fetchHandoverItems(repo, gh, deadline);
     if (!fetched.ok)
         return fetched;
     const { issues, bad } = fetched;
     const capped = issues.length > ISSUE_CAP;
     const parsed = [];
     const unreadable = [];
+    const keyed = new Map();
+    const logins = new Set();
+    let unnamed = 0;
     let excluded = 0;
     for (const item of issues.slice(0, ISSUE_CAP)) {
         if (!isTrustedAuthor(item.association)) {
             excluded++;
             continue;
         }
+        if (item.login === "")
+            unnamed++;
+        else
+            logins.add(item.login);
         const p = parseHandoverBody(item.number, item.body);
-        if (p.kind === "record")
+        if (p.kind === "record") {
             parsed.push(p.record);
+            if (p.unknownKeys !== undefined)
+                keyed.set(item.number, p.unknownKeys);
+        }
         else if (p.kind === "legacy")
             unreadable.push({ issue: item.number, kind: "legacy", reason: LEGACY_REASON });
         else
@@ -118,6 +136,8 @@ export async function fetchHandoverIssues(repo, gh) {
         seen.add(key);
         records.push(r);
     }
-    return { ok: true, scan: { records, ...countUnreadable(unreadable), unreadable, excluded, conflicts, capped } };
+    // A block a newer handover replaced is not in the numbers, so a key in it is not worth a note.
+    const noted = records.flatMap((r) => (keyed.has(r.handover) ? [{ issue: r.handover, keys: keyed.get(r.handover) }] : []));
+    return { ok: true, scan: { records, ...countUnreadable(unreadable), unreadable, excluded, conflicts, capped, noted }, authors: unnamed > 0 ? null : logins.size };
 }
 //# sourceMappingURL=handover-issues.js.map

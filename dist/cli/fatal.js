@@ -19,7 +19,7 @@ import { lstatSync, mkdirSync, writeFileSync, writeSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { resolveBrandSlugSync } from "../branding/runtime.js";
-import { scanSecrets } from "../validate/secrets.js";
+import { redactMatch, scanSecrets } from "../validate/secrets.js";
 /**
  * The event `hook run` handles: the LAST `--event=` wins, PreToolUse by
  * default. One parser for the command and for the crash classifier — two
@@ -112,11 +112,25 @@ const keep = (text) => text.length > MAX_DETAIL_CHARS ? `${text.slice(0, MAX_DET
  * knows — AWS, GitHub, JWT, Stripe, PEM headers, connection strings — and no
  * others. The log is local and private, but it is not a vault.
  */
-function redact(text) {
-    let out = text;
-    for (const h of scanSecrets(text).hits)
-        out = out.split(h.match).join(h.redacted);
-    return out;
+export function redact(text) {
+    // Hits that overlap, even in part, are one stretch and are redacted together: replacing them one by one removes
+    // the text a later hit needs and leaves the rest of it behind.
+    const spans = scanSecrets(text)
+        .hits.map((hit) => ({ start: hit.index, end: hit.index + hit.match.length }))
+        .sort((a, b) => a.start - b.start || b.end - a.end);
+    let out = "";
+    let at = 0;
+    for (let i = 0; i < spans.length;) {
+        const { start } = spans[i];
+        let end = spans[i].end;
+        let next = i + 1;
+        while (next < spans.length && spans[next].start < end)
+            end = Math.max(end, spans[next++].end);
+        out += text.slice(at, start) + redactMatch(text.slice(start, end));
+        at = end;
+        i = next;
+    }
+    return out + text.slice(at);
 }
 /**
  * The command words: the LEADING run of subcommand-shaped words, stopping at

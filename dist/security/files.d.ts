@@ -18,6 +18,8 @@ export interface SecurityFileSet {
     readonly files: readonly string[];
     /** Files skipped for exceeding MAX_SCANNED_BYTES — reported, never silently dropped. */
     readonly skipped: readonly string[];
+    /** Files staged for the commit that are gone from disk: their staged content was not read. */
+    readonly stagedGone: readonly string[];
     /** Resolved base commit, or null when the repository has no commits yet. */
     readonly base: string | null;
     /** Each changed package.json, package-lock.json and npm-shrinkwrap.json, at the base and now, for the dependency half. */

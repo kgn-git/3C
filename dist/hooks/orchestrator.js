@@ -11,6 +11,7 @@ import { checkAndConfirmHooksConfig } from "./diff-confirm.js";
 import { readHookEventFromStdin } from "./event.js";
 import { hookLimitText, readErrorCode, retryRoute, StdinTooLargeError, unreadableEvent } from "../validate/_stdin.js";
 import { buildIsolatedCommand } from "./network-isolate.js";
+import { hookLabel, hookRefusal, matcherFault, matchesTool } from "./refusal.js";
 import { loadTelemetryConfig } from "../telemetry/config.js";
 import { writeTelemetryEvent } from "../telemetry/writer.js";
 import { safeSummary } from "../telemetry/sanitise.js";
@@ -120,7 +121,7 @@ export async function runHookOrchestrator(opts) {
         return { exitCode: 0 };
     }
     // 6. Filter hooks: matching event + matcher (regex on tool name).
-    const matching = cfg.config.hooks.filter((h) => h.event === opts.event && new RegExp(h.matcher).test(event.tool_name));
+    const matching = cfg.config.hooks.filter((h) => h.event === opts.event && matchesTool(h.matcher, event.tool_name));
     if (matching.length === 0) {
         return { exitCode: 0 };
     }
@@ -172,15 +173,14 @@ async function runOne(hook, event, triggerEvent, opts, spawn, tcfg, actorToken) 
         actor_token: actorToken,
         timestamp: startedAt,
     }, tcfg);
-    // Credential references are retired. The hook is refused here, per hook,
-    // so a blocking hook still blocks — a config error would bypass the whole
-    // chain. Nothing is resolved or substituted.
-    if (hook.command.includes("${OS_KEYCHAIN:")) {
+    // A retired credential reference or a literal credential. The hook is refused here, per hook, so a blocking hook
+    // still blocks — a config error would bypass the whole chain. Nothing is resolved or substituted.
+    const refusal = matcherFault(hook.matcher, slug) ?? hookRefusal(hook.command, slug);
+    if (refusal !== null) {
         await emit(-1, 0, deriveFailureCategory({ exitCode: -1, timedOut: false, configError: true, spawnError: false }));
         return {
             blocked: hook.blocking,
-            warning: `${slug} hook "${hook.id}": \${OS_KEYCHAIN:...} references in hook commands are retired — ` +
-                `remove it from .${slug}/hooks.yaml; a hook that needs a secret must read its own secret from the OS credential store\n`,
+            warning: `${slug} hook "${hookLabel(hook.id)}": ${refusal}\n`,
         };
     }
     const isolated = buildIsolatedCommand({

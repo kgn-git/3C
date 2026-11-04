@@ -3,10 +3,35 @@ import { ISSUE_CAP } from "../../handovers/handover-unreadable.js";
 import { readStore } from "../../memory/store.js";
 import { CAUSE } from "../../memory/causes.js";
 import { RETRY_VERB, syncMemory } from "../../memory/sync.js";
+import { scanSecrets } from "../../validate/secrets.js";
 import { briefCommand } from "./memory-brief.js";
-/** The first line of a sync that stopped before it finished; the filing command prints the same words. */
+import { lessonsRelPath } from "../../memory/lessons-file.js";
+import { lessonsCommand } from "./memory-lessons.js";
+import { promptCommand } from "./memory-prompt.js";
+import { parseIssueWord } from "../../memory/prompts.js";
+/** The first line of a sync that stopped before it finished. */
 export const SYNC_STOPPED = "Memory not synced: the sync stopped before it finished.";
-const USAGE = `Usage: ${RETRY_VERB}\n  Builds the delivery memory from this repository's trusted handover issues.\n       3c memory brief <issue>\n  Says what is decided and to do for an issue, what earlier work says, and whether it is still current.`;
+const UNREAD = "Your previous memory could not be read and has been left as it was.";
+// An error's message can hold a path, and a name or code from another module could hold a line break or a credential, so only a plain identifier that matches no secret pattern is echoed.
+const PLAIN_IDENTIFIER = /^[A-Za-z][A-Za-z0-9_]{0,63}$/;
+function plainField(thrown, field) {
+    try {
+        const value = typeof thrown === "object" && thrown !== null ? thrown[field] : undefined;
+        return typeof value === "string" && PLAIN_IDENTIFIER.test(value) && scanSecrets(value).hits.length === 0 ? value : "unknown";
+    }
+    catch {
+        return "unknown";
+    }
+}
+/** The lines printed when a sync stops: what happened, which error, what to do next. It never throws, because it runs inside a catch. */
+export function stoppedLines(thrown, kept) {
+    return [
+        kept === undefined ? SYNC_STOPPED : `${SYNC_STOPPED} ${kept}`,
+        `The error was ${plainField(thrown, "name")} (code ${plainField(thrown, "code")}).`,
+        `Next step: check that you can write to this folder, then run ${RETRY_VERB}. If it fails again, report it with \`3c bug\`.`,
+    ];
+}
+const USAGE = `Usage: ${RETRY_VERB}\n  Builds the delivery memory from this repository's trusted handover issues.\n       3c memory brief <issue>\n  Says what is decided and to do for an issue, what earlier work says, and whether it is still current.\n       3c memory brief <issue> --prompt\n  Prints the prompt that starts the work on an issue, from the memory and the issue number only; it does not read the issue on GitHub.\n       3c memory lessons\n  Counts the lessons in ${lessonsRelPath()} across the memory, with their exclusions and the matches of the last week.`;
 const NEXT = {
     offline: `check your network connection, then run ${RETRY_VERB}.`,
     unauthenticated: `sign in with \`gh auth login\`, then run ${RETRY_VERB}.`,
@@ -37,7 +62,7 @@ function leftOut(s) {
     if (s.superseded > 0)
         left.push(`${plural(s.superseded, "handover", "handovers")} replaced by a newer one for the same pull request`);
     if (s.excluded > 0)
-        left.push(`${plural(s.excluded, "handover", "handovers")} from authors who are not owners, members or collaborators`);
+        left.push(`${plural(s.excluded, "handover", "handovers")} from authors who are not owners or members`);
     if (s.overBudget > 0)
         left.push(`${plural(s.overBudget, "note", "notes")} not screened because this sync reached its limit of text to screen`);
     if (s.capped)
@@ -67,27 +92,29 @@ function refusal(result) {
 export async function memoryCommand(argv, env) {
     const log = env.log ?? ((m) => console.log(m));
     const error = env.error ?? ((m) => console.error(m));
-    if (argv[0] === "brief" && argv.length === 2 && /^[1-9][0-9]{0,8}$/.test(argv[1])) {
-        return briefCommand(Number(argv[1]), { cwd: env.cwd, ...(env.deps ? { deps: env.deps } : {}), ...(env.limits ? { limits: env.limits } : {}), ...(env.git ? { git: env.git } : {}), log, error });
+    const asked = argv[0] === "brief" && (argv.length === 2 || (argv.length === 3 && argv[2] === "--prompt")) ? parseIssueWord(argv[1]) : null;
+    if (asked !== null) {
+        const common = { cwd: env.cwd, ...(env.limits ? { limits: env.limits } : {}), ...(env.git ? { git: env.git } : {}), log, error };
+        return argv.length === 3 ? promptCommand(asked, common) : briefCommand(asked, { ...common, ...(env.deps ? { deps: env.deps } : {}) });
+    }
+    if (argv.length === 1 && argv[0] === "lessons") {
+        return lessonsCommand({ cwd: env.cwd, ...(env.deps ? { deps: env.deps } : {}), ...(env.limits ? { limits: env.limits } : {}), ...(env.git ? { git: env.git } : {}), log, error });
     }
     if (argv.length !== 1 || argv[0] !== "sync") {
         error(USAGE);
         return 2;
     }
-    const before = (await readStore(env.cwd, env.limits)).kind;
-    const kept = before === "found"
-        ? "Your previous memory is unchanged."
-        : before === "refused"
-            ? "Your previous memory could not be read and has been left as it was."
-            : "There is no memory yet.";
+    let kept = UNREAD;
     let result;
     try {
+        const before = (await readStore(env.cwd, env.limits)).kind;
+        kept = before === "found" ? "Your previous memory is unchanged." : before === "absent" ? "There is no memory yet." : UNREAD;
         const expecting = env.filed === undefined ? undefined : { number: env.filed, wait: env.wait ?? timer };
         result = await syncMemory(env.cwd, env.deps ?? defaultSourceDeps, env.limits, env.runBudget, expecting);
     }
-    catch {
-        error(`${SYNC_STOPPED} ${kept}`);
-        error(`Next step: check that you can write to this folder, then run ${RETRY_VERB}. If it fails again, report it with \`3c bug\`.`);
+    catch (thrown) {
+        for (const line of stoppedLines(thrown, kept))
+            error(line);
         return 1;
     }
     if (result.ok) {

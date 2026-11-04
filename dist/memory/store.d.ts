@@ -4,6 +4,7 @@ export interface StoreLimits {
     readonly bytes: number;
 }
 export declare const STORE_LIMITS: StoreLimits;
+export declare const FORMAT = 2;
 export interface StoreMeta {
     readonly repo: string | null;
     readonly syncedAt: string;

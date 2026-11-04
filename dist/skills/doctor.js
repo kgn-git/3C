@@ -13,6 +13,8 @@ import { discoverWorkspaceFiles } from "../rules/discover.js";
 import { hasClusterableSource } from "./arch-boundary/discover.js";
 import { PATH_GUARD_MATCHER } from "../hooks/install.js";
 import { lacksMemoryLines, memoryFinding, outdatedTemplateMessage } from "./doctor-memory.js";
+import { hooksConfigFindings } from "./doctor-hooks-config.js";
+import { whereFound } from "./doctor-secrets.js";
 import { CLI_COMMANDS, RETIRED_COMMANDS, checkCliSkillCompat, referencedRetiredCommands, retiredVerbs, } from "./cli-compat.js";
 async function pathExists(p) {
     try {
@@ -360,8 +362,9 @@ export async function runDoctor(opts) {
             add("warn", "claude-md", `CLAUDE.md has ${c.count} directives (warn ≥120).`);
         else
             add("ok", "claude-md", `CLAUDE.md: ${c.count} directives (within budget).`);
-        if (scanSecrets(t).hits.length > 0)
-            add("fail", "claude-md", "CLAUDE.md contains potential secret(s).");
+        const secretHits = scanSecrets(t).hits;
+        if (secretHits.length > 0)
+            add("fail", "claude-md", `${relative(workspaceDir, p).split(sep).join("/")} matches a secret or address pattern: ${whereFound(t, secretHits)}. Remove or replace the value, then run \`${slug} doctor\` again.`);
         break;
     }
     // Inert boundary gate — the config is load-bearing for the gate itself
@@ -467,6 +470,7 @@ export async function runDoctor(opts) {
         }
     }
     findings.push(await memoryFinding(workspaceDir, slug));
+    findings.push(...(await hooksConfigFindings(workspaceDir, slug)));
     // Fill-in rule packs ship `{{NAME}}` blanks the adopter replaces. A warning,
     // never a failure: an unfilled blank weakens a rule, it does not break one.
     const ruleFiles = (await walkFiles(join(workspaceDir, ".claude", "rules"))).filter((f) => f.endsWith(".md"));

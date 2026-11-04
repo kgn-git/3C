@@ -1,11 +1,17 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { resolveBrandSlugSync } from "../../branding/runtime.js";
-import { deliveryMetrics } from "../../dashboard/delivery.js";
-import { defaultSourceDeps, loadDelivery } from "../../handovers/delivery-source.js";
+import { deliveryMetrics, issueDeliveries } from "../../dashboard/delivery.js";
+import { loadDelivery } from "../../handovers/delivery-source.js";
+import { memoryDeps } from "../../memory/open-issues.js";
+import { RETRY_VERB } from "../../memory/sync.js";
 import { describeDelivery } from "../../dashboard/delivery-status.js";
 import { dashboardMetrics } from "../../dashboard/metrics.js";
 import { renderDashboardHtml } from "../../dashboard/render.js";
+import { loadDeveloperView } from "../../dashboard/views/developer-load.js";
+import { loadManagerView } from "../../dashboard/views/manager-load.js";
+import { readUsableStore } from "../../memory/store-gate.js";
+import { gitIn } from "../../memory/git-probe.js";
 import { DEFAULT_PORT, startDashboardServer } from "../../dashboard/server.js";
 import { renderConsole } from "../../output/index.js";
 import { loadTelemetryConfig } from "../../telemetry/config.js";
@@ -117,7 +123,7 @@ export async function dashboardCommand(argv, env = { cwd: process.cwd() }) {
         else if (a?.startsWith("--since="))
             since = a.slice("--since=".length);
     }
-    const src = await loadDelivery(env.cwd, env.delivery ?? defaultSourceDeps);
+    const src = await loadDelivery(env.cwd, env.delivery ?? memoryDeps);
     const said = describeDelivery(src);
     const delivery = src.scan.records.length > 0 || src.scan.malformed > 0 ? deliveryMetrics(src.scan) : null;
     const cfg = await loadTelemetryConfig(env.cwd);
@@ -142,26 +148,31 @@ export async function dashboardCommand(argv, env = { cwd: process.cwd() }) {
                 ...said.unreadable,
             ].join("\n"),
             meaning: said.unread
-                ? "The delivery view is empty because the handover issues could not be read, not because nothing shipped."
+                ? "The delivery view is empty because the handover issues could not be read, not because no issue deliveries have been recorded."
                 : "An empty dashboard is the expected state before any delivery has been recorded — not a failure.",
             nextSteps: [
                 ...said.nextSteps,
+                `${RETRY_VERB}   # builds the delivery memory the developer view reads`,
                 "3c dashboard --serve",
                 ...(cfg.enabled ? [] : ["3c doctor   # confirms telemetry configuration"]),
             ],
         }));
         return 0;
     }
-    const html = renderDashboardHtml(delivery, gates, win.label, said);
+    const now = env.now ?? new Date();
+    const memory = await readUsableStore(env.cwd, gitIn(env.cwd));
+    const developer = await loadDeveloperView({ cwd: env.cwd, now, source: src, memory });
+    const manager = await loadManagerView({ cwd: env.cwd, now, source: src, memory, withPrompts: false });
+    const html = renderDashboardHtml(delivery, gates, win.label, said, developer, manager);
     const out = join(env.cwd, `.${resolveBrandSlugSync()}`, "dashboard.html");
     await mkdir(dirname(out), { recursive: true });
     await writeFile(out, html, "utf8");
-    const shipped = delivery?.rows.length ?? 0;
+    const issueRows = delivery?.rows.length ?? 0;
     log(renderConsole({
         results: [
             said.header,
             said.status,
-            `${shipped} ${shipped === 1 ? "issue" : "issues"} shipped on record`,
+            `${issueDeliveries(issueRows)} on record`,
             ...said.notes,
             ...said.unreadable,
             gates !== null ? `${gates.totalRuns} gate runs in the ${win.label}` : null,

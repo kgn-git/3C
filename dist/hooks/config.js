@@ -11,16 +11,14 @@
 //       blocking: <bool>                   (optional, default true)
 //       network: <bool>                    (optional, default false; AC9)
 //
-// AC10 enforcement: command field is scanned for inline credentials via
-// scanSecrets; matches are rejected. `${OS_KEYCHAIN:NAME}` references are
-// retired and refused per hook by the orchestrator — NOT here: a config
-// error bypasses the whole hook chain (fail-open), so one stale line would
-// disable every blocking hook.
+// A command that holds a literal credential, or a retired `${OS_KEYCHAIN:NAME}`
+// reference, is refused per hook by the orchestrator (src/hooks/refusal.ts) —
+// NOT here: a config error bypasses the whole hook chain (fail-open), so one
+// bad line would disable every blocking hook. Only a structural fault is an error.
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import * as yaml from "js-yaml";
 import { resolveBrandSlugSync } from "../branding/runtime.js";
-import { scanSecrets } from "../validate/secrets.js";
 const VALID_EVENTS = new Set(["PreToolUse", "PostToolUse"]);
 const DEFAULT_TIMEOUT_MS = 10000;
 export async function loadHooksConfig(workspaceDir) {
@@ -49,7 +47,7 @@ export async function loadHooksConfig(workspaceDir) {
             errors: [
                 {
                     path: filePath,
-                    message: `YAML parse error: ${err.message}`,
+                    message: `YAML parse error: ${yamlFault(err)}`,
                 },
             ],
         };
@@ -71,7 +69,7 @@ function validate(parsed, filePath) {
             path: filePath,
             message: parsed.schema_version === undefined
                 ? 'missing required field "schema_version"'
-                : `unsupported schema_version: ${JSON.stringify(parsed.schema_version)} (expected integer 1)`,
+                : "unsupported schema_version (expected integer 1)",
         });
     }
     const rawHooks = parsed.hooks;
@@ -118,7 +116,7 @@ function validate(parsed, filePath) {
         else {
             hookErrors.push({
                 path: filePath,
-                message: `${indexLabel}: "event" must be one of "PreToolUse", "PostToolUse" (got ${JSON.stringify(eventRaw)})`,
+                message: `${indexLabel}: "event" must be one of "PreToolUse", "PostToolUse"`,
             });
         }
         const matcher = requireString("matcher");
@@ -164,18 +162,6 @@ function validate(parsed, filePath) {
                 network = networkRaw;
             }
         }
-        // AC10: scan command for inline credentials.
-        if (command !== undefined) {
-            const secretScan = scanSecrets(command);
-            if (secretScan.hits.length > 0) {
-                for (const hit of secretScan.hits) {
-                    hookErrors.push({
-                        path: filePath,
-                        message: `${indexLabel}: inline credential detected in command (${hit.type}: ${hit.redacted}) — remove it; a hook reads its own secret from the OS credential store`,
-                    });
-                }
-            }
-        }
         if (hookErrors.length > 0) {
             errors.push(...hookErrors);
             continue;
@@ -193,6 +179,13 @@ function validate(parsed, filePath) {
     if (errors.length > 0)
         return { ok: false, errors };
     return { ok: true, config: { schemaVersion: 1, hooks } };
+}
+// js-yaml puts the source line around a fault into its message, and that line can hold a credential, so only the
+// reason and the position are printed.
+function yamlFault(err) {
+    const { reason, mark } = err;
+    const why = typeof reason === "string" ? reason : "the file is not valid YAML";
+    return typeof mark?.line === "number" && typeof mark.column === "number" ? `${why} (line ${mark.line + 1}, column ${mark.column + 1})` : why;
 }
 function isPlainObject(v) {
     return typeof v === "object" && v !== null && !Array.isArray(v);

@@ -10,11 +10,12 @@ import { basename, dirname, join } from "node:path";
 import { resolveBrandSlugSync } from "../branding/runtime.js";
 import { hasControl } from "../handovers/controls.js";
 import { writeStateFile } from "../validate/cache-file.js";
+import { isWrittenDate } from "../validate/written-date.js";
 import { NOTE_KINDS, NOTE_LIMITS } from "./notes.js";
 import { secretTypesIn } from "./screen.js";
 // A read holds the whole file in memory, up to `bytes`, and checks every note, so both are bounded.
 export const STORE_LIMITS = { notes: 20_000, bytes: 8 * 1024 * 1024 };
-const FORMAT = 1;
+export const FORMAT = 2;
 const MAX_ISSUES = 100;
 const FILE = "notes.jsonl";
 export const memoryDir = (ws) => join(ws, `.${resolveBrandSlugSync()}`, "memory");
@@ -29,7 +30,7 @@ function toMeta(raw) {
     const { repo, syncedAt } = o;
     if (repo !== null && (typeof repo !== "string" || !REPO.test(repo)))
         return null;
-    if (typeof syncedAt !== "string" || syncedAt.length > 64 || Number.isNaN(Date.parse(syncedAt)))
+    if (!isWrittenDate(syncedAt))
         return null;
     return { repo, syncedAt };
 }

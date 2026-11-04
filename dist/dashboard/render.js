@@ -1,13 +1,8 @@
-import { CYCLE_LABEL, CYCLE_NOTE } from "./delivery.js";
+import { CYCLE_LABEL, CYCLE_NOTE, fmtCycle, ISSUE_DELIVERIES_LABEL, ISSUE_DELIVERIES_NOTE, ISSUE_DELIVERIES_PER_WEEK, } from "./delivery.js";
+import { esc } from "./html-escape.js";
+import { developerSectionHtml } from "./views/developer-html.js";
+import { managerSectionHtml } from "./views/manager-html.js";
 const pct = (n) => `${Math.round(n * 100)}%`;
-const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-const fmtCycle = (ms) => {
-    if (ms < 3_600_000)
-        return `${Math.round(ms / 60_000)}m`;
-    if (ms < 48 * 3_600_000)
-        return `${(ms / 3_600_000).toFixed(1)}h`;
-    return `${(ms / 86_400_000).toFixed(1)}d`;
-};
 const verdictCell = (r) => {
     const v = r.verdict;
     const level = v?.level;
@@ -46,7 +41,7 @@ function deliverySection(d, source) {
         `<td>${r.loc ? `+${r.loc.added ?? 0} / −${r.loc.removed ?? 0}` : ""}</td>` +
         `<td>${r.followUps || ""}</td></tr>`)
         .join("");
-    const weeks = d.shippedPerWeek
+    const weeks = d.issueDeliveriesPerWeek
         .map((w) => `<tr><td>${esc(w.week)}</td><td>${w.count}</td></tr>`)
         .join("");
     const verdicts = Object.entries(d.verdictDistribution)
@@ -67,16 +62,16 @@ function deliverySection(d, source) {
     return `<h2>Delivery</h2>
 <p><small>${origin}</small></p>
 <div class="kpi">
-<div><small>Issues shipped</small><b>${d.rows.length}</b></div>
+<div><small>${ISSUE_DELIVERIES_LABEL}</small><b>${d.rows.length}</b></div>
 <div><small>${CYCLE_LABEL}</small><b>${d.medianCycleMs !== null ? fmtCycle(d.medianCycleMs) : "—"}</b></div>
 <div><small>Follow-ups per delivery</small><b>${d.followUpRatio !== null ? d.followUpRatio.toFixed(1) : "—"}</b></div>
 <div><small>Verdicts</small><b class="small">${verdicts || "—"}</b></div>
 </div>
-<table><thead><tr><th>Issue</th><th>Title</th><th>Board verdict</th><th>${CYCLE_LABEL}</th><th>LOC ±</th><th>Follow-ups</th></tr></thead>
-<tbody>${rows}</tbody></table>
-<p><small>${CYCLE_NOTE}</small></p>
-<h3>Shipped per week</h3>
-<table><tbody>${weeks || "<tr><td>no dated deliveries</td></tr>"}</tbody></table>
+<div class="scroll" role="region" aria-label="Delivery rows" tabindex="0"><table><thead><tr><th>Issue</th><th>Title</th><th>Board verdict</th><th>${CYCLE_LABEL}</th><th>LOC ±</th><th>Follow-ups</th></tr></thead>
+<tbody>${rows}</tbody></table></div>
+<p><small>${CYCLE_NOTE} ${ISSUE_DELIVERIES_NOTE}</small></p>
+<h3>${ISSUE_DELIVERIES_PER_WEEK}</h3>
+<div class="scroll" role="region" aria-label="Issue deliveries per week" tabindex="0"><table><tbody>${weeks || "<tr><td>no dated deliveries</td></tr>"}</tbody></table></div>
 ${notes.length > 0 ? `<p><small>${notes.join(" · ")}</small></p>` : ""}
 ${unreadable}`;
 }
@@ -101,21 +96,33 @@ function gateSection(m, windowLabel) {
 <h3>Where your flow snagged</h3>
 <ul>${cats}</ul>
 <h3>Pass-rate trend</h3>
-<table><tbody>${trend}</tbody></table>`;
+<div class="scroll" role="region" aria-label="Pass-rate trend" tabindex="0"><table><tbody>${trend}</tbody></table></div>`;
 }
 // A single self-contained HTML document.
 // Inline CSS only; no network refs, no scripts; personal/local wording only.
-export function renderDashboardHtml(delivery, gates, windowLabel, source = null) {
-    const sections = [
-        delivery !== null
-            ? deliverySection(delivery, source)
-            : source !== null && unreadableBlock(source) !== ""
-                ? unreadableOnlySection(source)
-                : null,
-        gates !== null ? gateSection(gates, windowLabel) : null,
-    ].filter((s) => s !== null);
+export function renderDashboardHtml(delivery, gates, windowLabel, source = null, developer = null, manager = null) {
+    const parts = [
+        {
+            id: "delivery",
+            title: "Delivery",
+            html: delivery !== null
+                ? deliverySection(delivery, source)
+                : source !== null && unreadableBlock(source) !== ""
+                    ? unreadableOnlySection(source)
+                    : null,
+        },
+        { id: "developer", title: "Developer", html: developer !== null ? developerSectionHtml(developer) : null },
+        { id: "manager", title: "Manager (team level)", html: manager !== null ? managerSectionHtml(manager) : null },
+        { id: "gates", title: "Gate health", html: gates !== null ? gateSection(gates, windowLabel) : null },
+    ];
+    const shown = parts.filter((p) => p.html !== null);
+    // A page of three sections or more has a list of them, because the delivery table can run to hundreds of rows.
+    const nav = shown.length < 3 ? "" : `<nav aria-label="On this page"><ul>${shown.map((p) => `<li><a href="#${p.id}">${esc(p.title)}</a></li>`).join("")}</ul></nav>`;
+    const sections = shown.map((p) => `<section id="${p.id}">\n${p.html}\n</section>`);
     return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'">
 <title>Your local insights — ${esc(windowLabel)}</title>
 <style>
 body{font-family:system-ui,sans-serif;margin:2rem;max-width:60rem}
@@ -123,15 +130,21 @@ body{font-family:system-ui,sans-serif;margin:2rem;max-width:60rem}
 .kpi div{background:#f4f4f5;padding:1rem;border-radius:.5rem;min-width:9rem}
 .kpi b{display:block;font-size:1.6rem}
 .kpi b.small{font-size:1rem}
+.scroll{overflow-x:auto}
 table{border-collapse:collapse;width:100%}
+@media (max-width:40rem){body{margin:1rem}}
 th{text-align:left;padding:.3rem .5rem;border-bottom:2px solid #d4d4d8}
 td{border-bottom:1px solid #e4e4e7;padding:.3rem .5rem}
 .bar{display:inline-block;height:.7rem;background:#16a34a;margin-right:.4rem;vertical-align:middle}
 small{color:#52525b}
+pre{white-space:pre-wrap;background:#f4f4f5;padding:.6rem;border-radius:.4rem}
 </style></head><body>
+<main>
 <h1>Your local insights</h1>
 <p><small>This workspace only · generated locally, never sent anywhere</small></p>
+${nav}
 ${sections.join("\n")}
+</main>
 </body></html>`;
 }
 //# sourceMappingURL=render.js.map

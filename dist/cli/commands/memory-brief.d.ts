@@ -1,6 +1,6 @@
 import { type SourceDeps } from "../../handovers/delivery-source.js";
 import { type GitRun } from "../../memory/git-probe.js";
-import { type StoreLimits } from "../../memory/store.js";
+import type { StoreLimits } from "../../memory/store.js";
 export interface BriefEnv {
     readonly cwd: string;
     readonly deps?: SourceDeps;

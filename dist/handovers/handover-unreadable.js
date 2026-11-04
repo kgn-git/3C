@@ -1,6 +1,6 @@
 // A leaf with no imports, so the fetcher, the cache and the describer can all
 // share these without depending on one another.
-/** Also bounds the unreadable list the cache will accept. */
+/** Also bounds the delivery records, and the blocks with an undefined key, that the cache will accept. */
 export const ISSUE_CAP = 500;
 export const LEGACY_REASON = "older handover with no delivery block";
 export const NO_NUMBER_REASON = "item has no issue number";

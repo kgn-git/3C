@@ -89,6 +89,8 @@ export async function securityFileSet(workspaceDir, opts = {}) {
     // `core.quotePath=false` so a non-ASCII path arrives as a path, not git's
     // octal-escaped rendering that never resolves on disk.
     const git = (args) => runner(["-C", workspaceDir, "-c", "core.quotePath=false", ...args]);
+    // A failed question counts as "yes": the staged content is then reported, never assumed absent.
+    const stillInIndex = async (rel) => git(["--literal-pathspecs", "ls-files", "--cached", "--", rel]).then((out) => out.trim() !== "", () => true);
     /** For probes where "this ref does not exist" is an answer, not a failure. */
     const probe = async (args) => {
         try {
@@ -128,13 +130,24 @@ export async function securityFileSet(workspaceDir, opts = {}) {
     // reported, because a file the gate did not read is not a file it found clean.
     const scannable = [];
     const skipped = [];
+    const stagedGone = [];
+    const stagedSet = new Set(staged);
     for (const rel of files) {
         let size;
         try {
             size = (await stat(join(workspaceDir, rel))).size;
         }
-        catch {
-            continue; // deleted in this span, or unreadable — nothing to scan
+        catch (err) {
+            if (err.code === "ENOENT") {
+                // A staged deletion leaves the index; a file staged and then removed from disk stays in it, and the commit
+                // would still carry the staged content, which a read of the working tree cannot see.
+                if (stagedSet.has(rel) && (await stillInIndex(rel)))
+                    stagedGone.push(rel);
+                continue;
+            }
+            // Any other failure is left to the scanner, which reports the file as unread instead of dropping it.
+            scannable.push(rel);
+            continue;
         }
         if (size > MAX_SCANNED_BYTES)
             skipped.push(rel);
@@ -153,7 +166,7 @@ export async function securityFileSet(workspaceDir, opts = {}) {
         base: base === null ? null : await probe(["show", `${base}:${path}`]),
         head: await readManifest(join(workspaceDir, path)),
     })));
-    return { files: scannable, skipped, base, manifests };
+    return { files: scannable, skipped, stagedGone, base, manifests };
 }
 /**
  * A manifest's current content, or null when the change deletes it. One that

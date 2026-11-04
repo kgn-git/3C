@@ -3,6 +3,7 @@
 // states, so a caller can show "rate-limited" instead of a blank or a stack.
 // The token never passes through here: gh reads its own credential store.
 import { execFile } from "node:child_process";
+export { GH_FAILURES, isGhFailure } from "./failures.js";
 const MAX_DETAIL = 4096;
 /** Classifies an `execFile` rejection; `detail` is for the local log, never the UI. */
 export function classifyGhError(err) {

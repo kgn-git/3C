@@ -7,10 +7,14 @@ import { open } from "node:fs/promises";
 import { constants } from "node:fs";
 import { join } from "node:path";
 import { cacheDir, writeCacheFile } from "../validate/cache-file.js";
-import { isCount } from "./counts.js";
+import { isGhFailure } from "../github/failures.js";
+import { isWrittenDate } from "../validate/written-date.js";
+import { isCount, isCountUpTo } from "./counts.js";
 import { HANDOVER_SCHEMA, validateHandoverObject } from "./handover.js";
+import { MAX_NOTED_KEYS, isNotedKey } from "./handover-noted.js";
+import { FLAG_CAP } from "./issue-flags.js";
 import { ISSUE_CAP, countUnreadable } from "./handover-unreadable.js";
-const CACHE_VERSION = 3;
+export const CACHE_VERSION = 6;
 const MAX_REASON = 200;
 // Trusted non-deliveries and number-less items are each capped at ISSUE_CAP.
 const MAX_UNREADABLE = 2 * ISSUE_CAP;
@@ -18,7 +22,6 @@ const MAX_UNREADABLE = 2 * ISSUE_CAP;
 // the line separators and the bidirectional overrides that can reorder a line.
 const CONTROL = /[\u0000-\u001f\u007f-\u009f\u2028\u2029\u202a-\u202e\u2066-\u2069]/;
 const MAX_CACHE_BYTES = 16 * 1024 * 1024;
-const FAILURES = new Set(["offline", "unauthenticated", "rate-limited", "not-found", "gh-missing"]);
 const REPO = /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/;
 export const cachePath = (ws) => join(cacheDir(ws), "handovers.json");
 export async function writeCache(ws, cache) {
@@ -31,12 +34,13 @@ export async function writeCache(ws, cache) {
         repo: cache.repo,
         fetchedAt: cache.fetchedAt,
         failure: cache.failure,
+        flags: cache.flags,
+        authors: cache.authors,
         ...counts,
         records: records.map(({ handover, ...fm }) => ({ handover, fm: { schema: HANDOVER_SCHEMA, ...fm } })),
     };
     await writeCacheFile(ws, "handovers.json", JSON.stringify(file));
 }
-const isDate = (v) => typeof v === "string" && v.length <= 64 && !Number.isNaN(Date.parse(v));
 function toUnreadable(raw) {
     if (!Array.isArray(raw) || raw.length > MAX_UNREADABLE)
         return null;
@@ -53,6 +57,41 @@ function toUnreadable(raw) {
     }
     return out;
 }
+function toNoted(raw) {
+    if (!Array.isArray(raw) || raw.length > ISSUE_CAP)
+        return null;
+    const out = [];
+    for (const entry of raw) {
+        const { issue, keys } = (entry ?? {});
+        if (typeof issue !== "number" || !Number.isSafeInteger(issue) || issue <= 0)
+            return null;
+        if (!Array.isArray(keys) || keys.length === 0 || keys.length > MAX_NOTED_KEYS || !keys.every(isNotedKey))
+            return null;
+        out.push({ issue, keys: [...keys] });
+    }
+    return out;
+}
+function toFlags(raw) {
+    if (raw === null)
+        return null;
+    if (typeof raw !== "object" || Array.isArray(raw))
+        return undefined;
+    const { at, cut, list } = raw;
+    if (!isWrittenDate(at) || !isCount(cut) || !Array.isArray(list) || list.length > FLAG_CAP)
+        return undefined;
+    const seen = new Set();
+    const out = [];
+    for (const entry of list) {
+        const { issue, open } = (entry ?? {});
+        if (typeof issue !== "number" || !Number.isSafeInteger(issue) || issue <= 0 || seen.has(issue))
+            return undefined;
+        if (open !== null && typeof open !== "boolean")
+            return undefined;
+        seen.add(issue);
+        out.push({ issue, open });
+    }
+    return { at, cut, list: out };
+}
 function toCache(raw) {
     if (typeof raw !== "object" || raw === null || Array.isArray(raw))
         return null;
@@ -63,7 +102,7 @@ function toCache(raw) {
     if (repo !== null && (typeof repo !== "string" || !REPO.test(repo)))
         return null;
     const fetchedAt = o["fetchedAt"];
-    if (fetchedAt !== null && !isDate(fetchedAt))
+    if (fetchedAt !== null && !isWrittenDate(fetchedAt))
         return null;
     const f = o["failure"];
     let failure = null;
@@ -71,15 +110,24 @@ function toCache(raw) {
         if (typeof f !== "object" || Array.isArray(f))
             return null;
         const { state, at } = f;
-        if (typeof state !== "string" || !FAILURES.has(state) || !isDate(at))
+        if (!isGhFailure(state) || !isWrittenDate(at))
             return null;
-        failure = { state: state, at };
+        failure = { state, at };
     }
     const { excluded, conflicts, capped } = o;
     if (![excluded, conflicts].every(isCount) || typeof capped !== "boolean")
         return null;
+    const flags = toFlags(o["flags"]);
+    if (flags === undefined)
+        return null;
+    const authors = o["authors"];
+    if (authors !== null && !isCountUpTo(authors, ISSUE_CAP))
+        return null;
     const unreadable = toUnreadable(o["unreadable"]);
     if (unreadable === null)
+        return null;
+    const noted = toNoted(o["noted"]);
+    if (noted === null)
         return null;
     const list = o["records"];
     if (!Array.isArray(list) || list.length > ISSUE_CAP)
@@ -98,7 +146,9 @@ function toCache(raw) {
         repo,
         fetchedAt,
         failure,
-        scan: { records, ...countUnreadable(unreadable), unreadable, excluded, conflicts, capped },
+        flags,
+        authors,
+        scan: { records, ...countUnreadable(unreadable), unreadable, excluded, conflicts, capped, noted },
     };
 }
 export async function readCache(ws) {

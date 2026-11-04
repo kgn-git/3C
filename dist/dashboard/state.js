@@ -13,8 +13,12 @@ import { join } from "node:path";
 import { resolveBrandSlugSync } from "../branding/runtime.js";
 import { readDelivery } from "../handovers/delivery-source.js";
 import { describeDelivery } from "./delivery-status.js";
-import { CYCLE_LABEL, CYCLE_NOTE, deliveryMetrics } from "./delivery.js";
+import { CYCLE_LABEL, CYCLE_NOTE, fmtCycle, ISSUE_DELIVERIES_NOTE, NO_ISSUE_DELIVERIES, deliveryMetrics, issueDeliveries } from "./delivery.js";
 import { dashboardMetrics } from "./metrics.js";
+import { gitIn } from "../memory/git-probe.js";
+import { readUsableStore } from "../memory/store-gate.js";
+import { loadDeveloperView } from "./views/developer-load.js";
+import { loadManagerView } from "./views/manager-load.js";
 import { loadTelemetryConfig } from "../telemetry/config.js";
 import { parseWindow } from "../telemetry/window.js";
 import { readEventsInWindow } from "../telemetry/read.js";
@@ -25,13 +29,6 @@ import { presentOnboarding } from "../skills/onboard/present.js";
 import { isSafeUser, onboardingDirLinked } from "../skills/onboard/user-path.js";
 /** More developers than any one workspace onboards; the cap exists to bound a planted directory. */
 const MAX_ONBOARDING_RECORDS = 500;
-const fmtCycle = (ms) => {
-    if (ms < 3_600_000)
-        return `${Math.round(ms / 60_000)}m`;
-    if (ms < 48 * 3_600_000)
-        return `${(ms / 3_600_000).toFixed(1)}h`;
-    return `${(ms / 86_400_000).toFixed(1)}d`;
-};
 const pct = (n) => `${Math.round(n * 100)}%`;
 // The meaning line is prose and has to read like prose, not "All 1 violations".
 const plural = (n, one, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
@@ -45,15 +42,15 @@ function worst(counts) {
     }
     return top;
 }
-async function deliveryPanel(env) {
-    const src = await readDelivery(env.cwd, env.now ?? new Date());
+function deliveryPanel(src) {
     const said = describeDelivery(src);
     const d = deliveryMetrics(src.scan);
     const n = d.rows.length;
     const summary = n === 0
-        ? ["No issues shipped on record."]
+        ? [NO_ISSUE_DELIVERIES]
         : [
-            `${plural(n, "issue")} shipped across ${plural(src.scan.records.length, "delivery", "deliveries")}`,
+            `${issueDeliveries(n)} across ${plural(src.scan.records.length, "delivery", "deliveries")}`,
+            ISSUE_DELIVERIES_NOTE,
             `${CYCLE_LABEL}: ${d.medianCycleMs !== null ? fmtCycle(d.medianCycleMs) : "—"}`,
             CYCLE_NOTE,
             `Follow-ups per delivery: ${d.followUpRatio !== null ? d.followUpRatio.toFixed(1) : "—"}`,
@@ -75,6 +72,12 @@ async function deliveryPanel(env) {
                     ? "No handover issue carries a delivery block yet — this view fills in as work ships."
                     : `Delivery data is complete for all ${plural(src.scan.records.length, "recorded delivery", "recorded deliveries")}.`;
     return { id: "delivery", label: "Delivery", results, meaning, nextSteps: [...said.nextSteps] };
+}
+function developerPanel(env, source, memory) {
+    return loadDeveloperView({ cwd: env.cwd, now: env.now ?? new Date(), source, memory });
+}
+function managerPanel(env, source, memory) {
+    return loadManagerView({ cwd: env.cwd, now: env.now ?? new Date(), source, memory });
 }
 async function gatesPanel(env) {
     const cfg = await loadTelemetryConfig(env.cwd);
@@ -158,9 +161,15 @@ async function onboardingPanel(env) {
     };
 }
 /** Builds every panel the local dashboard app renders. Performs no network call. */
-export async function buildDashboardState(env) {
+export async function buildDashboardState(given) {
+    // One clock for the whole state, so the cache's freshness and the period edges agree.
+    const env = { ...given, now: given.now ?? new Date() };
+    const source = await readDelivery(env.cwd, env.now);
+    const memory = await readUsableStore(env.cwd, env.git ?? gitIn(env.cwd));
     const panels = await Promise.all([
-        deliveryPanel(env),
+        deliveryPanel(source),
+        developerPanel(env, source, memory),
+        managerPanel(env, source, memory),
         gatesPanel(env),
         boundaryPanel(env),
         onboardingPanel(env),

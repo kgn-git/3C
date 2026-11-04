@@ -19,7 +19,10 @@ export interface BriefInput {
     readonly unreadCause?: string | null;
     readonly git: GitProbe;
 }
-export type BriefNote = Pick<Ranked, "note" | "why">;
+/** A ranked note and the labels it is printed with; none when the brief was built without them. */
+export type BriefNote = Pick<Ranked, "note" | "why"> & {
+    readonly labels?: ReadonlyArray<string>;
+};
 export interface Brief {
     readonly issue: number;
     readonly title: string | null;

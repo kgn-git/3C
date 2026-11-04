@@ -12,6 +12,12 @@ export declare function hookRunEvent(rest: readonly string[]): string;
  */
 export declare function fatalExitCode(argv: readonly string[]): 1 | 2;
 /**
+ * Best-effort redaction (A09): `scanSecrets` knows the credential SHAPES it
+ * knows — AWS, GitHub, JWT, Stripe, PEM headers, connection strings — and no
+ * others. The log is local and private, but it is not a vault.
+ */
+export declare function redact(text: string): string;
+/**
  * Report an error nothing else handled and return the exit code. Prints one
  * line — the ref, where the detail is, the route — and nothing from the error
  * itself: its message can carry an absolute path, and its stack always does.

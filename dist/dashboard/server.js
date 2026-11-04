@@ -12,7 +12,7 @@ import { pipeline } from "node:stream";
 import { resolve, sep, extname, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildDashboardState } from "./state.js";
-import { defaultSourceDeps } from "../handovers/delivery-source.js";
+import { memoryDeps } from "../memory/open-issues.js";
 import { DeliveryRefresher } from "./delivery-refresher.js";
 /** The only host this server ever binds. */
 export const LOOPBACK = "127.0.0.1";
@@ -167,7 +167,7 @@ export function socketErrorMessage(code) {
     return `The dashboard server hit a socket error (${code ?? "unknown"}) and may have stopped accepting connections. Press Ctrl-C and restart.`;
 }
 function handler(root, opts, boundPort, refresh) {
-    const deps = opts.delivery ?? defaultSourceDeps;
+    const deps = opts.delivery ?? memoryDeps;
     const state = boundedState(opts.buildState ??
         (() => buildDashboardState({
             cwd: opts.cwd,
@@ -239,7 +239,7 @@ export async function startDashboardServer(opts) {
         throw new Error("The dashboard bundle is missing. Run `npm run build` to generate it.");
     }
     let port = requested;
-    const refresher = new DeliveryRefresher(opts.cwd, opts.delivery ?? defaultSourceDeps);
+    const refresher = new DeliveryRefresher(opts.cwd, opts.delivery ?? memoryDeps);
     const refresh = () => {
         refresher.ensureFresh().catch(() => opts.log?.("The handover issues could not be refreshed; showing the cached rows."));
     };

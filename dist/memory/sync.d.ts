@@ -16,7 +16,7 @@ export interface SyncSummary {
     readonly unreadable: number;
     /** Handovers a newer handover for the same pull request replaced. */
     readonly superseded: number;
-    /** Handovers from authors who are not owners, members or collaborators. */
+    /** Handovers from authors who are not owners or members. */
     readonly excluded: number;
     readonly capped: boolean;
     /** Notes left unscreened-and-unstored because the sync reached its budget of characters to screen. */
